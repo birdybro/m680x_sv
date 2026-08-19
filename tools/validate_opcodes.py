@@ -13,6 +13,7 @@ from tools.fetch_references import DEFAULT_MANIFEST, ReferenceError, load_manife
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OPCODE_DIR = ROOT / "spec" / "opcodes"
+DEFAULT_DEVICE_SPEC = ROOT / "spec" / "devices.yml"
 RECORD_FIELDS = {
     "opcode", "opcode_hex", "classification", "mnemonic", "aliases",
     "architectural_applicability", "addressing_mode", "length", "cycles",
@@ -115,7 +116,11 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
         raise OpcodeSpecError(f"{architecture}: opcode values are not exactly 00-FF")
 
 
-def validate_directory(opcode_dir: Path, reference_manifest: dict) -> tuple[int, int]:
+def validate_directory(
+    opcode_dir: Path,
+    reference_manifest: dict,
+    expected_architectures: set[str] | None = None,
+) -> tuple[int, int]:
     known_references = {item["id"] for item in reference_manifest["references"]}
     paths = sorted(opcode_dir.glob("*.json"))
     if not paths:
@@ -132,12 +137,17 @@ def validate_directory(opcode_dir: Path, reference_manifest: dict) -> tuple[int,
         documented += sum(
             record["classification"] == "documented_instruction" for record in spec["opcodes"]
         )
+    if expected_architectures is not None and architectures != expected_architectures:
+        missing = sorted(expected_architectures - architectures)
+        extra = sorted(architectures - expected_architectures)
+        raise OpcodeSpecError(f"opcode/device architecture conflict: missing={missing}, extra={extra}")
     return len(paths), documented
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--opcode-dir", type=Path, default=DEFAULT_OPCODE_DIR)
+    parser.add_argument("--devices", type=Path, default=DEFAULT_DEVICE_SPEC)
     parser.add_argument("--references", type=Path, default=DEFAULT_MANIFEST)
     return parser.parse_args(argv)
 
@@ -146,8 +156,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
         references = load_manifest(args.references)
-        files, documented = validate_directory(args.opcode_dir, references)
-    except (OpcodeSpecError, ReferenceError) as exc:
+        devices = json.loads(args.devices.read_text(encoding="utf-8"))
+        expected_architectures = set(devices["architectures"])
+        files, documented = validate_directory(
+            args.opcode_dir, references, expected_architectures
+        )
+    except (OpcodeSpecError, ReferenceError, OSError, json.JSONDecodeError, KeyError, TypeError) as exc:
         print(f"opcode specification error: {exc}", file=sys.stderr)
         return 1
     print(f"opcode specifications valid: {files} architectures, {files * 256} classified values, {documented} documented instruction encodings")

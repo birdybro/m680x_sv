@@ -18,15 +18,18 @@ class OpcodeSpecificationTests(unittest.TestCase):
         cls.known_references = {item["id"] for item in cls.references["references"]}
         cls.m6800 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "m6800.json")
         cls.m6801 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "m6801.json")
+        cls.hd6301 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "hd6301.json")
         cls.m6805 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "m6805.json")
         cls.hd6305 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "hd6305.json")
 
     def test_repository_opcode_directory_is_valid(self) -> None:
         files, documented = validate_opcodes.validate_directory(
-            ROOT / "spec" / "opcodes", self.references
+            ROOT / "spec" / "opcodes",
+            self.references,
+            {"m6800", "m6801", "hd6301", "m6805", "hd6305"},
         )
-        self.assertEqual(files, 4)
-        self.assertEqual(documented, 834)
+        self.assertEqual(files, 5)
+        self.assertEqual(documented, 1064)
         self.assertEqual(
             sum(record["classification"] == "documented_instruction" for record in self.m6800["opcodes"]),
             197,
@@ -34,6 +37,10 @@ class OpcodeSpecificationTests(unittest.TestCase):
         self.assertEqual(
             sum(record["classification"] == "documented_instruction" for record in self.m6801["opcodes"]),
             220,
+        )
+        self.assertEqual(
+            sum(record["classification"] == "documented_instruction" for record in self.hd6301["opcodes"]),
+            230,
         )
         self.assertEqual(
             sum(record["classification"] == "documented_instruction" for record in self.m6805["opcodes"]),
@@ -45,7 +52,7 @@ class OpcodeSpecificationTests(unittest.TestCase):
         )
 
     def test_all_values_are_explicitly_classified(self) -> None:
-        for spec in (self.m6800, self.m6801, self.m6805, self.hd6305):
+        for spec in (self.m6800, self.m6801, self.hd6301, self.m6805, self.hd6305):
             self.assertEqual([record["opcode"] for record in spec["opcodes"]], list(range(256)))
             self.assertTrue(all(record["classification"] for record in spec["opcodes"]))
 
@@ -64,6 +71,64 @@ class OpcodeSpecificationTests(unittest.TestCase):
         self.assertEqual(self.hd6305["opcodes"][0x8E]["mnemonic"], "STOP")
         self.assertEqual(self.m6805["opcodes"][0x20]["cycles"], 4)
         self.assertEqual(self.hd6305["opcodes"][0x20]["cycles"], 3)
+
+    def test_hd6301_extensions_and_pipeline_cycles(self) -> None:
+        expected_extensions = {
+            0x18: ("XGDX", 1, 2),
+            0x1A: ("SLP", 1, 4),
+            0x61: ("AIM", 3, 7),
+            0x62: ("OIM", 3, 7),
+            0x65: ("EIM", 3, 7),
+            0x6B: ("TIM", 3, 5),
+            0x71: ("AIM", 3, 6),
+            0x72: ("OIM", 3, 6),
+            0x75: ("EIM", 3, 6),
+            0x7B: ("TIM", 3, 4),
+        }
+        self.assertEqual(
+            {
+                opcode: (
+                    self.hd6301["opcodes"][opcode]["mnemonic"],
+                    self.hd6301["opcodes"][opcode]["length"],
+                    self.hd6301["opcodes"][opcode]["cycles"],
+                )
+                for opcode in expected_extensions
+            },
+            expected_extensions,
+        )
+        expected_cycles = {
+            0x01: 1,
+            0x04: 1,
+            0x20: 3,
+            0x38: 4,
+            0x3C: 5,
+            0x3D: 7,
+            0x4F: 1,
+            0x6D: 4,
+            0x7D: 4,
+            0x83: 3,
+            0x8C: 3,
+            0x8D: 5,
+            0x9D: 5,
+            0xAD: 5,
+            0xBD: 6,
+        }
+        self.assertEqual(
+            {opcode: self.hd6301["opcodes"][opcode]["cycles"] for opcode in expected_cycles},
+            expected_cycles,
+        )
+
+    def test_hd6301_extension_memory_and_flag_effects(self) -> None:
+        aim = self.hd6301["opcodes"][0x71]
+        tim = self.hd6301["opcodes"][0x7B]
+        xgdx = self.hd6301["opcodes"][0x18]
+        self.assertEqual(aim["flags_affected"], ["N", "Z", "V"])
+        self.assertIn("write modified effective-address byte", aim["memory_operations"])
+        self.assertNotIn("write modified effective-address byte", tim["memory_operations"])
+        self.assertEqual(set(xgdx["registers_read"]), set(xgdx["registers_written"]))
+        self.assertTrue({"A", "B", "X"} <= set(xgdx["registers_read"]))
+        self.assertEqual(self.hd6301["opcodes"][0x19]["flags_undefined"], [])
+        self.assertNotIn("V", self.hd6301["opcodes"][0x19]["flags_affected"])
 
     def test_m6805_bit_test_and_clear_flag_facts(self) -> None:
         for opcode in range(0x10):
@@ -139,6 +204,12 @@ class OpcodeSpecificationTests(unittest.TestCase):
         broken["opcodes"][0x01]["cycles"] = None
         with self.assertRaisesRegex(validate_opcodes.OpcodeSpecError, "missing cycles"):
             validate_opcodes.validate_opcode_spec(broken, self.known_references)
+
+    def test_device_architecture_conflict_is_rejected(self) -> None:
+        with self.assertRaisesRegex(validate_opcodes.OpcodeSpecError, "architecture conflict"):
+            validate_opcodes.validate_directory(
+                ROOT / "spec" / "opcodes", self.references, {"m6800"}
+            )
 
 
 if __name__ == "__main__":

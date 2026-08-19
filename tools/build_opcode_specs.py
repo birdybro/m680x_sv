@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 import json
 from pathlib import Path
 import sys
@@ -167,14 +168,21 @@ def _flag_facts(mnemonic: str, architecture: str) -> tuple[list[str], list[str],
             "C": "16-bit carry or borrow",
         }
     elif mnemonic == "CPX":
-        affected = ["N", "Z", "V"] + (["C"] if architecture == "m6801" else [])
+        affected = ["N", "Z", "V"] + (["C"] if architecture in {"m6801", "hd6301"} else [])
         semantics = {
             "N": "most-significant bit of the 16-bit comparison result",
             "Z": "1 exactly when X equals the 16-bit operand",
             "V": "two's-complement overflow from the high-byte comparison",
         }
-        if architecture == "m6801":
+        if architecture in {"m6801", "hd6301"}:
             semantics["C"] = "borrow from the 16-bit comparison"
+    elif mnemonic in {"AIM", "OIM", "EIM", "TIM"}:
+        affected = ["N", "Z", "V"]
+        semantics = {
+            "N": "most-significant bit of the logical result",
+            "Z": "1 exactly when the logical result is zero",
+            "V": "cleared",
+        }
     elif root in {"AND", "BIT", "LDA", "STA", "EOR", "ORA"} or mnemonic in {
         "LDX",
         "STX",
@@ -345,6 +353,9 @@ def _register_facts(mnemonic: str, mode: str) -> tuple[list[str], list[str]]:
     elif mnemonic == "DAA":
         read.append("A")
         written.append("A")
+    elif mnemonic == "XGDX":
+        read += ["A", "B", "X"]
+        written += ["A", "B", "X"]
     elif mnemonic in {"ASLD", "LSRD", "ADDD", "SUBD"}:
         read += ["A", "B"]
         written += ["A", "B"]
@@ -388,7 +399,11 @@ def _memory_facts(mnemonic: str, mode: str, length: int) -> list[str]:
         operations.append(f"read {length - 1} instruction operand byte(s)")
     root = _operation_root(mnemonic)
     memory_mode = mode in {"direct", "indexed-unsigned-8", "extended"}
-    if memory_mode and mnemonic not in {"JMP", "JSR"}:
+    if mnemonic in {"AIM", "OIM", "EIM", "TIM"}:
+        operations.append("read effective-address byte")
+        if mnemonic != "TIM":
+            operations.append("write modified effective-address byte")
+    elif memory_mode and mnemonic not in {"JMP", "JSR"}:
         if root == "STA" or mnemonic in {"STX", "STS", "STD"}:
             width = 2 if mnemonic in {"STX", "STS", "STD"} else 1
             operations.append(f"write {width} effective-address byte(s)")
@@ -477,9 +492,9 @@ def _aliases(mnemonic: str, architecture: str) -> list[str]:
         "ASLB": ["LSLB"],
         "ASLD": ["LSLD"],
     }.get(mnemonic, [])
-    if architecture == "m6801" and mnemonic == "BCC":
+    if architecture in {"m6801", "hd6301"} and mnemonic == "BCC":
         aliases.append("BHS")
-    if architecture == "m6801" and mnemonic == "BCS":
+    if architecture in {"m6801", "hd6301"} and mnemonic == "BCS":
         aliases.append("BLO")
     return aliases
 
@@ -715,6 +730,142 @@ def build_m6801() -> dict:
         "architecture": architecture,
         "title": "Motorola MC6801/MC6803 opcode classification",
         "primary_references": [{"id": reference_id, "locators": ["figure 4-2 instruction summary", "appendix A instruction entries", "appendix B operation code map"]}],
+        "opcodes": records,
+    }
+
+
+HD6301_INHERENT_CYCLES = {
+    "NOP": 1,
+    "LSRD": 1,
+    "ASLD": 1,
+    "TAP": 1,
+    "TPA": 1,
+    "INX": 1,
+    "DEX": 1,
+    "CLV": 1,
+    "SEV": 1,
+    "CLC": 1,
+    "SEC": 1,
+    "CLI": 1,
+    "SEI": 1,
+    "SBA": 1,
+    "CBA": 1,
+    "TAB": 1,
+    "TBA": 1,
+    "DAA": 2,
+    "ABA": 1,
+    "TSX": 1,
+    "INS": 1,
+    "PULA": 3,
+    "PULB": 3,
+    "DES": 1,
+    "TXS": 1,
+    "PSHA": 4,
+    "PSHB": 4,
+    "PULX": 4,
+    "RTS": 5,
+    "ABX": 1,
+    "RTI": 10,
+    "PSHX": 5,
+    "MUL": 7,
+    "WAI": 9,
+    "SWI": 12,
+}
+
+
+def _hd6301_cycles(record: dict) -> int:
+    mnemonic = record["mnemonic"]
+    mode = record["addressing_mode"]
+    root = _operation_root(mnemonic)
+    if mnemonic in HD6301_INHERENT_CYCLES:
+        return HD6301_INHERENT_CYCLES[mnemonic]
+    if mnemonic == "BSR":
+        return 5
+    if mode == "relative":
+        return 3
+    if mnemonic == "JMP":
+        return 3
+    if mnemonic == "JSR":
+        return {"direct": 5, "indexed-unsigned-8": 5, "extended": 6}[mode]
+    if root in RMW_ROWS.values():
+        if mode in {"accumulator-a", "accumulator-b"}:
+            return 1
+        if root == "CLR":
+            return 5
+        if root == "TST":
+            return 4
+        return 6
+    if mnemonic in {"ADDD", "SUBD", "LDD"}:
+        return {"immediate-16": 3, "direct": 4, "indexed-unsigned-8": 5, "extended": 5}[mode]
+    if mnemonic in {"CPX", "LDS", "LDX"}:
+        return {"immediate-16": 3, "direct": 4, "indexed-unsigned-8": 5, "extended": 5}[mode]
+    if mnemonic in {"STD", "STS", "STX"}:
+        return {"direct": 4, "indexed-unsigned-8": 5, "extended": 5}[mode]
+    if root in AB_ROWS.values():
+        return {"immediate-8": 2, "direct": 3, "indexed-unsigned-8": 4, "extended": 4}[mode]
+    raise ValueError(f"no HD6301 cycle fact for {record['opcode_hex']} {mnemonic} {mode}")
+
+
+def build_hd6301() -> dict:
+    architecture = "hd6301"
+    reference_id = "hitachi-hd6301-hd6303-series-handbook-1989"
+    map_locator = "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+    records = deepcopy(build_m6801()["opcodes"])
+    for record in records:
+        record["architectural_applicability"] = [architecture]
+        record["primary_reference"] = {"id": reference_id, "locator": map_locator}
+        if record["classification"] == "documented_instruction":
+            record["cycles"] = _hd6301_cycles(record)
+            if record["mnemonic"] == "CPX":
+                record["notes"] = "HD6301 CPX affects C and supports every applicable conditional branch."
+            elif record["mnemonic"] == "DAA":
+                record["flags_undefined"] = []
+                record["flag_semantics"].pop("V")
+                record["notes"] = "Hitachi documents V as not affected; this differs from Motorola's undefined MC6801 DAA overflow state."
+        else:
+            record["notes"] = "No architectural behavior is assigned by the cited Hitachi operation-code map."
+
+    extensions = {
+        0x18: ("XGDX", "inherent", 1, 2),
+        0x1A: ("SLP", "inherent", 1, 4),
+        0x61: ("AIM", "indexed-unsigned-8", 3, 7),
+        0x62: ("OIM", "indexed-unsigned-8", 3, 7),
+        0x65: ("EIM", "indexed-unsigned-8", 3, 7),
+        0x6B: ("TIM", "indexed-unsigned-8", 3, 5),
+        0x71: ("AIM", "direct", 3, 6),
+        0x72: ("OIM", "direct", 3, 6),
+        0x75: ("EIM", "direct", 3, 6),
+        0x7B: ("TIM", "direct", 3, 4),
+    }
+    for opcode, (mnemonic, mode, length, cycles) in extensions.items():
+        _put(
+            records,
+            _instruction(
+                opcode,
+                architecture,
+                mnemonic,
+                mode,
+                length,
+                cycles,
+                reference_id,
+                map_locator,
+                notes="Hitachi extension to the HD6801 instruction set.",
+            ),
+        )
+
+    return {
+        "schema_version": 1,
+        "architecture": architecture,
+        "title": "Hitachi HD6301/HD6303/HD63701 opcode classification",
+        "primary_references": [
+            {
+                "id": reference_id,
+                "locators": [
+                    "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175",
+                    "HD6301V1 section 3.3, cycle-by-cycle operation tables",
+                ],
+            }
+        ],
         "opcodes": records,
     }
 
@@ -1134,6 +1285,7 @@ def build_hd6305() -> dict:
 BUILDERS = {
     "m6800": build_m6800,
     "m6801": build_m6801,
+    "hd6301": build_hd6301,
     "m6805": build_m6805,
     "hd6305": build_hd6305,
 }
