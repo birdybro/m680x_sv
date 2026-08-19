@@ -5,7 +5,8 @@ module tb_m6800_opcodes #(
   import m6800_opcode_vectors_pkg::*;
 
   localparam int unsigned VECTOR_COUNT =
-    (TEST_ARCHITECTURE == 2'd0) ? M6800_VECTOR_COUNT : M6801_VECTOR_COUNT;
+    (TEST_ARCHITECTURE == 2'd0) ? M6800_VECTOR_COUNT :
+    ((TEST_ARCHITECTURE == 2'd1) ? M6801_VECTOR_COUNT : HD6301_VECTOR_COUNT);
 
   logic clk;
   logic reset_n;
@@ -19,6 +20,7 @@ module tb_m6800_opcodes #(
   logic illegal;
   logic undefined_value;
   logic waiting_state;
+  logic sleeping_state;
   logic interrupt_ack;
   logic [1:0] interrupt_vector;
   logic [7:0] debug_a;
@@ -55,6 +57,7 @@ module tb_m6800_opcodes #(
     .illegal_o(illegal),
     .undefined_o(undefined_value),
     .waiting_o(waiting_state),
+    .sleeping_o(sleeping_state),
     .interrupt_ack_o(interrupt_ack),
     .interrupt_vector_o(interrupt_vector),
     .debug_a_o(debug_a),
@@ -159,7 +162,8 @@ module tb_m6800_opcodes #(
     reset_n = 1'b1;
     for (vector_index = 0; vector_index < VECTOR_COUNT; vector_index = vector_index + 1) begin
       expected_vector = (TEST_ARCHITECTURE == 2'd0) ?
-        m6800_vector(vector_index) : m6801_vector(vector_index);
+        m6800_vector(vector_index) : ((TEST_ARCHITECTURE == 2'd1) ?
+        m6801_vector(vector_index) : hd6301_vector(vector_index));
       initialize_fixture(expected_vector.opcode);
       cycle_count = 0;
       access_count = 0;
@@ -171,7 +175,9 @@ module tb_m6800_opcodes #(
           end
           expected_access = (TEST_ARCHITECTURE == 2'd0) ?
             m6800_access(vector_index[7:0], access_count[7:0]) :
-            m6801_access(vector_index[7:0], access_count[7:0]);
+            ((TEST_ARCHITECTURE == 2'd1) ?
+            m6801_access(vector_index[7:0], access_count[7:0]) :
+            hd6301_access(vector_index[7:0], access_count[7:0]));
           if ((access_count == 0) && !opcode_fetch) begin
             $fatal(1, "opcode %02x first access was not marked as fetch", expected_vector.opcode);
           end
@@ -195,6 +201,7 @@ module tb_m6800_opcodes #(
           debug_sp != expected_vector.sp || debug_pc != expected_vector.pc ||
           ((debug_ccr ^ expected_vector.ccr) & expected_vector.ccr_mask) != 6'h00 ||
           waiting_state != expected_vector.waiting_state || illegal || undefined_value || interrupt_ack ||
+          sleeping_state != expected_vector.sleeping_state ||
           interrupt_vector != 2'b00) begin
         $fatal(1, "opcode %02x final mismatch cycles=%0d/%0d A=%02x/%02x B=%02x/%02x X=%04x/%04x SP=%04x/%04x PC=%04x/%04x CCR=%02x/%02x mask=%02x access=%0d/%0d wait=%0d/%0d illegal=%0d undefined=%0d",
           expected_vector.opcode, cycle_count, expected_vector.cycles,

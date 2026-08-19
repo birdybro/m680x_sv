@@ -13,7 +13,7 @@ from model.m6800 import FLAG_BITS, M6800Model, M6800State
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "sim" / "generated" / "m6800_opcode_vectors_pkg.sv"
 TARGET_PC = 0x100D
-ARCHITECTURES = ("m6800", "m6801")
+ARCHITECTURES = ("m6800", "m6801", "hd6301")
 
 
 def fixture(architecture: str, opcode: int) -> M6800Model:
@@ -69,6 +69,7 @@ def render_vector_function(
                 f"{prefix}.ccr = 6'h{state.ccr:02x};",
                 f"{prefix}.ccr_mask = 6'h{ccr_mask:02x};",
                 f"{prefix}.waiting_state = 1'b{int(state.waiting)};",
+                f"{prefix}.sleeping_state = 1'b{int(state.sleeping)};",
                 f"{prefix}.access_count = 4'd{len(trace.accesses)};",
                 "        end",
             ]
@@ -122,6 +123,7 @@ def render() -> str:
         "    logic [5:0] ccr;",
         "    logic [5:0] ccr_mask;",
         "    logic waiting_state;",
+        "    logic sleeping_state;",
         "    logic [3:0] access_count;",
         "  } opcode_vector_t;",
         "  typedef struct packed {",

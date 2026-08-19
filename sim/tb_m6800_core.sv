@@ -16,6 +16,7 @@ module tb_m6800_core;
   logic illegal;
   logic undefined_value;
   logic waiting_state;
+  logic sleeping_state;
   logic interrupt_ack;
   logic [1:0] interrupt_vector;
   logic [7:0] debug_a;
@@ -53,6 +54,7 @@ module tb_m6800_core;
     .illegal_o(illegal),
     .undefined_o(undefined_value),
     .waiting_o(waiting_state),
+    .sleeping_o(sleeping_state),
     .interrupt_ack_o(interrupt_ack),
     .interrupt_vector_o(interrupt_vector),
     .debug_a_o(debug_a),
@@ -260,7 +262,7 @@ module tb_m6800_core;
     end
     run_instruction(2, 8'h01);
     if (debug_pc != 16'h1019 || debug_b != 8'h00 || !debug_ccr[4] ||
-        illegal || undefined_value || waiting_state) begin
+        illegal || undefined_value || waiting_state || sleeping_state) begin
       $fatal(1, "post-interrupt NOP result ccr=%02x stacked=%02x", debug_ccr, memory[16'h01f9]);
     end
 

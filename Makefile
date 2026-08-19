@@ -1,7 +1,7 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-hitachi test-alu test-alu-rtl quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-hitachi test-hd6301-opcodes test-alu test-alu-rtl quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -20,6 +20,7 @@ help:
 	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
 	@echo "  test-m6805  run M6805-lineage model regressions"
 	@echo "  test-hitachi run HD6301/HD6305 model regressions"
+	@echo "  test-hd6301-opcodes compare all documented HD6301 encodings to the model"
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
 	@echo "  quick       run the fast local gate"
@@ -53,6 +54,9 @@ lint-rtl:
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core -GARCHITECTURE=1 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core "-GARCHITECTURE=2'b10" \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
 
@@ -97,8 +101,17 @@ test-m6801-opcodes:
 test-m6805:
 	$(PYTHON) -m unittest tests.test_m6805_model -v
 
-test-hitachi:
+test-hitachi: test-hd6301-opcodes
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model -v
+
+test-hd6301-opcodes:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_opcodes \
+		"-GTEST_ARCHITECTURE=2'b10" -Mdir build/obj_hd6301_opcodes -o Vtb_hd6301_opcodes \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/m6800_opcode_vectors_pkg.sv rtl/m6800/m6800_core.sv \
+		sim/tb_m6800_opcodes.sv
+	build/obj_hd6301_opcodes/Vtb_hd6301_opcodes
 
 test-alu: test-alu-rtl
 	$(PYTHON) -m unittest tests.test_alu_exhaustive -v

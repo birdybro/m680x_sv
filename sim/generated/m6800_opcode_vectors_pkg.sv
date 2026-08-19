@@ -3,6 +3,7 @@
 package m6800_opcode_vectors_pkg;
   localparam int unsigned M6800_VECTOR_COUNT = 197;
   localparam int unsigned M6801_VECTOR_COUNT = 220;
+  localparam int unsigned HD6301_VECTOR_COUNT = 230;
   typedef struct packed {
     logic [7:0] opcode;
     logic [3:0] cycles;
@@ -14,6 +15,7 @@ package m6800_opcode_vectors_pkg;
     logic [5:0] ccr;
     logic [5:0] ccr_mask;
     logic waiting_state;
+    logic sleeping_state;
     logic [3:0] access_count;
   } opcode_vector_t;
   typedef struct packed {
@@ -37,6 +39,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         1: begin // 06 TAP
@@ -50,6 +53,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h12;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         2: begin // 07 TPA
@@ -63,6 +67,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         3: begin // 08 INX
@@ -76,6 +81,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         4: begin // 09 DEX
@@ -89,6 +95,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         5: begin // 0A CLV
@@ -102,6 +109,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         6: begin // 0B SEV
@@ -115,6 +123,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h02;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         7: begin // 0C CLC
@@ -128,6 +137,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         8: begin // 0D SEC
@@ -141,6 +151,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h01;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         9: begin // 0E CLI
@@ -154,6 +165,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         10: begin // 0F SEI
@@ -167,6 +179,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h10;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         11: begin // 10 SBA
@@ -180,6 +193,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         12: begin // 11 CBA
@@ -193,6 +207,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         13: begin // 16 TAB
@@ -206,6 +221,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         14: begin // 17 TBA
@@ -219,6 +235,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         15: begin // 19 DAA
@@ -232,6 +249,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3d;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         16: begin // 1B ABA
@@ -245,6 +263,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         17: begin // 20 BRA
@@ -258,6 +277,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         18: begin // 22 BHI
@@ -271,6 +291,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         19: begin // 23 BLS
@@ -284,6 +305,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         20: begin // 24 BCC
@@ -297,6 +319,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         21: begin // 25 BCS
@@ -310,6 +333,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         22: begin // 26 BNE
@@ -323,6 +347,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         23: begin // 27 BEQ
@@ -336,6 +361,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         24: begin // 28 BVC
@@ -349,6 +375,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         25: begin // 29 BVS
@@ -362,6 +389,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         26: begin // 2A BPL
@@ -375,6 +403,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         27: begin // 2B BMI
@@ -388,6 +417,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         28: begin // 2C BGE
@@ -401,6 +431,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         29: begin // 2D BLT
@@ -414,6 +445,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         30: begin // 2E BGT
@@ -427,6 +459,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         31: begin // 2F BLE
@@ -440,6 +473,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         32: begin // 30 TSX
@@ -453,6 +487,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         33: begin // 31 INS
@@ -466,6 +501,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         34: begin // 32 PULA
@@ -479,6 +515,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         35: begin // 33 PULB
@@ -492,6 +529,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         36: begin // 34 DES
@@ -505,6 +543,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         37: begin // 35 TXS
@@ -518,6 +557,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         38: begin // 36 PSHA
@@ -531,6 +571,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         39: begin // 37 PSHB
@@ -544,6 +585,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         40: begin // 39 RTS
@@ -557,6 +599,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         41: begin // 3B RTI
@@ -570,6 +613,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd8;
         end
         42: begin // 3E WAI
@@ -583,6 +627,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b1;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd8;
         end
         43: begin // 3F SWI
@@ -596,6 +641,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h10;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd10;
         end
         44: begin // 40 NEGA
@@ -609,6 +655,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         45: begin // 43 COMA
@@ -622,6 +669,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         46: begin // 44 LSRA
@@ -635,6 +683,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         47: begin // 46 RORA
@@ -648,6 +697,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         48: begin // 47 ASRA
@@ -661,6 +711,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         49: begin // 48 ASLA
@@ -674,6 +725,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         50: begin // 49 ROLA
@@ -687,6 +739,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         51: begin // 4A DECA
@@ -700,6 +753,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         52: begin // 4C INCA
@@ -713,6 +767,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         53: begin // 4D TSTA
@@ -726,6 +781,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         54: begin // 4F CLRA
@@ -739,6 +795,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         55: begin // 50 NEGB
@@ -752,6 +809,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         56: begin // 53 COMB
@@ -765,6 +823,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         57: begin // 54 LSRB
@@ -778,6 +837,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         58: begin // 56 RORB
@@ -791,6 +851,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         59: begin // 57 ASRB
@@ -804,6 +865,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         60: begin // 58 ASLB
@@ -817,6 +879,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         61: begin // 59 ROLB
@@ -830,6 +893,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         62: begin // 5A DECB
@@ -843,6 +907,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         63: begin // 5C INCB
@@ -856,6 +921,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         64: begin // 5D TSTB
@@ -869,6 +935,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         65: begin // 5F CLRB
@@ -882,6 +949,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd1;
         end
         66: begin // 60 NEG
@@ -895,6 +963,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         67: begin // 63 COM
@@ -908,6 +977,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         68: begin // 64 LSR
@@ -921,6 +991,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h03;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         69: begin // 66 ROR
@@ -934,6 +1005,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h03;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         70: begin // 67 ASR
@@ -947,6 +1019,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h03;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         71: begin // 68 ASL
@@ -960,6 +1033,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         72: begin // 69 ROL
@@ -973,6 +1047,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         73: begin // 6A DEC
@@ -986,6 +1061,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         74: begin // 6C INC
@@ -999,6 +1075,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         75: begin // 6D TST
@@ -1012,6 +1089,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         76: begin // 6E JMP
@@ -1025,6 +1103,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         77: begin // 6F CLR
@@ -1038,6 +1117,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         78: begin // 70 NEG
@@ -1051,6 +1131,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         79: begin // 73 COM
@@ -1064,6 +1145,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         80: begin // 74 LSR
@@ -1077,6 +1159,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h03;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         81: begin // 76 ROR
@@ -1090,6 +1173,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h03;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         82: begin // 77 ASR
@@ -1103,6 +1187,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h03;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         83: begin // 78 ASL
@@ -1116,6 +1201,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         84: begin // 79 ROL
@@ -1129,6 +1215,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         85: begin // 7A DEC
@@ -1142,6 +1229,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         86: begin // 7C INC
@@ -1155,6 +1243,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         87: begin // 7D TST
@@ -1168,6 +1257,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         88: begin // 7E JMP
@@ -1181,6 +1271,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         89: begin // 7F CLR
@@ -1194,6 +1285,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         90: begin // 80 SUBA
@@ -1207,6 +1299,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         91: begin // 81 CMPA
@@ -1220,6 +1313,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         92: begin // 82 SBCA
@@ -1233,6 +1327,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         93: begin // 84 ANDA
@@ -1246,6 +1341,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         94: begin // 85 BITA
@@ -1259,6 +1355,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         95: begin // 86 LDAA
@@ -1272,6 +1369,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         96: begin // 88 EORA
@@ -1285,6 +1383,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         97: begin // 89 ADCA
@@ -1298,6 +1397,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         98: begin // 8A ORAA
@@ -1311,6 +1411,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         99: begin // 8B ADDA
@@ -1324,6 +1425,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         100: begin // 8C CPX
@@ -1337,6 +1439,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         101: begin // 8D BSR
@@ -1350,6 +1453,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         102: begin // 8E LDS
@@ -1363,6 +1467,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         103: begin // 90 SUBA
@@ -1376,6 +1481,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         104: begin // 91 CMPA
@@ -1389,6 +1495,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         105: begin // 92 SBCA
@@ -1402,6 +1509,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         106: begin // 94 ANDA
@@ -1415,6 +1523,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         107: begin // 95 BITA
@@ -1428,6 +1537,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         108: begin // 96 LDAA
@@ -1441,6 +1551,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         109: begin // 97 STAA
@@ -1454,6 +1565,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         110: begin // 98 EORA
@@ -1467,6 +1579,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         111: begin // 99 ADCA
@@ -1480,6 +1593,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         112: begin // 9A ORAA
@@ -1493,6 +1607,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         113: begin // 9B ADDA
@@ -1506,6 +1621,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         114: begin // 9C CPX
@@ -1519,6 +1635,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h08;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         115: begin // 9E LDS
@@ -1532,6 +1649,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         116: begin // 9F STS
@@ -1545,6 +1663,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         117: begin // A0 SUBA
@@ -1558,6 +1677,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         118: begin // A1 CMPA
@@ -1571,6 +1691,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         119: begin // A2 SBCA
@@ -1584,6 +1705,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         120: begin // A4 ANDA
@@ -1597,6 +1719,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         121: begin // A5 BITA
@@ -1610,6 +1733,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         122: begin // A6 LDAA
@@ -1623,6 +1747,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         123: begin // A7 STAA
@@ -1636,6 +1761,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         124: begin // A8 EORA
@@ -1649,6 +1775,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         125: begin // A9 ADCA
@@ -1662,6 +1789,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         126: begin // AA ORAA
@@ -1675,6 +1803,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         127: begin // AB ADDA
@@ -1688,6 +1817,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         128: begin // AC CPX
@@ -1701,6 +1831,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h08;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         129: begin // AD JSR
@@ -1714,6 +1845,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         130: begin // AE LDS
@@ -1727,6 +1859,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         131: begin // AF STS
@@ -1740,6 +1873,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         132: begin // B0 SUBA
@@ -1753,6 +1887,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         133: begin // B1 CMPA
@@ -1766,6 +1901,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         134: begin // B2 SBCA
@@ -1779,6 +1915,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         135: begin // B4 ANDA
@@ -1792,6 +1929,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         136: begin // B5 BITA
@@ -1805,6 +1943,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         137: begin // B6 LDAA
@@ -1818,6 +1957,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         138: begin // B7 STAA
@@ -1831,6 +1971,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         139: begin // B8 EORA
@@ -1844,6 +1985,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         140: begin // B9 ADCA
@@ -1857,6 +1999,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         141: begin // BA ORAA
@@ -1870,6 +2013,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         142: begin // BB ADDA
@@ -1883,6 +2027,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         143: begin // BC CPX
@@ -1896,6 +2041,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h08;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         144: begin // BD JSR
@@ -1909,6 +2055,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         145: begin // BE LDS
@@ -1922,6 +2069,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         146: begin // BF STS
@@ -1935,6 +2083,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         147: begin // C0 SUBB
@@ -1948,6 +2097,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         148: begin // C1 CMPB
@@ -1961,6 +2111,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         149: begin // C2 SBCB
@@ -1974,6 +2125,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         150: begin // C4 ANDB
@@ -1987,6 +2139,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         151: begin // C5 BITB
@@ -2000,6 +2153,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         152: begin // C6 LDAB
@@ -2013,6 +2167,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         153: begin // C8 EORB
@@ -2026,6 +2181,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         154: begin // C9 ADCB
@@ -2039,6 +2195,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         155: begin // CA ORAB
@@ -2052,6 +2209,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         156: begin // CB ADDB
@@ -2065,6 +2223,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd2;
         end
         157: begin // CE LDX
@@ -2078,6 +2237,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         158: begin // D0 SUBB
@@ -2091,6 +2251,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         159: begin // D1 CMPB
@@ -2104,6 +2265,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         160: begin // D2 SBCB
@@ -2117,6 +2279,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         161: begin // D4 ANDB
@@ -2130,6 +2293,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         162: begin // D5 BITB
@@ -2143,6 +2307,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         163: begin // D6 LDAB
@@ -2156,6 +2321,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         164: begin // D7 STAB
@@ -2169,6 +2335,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         165: begin // D8 EORB
@@ -2182,6 +2349,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         166: begin // D9 ADCB
@@ -2195,6 +2363,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         167: begin // DA ORAB
@@ -2208,6 +2377,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         168: begin // DB ADDB
@@ -2221,6 +2391,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         169: begin // DE LDX
@@ -2234,6 +2405,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         170: begin // DF STX
@@ -2247,6 +2419,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         171: begin // E0 SUBB
@@ -2260,6 +2433,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         172: begin // E1 CMPB
@@ -2273,6 +2447,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         173: begin // E2 SBCB
@@ -2286,6 +2461,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         174: begin // E4 ANDB
@@ -2299,6 +2475,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         175: begin // E5 BITB
@@ -2312,6 +2489,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h04;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         176: begin // E6 LDAB
@@ -2325,6 +2503,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         177: begin // E7 STAB
@@ -2338,6 +2517,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         178: begin // E8 EORB
@@ -2351,6 +2531,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         179: begin // E9 ADCB
@@ -2364,6 +2545,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         180: begin // EA ORAB
@@ -2377,6 +2559,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         181: begin // EB ADDB
@@ -2390,6 +2573,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd3;
         end
         182: begin // EE LDX
@@ -2403,6 +2587,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         183: begin // EF STX
@@ -2416,6 +2601,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         184: begin // F0 SUBB
@@ -2429,6 +2615,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         185: begin // F1 CMPB
@@ -2442,6 +2629,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         186: begin // F2 SBCB
@@ -2455,6 +2643,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h09;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         187: begin // F4 ANDB
@@ -2468,6 +2657,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         188: begin // F5 BITB
@@ -2481,6 +2671,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         189: begin // F6 LDAB
@@ -2494,6 +2685,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         190: begin // F7 STAB
@@ -2507,6 +2699,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         191: begin // F8 EORB
@@ -2520,6 +2713,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         192: begin // F9 ADCB
@@ -2533,6 +2727,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         193: begin // FA ORAB
@@ -2546,6 +2741,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         194: begin // FB ADDB
@@ -2559,6 +2755,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h0a;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd4;
         end
         195: begin // FE LDX
@@ -2572,6 +2769,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         196: begin // FF STX
@@ -2585,6 +2783,7 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr = 6'h00;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
+          m6800_vector.sleeping_state = 1'b0;
           m6800_vector.access_count = 4'd5;
         end
         default: ;
@@ -5404,6 +5603,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         1: begin // 04 LSRD
@@ -5417,6 +5617,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         2: begin // 05 ASLD
@@ -5430,6 +5631,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         3: begin // 06 TAP
@@ -5443,6 +5645,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h12;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         4: begin // 07 TPA
@@ -5456,6 +5659,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         5: begin // 08 INX
@@ -5469,6 +5673,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         6: begin // 09 DEX
@@ -5482,6 +5687,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         7: begin // 0A CLV
@@ -5495,6 +5701,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         8: begin // 0B SEV
@@ -5508,6 +5715,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h02;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         9: begin // 0C CLC
@@ -5521,6 +5729,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         10: begin // 0D SEC
@@ -5534,6 +5743,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h01;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         11: begin // 0E CLI
@@ -5547,6 +5757,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         12: begin // 0F SEI
@@ -5560,6 +5771,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h10;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         13: begin // 10 SBA
@@ -5573,6 +5785,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         14: begin // 11 CBA
@@ -5586,6 +5799,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         15: begin // 16 TAB
@@ -5599,6 +5813,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         16: begin // 17 TBA
@@ -5612,6 +5827,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         17: begin // 19 DAA
@@ -5625,6 +5841,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3d;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         18: begin // 1B ABA
@@ -5638,6 +5855,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         19: begin // 20 BRA
@@ -5651,6 +5869,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         20: begin // 21 BRN
@@ -5664,6 +5883,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         21: begin // 22 BHI
@@ -5677,6 +5897,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         22: begin // 23 BLS
@@ -5690,6 +5911,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         23: begin // 24 BCC
@@ -5703,6 +5925,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         24: begin // 25 BCS
@@ -5716,6 +5939,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         25: begin // 26 BNE
@@ -5729,6 +5953,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         26: begin // 27 BEQ
@@ -5742,6 +5967,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         27: begin // 28 BVC
@@ -5755,6 +5981,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         28: begin // 29 BVS
@@ -5768,6 +5995,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         29: begin // 2A BPL
@@ -5781,6 +6009,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         30: begin // 2B BMI
@@ -5794,6 +6023,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         31: begin // 2C BGE
@@ -5807,6 +6037,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         32: begin // 2D BLT
@@ -5820,6 +6051,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         33: begin // 2E BGT
@@ -5833,6 +6065,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         34: begin // 2F BLE
@@ -5846,6 +6079,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         35: begin // 30 TSX
@@ -5859,6 +6093,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         36: begin // 31 INS
@@ -5872,6 +6107,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         37: begin // 32 PULA
@@ -5885,6 +6121,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         38: begin // 33 PULB
@@ -5898,6 +6135,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         39: begin // 34 DES
@@ -5911,6 +6149,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         40: begin // 35 TXS
@@ -5924,6 +6163,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         41: begin // 36 PSHA
@@ -5937,6 +6177,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         42: begin // 37 PSHB
@@ -5950,6 +6191,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         43: begin // 38 PULX
@@ -5963,6 +6205,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         44: begin // 39 RTS
@@ -5976,6 +6219,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         45: begin // 3A ABX
@@ -5989,6 +6233,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         46: begin // 3B RTI
@@ -6002,6 +6247,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd8;
         end
         47: begin // 3C PSHX
@@ -6015,6 +6261,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         48: begin // 3D MUL
@@ -6028,6 +6275,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h01;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         49: begin // 3E WAI
@@ -6041,6 +6289,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b1;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd8;
         end
         50: begin // 3F SWI
@@ -6054,6 +6303,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h10;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd10;
         end
         51: begin // 40 NEGA
@@ -6067,6 +6317,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         52: begin // 43 COMA
@@ -6080,6 +6331,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         53: begin // 44 LSRA
@@ -6093,6 +6345,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         54: begin // 46 RORA
@@ -6106,6 +6359,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         55: begin // 47 ASRA
@@ -6119,6 +6373,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         56: begin // 48 ASLA
@@ -6132,6 +6387,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         57: begin // 49 ROLA
@@ -6145,6 +6401,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         58: begin // 4A DECA
@@ -6158,6 +6415,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         59: begin // 4C INCA
@@ -6171,6 +6429,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         60: begin // 4D TSTA
@@ -6184,6 +6443,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         61: begin // 4F CLRA
@@ -6197,6 +6457,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         62: begin // 50 NEGB
@@ -6210,6 +6471,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         63: begin // 53 COMB
@@ -6223,6 +6485,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         64: begin // 54 LSRB
@@ -6236,6 +6499,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         65: begin // 56 RORB
@@ -6249,6 +6513,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         66: begin // 57 ASRB
@@ -6262,6 +6527,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         67: begin // 58 ASLB
@@ -6275,6 +6541,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         68: begin // 59 ROLB
@@ -6288,6 +6555,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         69: begin // 5A DECB
@@ -6301,6 +6569,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         70: begin // 5C INCB
@@ -6314,6 +6583,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         71: begin // 5D TSTB
@@ -6327,6 +6597,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         72: begin // 5F CLRB
@@ -6340,6 +6611,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd1;
         end
         73: begin // 60 NEG
@@ -6353,6 +6625,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         74: begin // 63 COM
@@ -6366,6 +6639,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         75: begin // 64 LSR
@@ -6379,6 +6653,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h03;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         76: begin // 66 ROR
@@ -6392,6 +6667,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h03;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         77: begin // 67 ASR
@@ -6405,6 +6681,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h03;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         78: begin // 68 ASL
@@ -6418,6 +6695,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         79: begin // 69 ROL
@@ -6431,6 +6709,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         80: begin // 6A DEC
@@ -6444,6 +6723,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         81: begin // 6C INC
@@ -6457,6 +6737,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         82: begin // 6D TST
@@ -6470,6 +6751,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         83: begin // 6E JMP
@@ -6483,6 +6765,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         84: begin // 6F CLR
@@ -6496,6 +6779,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         85: begin // 70 NEG
@@ -6509,6 +6793,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         86: begin // 73 COM
@@ -6522,6 +6807,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         87: begin // 74 LSR
@@ -6535,6 +6821,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h03;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         88: begin // 76 ROR
@@ -6548,6 +6835,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h03;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         89: begin // 77 ASR
@@ -6561,6 +6849,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h03;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         90: begin // 78 ASL
@@ -6574,6 +6863,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         91: begin // 79 ROL
@@ -6587,6 +6877,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         92: begin // 7A DEC
@@ -6600,6 +6891,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         93: begin // 7C INC
@@ -6613,6 +6905,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         94: begin // 7D TST
@@ -6626,6 +6919,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         95: begin // 7E JMP
@@ -6639,6 +6933,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         96: begin // 7F CLR
@@ -6652,6 +6947,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         97: begin // 80 SUBA
@@ -6665,6 +6961,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         98: begin // 81 CMPA
@@ -6678,6 +6975,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         99: begin // 82 SBCA
@@ -6691,6 +6989,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         100: begin // 83 SUBD
@@ -6704,6 +7003,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         101: begin // 84 ANDA
@@ -6717,6 +7017,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         102: begin // 85 BITA
@@ -6730,6 +7031,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         103: begin // 86 LDAA
@@ -6743,6 +7045,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         104: begin // 88 EORA
@@ -6756,6 +7059,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         105: begin // 89 ADCA
@@ -6769,6 +7073,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         106: begin // 8A ORAA
@@ -6782,6 +7087,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         107: begin // 8B ADDA
@@ -6795,6 +7101,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         108: begin // 8C CPX
@@ -6808,6 +7115,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         109: begin // 8D BSR
@@ -6821,6 +7129,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         110: begin // 8E LDS
@@ -6834,6 +7143,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         111: begin // 90 SUBA
@@ -6847,6 +7157,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         112: begin // 91 CMPA
@@ -6860,6 +7171,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         113: begin // 92 SBCA
@@ -6873,6 +7185,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         114: begin // 93 SUBD
@@ -6886,6 +7199,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         115: begin // 94 ANDA
@@ -6899,6 +7213,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         116: begin // 95 BITA
@@ -6912,6 +7227,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         117: begin // 96 LDAA
@@ -6925,6 +7241,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         118: begin // 97 STAA
@@ -6938,6 +7255,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         119: begin // 98 EORA
@@ -6951,6 +7269,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         120: begin // 99 ADCA
@@ -6964,6 +7283,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         121: begin // 9A ORAA
@@ -6977,6 +7297,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         122: begin // 9B ADDA
@@ -6990,6 +7311,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         123: begin // 9C CPX
@@ -7003,6 +7325,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         124: begin // 9D JSR
@@ -7016,6 +7339,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         125: begin // 9E LDS
@@ -7029,6 +7353,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         126: begin // 9F STS
@@ -7042,6 +7367,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         127: begin // A0 SUBA
@@ -7055,6 +7381,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         128: begin // A1 CMPA
@@ -7068,6 +7395,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         129: begin // A2 SBCA
@@ -7081,6 +7409,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         130: begin // A3 SUBD
@@ -7094,6 +7423,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         131: begin // A4 ANDA
@@ -7107,6 +7437,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         132: begin // A5 BITA
@@ -7120,6 +7451,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         133: begin // A6 LDAA
@@ -7133,6 +7465,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         134: begin // A7 STAA
@@ -7146,6 +7479,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         135: begin // A8 EORA
@@ -7159,6 +7493,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         136: begin // A9 ADCA
@@ -7172,6 +7507,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         137: begin // AA ORAA
@@ -7185,6 +7521,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         138: begin // AB ADDA
@@ -7198,6 +7535,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         139: begin // AC CPX
@@ -7211,6 +7549,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         140: begin // AD JSR
@@ -7224,6 +7563,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         141: begin // AE LDS
@@ -7237,6 +7577,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         142: begin // AF STS
@@ -7250,6 +7591,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         143: begin // B0 SUBA
@@ -7263,6 +7605,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         144: begin // B1 CMPA
@@ -7276,6 +7619,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         145: begin // B2 SBCA
@@ -7289,6 +7633,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         146: begin // B3 SUBD
@@ -7302,6 +7647,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         147: begin // B4 ANDA
@@ -7315,6 +7661,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         148: begin // B5 BITA
@@ -7328,6 +7675,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         149: begin // B6 LDAA
@@ -7341,6 +7689,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         150: begin // B7 STAA
@@ -7354,6 +7703,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         151: begin // B8 EORA
@@ -7367,6 +7717,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         152: begin // B9 ADCA
@@ -7380,6 +7731,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         153: begin // BA ORAA
@@ -7393,6 +7745,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         154: begin // BB ADDA
@@ -7406,6 +7759,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         155: begin // BC CPX
@@ -7419,6 +7773,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         156: begin // BD JSR
@@ -7432,6 +7787,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         157: begin // BE LDS
@@ -7445,6 +7801,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         158: begin // BF STS
@@ -7458,6 +7815,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         159: begin // C0 SUBB
@@ -7471,6 +7829,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         160: begin // C1 CMPB
@@ -7484,6 +7843,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         161: begin // C2 SBCB
@@ -7497,6 +7857,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         162: begin // C3 ADDD
@@ -7510,6 +7871,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         163: begin // C4 ANDB
@@ -7523,6 +7885,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         164: begin // C5 BITB
@@ -7536,6 +7899,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         165: begin // C6 LDAB
@@ -7549,6 +7913,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         166: begin // C8 EORB
@@ -7562,6 +7927,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         167: begin // C9 ADCB
@@ -7575,6 +7941,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         168: begin // CA ORAB
@@ -7588,6 +7955,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         169: begin // CB ADDB
@@ -7601,6 +7969,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd2;
         end
         170: begin // CC LDD
@@ -7614,6 +7983,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         171: begin // CE LDX
@@ -7627,6 +7997,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         172: begin // D0 SUBB
@@ -7640,6 +8011,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         173: begin // D1 CMPB
@@ -7653,6 +8025,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         174: begin // D2 SBCB
@@ -7666,6 +8039,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         175: begin // D3 ADDD
@@ -7679,6 +8053,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         176: begin // D4 ANDB
@@ -7692,6 +8067,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         177: begin // D5 BITB
@@ -7705,6 +8081,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         178: begin // D6 LDAB
@@ -7718,6 +8095,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         179: begin // D7 STAB
@@ -7731,6 +8109,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         180: begin // D8 EORB
@@ -7744,6 +8123,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         181: begin // D9 ADCB
@@ -7757,6 +8137,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         182: begin // DA ORAB
@@ -7770,6 +8151,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         183: begin // DB ADDB
@@ -7783,6 +8165,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         184: begin // DC LDD
@@ -7796,6 +8179,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         185: begin // DD STD
@@ -7809,6 +8193,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         186: begin // DE LDX
@@ -7822,6 +8207,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         187: begin // DF STX
@@ -7835,6 +8221,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         188: begin // E0 SUBB
@@ -7848,6 +8235,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         189: begin // E1 CMPB
@@ -7861,6 +8249,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         190: begin // E2 SBCB
@@ -7874,6 +8263,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         191: begin // E3 ADDD
@@ -7887,6 +8277,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         192: begin // E4 ANDB
@@ -7900,6 +8291,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         193: begin // E5 BITB
@@ -7913,6 +8305,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h04;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         194: begin // E6 LDAB
@@ -7926,6 +8319,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         195: begin // E7 STAB
@@ -7939,6 +8333,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         196: begin // E8 EORB
@@ -7952,6 +8347,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         197: begin // E9 ADCB
@@ -7965,6 +8361,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         198: begin // EA ORAB
@@ -7978,6 +8375,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         199: begin // EB ADDB
@@ -7991,6 +8389,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd3;
         end
         200: begin // EC LDD
@@ -8004,6 +8403,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         201: begin // ED STD
@@ -8017,6 +8417,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         202: begin // EE LDX
@@ -8030,6 +8431,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         203: begin // EF STX
@@ -8043,6 +8445,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         204: begin // F0 SUBB
@@ -8056,6 +8459,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         205: begin // F1 CMPB
@@ -8069,6 +8473,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         206: begin // F2 SBCB
@@ -8082,6 +8487,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h09;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         207: begin // F3 ADDD
@@ -8095,6 +8501,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         208: begin // F4 ANDB
@@ -8108,6 +8515,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         209: begin // F5 BITB
@@ -8121,6 +8529,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         210: begin // F6 LDAB
@@ -8134,6 +8543,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         211: begin // F7 STAB
@@ -8147,6 +8557,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         212: begin // F8 EORB
@@ -8160,6 +8571,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         213: begin // F9 ADCB
@@ -8173,6 +8585,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         214: begin // FA ORAB
@@ -8186,6 +8599,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         215: begin // FB ADDB
@@ -8199,6 +8613,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h0a;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd4;
         end
         216: begin // FC LDD
@@ -8212,6 +8627,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         217: begin // FD STD
@@ -8225,6 +8641,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         218: begin // FE LDX
@@ -8238,6 +8655,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         219: begin // FF STX
@@ -8251,6 +8669,7 @@ package m6800_opcode_vectors_pkg;
           m6801_vector.ccr = 6'h00;
           m6801_vector.ccr_mask = 6'h3f;
           m6801_vector.waiting_state = 1'b0;
+          m6801_vector.sleeping_state = 1'b0;
           m6801_vector.access_count = 4'd5;
         end
         default: ;
@@ -11434,6 +11853,6617 @@ package m6800_opcode_vectors_pkg;
           m6801_access.write_enable = 1'b1;
           m6801_access.address = 16'h1021;
           m6801_access.data = 8'h00;
+        end
+        default: ;
+      endcase
+    end
+  endfunction
+
+  function automatic opcode_vector_t hd6301_vector(input int unsigned vector_index);
+    begin
+      hd6301_vector = '0;
+      case (vector_index)
+        0: begin // 01 NOP
+          hd6301_vector.opcode = 8'h01;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        1: begin // 04 LSRD
+          hd6301_vector.opcode = 8'h04;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h09;
+          hd6301_vector.b = 8'h1a;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        2: begin // 05 ASLD
+          hd6301_vector.opcode = 8'h05;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h24;
+          hd6301_vector.b = 8'h68;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        3: begin // 06 TAP
+          hd6301_vector.opcode = 8'h06;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h12;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        4: begin // 07 TPA
+          hd6301_vector.opcode = 8'h07;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'hc0;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        5: begin // 08 INX
+          hd6301_vector.opcode = 8'h08;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2001;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        6: begin // 09 DEX
+          hd6301_vector.opcode = 8'h09;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h1fff;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        7: begin // 0A CLV
+          hd6301_vector.opcode = 8'h0a;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        8: begin // 0B SEV
+          hd6301_vector.opcode = 8'h0b;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h02;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        9: begin // 0C CLC
+          hd6301_vector.opcode = 8'h0c;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        10: begin // 0D SEC
+          hd6301_vector.opcode = 8'h0d;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h01;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        11: begin // 0E CLI
+          hd6301_vector.opcode = 8'h0e;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        12: begin // 0F SEI
+          hd6301_vector.opcode = 8'h0f;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h10;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        13: begin // 10 SBA
+          hd6301_vector.opcode = 8'h10;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'hde;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        14: begin // 11 CBA
+          hd6301_vector.opcode = 8'h11;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        15: begin // 16 TAB
+          hd6301_vector.opcode = 8'h16;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h12;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        16: begin // 17 TBA
+          hd6301_vector.opcode = 8'h17;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h34;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        17: begin // 18 XGDX
+          hd6301_vector.opcode = 8'h18;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h20;
+          hd6301_vector.b = 8'h00;
+          hd6301_vector.x = 16'h1234;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        18: begin // 19 DAA
+          hd6301_vector.opcode = 8'h19;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        19: begin // 1A SLP
+          hd6301_vector.opcode = 8'h1a;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b1;
+          hd6301_vector.access_count = 4'd1;
+        end
+        20: begin // 1B ABA
+          hd6301_vector.opcode = 8'h1b;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h46;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        21: begin // 20 BRA
+          hd6301_vector.opcode = 8'h20;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        22: begin // 21 BRN
+          hd6301_vector.opcode = 8'h21;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        23: begin // 22 BHI
+          hd6301_vector.opcode = 8'h22;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        24: begin // 23 BLS
+          hd6301_vector.opcode = 8'h23;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        25: begin // 24 BCC
+          hd6301_vector.opcode = 8'h24;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        26: begin // 25 BCS
+          hd6301_vector.opcode = 8'h25;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        27: begin // 26 BNE
+          hd6301_vector.opcode = 8'h26;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        28: begin // 27 BEQ
+          hd6301_vector.opcode = 8'h27;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        29: begin // 28 BVC
+          hd6301_vector.opcode = 8'h28;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        30: begin // 29 BVS
+          hd6301_vector.opcode = 8'h29;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        31: begin // 2A BPL
+          hd6301_vector.opcode = 8'h2a;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        32: begin // 2B BMI
+          hd6301_vector.opcode = 8'h2b;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        33: begin // 2C BGE
+          hd6301_vector.opcode = 8'h2c;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        34: begin // 2D BLT
+          hd6301_vector.opcode = 8'h2d;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        35: begin // 2E BGT
+          hd6301_vector.opcode = 8'h2e;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        36: begin // 2F BLE
+          hd6301_vector.opcode = 8'h2f;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        37: begin // 30 TSX
+          hd6301_vector.opcode = 8'h30;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h4001;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        38: begin // 31 INS
+          hd6301_vector.opcode = 8'h31;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4001;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        39: begin // 32 PULA
+          hd6301_vector.opcode = 8'h32;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'hc0;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4001;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        40: begin // 33 PULB
+          hd6301_vector.opcode = 8'h33;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hc0;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4001;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        41: begin // 34 DES
+          hd6301_vector.opcode = 8'h34;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3fff;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        42: begin // 35 TXS
+          hd6301_vector.opcode = 8'h35;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h1fff;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        43: begin // 36 PSHA
+          hd6301_vector.opcode = 8'h36;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3fff;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        44: begin // 37 PSHB
+          hd6301_vector.opcode = 8'h37;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3fff;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        45: begin // 38 PULX
+          hd6301_vector.opcode = 8'h38;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'hc034;
+          hd6301_vector.sp = 16'h4002;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        46: begin // 39 RTS
+          hd6301_vector.opcode = 8'h39;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4002;
+          hd6301_vector.pc = 16'hc034;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        47: begin // 3A ABX
+          hd6301_vector.opcode = 8'h3a;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2034;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        48: begin // 3B RTI
+          hd6301_vector.opcode = 8'h3b;
+          hd6301_vector.cycles = 4'd10;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4007;
+          hd6301_vector.pc = 16'h1011;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd8;
+        end
+        49: begin // 3C PSHX
+          hd6301_vector.opcode = 8'h3c;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3ffe;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        50: begin // 3D MUL
+          hd6301_vector.opcode = 8'h3d;
+          hd6301_vector.cycles = 4'd7;
+          hd6301_vector.a = 8'h03;
+          hd6301_vector.b = 8'ha8;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h01;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        51: begin // 3E WAI
+          hd6301_vector.opcode = 8'h3e;
+          hd6301_vector.cycles = 4'd9;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3ff9;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b1;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd8;
+        end
+        52: begin // 3F SWI
+          hd6301_vector.opcode = 8'h3f;
+          hd6301_vector.cycles = 4'd12;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3ff9;
+          hd6301_vector.pc = 16'h3000;
+          hd6301_vector.ccr = 6'h10;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd10;
+        end
+        53: begin // 40 NEGA
+          hd6301_vector.opcode = 8'h40;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'hee;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        54: begin // 43 COMA
+          hd6301_vector.opcode = 8'h43;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'hed;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        55: begin // 44 LSRA
+          hd6301_vector.opcode = 8'h44;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h09;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        56: begin // 46 RORA
+          hd6301_vector.opcode = 8'h46;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h09;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        57: begin // 47 ASRA
+          hd6301_vector.opcode = 8'h47;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h09;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        58: begin // 48 ASLA
+          hd6301_vector.opcode = 8'h48;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h24;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        59: begin // 49 ROLA
+          hd6301_vector.opcode = 8'h49;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h24;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        60: begin // 4A DECA
+          hd6301_vector.opcode = 8'h4a;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h11;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        61: begin // 4C INCA
+          hd6301_vector.opcode = 8'h4c;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h13;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        62: begin // 4D TSTA
+          hd6301_vector.opcode = 8'h4d;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        63: begin // 4F CLRA
+          hd6301_vector.opcode = 8'h4f;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h00;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        64: begin // 50 NEGB
+          hd6301_vector.opcode = 8'h50;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hcc;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        65: begin // 53 COMB
+          hd6301_vector.opcode = 8'h53;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hcb;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        66: begin // 54 LSRB
+          hd6301_vector.opcode = 8'h54;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h1a;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        67: begin // 56 RORB
+          hd6301_vector.opcode = 8'h56;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h1a;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        68: begin // 57 ASRB
+          hd6301_vector.opcode = 8'h57;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h1a;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        69: begin // 58 ASLB
+          hd6301_vector.opcode = 8'h58;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h68;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        70: begin // 59 ROLB
+          hd6301_vector.opcode = 8'h59;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h68;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        71: begin // 5A DECB
+          hd6301_vector.opcode = 8'h5a;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h33;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        72: begin // 5C INCB
+          hd6301_vector.opcode = 8'h5c;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h35;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        73: begin // 5D TSTB
+          hd6301_vector.opcode = 8'h5d;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        74: begin // 5F CLRB
+          hd6301_vector.opcode = 8'h5f;
+          hd6301_vector.cycles = 4'd1;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h00;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100e;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd1;
+        end
+        75: begin // 60 NEG
+          hd6301_vector.opcode = 8'h60;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        76: begin // 61 AIM
+          hd6301_vector.opcode = 8'h61;
+          hd6301_vector.cycles = 4'd7;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        77: begin // 62 OIM
+          hd6301_vector.opcode = 8'h62;
+          hd6301_vector.cycles = 4'd7;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        78: begin // 63 COM
+          hd6301_vector.opcode = 8'h63;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        79: begin // 64 LSR
+          hd6301_vector.opcode = 8'h64;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h03;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        80: begin // 65 EIM
+          hd6301_vector.opcode = 8'h65;
+          hd6301_vector.cycles = 4'd7;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        81: begin // 66 ROR
+          hd6301_vector.opcode = 8'h66;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h03;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        82: begin // 67 ASR
+          hd6301_vector.opcode = 8'h67;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h03;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        83: begin // 68 ASL
+          hd6301_vector.opcode = 8'h68;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        84: begin // 69 ROL
+          hd6301_vector.opcode = 8'h69;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        85: begin // 6A DEC
+          hd6301_vector.opcode = 8'h6a;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        86: begin // 6B TIM
+          hd6301_vector.opcode = 8'h6b;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        87: begin // 6C INC
+          hd6301_vector.opcode = 8'h6c;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        88: begin // 6D TST
+          hd6301_vector.opcode = 8'h6d;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        89: begin // 6E JMP
+          hd6301_vector.opcode = 8'h6e;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h2010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        90: begin // 6F CLR
+          hd6301_vector.opcode = 8'h6f;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        91: begin // 70 NEG
+          hd6301_vector.opcode = 8'h70;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        92: begin // 71 AIM
+          hd6301_vector.opcode = 8'h71;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        93: begin // 72 OIM
+          hd6301_vector.opcode = 8'h72;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        94: begin // 73 COM
+          hd6301_vector.opcode = 8'h73;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        95: begin // 74 LSR
+          hd6301_vector.opcode = 8'h74;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h03;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        96: begin // 75 EIM
+          hd6301_vector.opcode = 8'h75;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        97: begin // 76 ROR
+          hd6301_vector.opcode = 8'h76;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h03;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        98: begin // 77 ASR
+          hd6301_vector.opcode = 8'h77;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h03;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        99: begin // 78 ASL
+          hd6301_vector.opcode = 8'h78;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        100: begin // 79 ROL
+          hd6301_vector.opcode = 8'h79;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        101: begin // 7A DEC
+          hd6301_vector.opcode = 8'h7a;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        102: begin // 7B TIM
+          hd6301_vector.opcode = 8'h7b;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        103: begin // 7C INC
+          hd6301_vector.opcode = 8'h7c;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        104: begin // 7D TST
+          hd6301_vector.opcode = 8'h7d;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        105: begin // 7E JMP
+          hd6301_vector.opcode = 8'h7e;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1020;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        106: begin // 7F CLR
+          hd6301_vector.opcode = 8'h7f;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        107: begin // 80 SUBA
+          hd6301_vector.opcode = 8'h80;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h02;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        108: begin // 81 CMPA
+          hd6301_vector.opcode = 8'h81;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        109: begin // 82 SBCA
+          hd6301_vector.opcode = 8'h82;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h02;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        110: begin // 83 SUBD
+          hd6301_vector.opcode = 8'h83;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h02;
+          hd6301_vector.b = 8'h14;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        111: begin // 84 ANDA
+          hd6301_vector.opcode = 8'h84;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h10;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        112: begin // 85 BITA
+          hd6301_vector.opcode = 8'h85;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        113: begin // 86 LDAA
+          hd6301_vector.opcode = 8'h86;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h10;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        114: begin // 88 EORA
+          hd6301_vector.opcode = 8'h88;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h02;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        115: begin // 89 ADCA
+          hd6301_vector.opcode = 8'h89;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h22;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        116: begin // 8A ORAA
+          hd6301_vector.opcode = 8'h8a;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        117: begin // 8B ADDA
+          hd6301_vector.opcode = 8'h8b;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h22;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        118: begin // 8C CPX
+          hd6301_vector.opcode = 8'h8c;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        119: begin // 8D BSR
+          hd6301_vector.opcode = 8'h8d;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3ffe;
+          hd6301_vector.pc = 16'h101f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        120: begin // 8E LDS
+          hd6301_vector.opcode = 8'h8e;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h1020;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        121: begin // 90 SUBA
+          hd6301_vector.opcode = 8'h90;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'hcf;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        122: begin // 91 CMPA
+          hd6301_vector.opcode = 8'h91;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        123: begin // 92 SBCA
+          hd6301_vector.opcode = 8'h92;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'hcf;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        124: begin // 93 SUBD
+          hd6301_vector.opcode = 8'h93;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'hce;
+          hd6301_vector.b = 8'hf2;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        125: begin // 94 ANDA
+          hd6301_vector.opcode = 8'h94;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h02;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        126: begin // 95 BITA
+          hd6301_vector.opcode = 8'h95;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        127: begin // 96 LDAA
+          hd6301_vector.opcode = 8'h96;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h43;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        128: begin // 97 STAA
+          hd6301_vector.opcode = 8'h97;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        129: begin // 98 EORA
+          hd6301_vector.opcode = 8'h98;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h51;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        130: begin // 99 ADCA
+          hd6301_vector.opcode = 8'h99;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h55;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        131: begin // 9A ORAA
+          hd6301_vector.opcode = 8'h9a;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h53;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        132: begin // 9B ADDA
+          hd6301_vector.opcode = 8'h9b;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h55;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        133: begin // 9C CPX
+          hd6301_vector.opcode = 8'h9c;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        134: begin // 9D JSR
+          hd6301_vector.opcode = 8'h9d;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3ffe;
+          hd6301_vector.pc = 16'h0010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        135: begin // 9E LDS
+          hd6301_vector.opcode = 8'h9e;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4342;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        136: begin // 9F STS
+          hd6301_vector.opcode = 8'h9f;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        137: begin // A0 SUBA
+          hd6301_vector.opcode = 8'ha0;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'hcf;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        138: begin // A1 CMPA
+          hd6301_vector.opcode = 8'ha1;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        139: begin // A2 SBCA
+          hd6301_vector.opcode = 8'ha2;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'hcf;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        140: begin // A3 SUBD
+          hd6301_vector.opcode = 8'ha3;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'hce;
+          hd6301_vector.b = 8'hf2;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        141: begin // A4 ANDA
+          hd6301_vector.opcode = 8'ha4;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h02;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        142: begin // A5 BITA
+          hd6301_vector.opcode = 8'ha5;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        143: begin // A6 LDAA
+          hd6301_vector.opcode = 8'ha6;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h43;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        144: begin // A7 STAA
+          hd6301_vector.opcode = 8'ha7;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        145: begin // A8 EORA
+          hd6301_vector.opcode = 8'ha8;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h51;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        146: begin // A9 ADCA
+          hd6301_vector.opcode = 8'ha9;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h55;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        147: begin // AA ORAA
+          hd6301_vector.opcode = 8'haa;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h53;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        148: begin // AB ADDA
+          hd6301_vector.opcode = 8'hab;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h55;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        149: begin // AC CPX
+          hd6301_vector.opcode = 8'hac;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        150: begin // AD JSR
+          hd6301_vector.opcode = 8'had;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3ffe;
+          hd6301_vector.pc = 16'h2010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        151: begin // AE LDS
+          hd6301_vector.opcode = 8'hae;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4342;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        152: begin // AF STS
+          hd6301_vector.opcode = 8'haf;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        153: begin // B0 SUBA
+          hd6301_vector.opcode = 8'hb0;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h9f;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        154: begin // B1 CMPA
+          hd6301_vector.opcode = 8'hb1;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        155: begin // B2 SBCA
+          hd6301_vector.opcode = 8'hb2;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h9f;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        156: begin // B3 SUBD
+          hd6301_vector.opcode = 8'hb3;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h9e;
+          hd6301_vector.b = 8'hc2;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        157: begin // B4 ANDA
+          hd6301_vector.opcode = 8'hb4;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        158: begin // B5 BITA
+          hd6301_vector.opcode = 8'hb5;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        159: begin // B6 LDAA
+          hd6301_vector.opcode = 8'hb6;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h73;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        160: begin // B7 STAA
+          hd6301_vector.opcode = 8'hb7;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        161: begin // B8 EORA
+          hd6301_vector.opcode = 8'hb8;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h61;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        162: begin // B9 ADCA
+          hd6301_vector.opcode = 8'hb9;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h85;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        163: begin // BA ORAA
+          hd6301_vector.opcode = 8'hba;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h73;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        164: begin // BB ADDA
+          hd6301_vector.opcode = 8'hbb;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h85;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        165: begin // BC CPX
+          hd6301_vector.opcode = 8'hbc;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        166: begin // BD JSR
+          hd6301_vector.opcode = 8'hbd;
+          hd6301_vector.cycles = 4'd6;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h3ffe;
+          hd6301_vector.pc = 16'h1020;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        167: begin // BE LDS
+          hd6301_vector.opcode = 8'hbe;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h7372;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        168: begin // BF STS
+          hd6301_vector.opcode = 8'hbf;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        169: begin // C0 SUBB
+          hd6301_vector.opcode = 8'hc0;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h24;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        170: begin // C1 CMPB
+          hd6301_vector.opcode = 8'hc1;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        171: begin // C2 SBCB
+          hd6301_vector.opcode = 8'hc2;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h24;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        172: begin // C3 ADDD
+          hd6301_vector.opcode = 8'hc3;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h22;
+          hd6301_vector.b = 8'h54;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        173: begin // C4 ANDB
+          hd6301_vector.opcode = 8'hc4;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h10;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        174: begin // C5 BITB
+          hd6301_vector.opcode = 8'hc5;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        175: begin // C6 LDAB
+          hd6301_vector.opcode = 8'hc6;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h10;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        176: begin // C8 EORB
+          hd6301_vector.opcode = 8'hc8;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h24;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        177: begin // C9 ADCB
+          hd6301_vector.opcode = 8'hc9;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h44;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        178: begin // CA ORAB
+          hd6301_vector.opcode = 8'hca;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        179: begin // CB ADDB
+          hd6301_vector.opcode = 8'hcb;
+          hd6301_vector.cycles = 4'd2;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h44;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd2;
+        end
+        180: begin // CC LDD
+          hd6301_vector.opcode = 8'hcc;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h10;
+          hd6301_vector.b = 8'h20;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        181: begin // CE LDX
+          hd6301_vector.opcode = 8'hce;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h1020;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        182: begin // D0 SUBB
+          hd6301_vector.opcode = 8'hd0;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hf1;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        183: begin // D1 CMPB
+          hd6301_vector.opcode = 8'hd1;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        184: begin // D2 SBCB
+          hd6301_vector.opcode = 8'hd2;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hf1;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        185: begin // D3 ADDD
+          hd6301_vector.opcode = 8'hd3;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h55;
+          hd6301_vector.b = 8'h76;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        186: begin // D4 ANDB
+          hd6301_vector.opcode = 8'hd4;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h00;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        187: begin // D5 BITB
+          hd6301_vector.opcode = 8'hd5;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        188: begin // D6 LDAB
+          hd6301_vector.opcode = 8'hd6;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h43;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        189: begin // D7 STAB
+          hd6301_vector.opcode = 8'hd7;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        190: begin // D8 EORB
+          hd6301_vector.opcode = 8'hd8;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        191: begin // D9 ADCB
+          hd6301_vector.opcode = 8'hd9;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        192: begin // DA ORAB
+          hd6301_vector.opcode = 8'hda;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        193: begin // DB ADDB
+          hd6301_vector.opcode = 8'hdb;
+          hd6301_vector.cycles = 4'd3;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        194: begin // DC LDD
+          hd6301_vector.opcode = 8'hdc;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h43;
+          hd6301_vector.b = 8'h42;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        195: begin // DD STD
+          hd6301_vector.opcode = 8'hdd;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        196: begin // DE LDX
+          hd6301_vector.opcode = 8'hde;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h4342;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        197: begin // DF STX
+          hd6301_vector.opcode = 8'hdf;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        198: begin // E0 SUBB
+          hd6301_vector.opcode = 8'he0;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hf1;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        199: begin // E1 CMPB
+          hd6301_vector.opcode = 8'he1;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        200: begin // E2 SBCB
+          hd6301_vector.opcode = 8'he2;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hf1;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        201: begin // E3 ADDD
+          hd6301_vector.opcode = 8'he3;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h55;
+          hd6301_vector.b = 8'h76;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        202: begin // E4 ANDB
+          hd6301_vector.opcode = 8'he4;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h00;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        203: begin // E5 BITB
+          hd6301_vector.opcode = 8'he5;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h04;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        204: begin // E6 LDAB
+          hd6301_vector.opcode = 8'he6;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h43;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        205: begin // E7 STAB
+          hd6301_vector.opcode = 8'he7;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        206: begin // E8 EORB
+          hd6301_vector.opcode = 8'he8;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        207: begin // E9 ADCB
+          hd6301_vector.opcode = 8'he9;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        208: begin // EA ORAB
+          hd6301_vector.opcode = 8'hea;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        209: begin // EB ADDB
+          hd6301_vector.opcode = 8'heb;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd3;
+        end
+        210: begin // EC LDD
+          hd6301_vector.opcode = 8'hec;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h43;
+          hd6301_vector.b = 8'h42;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        211: begin // ED STD
+          hd6301_vector.opcode = 8'hed;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        212: begin // EE LDX
+          hd6301_vector.opcode = 8'hee;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h4342;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        213: begin // EF STX
+          hd6301_vector.opcode = 8'hef;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h100f;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        214: begin // F0 SUBB
+          hd6301_vector.opcode = 8'hf0;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hc1;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        215: begin // F1 CMPB
+          hd6301_vector.opcode = 8'hf1;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        216: begin // F2 SBCB
+          hd6301_vector.opcode = 8'hf2;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'hc1;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h09;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        217: begin // F3 ADDD
+          hd6301_vector.opcode = 8'hf3;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h85;
+          hd6301_vector.b = 8'ha6;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        218: begin // F4 ANDB
+          hd6301_vector.opcode = 8'hf4;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h30;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        219: begin // F5 BITB
+          hd6301_vector.opcode = 8'hf5;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        220: begin // F6 LDAB
+          hd6301_vector.opcode = 8'hf6;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h73;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        221: begin // F7 STAB
+          hd6301_vector.opcode = 8'hf7;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        222: begin // F8 EORB
+          hd6301_vector.opcode = 8'hf8;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h47;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        223: begin // F9 ADCB
+          hd6301_vector.opcode = 8'hf9;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'ha7;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        224: begin // FA ORAB
+          hd6301_vector.opcode = 8'hfa;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h77;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        225: begin // FB ADDB
+          hd6301_vector.opcode = 8'hfb;
+          hd6301_vector.cycles = 4'd4;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'ha7;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h0a;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd4;
+        end
+        226: begin // FC LDD
+          hd6301_vector.opcode = 8'hfc;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h73;
+          hd6301_vector.b = 8'h72;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        227: begin // FD STD
+          hd6301_vector.opcode = 8'hfd;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        228: begin // FE LDX
+          hd6301_vector.opcode = 8'hfe;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h7372;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        229: begin // FF STX
+          hd6301_vector.opcode = 8'hff;
+          hd6301_vector.cycles = 4'd5;
+          hd6301_vector.a = 8'h12;
+          hd6301_vector.b = 8'h34;
+          hd6301_vector.x = 16'h2000;
+          hd6301_vector.sp = 16'h4000;
+          hd6301_vector.pc = 16'h1010;
+          hd6301_vector.ccr = 6'h00;
+          hd6301_vector.ccr_mask = 6'h3f;
+          hd6301_vector.waiting_state = 1'b0;
+          hd6301_vector.sleeping_state = 1'b0;
+          hd6301_vector.access_count = 4'd5;
+        end
+        default: ;
+      endcase
+    end
+  endfunction
+
+  function automatic opcode_access_t hd6301_access(
+    input logic [7:0] vector_index,
+    input logic [7:0] access_index
+  );
+    begin
+      hd6301_access = '0;
+      case ({vector_index, access_index})
+        16'h0000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h01;
+        end
+        16'h0100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h04;
+        end
+        16'h0200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h05;
+        end
+        16'h0300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h06;
+        end
+        16'h0400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h07;
+        end
+        16'h0500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h08;
+        end
+        16'h0600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h09;
+        end
+        16'h0700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h0a;
+        end
+        16'h0800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h0b;
+        end
+        16'h0900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h0c;
+        end
+        16'h0a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h0d;
+        end
+        16'h0b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h0e;
+        end
+        16'h0c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h0f;
+        end
+        16'h0d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h10;
+        end
+        16'h0e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h11;
+        end
+        16'h0f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h16;
+        end
+        16'h1000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h17;
+        end
+        16'h1100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h18;
+        end
+        16'h1200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h19;
+        end
+        16'h1300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h1a;
+        end
+        16'h1400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h1b;
+        end
+        16'h1500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h20;
+        end
+        16'h1501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h21;
+        end
+        16'h1601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h22;
+        end
+        16'h1701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h23;
+        end
+        16'h1801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h24;
+        end
+        16'h1901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h25;
+        end
+        16'h1a01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h26;
+        end
+        16'h1b01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h27;
+        end
+        16'h1c01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h28;
+        end
+        16'h1d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h29;
+        end
+        16'h1e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h1f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h2a;
+        end
+        16'h1f01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h2000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h2b;
+        end
+        16'h2001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h2100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h2c;
+        end
+        16'h2101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h2200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h2d;
+        end
+        16'h2201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h2300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h2e;
+        end
+        16'h2301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h2400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h2f;
+        end
+        16'h2401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h2500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h30;
+        end
+        16'h2600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h31;
+        end
+        16'h2700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h32;
+        end
+        16'h2701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4001;
+          hd6301_access.data = 8'hc0;
+        end
+        16'h2800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h33;
+        end
+        16'h2801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4001;
+          hd6301_access.data = 8'hc0;
+        end
+        16'h2900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h34;
+        end
+        16'h2a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h35;
+        end
+        16'h2b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h36;
+        end
+        16'h2b01: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h12;
+        end
+        16'h2c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h37;
+        end
+        16'h2c01: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h34;
+        end
+        16'h2d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h38;
+        end
+        16'h2d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4001;
+          hd6301_access.data = 8'hc0;
+        end
+        16'h2d02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4002;
+          hd6301_access.data = 8'h34;
+        end
+        16'h2e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h39;
+        end
+        16'h2e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4001;
+          hd6301_access.data = 8'hc0;
+        end
+        16'h2e02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4002;
+          hd6301_access.data = 8'h34;
+        end
+        16'h2f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h3a;
+        end
+        16'h3000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h3b;
+        end
+        16'h3001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4001;
+          hd6301_access.data = 8'hc0;
+        end
+        16'h3002: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4002;
+          hd6301_access.data = 8'h34;
+        end
+        16'h3003: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4003;
+          hd6301_access.data = 8'h12;
+        end
+        16'h3004: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4004;
+          hd6301_access.data = 8'h20;
+        end
+        16'h3005: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4005;
+          hd6301_access.data = 8'h00;
+        end
+        16'h3006: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4006;
+          hd6301_access.data = 8'h10;
+        end
+        16'h3007: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h4007;
+          hd6301_access.data = 8'h11;
+        end
+        16'h3100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h3c;
+        end
+        16'h3101: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h00;
+        end
+        16'h3102: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3fff;
+          hd6301_access.data = 8'h20;
+        end
+        16'h3200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h3d;
+        end
+        16'h3300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h3e;
+        end
+        16'h3301: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h0e;
+        end
+        16'h3302: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3fff;
+          hd6301_access.data = 8'h10;
+        end
+        16'h3303: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffe;
+          hd6301_access.data = 8'h00;
+        end
+        16'h3304: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffd;
+          hd6301_access.data = 8'h20;
+        end
+        16'h3305: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffc;
+          hd6301_access.data = 8'h12;
+        end
+        16'h3306: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffb;
+          hd6301_access.data = 8'h34;
+        end
+        16'h3307: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffa;
+          hd6301_access.data = 8'hc0;
+        end
+        16'h3400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h3f;
+        end
+        16'h3401: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h0e;
+        end
+        16'h3402: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3fff;
+          hd6301_access.data = 8'h10;
+        end
+        16'h3403: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffe;
+          hd6301_access.data = 8'h00;
+        end
+        16'h3404: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffd;
+          hd6301_access.data = 8'h20;
+        end
+        16'h3405: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffc;
+          hd6301_access.data = 8'h12;
+        end
+        16'h3406: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffb;
+          hd6301_access.data = 8'h34;
+        end
+        16'h3407: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3ffa;
+          hd6301_access.data = 8'hc0;
+        end
+        16'h3408: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'hfffa;
+          hd6301_access.data = 8'h30;
+        end
+        16'h3409: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'hfffb;
+          hd6301_access.data = 8'h00;
+        end
+        16'h3500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h40;
+        end
+        16'h3600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h43;
+        end
+        16'h3700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h44;
+        end
+        16'h3800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h46;
+        end
+        16'h3900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h47;
+        end
+        16'h3a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h48;
+        end
+        16'h3b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h49;
+        end
+        16'h3c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h4a;
+        end
+        16'h3d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h4c;
+        end
+        16'h3e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h4d;
+        end
+        16'h3f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h4f;
+        end
+        16'h4000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h50;
+        end
+        16'h4100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h53;
+        end
+        16'h4200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h54;
+        end
+        16'h4300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h56;
+        end
+        16'h4400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h57;
+        end
+        16'h4500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h58;
+        end
+        16'h4600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h59;
+        end
+        16'h4700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h5a;
+        end
+        16'h4800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h5c;
+        end
+        16'h4900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h5d;
+        end
+        16'h4a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h5f;
+        end
+        16'h4b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h60;
+        end
+        16'h4b01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h4b02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h4b03: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'hbd;
+        end
+        16'h4c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h61;
+        end
+        16'h4c01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h4c02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h4c03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2020;
+          hd6301_access.data = 8'h00;
+        end
+        16'h4c04: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2020;
+          hd6301_access.data = 8'h00;
+        end
+        16'h4d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h62;
+        end
+        16'h4d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h4d02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h4d03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2020;
+          hd6301_access.data = 8'h00;
+        end
+        16'h4d04: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2020;
+          hd6301_access.data = 8'h10;
+        end
+        16'h4e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h63;
+        end
+        16'h4e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h4e02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h4e03: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'hbc;
+        end
+        16'h4f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h64;
+        end
+        16'h4f01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h4f02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h4f03: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h21;
+        end
+        16'h5000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h65;
+        end
+        16'h5001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5002: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h5003: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2020;
+          hd6301_access.data = 8'h00;
+        end
+        16'h5004: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2020;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h66;
+        end
+        16'h5101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h5103: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h21;
+        end
+        16'h5200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h67;
+        end
+        16'h5201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h5203: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h21;
+        end
+        16'h5300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h68;
+        end
+        16'h5301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5302: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h5303: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h86;
+        end
+        16'h5400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h69;
+        end
+        16'h5401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h5403: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h86;
+        end
+        16'h5500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h6a;
+        end
+        16'h5501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5502: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h5503: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h42;
+        end
+        16'h5600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h6b;
+        end
+        16'h5601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5602: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h5603: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2020;
+          hd6301_access.data = 8'h00;
+        end
+        16'h5700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h6c;
+        end
+        16'h5701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h5703: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h44;
+        end
+        16'h5800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h6d;
+        end
+        16'h5801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5802: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h5900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h6e;
+        end
+        16'h5901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h6f;
+        end
+        16'h5a01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5a02: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h00;
+        end
+        16'h5b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h70;
+        end
+        16'h5b01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5b02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h5b03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h5b04: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h8d;
+        end
+        16'h5c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h71;
+        end
+        16'h5c01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5c02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h5c03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h5c04: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0020;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h72;
+        end
+        16'h5d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5d02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h5d03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h5d04: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h5e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h73;
+        end
+        16'h5e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5e02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h5e03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h5e04: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h8c;
+        end
+        16'h5f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h74;
+        end
+        16'h5f01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h5f02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h5f03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h5f04: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h39;
+        end
+        16'h6000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h75;
+        end
+        16'h6001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6002: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6003: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6004: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0020;
+          hd6301_access.data = 8'h63;
+        end
+        16'h6100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h76;
+        end
+        16'h6101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6103: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6104: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h39;
+        end
+        16'h6200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h77;
+        end
+        16'h6201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6203: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6204: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h39;
+        end
+        16'h6300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h78;
+        end
+        16'h6301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6302: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6303: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6304: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'he6;
+        end
+        16'h6400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h79;
+        end
+        16'h6401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6403: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6404: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'he6;
+        end
+        16'h6500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h7a;
+        end
+        16'h6501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6502: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6503: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6504: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h72;
+        end
+        16'h6600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h7b;
+        end
+        16'h6601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6602: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6603: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h7c;
+        end
+        16'h6701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6703: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6704: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h74;
+        end
+        16'h6800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h7d;
+        end
+        16'h6801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6802: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6803: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h6900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h7e;
+        end
+        16'h6901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6902: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h7f;
+        end
+        16'h6a01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6a02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6a03: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h00;
+        end
+        16'h6b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h80;
+        end
+        16'h6b01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h81;
+        end
+        16'h6c01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h82;
+        end
+        16'h6d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h83;
+        end
+        16'h6e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h6e02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h6f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h84;
+        end
+        16'h6f01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h85;
+        end
+        16'h7001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h86;
+        end
+        16'h7101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h88;
+        end
+        16'h7201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h89;
+        end
+        16'h7301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h8a;
+        end
+        16'h7401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h8b;
+        end
+        16'h7501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h8c;
+        end
+        16'h7601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7602: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h7700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h8d;
+        end
+        16'h7701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7702: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h0f;
+        end
+        16'h7703: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3fff;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h8e;
+        end
+        16'h7801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7802: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h7900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h90;
+        end
+        16'h7901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7902: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h7a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h91;
+        end
+        16'h7a01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7a02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h7b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h92;
+        end
+        16'h7b01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7b02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h7c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h93;
+        end
+        16'h7c01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7c02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h7c03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h42;
+        end
+        16'h7d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h94;
+        end
+        16'h7d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7d02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h7e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h95;
+        end
+        16'h7e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7e02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h7f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h96;
+        end
+        16'h7f01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h7f02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h97;
+        end
+        16'h8001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8002: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h12;
+        end
+        16'h8100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h98;
+        end
+        16'h8101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h99;
+        end
+        16'h8201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h9a;
+        end
+        16'h8301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8302: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h9b;
+        end
+        16'h8401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h9c;
+        end
+        16'h8501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8502: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8503: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h42;
+        end
+        16'h8600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h9d;
+        end
+        16'h8601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8602: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h0f;
+        end
+        16'h8603: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3fff;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h9e;
+        end
+        16'h8701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8703: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h42;
+        end
+        16'h8800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'h9f;
+        end
+        16'h8801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8802: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h40;
+        end
+        16'h8803: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h00;
+        end
+        16'h8900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha0;
+        end
+        16'h8901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8902: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha1;
+        end
+        16'h8a01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8a02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha2;
+        end
+        16'h8b01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8b02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha3;
+        end
+        16'h8c01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8c02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8c03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h42;
+        end
+        16'h8d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha4;
+        end
+        16'h8d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8d02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha5;
+        end
+        16'h8e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8e02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h8f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha6;
+        end
+        16'h8f01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h8f02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h9000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha7;
+        end
+        16'h9001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9002: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h12;
+        end
+        16'h9100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha8;
+        end
+        16'h9101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h9200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'ha9;
+        end
+        16'h9201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h9300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'haa;
+        end
+        16'h9301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9302: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h9400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hab;
+        end
+        16'h9401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h9500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hac;
+        end
+        16'h9501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9502: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h9503: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h42;
+        end
+        16'h9600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'had;
+        end
+        16'h9601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9602: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h0f;
+        end
+        16'h9603: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3fff;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hae;
+        end
+        16'h9701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'h9703: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h42;
+        end
+        16'h9800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'haf;
+        end
+        16'h9801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9802: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h40;
+        end
+        16'h9803: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h00;
+        end
+        16'h9900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb0;
+        end
+        16'h9901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9902: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h9903: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h9a00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb1;
+        end
+        16'h9a01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9a02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h9a03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h9b00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb2;
+        end
+        16'h9b01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9b02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h9b03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h9c00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb3;
+        end
+        16'h9c01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9c02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h9c03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h9c04: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h72;
+        end
+        16'h9d00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb4;
+        end
+        16'h9d01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9d02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h9d03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h9e00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb5;
+        end
+        16'h9e01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9e02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h9e03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'h9f00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb6;
+        end
+        16'h9f01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'h9f02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'h9f03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'ha000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb7;
+        end
+        16'ha001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha002: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha003: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h12;
+        end
+        16'ha100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb8;
+        end
+        16'ha101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha103: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'ha200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hb9;
+        end
+        16'ha201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha203: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'ha300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hba;
+        end
+        16'ha301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha302: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha303: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'ha400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hbb;
+        end
+        16'ha401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha403: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'ha500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hbc;
+        end
+        16'ha501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha502: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha503: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'ha504: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h72;
+        end
+        16'ha600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hbd;
+        end
+        16'ha601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha602: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha603: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h4000;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha604: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h3fff;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hbe;
+        end
+        16'ha701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha703: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'ha704: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h72;
+        end
+        16'ha800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hbf;
+        end
+        16'ha801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'ha802: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'ha803: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h40;
+        end
+        16'ha804: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h00;
+        end
+        16'ha900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc0;
+        end
+        16'ha901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'haa00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc1;
+        end
+        16'haa01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hab00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc2;
+        end
+        16'hab01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hac00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc3;
+        end
+        16'hac01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hac02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'had00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc4;
+        end
+        16'had01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hae00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc5;
+        end
+        16'hae01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'haf00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc6;
+        end
+        16'haf01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc8;
+        end
+        16'hb001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hc9;
+        end
+        16'hb101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hca;
+        end
+        16'hb201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hcb;
+        end
+        16'hb301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hcc;
+        end
+        16'hb401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hb500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hce;
+        end
+        16'hb501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb502: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hb600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd0;
+        end
+        16'hb601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb602: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hb700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd1;
+        end
+        16'hb701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hb800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd2;
+        end
+        16'hb801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb802: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hb900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd3;
+        end
+        16'hb901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hb902: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hb903: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h42;
+        end
+        16'hba00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd4;
+        end
+        16'hba01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hba02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hbb00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd5;
+        end
+        16'hbb01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hbb02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hbc00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd6;
+        end
+        16'hbc01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hbc02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hbd00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd7;
+        end
+        16'hbd01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hbd02: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h34;
+        end
+        16'hbe00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd8;
+        end
+        16'hbe01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hbe02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hbf00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hd9;
+        end
+        16'hbf01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hbf02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hda;
+        end
+        16'hc001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc002: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hdb;
+        end
+        16'hc101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hdc;
+        end
+        16'hc201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc203: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h42;
+        end
+        16'hc300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hdd;
+        end
+        16'hc301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc302: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h12;
+        end
+        16'hc303: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h34;
+        end
+        16'hc400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hde;
+        end
+        16'hc401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc403: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h42;
+        end
+        16'hc500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hdf;
+        end
+        16'hc501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc502: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0010;
+          hd6301_access.data = 8'h20;
+        end
+        16'hc503: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h0011;
+          hd6301_access.data = 8'h00;
+        end
+        16'hc600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he0;
+        end
+        16'hc601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc602: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he1;
+        end
+        16'hc701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he2;
+        end
+        16'hc801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc802: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he3;
+        end
+        16'hc901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hc902: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hc903: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h42;
+        end
+        16'hca00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he4;
+        end
+        16'hca01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hca02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hcb00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he5;
+        end
+        16'hcb01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hcb02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hcc00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he6;
+        end
+        16'hcc01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hcc02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hcd00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he7;
+        end
+        16'hcd01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hcd02: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h34;
+        end
+        16'hce00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he8;
+        end
+        16'hce01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hce02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hcf00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'he9;
+        end
+        16'hcf01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hcf02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hd000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hea;
+        end
+        16'hd001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd002: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hd100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'heb;
+        end
+        16'hd101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hd200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hec;
+        end
+        16'hd201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hd203: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h42;
+        end
+        16'hd300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hed;
+        end
+        16'hd301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd302: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h12;
+        end
+        16'hd303: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h34;
+        end
+        16'hd400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hee;
+        end
+        16'hd401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h43;
+        end
+        16'hd403: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h42;
+        end
+        16'hd500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hef;
+        end
+        16'hd501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd502: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2010;
+          hd6301_access.data = 8'h20;
+        end
+        16'hd503: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h2011;
+          hd6301_access.data = 8'h00;
+        end
+        16'hd600: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf0;
+        end
+        16'hd601: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd602: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hd603: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hd700: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf1;
+        end
+        16'hd701: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd702: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hd703: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hd800: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf2;
+        end
+        16'hd801: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd802: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hd803: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hd900: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf3;
+        end
+        16'hd901: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hd902: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hd903: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hd904: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h72;
+        end
+        16'hda00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf4;
+        end
+        16'hda01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hda02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hda03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hdb00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf5;
+        end
+        16'hdb01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hdb02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hdb03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hdc00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf6;
+        end
+        16'hdc01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hdc02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hdc03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hdd00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf7;
+        end
+        16'hdd01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hdd02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hdd03: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h34;
+        end
+        16'hde00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf8;
+        end
+        16'hde01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hde02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hde03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'hdf00: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hf9;
+        end
+        16'hdf01: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'hdf02: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'hdf03: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'he000: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hfa;
+        end
+        16'he001: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'he002: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'he003: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'he100: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hfb;
+        end
+        16'he101: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'he102: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'he103: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'he200: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hfc;
+        end
+        16'he201: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'he202: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'he203: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'he204: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h72;
+        end
+        16'he300: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hfd;
+        end
+        16'he301: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'he302: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'he303: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h12;
+        end
+        16'he304: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h34;
+        end
+        16'he400: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hfe;
+        end
+        16'he401: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'he402: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'he403: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h73;
+        end
+        16'he404: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h72;
+        end
+        16'he500: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100d;
+          hd6301_access.data = 8'hff;
+        end
+        16'he501: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100e;
+          hd6301_access.data = 8'h10;
+        end
+        16'he502: begin
+          hd6301_access.write_enable = 1'b0;
+          hd6301_access.address = 16'h100f;
+          hd6301_access.data = 8'h20;
+        end
+        16'he503: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1020;
+          hd6301_access.data = 8'h20;
+        end
+        16'he504: begin
+          hd6301_access.write_enable = 1'b1;
+          hd6301_access.address = 16'h1021;
+          hd6301_access.data = 8'h00;
         end
         default: ;
       endcase

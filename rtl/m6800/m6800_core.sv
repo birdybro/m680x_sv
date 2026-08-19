@@ -18,6 +18,7 @@ module m6800_core #(
   output logic        illegal_o,
   output logic        undefined_o,
   output logic        waiting_o,
+  output logic        sleeping_o,
   output logic        interrupt_ack_o,
   output logic [1:0]  interrupt_vector_o,
   output logic [7:0]  debug_a_o,
@@ -68,6 +69,9 @@ module m6800_core #(
     ST_PUSH_X_HIGH,
     ST_PULL_X_HIGH,
     ST_PULL_X_LOW,
+    ST_MASK_IMMEDIATE,
+    ST_MASK_DIRECT,
+    ST_MASK_INDEXED,
     ST_INTERRUPT_DELAY,
     ST_INTERRUPT_PUSH,
     ST_INTERRUPT_POST,
@@ -76,6 +80,7 @@ module m6800_core #(
     ST_RTI_PULL,
     ST_PADDING,
     ST_WAITING,
+    ST_SLEEPING,
     ST_ILLEGAL
   } state_t;
 
@@ -101,6 +106,7 @@ module m6800_core #(
   logic nmi_previous;
   logic nmi_pending;
   logic [15:0] vector_address;
+  logic [7:0] immediate_mask;
 
   opcode_decode_t fetched_decode;
   logic decoded_sane;
@@ -167,6 +173,13 @@ module m6800_core #(
       OP_NEG, OP_COM, OP_LSR, OP_ROR, OP_ASR, OP_ASL, OP_ROL,
       OP_DEC, OP_INC, OP_TST, OP_CLR: is_read_modify_write = 1'b1;
       default: is_read_modify_write = 1'b0;
+    endcase
+  endfunction
+
+  function automatic logic is_mask_operation(input operation_t operation);
+    case (operation)
+      OP_AIM, OP_OIM, OP_EIM, OP_TIM: is_mask_operation = 1'b1;
+      default: is_mask_operation = 1'b0;
     endcase
   endfunction
 
@@ -291,6 +304,20 @@ module m6800_core #(
       left = selected_byte(decoded.target);
       result_value = '0;
       case (decoded.operation)
+        OP_AIM, OP_OIM, OP_EIM, OP_TIM: begin
+          case (decoded.operation)
+            OP_AIM, OP_TIM: result_value = logic8(operand, immediate_mask, 2'd0);
+            OP_OIM: result_value = logic8(operand, immediate_mask, 2'd1);
+            default: result_value = logic8(operand, immediate_mask, 2'd2);
+          endcase
+          set_nzv8(result_value.value);
+          if (decoded.operation == OP_TIM) begin
+            finish_to(ST_FETCH);
+          end else begin
+            write_data <= result_value.value;
+            state <= ST_MEMORY_WRITE;
+          end
+        end
         OP_ADD, OP_ADC: begin
           result_value = add8(left, operand,
             (decoded.operation == OP_ADC) ? condition_codes[CCR_C] : 1'b0);
@@ -534,6 +561,7 @@ module m6800_core #(
           index_register <= inherent_word;
           finish_to(ST_FETCH);
         end
+        OP_SLP: finish_to(ST_SLEEPING);
         OP_TSX: begin
           index_register <= stack_pointer + 16'h0001;
           finish_to(ST_FETCH);
@@ -579,6 +607,104 @@ module m6800_core #(
     end
   endtask
 
+  task automatic execute_single_cycle(
+    input operation_t single_operation,
+    input operation_target_t single_target
+  );
+    alu8_result_t byte_result;
+    logic [7:0] selected;
+    logic [15:0] double_value;
+    begin
+      byte_result = '0;
+      selected = selected_byte(single_target);
+      double_value = {accumulator_a, accumulator_b};
+      case (single_operation)
+        OP_NOP: ;
+        OP_TAP: condition_codes <= accumulator_a[5:0];
+        OP_TPA: accumulator_a <= {2'b11, condition_codes};
+        OP_INX, OP_DEX: begin
+          index_register <= index_register +
+            ((single_operation == OP_INX) ? 16'h0001 : 16'hffff);
+          condition_codes[CCR_Z] <=
+            (index_register + ((single_operation == OP_INX) ? 16'h0001 : 16'hffff)) == 16'h0000;
+        end
+        OP_CLV, OP_SEV: condition_codes[CCR_V] <= (single_operation == OP_SEV);
+        OP_CLC, OP_SEC: condition_codes[CCR_C] <= (single_operation == OP_SEC);
+        OP_CLI, OP_SEI: condition_codes[CCR_I] <= (single_operation == OP_SEI);
+        OP_SBA, OP_CBA: begin
+          byte_result = sub8(accumulator_a, accumulator_b, 1'b0);
+          if (single_operation == OP_SBA) accumulator_a <= byte_result.value;
+          apply_nzvc8(byte_result.n, byte_result.z, byte_result.v, byte_result.c);
+        end
+        OP_TAB, OP_TBA: begin
+          if (single_operation == OP_TAB) accumulator_b <= accumulator_a;
+          else accumulator_a <= accumulator_b;
+          set_nzv8((single_operation == OP_TAB) ? accumulator_a : accumulator_b);
+        end
+        OP_ABA: begin
+          byte_result = add8(accumulator_a, accumulator_b, 1'b0);
+          accumulator_a <= byte_result.value;
+          apply_hnzvc8(byte_result.h, byte_result.n, byte_result.z,
+            byte_result.v, byte_result.c);
+        end
+        OP_TSX: index_register <= stack_pointer + 16'h0001;
+        OP_INS, OP_DES: stack_pointer <= stack_pointer +
+          ((single_operation == OP_INS) ? 16'h0001 : 16'hffff);
+        OP_TXS: stack_pointer <= index_register - 16'h0001;
+        OP_ABX: index_register <= index_register + {8'h00, accumulator_b};
+        OP_LSRD: begin
+          double_value = {accumulator_a, accumulator_b} >> 1;
+          accumulator_a <= double_value[15:8];
+          accumulator_b <= double_value[7:0];
+          condition_codes[CCR_N] <= 1'b0;
+          condition_codes[CCR_Z] <= (double_value == 16'h0000);
+          condition_codes[CCR_V] <= accumulator_b[0];
+          condition_codes[CCR_C] <= accumulator_b[0];
+        end
+        OP_ASLD: begin
+          double_value = {accumulator_a, accumulator_b} << 1;
+          accumulator_a <= double_value[15:8];
+          accumulator_b <= double_value[7:0];
+          condition_codes[CCR_N] <= double_value[15];
+          condition_codes[CCR_Z] <= (double_value == 16'h0000);
+          condition_codes[CCR_V] <= double_value[15] ^ accumulator_a[7];
+          condition_codes[CCR_C] <= accumulator_a[7];
+        end
+        OP_NEG: byte_result = neg8(selected);
+        OP_COM: byte_result = com8(selected);
+        OP_LSR: byte_result = lsr8(selected);
+        OP_ROR: byte_result = ror8(selected, condition_codes[CCR_C]);
+        OP_ASR: byte_result = asr8(selected);
+        OP_ASL: byte_result = asl8(selected);
+        OP_ROL: byte_result = rol8(selected, condition_codes[CCR_C]);
+        OP_DEC: byte_result = dec8(selected);
+        OP_INC: byte_result = inc8(selected);
+        OP_TST: byte_result = tst8(selected);
+        OP_CLR: byte_result = clr8();
+        default: begin
+          illegal_o <= 1'b1;
+          state <= ST_ILLEGAL;
+        end
+      endcase
+      if (is_read_modify_write(single_operation)) begin
+        if ((single_operation == OP_INC) || (single_operation == OP_DEC)) begin
+          apply_nzv8_result(byte_result.n, byte_result.z, byte_result.v);
+        end else begin
+          apply_nzvc8(byte_result.n, byte_result.z, byte_result.v, byte_result.c);
+        end
+        if (single_operation != OP_TST) begin
+          set_selected_byte(single_target, byte_result.value);
+        end
+      end
+      if (single_operation != OP_INVALID) begin
+        cycles_left <= 4'd0;
+        terminal_state <= ST_FETCH;
+        state <= ST_FETCH;
+        retire_o <= 1'b1;
+      end
+    end
+  endtask
+
   always_comb begin
     address_o = 16'h0000;
     data_o = 8'h00;
@@ -601,7 +727,8 @@ module m6800_core #(
       end
       ST_RELATIVE, ST_IMMEDIATE_8, ST_IMMEDIATE_16_HIGH,
       ST_IMMEDIATE_16_LOW, ST_DIRECT, ST_INDEXED,
-      ST_EXTENDED_HIGH, ST_EXTENDED_LOW: begin
+      ST_EXTENDED_HIGH, ST_EXTENDED_LOW, ST_MASK_IMMEDIATE,
+      ST_MASK_DIRECT, ST_MASK_INDEXED: begin
         address_o = program_counter;
         bus_valid_o = 1'b1;
       end
@@ -723,6 +850,7 @@ module m6800_core #(
       nmi_previous <= 1'b1;
       nmi_pending <= 1'b0;
       vector_address <= 16'hfffa;
+      immediate_mask <= 8'h00;
       retire_o <= 1'b0;
       illegal_o <= 1'b0;
       undefined_o <= 1'b0;
@@ -735,7 +863,7 @@ module m6800_core #(
       nmi_previous <= nmi_n_i;
       if (nmi_previous && !nmi_n_i) nmi_pending <= 1'b1;
       if (state != ST_FETCH && state != ST_RESET_HIGH && state != ST_RESET_LOW &&
-          state != ST_WAITING && state != ST_ILLEGAL) begin
+          state != ST_WAITING && state != ST_SLEEPING && state != ST_ILLEGAL) begin
         cycles_left <= cycles_left - 4'd1;
       end
       case (state)
@@ -770,19 +898,25 @@ module m6800_core #(
               state <= ST_ILLEGAL;
             end else begin
               cycles_left <= fetched_decode.cycles - 4'd1;
-              case (fetched_decode.mode)
-                AM_INHERENT, AM_ACCUMULATOR_A, AM_ACCUMULATOR_B: state <= ST_EXECUTE;
-                AM_RELATIVE: state <= ST_RELATIVE;
-                AM_IMMEDIATE_8: state <= ST_IMMEDIATE_8;
-                AM_IMMEDIATE_16: state <= ST_IMMEDIATE_16_HIGH;
-                AM_DIRECT: state <= ST_DIRECT;
-                AM_INDEXED_8: state <= ST_INDEXED;
-                AM_EXTENDED: state <= ST_EXTENDED_HIGH;
-                default: begin
-                  illegal_o <= 1'b1;
-                  state <= ST_ILLEGAL;
-                end
-              endcase
+              if ((ARCHITECTURE == 2'd2) && (fetched_decode.cycles == 4'd1)) begin
+                execute_single_cycle(fetched_decode.operation, fetched_decode.target);
+              end else if (is_mask_operation(fetched_decode.operation)) begin
+                state <= ST_MASK_IMMEDIATE;
+              end else begin
+                case (fetched_decode.mode)
+                  AM_INHERENT, AM_ACCUMULATOR_A, AM_ACCUMULATOR_B: state <= ST_EXECUTE;
+                  AM_RELATIVE: state <= ST_RELATIVE;
+                  AM_IMMEDIATE_8: state <= ST_IMMEDIATE_8;
+                  AM_IMMEDIATE_16: state <= ST_IMMEDIATE_16_HIGH;
+                  AM_DIRECT: state <= ST_DIRECT;
+                  AM_INDEXED_8: state <= ST_INDEXED;
+                  AM_EXTENDED: state <= ST_EXTENDED_HIGH;
+                  default: begin
+                    illegal_o <= 1'b1;
+                    state <= ST_ILLEGAL;
+                  end
+                endcase
+              end
             end
           end
         end
@@ -828,6 +962,21 @@ module m6800_core #(
         ST_EXTENDED_LOW: begin
           program_counter <= program_counter + 16'h0001;
           route_effective_address({temporary_high, data_i});
+        end
+        ST_MASK_IMMEDIATE: begin
+          immediate_mask <= data_i;
+          program_counter <= program_counter + 16'h0001;
+          state <= (decoded.mode == AM_DIRECT) ? ST_MASK_DIRECT : ST_MASK_INDEXED;
+        end
+        ST_MASK_DIRECT: begin
+          program_counter <= program_counter + 16'h0001;
+          effective_address <= {8'h00, data_i};
+          state <= ST_MEMORY_READ;
+        end
+        ST_MASK_INDEXED: begin
+          program_counter <= program_counter + 16'h0001;
+          effective_address <= index_register + {8'h00, data_i};
+          state <= ST_MEMORY_READ;
         end
         ST_MEMORY_READ: execute_byte(data_i, 1'b1);
         ST_MEMORY_READ_16_HIGH: begin
@@ -956,6 +1105,22 @@ module m6800_core #(
             state <= ST_INTERRUPT_POST;
           end
         end
+        ST_SLEEPING: begin
+          if (nmi_requested() || (!irq_n_i && !condition_codes[CCR_I])) begin
+            phase <= 3'd0;
+            interrupt_is_wait <= 1'b0;
+            external_interrupt <= 1'b1;
+            if (nmi_requested()) begin
+              vector_address <= 16'hfffc;
+              interrupt_vector_o <= 2'b10;
+              nmi_pending <= 1'b0;
+            end else begin
+              vector_address <= 16'hfff8;
+              interrupt_vector_o <= 2'b01;
+            end
+            state <= ST_INTERRUPT_DELAY;
+          end
+        end
         default: ;
       endcase
     end
@@ -966,6 +1131,7 @@ module m6800_core #(
   assign decoded_sane = decoded.valid && (decoded.mode != AM_NONE) &&
     (decoded.length != 2'd0) && (decoded.bit_index == 3'd0);
   assign waiting_o = (state == ST_WAITING);
+  assign sleeping_o = (state == ST_SLEEPING);
   assign debug_a_o = accumulator_a;
   assign debug_b_o = accumulator_b;
   assign debug_x_o = index_register;
