@@ -33,7 +33,10 @@ an ordered memory-access trace, the documented total cycle count, effective
 address, pre/post architectural state, and any manufacturer-undefined flags.
 Directed regressions cover wraparound addressing, call and interrupt stack byte
 order, SWI/RTI, WAI interrupt entry without double stacking, masking, reset
-vectors, and the Hitachi immediate-memory and exchange extensions.
+vectors, and the Hitachi immediate-memory and exchange extensions. The HD6301
+profile additionally classifies and executes all 26 documented opcode-error
+TRAP values, accepts an explicit instruction-address-error condition, records
+the exact 13-cycle entry trace, and preserves the faulting PC for RTI retry.
 
 `m6805.py` is a separate instruction path for M6805 and HD6305. It executes all
 417 documented encodings while modeling the eight-bit X register, parameterized

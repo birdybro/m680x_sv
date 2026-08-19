@@ -34,11 +34,12 @@ Two independent CPU state machines currently cover five instruction profiles:
   separate FPGA firmware-memory port for EPROM/bootstrap/vector bytes.
 
 All 256 opcode values are explicitly classified for each profile. The current
-five maps contain 1,064 documented instruction encodings and 216 explicitly
-reserved or manufacturer-undefined values. The generated decoder is derived
-from those factual maps, while the Python execution model remains independently
-organized. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for interfaces and
-design boundaries.
+five maps contain 1,064 documented instruction encodings, 26 HD6301 map values
+with documented TRAP behavior, and 190 explicitly reserved or
+manufacturer-undefined values. The generated decoder is derived from those
+factual maps, while the Python execution model remains independently organized.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for interfaces and design
+boundaries.
 
 The normalized CPU bus uses a single FPGA clock and clock enable. A cycle
 advances on a rising clock edge when `clock_enable_i` is asserted and either no
@@ -81,12 +82,13 @@ cycle boundaries being checked.
 ## Known limitations
 
 The physical MC6800 signal wrapper, MC6801/MC6803 and Hitachi MCU peripherals,
-HD6301 TRAP entry, complete manufacturer bus waveforms, and several P5
-timer/programming modes remain incomplete. Manufacturer-undefined reset values,
-reserved opcodes, analog oscillators, EPROM voltage physics, pad strength, and
-metastability are not assigned invented silicon behavior. These limitations are
-tracked as `PARTIAL`, `NOT_IMPLEMENTED`, or `UNDEFINED_BY_DOCUMENTATION`, never
-hidden behind a support claim.
+complete manufacturer bus waveforms outside the specifically verified traces,
+and several P5 timer/programming modes remain incomplete.
+Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
+EPROM voltage physics, pad strength, and metastability are not assigned invented
+silicon behavior. These limitations are tracked as `PARTIAL`,
+`NOT_IMPLEMENTED`, or `UNDEFINED_BY_DOCUMENTATION`, never hidden behind a
+support claim.
 
 ## License and contribution
 

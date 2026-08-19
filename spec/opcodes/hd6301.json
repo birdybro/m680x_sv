@@ -15,31 +15,55 @@
     {
       "opcode": 0,
       "opcode_hex": "00",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 1,
@@ -79,60 +103,108 @@
     {
       "opcode": 2,
       "opcode_hex": "02",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 3,
       "opcode_hex": "03",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 4,
@@ -736,118 +808,214 @@
     {
       "opcode": 18,
       "opcode_hex": "12",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 19,
       "opcode_hex": "13",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 20,
       "opcode_hex": "14",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 21,
       "opcode_hex": "15",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 22,
@@ -1116,118 +1284,214 @@
     {
       "opcode": 28,
       "opcode_hex": "1C",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 29,
       "opcode_hex": "1D",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 30,
       "opcode_hex": "1E",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 31,
       "opcode_hex": "1F",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 32,
@@ -2568,60 +2832,108 @@
     {
       "opcode": 65,
       "opcode_hex": "41",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 66,
       "opcode_hex": "42",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 67,
@@ -2720,31 +3032,55 @@
     {
       "opcode": 69,
       "opcode_hex": "45",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 70,
@@ -2988,31 +3324,55 @@
     {
       "opcode": 75,
       "opcode_hex": "4B",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 76,
@@ -3108,31 +3468,55 @@
     {
       "opcode": 78,
       "opcode_hex": "4E",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 79,
@@ -3230,60 +3614,108 @@
     {
       "opcode": 81,
       "opcode_hex": "51",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 82,
       "opcode_hex": "52",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 83,
@@ -3382,31 +3814,55 @@
     {
       "opcode": 85,
       "opcode_hex": "55",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 86,
@@ -3650,31 +4106,55 @@
     {
       "opcode": 91,
       "opcode_hex": "5B",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 92,
@@ -3770,31 +4250,55 @@
     {
       "opcode": 94,
       "opcode_hex": "5E",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 95,
@@ -5686,31 +6190,55 @@
     {
       "opcode": 135,
       "opcode_hex": "87",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 136,
@@ -6045,31 +6573,55 @@
     {
       "opcode": 143,
       "opcode_hex": "8F",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 144,
@@ -8718,31 +9270,55 @@
     {
       "opcode": 199,
       "opcode_hex": "C7",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 200,
@@ -8987,31 +9563,55 @@
     {
       "opcode": 205,
       "opcode_hex": "CD",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 206,
@@ -9061,31 +9661,55 @@
     {
       "opcode": 207,
       "opcode_hex": "CF",
-      "classification": "undefined_behavior",
-      "mnemonic": null,
+      "classification": "documented_special_behavior",
+      "mnemonic": "TRAP",
       "aliases": [],
       "architectural_applicability": [
         "hd6301"
       ],
-      "addressing_mode": null,
-      "length": null,
-      "cycles": null,
+      "addressing_mode": "trap-on-fetch",
+      "length": 1,
+      "cycles": 13,
       "conditional_cycles": [],
-      "registers_read": [],
-      "registers_written": [],
+      "registers_read": [
+        "PC",
+        "SP",
+        "X",
+        "A",
+        "B",
+        "CCR"
+      ],
+      "registers_written": [
+        "PC",
+        "SP",
+        "CCR"
+      ],
       "flags_read": [],
-      "flags_affected": [],
+      "flags_affected": [
+        "I"
+      ],
       "flags_undefined": [],
-      "flag_semantics": {},
-      "memory_operations": [],
-      "stack_effects": [],
+      "flag_semantics": {
+        "I": "set after the pre-trap CCR value is stacked"
+      },
+      "memory_operations": [
+        "read undefined opcode at PC",
+        "read discarded byte at opcode address plus one",
+        "read FFFF during trap entry",
+        "read FFFF during the trap-only additional cycle",
+        "write seven-byte complete processor state to stack",
+        "read trap vector at FFEE:FFEF"
+      ],
+      "stack_effects": [
+        "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
+      ],
       "branch_behavior": null,
-      "vector_behavior": null,
+      "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501"
       },
-      "notes": "No architectural behavior is assigned by the cited Hitachi operation-code map."
+      "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP."
     },
     {
       "opcode": 208,

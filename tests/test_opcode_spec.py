@@ -130,6 +130,18 @@ class OpcodeSpecificationTests(unittest.TestCase):
         self.assertEqual(self.hd6301["opcodes"][0x19]["flags_undefined"], [])
         self.assertNotIn("V", self.hd6301["opcodes"][0x19]["flags_affected"])
 
+    def test_hd6301_undefined_map_cells_are_documented_traps(self) -> None:
+        traps = [
+            record for record in self.hd6301["opcodes"]
+            if record["classification"] == "documented_special_behavior"
+        ]
+        self.assertEqual(len(traps), 26)
+        for record in traps:
+            self.assertEqual(record["mnemonic"], "TRAP")
+            self.assertEqual(record["cycles"], 13)
+            self.assertEqual(record["length"], 1)
+            self.assertIn("FFEE:FFEF", record["vector_behavior"])
+
     def test_m6805_bit_test_and_clear_flag_facts(self) -> None:
         for opcode in range(0x10):
             self.assertEqual(self.m6805["opcodes"][opcode]["flags_affected"], ["C"])

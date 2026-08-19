@@ -156,6 +156,32 @@ class M6800ModelTests(unittest.TestCase):
         self.assertEqual(xgdx.state.d, 0x2000)
         self.assertEqual(xgdx.state.x, 0x1234)
 
+    def test_hd6301_opcode_and_instruction_address_traps_retry_fetch(self) -> None:
+        opcode_trap = _fixture("hd6301", 0x00)
+        opcode_trap.memory.load(0xFFEE, [0x12, 0x00])
+        trace = opcode_trap.step()
+        self.assertEqual(trace.mnemonic, "TRAP")
+        self.assertEqual(trace.documented_cycles, 13)
+        self.assertEqual(opcode_trap.state.pc, 0x1200)
+        self.assertEqual(opcode_trap.state.sp, 0x3FF9)
+        self.assertEqual(
+            [access.address for access in trace.accesses],
+            [0x1000, 0x1001, 0xFFFF, 0xFFFF,
+             0x4000, 0x3FFF, 0x3FFE, 0x3FFD, 0x3FFC, 0x3FFB, 0x3FFA,
+             0xFFEE, 0xFFEF],
+        )
+        opcode_trap.memory[0x1200] = 0x3B
+        opcode_trap.step()
+        self.assertEqual(opcode_trap.state.pc, 0x1000)
+
+        address_trap = _fixture("hd6301", 0x01)
+        address_trap.memory.load(0xFFEE, [0x13, 0x00])
+        address_trace = address_trap.step(instruction_address_error=True)
+        self.assertEqual(address_trace.mnemonic, "TRAP")
+        self.assertEqual(address_trap.state.pc, 0x1300)
+        self.assertEqual(address_trap.memory[0x4000], 0x00)
+        self.assertEqual(address_trap.memory[0x3FFF], 0x10)
+
     def test_reset_vector_and_trace_serialization(self) -> None:
         model = _fixture("m6800", 0x01)
         model.memory.load(0xFFFE, [0xAB, 0xCD])

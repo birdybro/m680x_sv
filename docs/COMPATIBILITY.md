@@ -43,8 +43,9 @@ profiles for the Motorola and Hitachi 6805-derived lineages.
 
 `PARTIAL` CPU status means every documented opcode encoding has architectural,
 cycle-total, and ordered semantic-bus comparison against the independent model,
-but detailed manufacturer bus-waveform coverage and remaining device-specific
-interrupt quirks are not yet complete. The MC68705P5 wrapper additionally has
+while the HD6301 profile also implements every documented opcode-error TRAP map
+value. Detailed manufacturer bus-waveform coverage and remaining device-specific
+interrupt sources are not yet complete. The MC68705P5 wrapper additionally has
 tested RAM/register decode, GPIO, base timer behavior, and interrupt priority;
 EPROM programming physics, every timer input/prescaler mode, and bootstrap-mode
 integration remain incomplete.
@@ -69,6 +70,11 @@ integration remain incomplete.
 - HD63705V0 has a 14-bit PC, stack top `00FF`, 192 bytes RAM, 4 KiB EPROM,
   31 GPIO lines, two timer functions, synchronous SCI, and wait/stop/standby
   modes. Its vector region is `1FF4`-`1FFF`.
+
+The normalized HD6301 CPU accepts a wrapper-generated instruction-address-error
+request and implements the documented 13-cycle TRAP entry, complete state
+stack, `$ffee:$ffef` vector, and retry PC. A full MCU claim still requires each
+device wrapper to decode its own non-memory space and generate that request.
 
 ## Deferred documented variants
 

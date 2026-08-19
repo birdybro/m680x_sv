@@ -96,16 +96,23 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
         ):
             raise OpcodeSpecError(f"{architecture}: invalid reference for {opcode:02X}")
 
-        if record["classification"] == "documented_instruction":
+        if record["classification"] in {
+            "documented_instruction", "documented_special_behavior"
+        }:
             if not isinstance(record["mnemonic"], str) or not record["mnemonic"]:
-                raise OpcodeSpecError(f"{architecture}: instruction {opcode:02X} needs mnemonic")
+                raise OpcodeSpecError(f"{architecture}: defined behavior {opcode:02X} needs mnemonic")
             if not isinstance(record["addressing_mode"], str) or not record["addressing_mode"]:
-                raise OpcodeSpecError(f"{architecture}: instruction {opcode:02X} needs addressing mode")
+                raise OpcodeSpecError(f"{architecture}: defined behavior {opcode:02X} needs addressing mode")
             if not isinstance(record["length"], int) or not 1 <= record["length"] <= 4:
                 raise OpcodeSpecError(f"{architecture}: invalid length for {opcode:02X}")
             if not isinstance(record["cycles"], int) or record["cycles"] <= 0:
                 raise OpcodeSpecError(f"{architecture}: missing cycles for {opcode:02X}")
-            if not record["memory_operations"] or record["memory_operations"][0] != "read opcode at PC":
+            if not record["memory_operations"]:
+                raise OpcodeSpecError(f"{architecture}: defined behavior {opcode:02X} needs memory facts")
+            if (
+                record["classification"] == "documented_instruction"
+                and record["memory_operations"][0] != "read opcode at PC"
+            ):
                 raise OpcodeSpecError(f"{architecture}: instruction {opcode:02X} needs opcode fetch")
         else:
             for field in ("mnemonic", "addressing_mode", "length", "cycles"):

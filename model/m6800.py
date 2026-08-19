@@ -116,15 +116,44 @@ class M6800Model:
         self._validate_state()
         return True
 
-    def step(self) -> InstructionTrace:
+    def step(self, *, instruction_address_error: bool = False) -> InstructionTrace:
         if self.state.waiting or self.state.sleeping:
             raise RuntimeError("processor is in a low-power state; service an interrupt or reset")
+        if instruction_address_error and self.architecture != "hd6301":
+            raise ValueError("instruction address traps apply only to the HD6301 profile")
         before = self.state.snapshot()
         defer_before = self._irq_defer_cycles
         start_pc = self.state.pc
         self._accesses = []
         opcode = self._fetch8("opcode")
         record = self.spec["opcodes"][opcode]
+        if self.architecture == "hd6301" and (
+            instruction_address_error
+            or record["classification"] == "documented_special_behavior"
+        ):
+            self.state.pc = start_pc
+            self._read8(start_pc + 1, "discarded post-opcode fetch")
+            self._read8(0xFFFF, "trap entry FFFF cycle")
+            self._read8(0xFFFF, "trap-only additional FFFF cycle")
+            self._stack_complete_state()
+            self.set_flag("I", True)
+            self._irq_defer_cycles = 0
+            self.state.pc = self._read16(0xFFEE, "TRAP vector")
+            self._validate_state()
+            trace = InstructionTrace(
+                instruction=self.instruction_count,
+                pc=start_pc,
+                opcode=opcode,
+                mnemonic="TRAP",
+                architecture=self.architecture,
+                documented_cycles=13,
+                state_before=before,
+                state_after=self.state.snapshot(),
+                accesses=list(self._accesses),
+            )
+            self.instruction_count += 1
+            self.last_trace = trace
+            return trace
         if record["classification"] != "documented_instruction":
             raise UndefinedBehavior(
                 f"{self.architecture} opcode {opcode:02X} is {record['classification']}"

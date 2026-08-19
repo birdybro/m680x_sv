@@ -96,6 +96,45 @@ def _undefined(opcode: int, architecture: str, reference_id: str, locator: str) 
     }
 
 
+def _opcode_trap(opcode: int, architecture: str, reference_id: str) -> dict:
+    return {
+        "opcode": opcode,
+        "opcode_hex": f"{opcode:02X}",
+        "classification": "documented_special_behavior",
+        "mnemonic": "TRAP",
+        "aliases": [],
+        "architectural_applicability": [architecture],
+        "addressing_mode": "trap-on-fetch",
+        "length": 1,
+        "cycles": 13,
+        "conditional_cycles": [],
+        "registers_read": ["PC", "SP", "X", "A", "B", "CCR"],
+        "registers_written": ["PC", "SP", "CCR"],
+        "flags_read": [],
+        "flags_affected": ["I"],
+        "flags_undefined": [],
+        "flag_semantics": {"I": "set after the pre-trap CCR value is stacked"},
+        "memory_operations": [
+            "read undefined opcode at PC",
+            "read discarded byte at opcode address plus one",
+            "read FFFF during trap entry",
+            "read FFFF during the trap-only additional cycle",
+            "write seven-byte complete processor state to stack",
+            "read trap vector at FFEE:FFEF",
+        ],
+        "stack_effects": [
+            "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR",
+        ],
+        "branch_behavior": None,
+        "vector_behavior": "unmaskable trap through FFEE:FFEF; RTI retries the undefined opcode",
+        "primary_reference": {
+            "id": reference_id,
+            "locator": "HD6301V1 section 2.13 printed page 167; Q&A III.5.2 figure III-8 printed pages 500-501",
+        },
+        "notes": "Every operation-code-map cell left undefined invokes the documented opcode-error TRAP.",
+    }
+
+
 def _operation_root(mnemonic: str) -> str:
     roots = (
         "SUBD",
@@ -823,7 +862,7 @@ def build_hd6301() -> dict:
                 record["flag_semantics"].pop("V")
                 record["notes"] = "Hitachi documents V as not affected; this differs from Motorola's undefined MC6801 DAA overflow state."
         else:
-            record["notes"] = "No architectural behavior is assigned by the cited Hitachi operation-code map."
+            record["notes"] = "Undefined map cells are converted to documented opcode traps after applying Hitachi extensions."
 
     extensions = {
         0x18: ("XGDX", "inherent", 1, 2),
@@ -852,6 +891,12 @@ def build_hd6301() -> dict:
                 notes="Hitachi extension to the HD6801 instruction set.",
             ),
         )
+
+    for record in list(records):
+        if record["classification"] == "undefined_behavior":
+            records[record["opcode"]] = _opcode_trap(
+                record["opcode"], architecture, reference_id
+            )
 
     return {
         "schema_version": 1,

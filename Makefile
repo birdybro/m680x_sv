@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -26,6 +26,7 @@ help:
 	@echo "  test-m6805-opcodes compare all documented M6805 encodings to the model"
 	@echo "  test-hitachi run HD6301/HD6305 model regressions"
 	@echo "  test-hd6301-opcodes compare all documented HD6301 encodings to the model"
+	@echo "  test-hd6301-trap verify opcode/address TRAP retry and exact entry trace"
 	@echo "  test-hd6305-opcodes compare all documented HD6305 encodings to the model"
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
@@ -161,6 +162,14 @@ test-hd6301-opcodes:
 		sim/tb_m6800_opcodes.sv
 	build/obj_hd6301_opcodes/Vtb_hd6301_opcodes
 
+test-hd6301-trap:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_hd6301_trap \
+		-Mdir build/obj_hd6301_trap -o Vtb_hd6301_trap \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv sim/tb_hd6301_trap.sv
+	build/obj_hd6301_trap/Vtb_hd6301_trap
+
 test-hd6305-opcodes:
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6805_opcodes \
@@ -182,7 +191,7 @@ test-alu-rtl:
 
 test-cycle: test-m6800-opcodes test-m6801-opcodes test-hd6301-opcodes test-m6805-opcodes test-hd6305-opcodes
 
-test-interrupts: test-m6800-rtl test-m6805-rtl test-interrupt-delay
+test-interrupts: test-m6800-rtl test-m6805-rtl test-interrupt-delay test-hd6301-trap
 
 test-interrupt-delay:
 	mkdir -p build
@@ -276,6 +285,9 @@ test-iverilog: spec-check
 	$(IVERILOG) -g2012 -Wall -s tb_m6805_interrupt_delay -o build/iverilog/delay_hd6305 \
 		rtl/generated/yosys_m6805_core.sv sim/tb_interrupt_delay.sv
 	$(VVP) build/iverilog/delay_hd6305
+	$(IVERILOG) -g2012 -Wall -s tb_hd6301_trap -o build/iverilog/tb_hd6301_trap \
+		rtl/generated/yosys_m6800_core.sv sim/tb_hd6301_trap.sv
+	$(VVP) build/iverilog/tb_hd6301_trap
 
 formal: spec-check
 	mkdir -p build
@@ -296,7 +308,7 @@ synth: spec-check
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 
-ci: lint test test-alu-rtl test-m6800-rtl test-m6801-opcodes test-hd6301-opcodes test-m6805-rtl test-hd6305-opcodes test-interrupt-delay test-peripherals test-random test-iverilog formal synth
+ci: lint test test-alu-rtl test-m6800-rtl test-m6801-opcodes test-hd6301-opcodes test-hd6301-trap test-m6805-rtl test-hd6305-opcodes test-interrupt-delay test-peripherals test-random test-iverilog formal synth
 
 clean:
 	rm -rf build obj_dir

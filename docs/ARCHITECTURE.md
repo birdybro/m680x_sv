@@ -64,7 +64,18 @@ The state machine contains A, B, X, SP, PC, and H/I/N/Z/V/C state. It implements
 the original M6800 modes, MC6801 D-register/stack/index/multiply extensions, and
 the HD6301 immediate-mask, exchange, and sleep instructions. NMI is edge-latched;
 IRQ is level-sensitive and masked by I. `interrupt_vector_o` identifies the
-selected reset/NMI/IRQ class to a future device wrapper.
+selected reset/NMI/IRQ/TRAP class to a future device wrapper. The HD6301 profile
+uses vector identifier `3` for TRAP.
+
+`instruction_address_error_i` is meaningful only for the HD6301 profile. A
+device wrapper asserts it with an attempted opcode fetch from its documented
+non-memory address space. Either that input or one of the 26 unassigned HD6301
+opcode-map values invokes the unmaskable `$ffee:$ffef` TRAP vector. The core
+retains the faulting opcode address as the stacked retry PC, so RTI refetches
+the opcode. Its verified normalized-bus sequence is the faulting opcode fetch,
+a discarded read at PC+1, two reads at `$ffff`, seven descending stack writes,
+and the two vector reads: 13 cycles in total. Data accesses do not use the
+instruction-address-error input.
 
 The profile also controls the documented I-mask clearing boundary. MC6801
 defers a pending maskable interrupt through the following instruction after

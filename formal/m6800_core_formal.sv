@@ -9,6 +9,7 @@ module m6800_core_formal #(
   (* anyseq *) logic bus_ready;
   (* anyseq *) logic irq_n;
   (* anyseq *) logic nmi_n;
+  (* anyseq *) logic instruction_address_error;
   (* anyseq *) logic [7:0] data_in;
   logic [15:0] address;
   logic [7:0] data_out;
@@ -36,7 +37,8 @@ module m6800_core_formal #(
 
   m6800_core #(.ARCHITECTURE(ARCHITECTURE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(clock_enable),
-    .bus_ready_i(bus_ready), .irq_n_i(irq_n), .nmi_n_i(nmi_n), .data_i(data_in),
+    .bus_ready_i(bus_ready), .irq_n_i(irq_n), .nmi_n_i(nmi_n),
+    .instruction_address_error_i(instruction_address_error), .data_i(data_in),
     .address_o(address), .data_o(data_out), .write_o(write_enable),
     .bus_valid_o(bus_valid), .opcode_fetch_o(opcode_fetch), .retire_o(retire),
     .illegal_o(illegal), .undefined_o(undefined_value), .waiting_o(waiting_state),
@@ -51,7 +53,7 @@ module m6800_core_formal #(
     assert (!write_enable || bus_valid);
     assert (!opcode_fetch || (bus_valid && !write_enable));
     assert (!(waiting_state && sleeping_state));
-    assert (interrupt_vector != 2'b11);
+    assert ((interrupt_vector != 2'b11) || (ARCHITECTURE == 2'd2));
   end
 
   always @(posedge clk) begin

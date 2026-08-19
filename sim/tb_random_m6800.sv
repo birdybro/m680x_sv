@@ -38,7 +38,8 @@ module tb_random_m6800 #(
 
   m6800_core #(.ARCHITECTURE(TEST_ARCHITECTURE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1), .bus_ready_i(1'b1),
-    .irq_n_i(1'b1), .nmi_n_i(1'b1), .data_i(data_in), .address_o(address),
+    .irq_n_i(1'b1), .nmi_n_i(1'b1), .instruction_address_error_i(1'b0),
+    .data_i(data_in), .address_o(address),
     .data_o(data_out), .write_o(write_enable), .bus_valid_o(bus_valid),
     .opcode_fetch_o(opcode_fetch), .retire_o(retire), .illegal_o(illegal),
     .undefined_o(undefined_value), .waiting_o(waiting_state), .sleeping_o(sleeping_state),

@@ -10,6 +10,7 @@ module m6800_core #(
   input  logic        bus_ready_i,
   input  logic        irq_n_i,
   input  logic        nmi_n_i,
+  input  logic        instruction_address_error_i,
   input  logic [7:0]  data_i,
   output logic [15:0] address_o,
   output logic [7:0]  data_o,
@@ -1646,6 +1647,7 @@ module m6800_core #(
   logic [15:0] vector_address;
   logic [7:0] immediate_mask;
   logic [1:0] interrupt_enable_delay;
+  logic trap_interrupt;
 
   opcode_decode_t fetched_decode;
   logic decoded_sane;
@@ -2367,7 +2369,13 @@ module m6800_core #(
           default: data_o = {2'b11, condition_codes};
         endcase
       end
-      ST_INTERRUPT_DELAY, ST_INTERRUPT_POST: ;
+      ST_INTERRUPT_DELAY: begin
+        if (ARCHITECTURE == 2'd2) begin
+          address_o = (phase == 3'd0) ? program_counter + 16'h0001 : 16'hffff;
+          bus_valid_o = 1'b1;
+        end
+      end
+      ST_INTERRUPT_POST: ;
       ST_INTERRUPT_VECTOR_HIGH: begin
         address_o = vector_address;
         bus_valid_o = 1'b1;
@@ -2409,6 +2417,7 @@ module m6800_core #(
       vector_address <= 16'hfffa;
       immediate_mask <= 8'h00;
       interrupt_enable_delay <= 2'd0;
+      trap_interrupt <= 1'b0;
       retire_o <= 1'b0;
       illegal_o <= 1'b0;
       undefined_o <= 1'b0;
@@ -2437,11 +2446,22 @@ module m6800_core #(
           state <= ST_FETCH;
         end
         ST_FETCH: begin
-          if (nmi_requested() ||
+          if ((ARCHITECTURE == 2'd2) && instruction_address_error_i) begin
+            instruction_register <= data_i;
+            decoded <= fetched_decode;
+            vector_address <= 16'hffee;
+            interrupt_vector_o <= 2'b11;
+            phase <= 3'd0;
+            interrupt_is_wait <= 1'b0;
+            external_interrupt <= 1'b1;
+            trap_interrupt <= 1'b1;
+            state <= ST_INTERRUPT_DELAY;
+          end else if (nmi_requested() ||
               (!irq_n_i && !condition_codes[CCR_I] && (interrupt_enable_delay == 2'd0))) begin
             phase <= 3'd0;
             interrupt_is_wait <= 1'b0;
             external_interrupt <= 1'b1;
+            trap_interrupt <= 1'b0;
             if (nmi_requested()) begin
               vector_address <= 16'hfffc;
               interrupt_vector_o <= 2'b10;
@@ -2454,11 +2474,22 @@ module m6800_core #(
           end else begin
             instruction_register <= data_i;
             decoded <= fetched_decode;
-            program_counter <= program_counter + 16'h0001;
             if (!fetched_decode.valid) begin
-              illegal_o <= 1'b1;
-              state <= ST_ILLEGAL;
+              if (ARCHITECTURE == 2'd2) begin
+                vector_address <= 16'hffee;
+                interrupt_vector_o <= 2'b11;
+                phase <= 3'd0;
+                interrupt_is_wait <= 1'b0;
+                external_interrupt <= 1'b1;
+                trap_interrupt <= 1'b1;
+                state <= ST_INTERRUPT_DELAY;
+              end else begin
+                program_counter <= program_counter + 16'h0001;
+                illegal_o <= 1'b1;
+                state <= ST_ILLEGAL;
+              end
             end else begin
+              program_counter <= program_counter + 16'h0001;
               cycles_left <= fetched_decode.cycles - 4'd1;
               if ((ARCHITECTURE == 2'd2) && (fetched_decode.cycles == 4'd1)) begin
                 execute_single_cycle(fetched_decode.operation, fetched_decode.target);
@@ -2601,7 +2632,7 @@ module m6800_core #(
           finish_to(ST_FETCH);
         end
         ST_INTERRUPT_DELAY: begin
-          if (phase == 3'd1) begin
+          if (phase == (trap_interrupt ? 3'd2 : 3'd1)) begin
             phase <= 3'd0;
             state <= ST_INTERRUPT_PUSH;
           end else begin
@@ -2616,7 +2647,11 @@ module m6800_core #(
             end else begin
               condition_codes[CCR_I] <= 1'b1;
               if (external_interrupt) begin
-                state <= ST_INTERRUPT_POST;
+                if (trap_interrupt) begin
+                  state <= ST_INTERRUPT_VECTOR_HIGH;
+                end else begin
+                  state <= ST_INTERRUPT_POST;
+                end
               end else begin
                 state <= ST_INTERRUPT_VECTOR_HIGH;
               end
@@ -2634,6 +2669,7 @@ module m6800_core #(
           program_counter <= {temporary_high, data_i};
           if (external_interrupt) begin
             external_interrupt <= 1'b0;
+            trap_interrupt <= 1'b0;
             state <= ST_FETCH;
             interrupt_ack_o <= 1'b1;
           end else begin
@@ -2663,6 +2699,7 @@ module m6800_core #(
         ST_WAITING: begin
           if (nmi_requested() || (!irq_n_i && !condition_codes[CCR_I])) begin
             external_interrupt <= 1'b1;
+            trap_interrupt <= 1'b0;
             condition_codes[CCR_I] <= 1'b1;
             if (nmi_requested()) begin
               vector_address <= 16'hfffc;
@@ -2680,6 +2717,7 @@ module m6800_core #(
             phase <= 3'd0;
             interrupt_is_wait <= 1'b0;
             external_interrupt <= 1'b1;
+            trap_interrupt <= 1'b0;
             if (nmi_requested()) begin
               vector_address <= 16'hfffc;
               interrupt_vector_o <= 2'b10;

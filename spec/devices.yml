@@ -45,10 +45,10 @@
       "addressing_modes": ["accumulator", "inherent", "immediate", "relative", "indexed-unsigned-8", "direct", "extended", "immediate-mask-direct", "immediate-mask-indexed"],
       "stack_behavior": "M6801-compatible 16-bit descending stack; interrupt entry stacks seven bytes and SP identifies the next free byte.",
       "base_reset_behavior": "M6801-compatible reset plus device register initialization and reset-vector fetch from FFFE:FFFF.",
-      "base_interrupt_behavior": "M6801-compatible priorities plus an unmaskable documented TRAP at FFEE:FFEF for address or opcode error. After CLI or an I-clearing TAP, maskable recognition waits the documented two machine cycles.",
+      "base_interrupt_behavior": "M6801-compatible priorities plus an unmaskable documented TRAP at FFEE:FFEF for instruction-address or opcode error. TRAP stacks the faulting opcode address for retry and has four pre-stack bus cycles: opcode, PC+1, FFFF, FFFF. After CLI or an I-clearing TAP, maskable recognition waits the documented two machine cycles.",
       "opcode_lineage": "M6801 instruction set plus AIM, OIM, EIM, TIM, XGDX, and SLP, with Hitachi-specific cycle counts.",
       "undefined_behavior": ["Only opcode and address errors described by the handbook are claimed to trap; electrical or revision-dependent behavior beyond those conditions remains unclaimed."],
-      "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD6301V1 section 3.2, printed pages 170-178; interrupt table 2-7-1"]}]
+      "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD6301V1 section 3.2, printed pages 170-178; interrupt table 2-7-1; Q&A III.5.2 and figure III-8"]}]
     },
     "hd6305": {
       "lineage": "Hitachi enhancement of the M6805 architecture.",

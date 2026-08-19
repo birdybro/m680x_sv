@@ -24,7 +24,8 @@ module tb_m6800_interrupt_delay #(
   /* verilator lint_off PINCONNECTEMPTY */
   m6800_core #(.ARCHITECTURE(TEST_ARCHITECTURE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1), .bus_ready_i(1'b1),
-    .irq_n_i(1'b0), .nmi_n_i(1'b1), .data_i(data_in), .address_o(address),
+    .irq_n_i(1'b0), .nmi_n_i(1'b1), .instruction_address_error_i(1'b0),
+    .data_i(data_in), .address_o(address),
     .data_o(data_out), .write_o(write_enable), .bus_valid_o(bus_valid),
     .opcode_fetch_o(), .retire_o(retire), .illegal_o(), .undefined_o(),
     .waiting_o(), .sleeping_o(), .interrupt_ack_o(interrupt_ack),

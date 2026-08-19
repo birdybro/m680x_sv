@@ -44,6 +44,7 @@ module tb_m6800_core;
     .bus_ready_i(bus_ready),
     .irq_n_i(irq_n),
     .nmi_n_i(nmi_n),
+    .instruction_address_error_i(1'b0),
     .data_i(data_in),
     .address_o(address),
     .data_o(data_out),
