@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
-module m6800_core (
+module m6800_core #(
+  parameter logic [1:0] ARCHITECTURE = 2'd0
+) (
   input  logic        clk_i,
   input  logic        reset_n_i,
   input  logic        clock_enable_i,
@@ -62,6 +64,10 @@ module m6800_core (
     ST_PULL_PC_LOW,
     ST_PUSH_BYTE,
     ST_PULL_BYTE,
+    ST_PUSH_X_LOW,
+    ST_PUSH_X_HIGH,
+    ST_PULL_X_HIGH,
+    ST_PULL_X_LOW,
     ST_INTERRUPT_DELAY,
     ST_INTERRUPT_PUSH,
     ST_INTERRUPT_POST,
@@ -144,14 +150,14 @@ module m6800_core (
 
   function automatic logic is_word_read(input operation_t operation);
     case (operation)
-      OP_CPX, OP_LDS, OP_LDX: is_word_read = 1'b1;
+      OP_CPX, OP_LDS, OP_LDX, OP_LDD, OP_ADDD, OP_SUBD: is_word_read = 1'b1;
       default: is_word_read = 1'b0;
     endcase
   endfunction
 
   function automatic logic is_word_store(input operation_t operation);
     case (operation)
-      OP_STS, OP_STX: is_word_store = 1'b1;
+      OP_STS, OP_STX, OP_STD: is_word_store = 1'b1;
       default: is_word_store = 1'b0;
     endcase
   endfunction
@@ -250,7 +256,11 @@ module m6800_core (
         set_nzv8(selected_byte(decoded.target));
         state <= ST_MEMORY_WRITE;
       end else if (is_word_store(decoded.operation)) begin
-        store_value = (decoded.operation == OP_STX) ? index_register : stack_pointer;
+        case (decoded.operation)
+          OP_STX: store_value = index_register;
+          OP_STS: store_value = stack_pointer;
+          default: store_value = {accumulator_a, accumulator_b};
+        endcase
         word_value <= store_value;
         condition_codes[CCR_N] <= store_value[15];
         condition_codes[CCR_Z] <= (store_value == 16'h0000);
@@ -360,7 +370,10 @@ module m6800_core (
 
   task automatic execute_word(input logic [15:0] operand);
     logic [15:0] result_value;
+    alu16_result_t word_result;
     begin
+      result_value = 16'h0000;
+      word_result = '0;
       case (decoded.operation)
         OP_CPX: begin
           result_value = index_register - operand;
@@ -368,6 +381,7 @@ module m6800_core (
           condition_codes[CCR_Z] <= (result_value == 16'h0000);
           condition_codes[CCR_V] <=
             (index_register[15] ^ operand[15]) & (index_register[15] ^ result_value[15]);
+          if (ARCHITECTURE != 2'd0) condition_codes[CCR_C] <= (index_register < operand);
         end
         OP_LDX: begin
           index_register <= operand;
@@ -381,6 +395,26 @@ module m6800_core (
           condition_codes[CCR_Z] <= (operand == 16'h0000);
           condition_codes[CCR_V] <= 1'b0;
         end
+        OP_LDD: begin
+          accumulator_a <= operand[15:8];
+          accumulator_b <= operand[7:0];
+          condition_codes[CCR_N] <= operand[15];
+          condition_codes[CCR_Z] <= (operand == 16'h0000);
+          condition_codes[CCR_V] <= 1'b0;
+        end
+        OP_ADDD, OP_SUBD: begin
+          if (decoded.operation == OP_ADDD) begin
+            word_result = add16({accumulator_a, accumulator_b}, operand);
+          end else begin
+            word_result = sub16({accumulator_a, accumulator_b}, operand);
+          end
+          accumulator_a <= word_result.value[15:8];
+          accumulator_b <= word_result.value[7:0];
+          condition_codes[CCR_N] <= word_result.n;
+          condition_codes[CCR_Z] <= word_result.z;
+          condition_codes[CCR_V] <= word_result.v;
+          condition_codes[CCR_C] <= word_result.c;
+        end
         default: begin
           illegal_o <= 1'b1;
           state <= ST_ILLEGAL;
@@ -393,9 +427,11 @@ module m6800_core (
   task automatic execute_inherent();
     alu8_result_t result_value;
     daa_result_t decimal_value;
+    logic [15:0] inherent_word;
     begin
       result_value = '0;
       decimal_value = '0;
+      inherent_word = 16'h0000;
       case (decoded.operation)
         OP_NOP: finish_to(ST_FETCH);
         OP_TAP: begin
@@ -463,6 +499,41 @@ module m6800_core (
             result_value.v, result_value.c);
           finish_to(ST_FETCH);
         end
+        OP_LSRD, OP_ASLD: begin
+          if (decoded.operation == OP_LSRD) begin
+            inherent_word = {accumulator_a, accumulator_b} >> 1;
+            condition_codes[CCR_N] <= 1'b0;
+            condition_codes[CCR_C] <= accumulator_b[0];
+            condition_codes[CCR_V] <= accumulator_b[0];
+          end else begin
+            inherent_word = {accumulator_a, accumulator_b} << 1;
+            condition_codes[CCR_N] <= accumulator_a[6];
+            condition_codes[CCR_C] <= accumulator_a[7];
+            condition_codes[CCR_V] <= accumulator_a[6] ^ accumulator_a[7];
+          end
+          accumulator_a <= inherent_word[15:8];
+          accumulator_b <= inherent_word[7:0];
+          condition_codes[CCR_Z] <= (inherent_word == 16'h0000);
+          finish_to(ST_FETCH);
+        end
+        OP_ABX: begin
+          index_register <= index_register + {8'h00, accumulator_b};
+          finish_to(ST_FETCH);
+        end
+        OP_MUL: begin
+          inherent_word = mul8(accumulator_a, accumulator_b);
+          accumulator_a <= inherent_word[15:8];
+          accumulator_b <= inherent_word[7:0];
+          condition_codes[CCR_C] <= inherent_word[7];
+          finish_to(ST_FETCH);
+        end
+        OP_XGDX: begin
+          inherent_word = {accumulator_a, accumulator_b};
+          accumulator_a <= index_register[15:8];
+          accumulator_b <= index_register[7:0];
+          index_register <= inherent_word;
+          finish_to(ST_FETCH);
+        end
         OP_TSX: begin
           index_register <= stack_pointer + 16'h0001;
           finish_to(ST_FETCH);
@@ -482,6 +553,8 @@ module m6800_core (
         OP_PULA, OP_PULB: begin
           state <= ST_PULL_BYTE;
         end
+        OP_PSHX: state <= ST_PUSH_X_LOW;
+        OP_PULX: state <= ST_PULL_X_HIGH;
         OP_RTS: state <= ST_PULL_PC_HIGH;
         OP_RTI: begin
           phase <= 3'd0;
@@ -578,6 +651,22 @@ module m6800_core (
         address_o = stack_pointer;
         data_o = write_data;
         write_o = 1'b1;
+        bus_valid_o = 1'b1;
+      end
+      ST_PUSH_X_LOW: begin
+        address_o = stack_pointer;
+        data_o = index_register[7:0];
+        write_o = 1'b1;
+        bus_valid_o = 1'b1;
+      end
+      ST_PUSH_X_HIGH: begin
+        address_o = stack_pointer;
+        data_o = index_register[15:8];
+        write_o = 1'b1;
+        bus_valid_o = 1'b1;
+      end
+      ST_PULL_X_HIGH, ST_PULL_X_LOW: begin
+        address_o = stack_pointer + 16'h0001;
         bus_valid_o = 1'b1;
       end
       ST_INTERRUPT_PUSH: begin
@@ -778,6 +867,24 @@ module m6800_core (
           else accumulator_b <= data_i;
           finish_to(ST_FETCH);
         end
+        ST_PUSH_X_LOW: begin
+          stack_pointer <= stack_pointer - 16'h0001;
+          state <= ST_PUSH_X_HIGH;
+        end
+        ST_PUSH_X_HIGH: begin
+          stack_pointer <= stack_pointer - 16'h0001;
+          finish_to(ST_FETCH);
+        end
+        ST_PULL_X_HIGH: begin
+          stack_pointer <= stack_pointer + 16'h0001;
+          temporary_high <= data_i;
+          state <= ST_PULL_X_LOW;
+        end
+        ST_PULL_X_LOW: begin
+          stack_pointer <= stack_pointer + 16'h0001;
+          index_register <= {temporary_high, data_i};
+          finish_to(ST_FETCH);
+        end
         ST_INTERRUPT_DELAY: begin
           if (phase == 3'd1) begin
             phase <= 3'd0;
@@ -854,7 +961,8 @@ module m6800_core (
     end
   end
 
-  assign fetched_decode = decode_m6800(data_i);
+  assign fetched_decode = (ARCHITECTURE == 2'd0) ? decode_m6800(data_i) :
+    ((ARCHITECTURE == 2'd1) ? decode_m6801(data_i) : decode_hd6301(data_i));
   assign decoded_sane = decoded.valid && (decoded.mode != AM_NONE) &&
     (decoded.length != 2'd0) && (decoded.bit_index == 3'd0);
   assign waiting_o = (state == ST_WAITING);

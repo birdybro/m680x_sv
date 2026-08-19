@@ -1,7 +1,7 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6805 test-hitachi test-alu test-alu-rtl quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-hitachi test-alu test-alu-rtl quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -17,6 +17,7 @@ help:
 	@echo "  test-m6800-rtl run the compiled M6800 core regression"
 	@echo "  test-m6800-opcodes compare all documented M6800 encodings to the model"
 	@echo "  test-m6801  run MC6801/MC6803 model regressions"
+	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
 	@echo "  test-m6805  run M6805-lineage model regressions"
 	@echo "  test-hitachi run HD6301/HD6305 model regressions"
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
@@ -51,6 +52,9 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core -GARCHITECTURE=1 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -78,8 +82,17 @@ test-m6800-opcodes:
 		sim/tb_m6800_opcodes.sv
 	build/obj_m6800_opcodes/Vtb_m6800_opcodes
 
-test-m6801:
+test-m6801: test-m6801-opcodes
 	$(PYTHON) -m unittest tests.test_m6800_model -v
+
+test-m6801-opcodes:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_opcodes \
+		-GTEST_ARCHITECTURE=1 -Mdir build/obj_m6801_opcodes -o Vtb_m6801_opcodes \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/m6800_opcode_vectors_pkg.sv rtl/m6800/m6800_core.sv \
+		sim/tb_m6800_opcodes.sv
+	build/obj_m6801_opcodes/Vtb_m6801_opcodes
 
 test-m6805:
 	$(PYTHON) -m unittest tests.test_m6805_model -v

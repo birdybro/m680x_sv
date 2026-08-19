@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
-module tb_m6800_opcodes;
+module tb_m6800_opcodes #(
+  parameter logic [1:0] TEST_ARCHITECTURE = 2'd0
+);
   import m6800_opcode_vectors_pkg::*;
+
+  localparam int unsigned VECTOR_COUNT =
+    (TEST_ARCHITECTURE == 2'd0) ? M6800_VECTOR_COUNT : M6801_VECTOR_COUNT;
 
   logic clk;
   logic reset_n;
@@ -25,15 +30,15 @@ module tb_m6800_opcodes;
   logic [7:0] debug_opcode;
   logic [3:0] debug_cycles;
   logic [7:0] memory [0:65535];
-  m6800_vector_t expected_vector;
-  m6800_access_t expected_access;
+  opcode_vector_t expected_vector;
+  opcode_access_t expected_access;
   integer vector_index;
   integer memory_index;
   integer cycle_count;
   integer access_count;
   integer setup_instruction;
 
-  m6800_core dut (
+  m6800_core #(.ARCHITECTURE(TEST_ARCHITECTURE)) dut (
     .clk_i(clk),
     .reset_n_i(reset_n),
     .clock_enable_i(1'b1),
@@ -152,8 +157,9 @@ module tb_m6800_opcodes;
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
-    for (vector_index = 0; vector_index < M6800_VECTOR_COUNT; vector_index = vector_index + 1) begin
-      expected_vector = m6800_vector(vector_index);
+    for (vector_index = 0; vector_index < VECTOR_COUNT; vector_index = vector_index + 1) begin
+      expected_vector = (TEST_ARCHITECTURE == 2'd0) ?
+        m6800_vector(vector_index) : m6801_vector(vector_index);
       initialize_fixture(expected_vector.opcode);
       cycle_count = 0;
       access_count = 0;
@@ -163,7 +169,9 @@ module tb_m6800_opcodes;
             $fatal(1, "opcode %02x emitted unexpected access %0d addr=%04x",
               expected_vector.opcode, access_count, address);
           end
-          expected_access = m6800_access(vector_index[7:0], access_count[7:0]);
+          expected_access = (TEST_ARCHITECTURE == 2'd0) ?
+            m6800_access(vector_index[7:0], access_count[7:0]) :
+            m6801_access(vector_index[7:0], access_count[7:0]);
           if ((access_count == 0) && !opcode_fetch) begin
             $fatal(1, "opcode %02x first access was not marked as fetch", expected_vector.opcode);
           end
@@ -197,8 +205,8 @@ module tb_m6800_opcodes;
           waiting_state, expected_vector.waiting_state, illegal, undefined_value);
       end
     end
-    $display("M6800 OPCODE PASS: %0d documented encodings, architectural bus accesses and cycle totals",
-      M6800_VECTOR_COUNT);
+    $display("M6800-FAMILY OPCODE PASS: architecture=%0d, %0d documented encodings, architectural bus accesses and cycle totals",
+      TEST_ARCHITECTURE, VECTOR_COUNT);
     $finish;
   end
 endmodule
