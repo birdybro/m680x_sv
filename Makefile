@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -31,6 +31,8 @@ help:
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
 	@echo "  test-cycle  verify documented instruction cycles and semantic bus accesses"
 	@echo "  test-interrupts run reset, IRQ, NMI, SWI, WAI, and RTI regressions"
+	@echo "  test-peripherals run every implemented MCU peripheral profile"
+	@echo "  test-mc68705p5 run MC68705P5 memory, GPIO, timer, and interrupt tests"
 	@echo "  test-random run 5,120 deterministic model/RTL retirement comparisons"
 	@echo "  test-iverilog run both directed core suites with the secondary simulator"
 	@echo "  formal      prove bounded core safety and stall invariants with Yosys"
@@ -55,6 +57,7 @@ spec-build:
 
 spec-check: refs-check
 	$(PYTHON) -m tools.validate_devices
+	$(PYTHON) -m tools.validate_peripherals
 	$(PYTHON) -m tools.build_opcode_specs --check
 	$(PYTHON) -m tools.validate_opcodes
 	$(PYTHON) -m tools.build_rtl_decode --check
@@ -83,6 +86,9 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6805_core -GHITACHI_PROFILE=1 \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6805/m6805_core.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module mc68705p5_mcu \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6805/m6805_core.sv rtl/m6805/mc68705p5_mcu.sv
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -177,6 +183,16 @@ test-cycle: test-m6800-opcodes test-m6801-opcodes test-hd6301-opcodes test-m6805
 
 test-interrupts: test-m6800-rtl test-m6805-rtl
 
+test-peripherals: test-mc68705p5
+
+test-mc68705p5:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_mc68705p5_mcu \
+		-Mdir build/obj_mc68705p5 -o Vtb_mc68705p5 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6805/m6805_core.sv rtl/m6805/mc68705p5_mcu.sv sim/tb_mc68705p5_mcu.sv
+	build/obj_mc68705p5/Vtb_mc68705p5
+
 test-random: test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305
 
 test-random-m6800:
@@ -227,6 +243,9 @@ test-iverilog: spec-check
 	$(IVERILOG) -g2012 -Wall -s tb_m6805_core -o build/iverilog/tb_m6805_core \
 		rtl/generated/yosys_m6805_core.sv sim/tb_m6805_core.sv
 	$(VVP) build/iverilog/tb_m6805_core
+	$(IVERILOG) -g2012 -Wall -s tb_mc68705p5_mcu -o build/iverilog/tb_mc68705p5 \
+		rtl/generated/yosys_m6805_core.sv rtl/m6805/mc68705p5_mcu.sv sim/tb_mc68705p5_mcu.sv
+	$(VVP) build/iverilog/tb_mc68705p5
 
 formal: spec-check
 	mkdir -p build
@@ -243,10 +262,11 @@ synth: spec-check
 	$(YOSYS) -ql build/synth_hd6301.log -s synth/hd6301.ys
 	$(YOSYS) -ql build/synth_m6805.log -s synth/m6805.ys
 	$(YOSYS) -ql build/synth_hd6305.log -s synth/hd6305.ys
+	$(YOSYS) -ql build/synth_mc68705p5.log -s synth/mc68705p5.ys
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 
-ci: lint test test-alu-rtl test-m6800-rtl test-m6801-opcodes test-hd6301-opcodes test-m6805-rtl test-hd6305-opcodes test-random test-iverilog formal synth
+ci: lint test test-alu-rtl test-m6800-rtl test-m6801-opcodes test-hd6301-opcodes test-m6805-rtl test-hd6305-opcodes test-peripherals test-random test-iverilog formal synth
 
 clean:
 	rm -rf build obj_dir

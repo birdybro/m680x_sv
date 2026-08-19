@@ -19,12 +19,25 @@ class DeviceSpecificationTests(unittest.TestCase):
     def test_repository_device_specification_is_valid(self) -> None:
         validate_devices.validate_devices(self.spec, self.references)
 
-    def test_all_current_v1_support_claims_are_honest(self) -> None:
+    def test_no_current_v1_dimension_is_claimed_complete(self) -> None:
         for device in self.spec["devices"]:
             if device["release_target"] != "v1":
                 continue
             self.assertNotIn("COMPLETE", device["status"].values(), device["id"])
-            self.assertNotIn("PARTIAL", device["status"].values(), device["id"])
+
+    def test_partial_claims_match_committed_implementation_evidence(self) -> None:
+        devices = {device["id"]: device for device in self.spec["devices"]}
+        for device in devices.values():
+            self.assertEqual(device["status"]["cpu_core"], "PARTIAL")
+            self.assertEqual(device["status"]["architectural_tests"], "PARTIAL")
+            self.assertEqual(device["status"]["cycle_count_tests"], "PARTIAL")
+            self.assertEqual(device["status"]["bus_trace_tests"], "PARTIAL")
+        p5 = devices["mc68705p5"]["status"]
+        for dimension in ("device_wrapper", "internal_memory", "gpio", "timer"):
+            self.assertEqual(p5[dimension], "PARTIAL")
+        for device_id, device in devices.items():
+            if device_id != "mc68705p5" and device["implementation_scope"] == "FULL_MCU":
+                self.assertEqual(device["status"]["device_wrapper"], "NOT_IMPLEMENTED")
 
     def test_unknown_architecture_is_rejected(self) -> None:
         broken = deepcopy(self.spec)

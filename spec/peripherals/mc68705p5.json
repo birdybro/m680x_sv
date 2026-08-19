@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "device": "mc68705p5",
+  "address_width": 11,
+  "memory_regions": [
+    {"start": "000", "end": "00F", "kind": "io", "access": "device-register-dependent"},
+    {"start": "010", "end": "07F", "kind": "ram", "access": "read-write"},
+    {"start": "080", "end": "783", "kind": "user-eprom", "access": "read-normal-program-bootstrap"},
+    {"start": "784", "end": "784", "kind": "mask-option-eprom", "access": "read-normal-program-bootstrap"},
+    {"start": "785", "end": "7F7", "kind": "bootstrap-rom", "access": "read-only"},
+    {"start": "7F8", "end": "7FF", "kind": "user-eprom-vectors", "access": "read-normal-program-bootstrap"}
+  ],
+  "registers": [
+    {"address": "000", "name": "PORTA", "read": "output latch where DDRA=1, pin where DDRA=0", "write": "output latch", "reset": "UNDEFINED_BY_DOCUMENTATION", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "figure 16 and Input/Output, printed pages 12-14"}},
+    {"address": "001", "name": "PORTB", "read": "output latch where DDRB=1, pin where DDRB=0", "write": "output latch", "reset": "UNDEFINED_BY_DOCUMENTATION", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "figure 16 and Input/Output, printed pages 12-14"}},
+    {"address": "002", "name": "PORTC", "read": "upper nibble one; lower output latch where DDRC=1, pin where DDRC=0", "write": "lower-nibble output latch", "reset": "UNDEFINED_BY_DOCUMENTATION", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "figures 4 and 16 and Input/Output, printed pages 6, 12-14"}},
+    {"address": "004", "name": "DDRA", "read": "FF", "write": "one selects output", "reset": "00", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "figures 4, 15, and 16, printed pages 6 and 12-14"}},
+    {"address": "005", "name": "DDRB", "read": "FF", "write": "one selects output", "reset": "00", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "figures 4, 15, and 16, printed pages 6 and 12-14"}},
+    {"address": "006", "name": "DDRC", "read": "FF", "write": "lower four bits; one selects output", "reset": "00", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "figures 4, 15, and 16, printed pages 6 and 12-14"}},
+    {"address": "008", "name": "TDR", "read": "current down-counter", "write": "load down-counter", "reset": "FF", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "Timer and figure 7, printed pages 8-9"}},
+    {"address": "009", "name": "TCR", "read": "TOPT-dependent TIR TIM TIN TIE PSC PS2 PS1 PS0", "write": "TOPT-dependent timer control; PSC is a write-only pulse", "reset": "TIR=0 TIM=1; selectable controls loaded from MOR", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "Timer Control Register, printed page 15"}},
+    {"address": "00B", "name": "PCR", "read": "11111 VPON PGE PLE", "write": "EPROM programming sequencing control", "reset": "PGE=1 PLE=1", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "On-Chip Programming Hardware, printed pages 16-17"}},
+    {"address": "784", "name": "MOR", "read": "CLK TOPT CLS TIE SNM P2 P1 P0", "write": "EPROM programming only", "reset": "nonvolatile programmed value", "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "Mask Options, printed page 16"}}
+  ],
+  "timer": {
+    "counter": "8-bit wrapping down-counter; TIR sets on transition to 00",
+    "prescaler": "7-bit programmable divider by 1,2,4,8,16,32,64,128; PSC initializes it to all ones",
+    "input_modes": {"00": "internal processor clock", "01": "external pin gates internal clock", "10": "disabled", "11": "external positive transitions"},
+    "interrupt": "level request when TIR=1 and TIM=0; service software must clear TIR",
+    "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "Timer, figure 7, and Timer Control Register, printed pages 8-9 and 15"}
+  },
+  "interrupts": [
+    {"source": "timer", "vector": "7F8:7F9", "priority": 2},
+    {"source": "external-int", "vector": "7FA:7FB", "priority": 1},
+    {"source": "swi", "vector": "7FC:7FD", "priority": "synchronous"},
+    {"source": "reset", "vector": "7FE:7FF", "priority": 0}
+  ],
+  "implementation_scope": {
+    "firmware_storage": "Address decode is internal; user EPROM, bootstrap ROM, and vector data use the FPGA firmware-memory port.",
+    "unspecified_port_latch_reset": "The RTL selects deterministic zero for FPGA operation and makes no silicon-equivalence claim for the manufacturer-undefined reset value.",
+    "unspecified_ram_reset": "RAM is not reset because the manufacturer reset description does not define its initial contents.",
+    "analog_exclusions": ["oscillator analog behavior", "EPROM programming voltage and pulse physics", "pad drive strength"]
+  }
+}

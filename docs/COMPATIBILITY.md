@@ -1,7 +1,7 @@
 # Compatibility and implementation status
 
 No processor or MCU is currently claimed complete. This matrix fixes the v1
-engineering targets before RTL is written and distinguishes CPU-core,
+engineering targets and distinguishes CPU-core,
 full-device, cycle-count, and bus-trace claims. The authoritative structured
 record is `spec/devices.yml`; status changes require passing evidence.
 
@@ -26,20 +26,28 @@ and low-power modes have separate specifications.
 
 | Target | Scope | CPU | Cycle count | Bus trace | MCU integration |
 |---|---|---:|---:|---:|---:|
-| Motorola MC6800 | physical CPU device | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_APPLICABLE |
-| Motorola MC6801 | full MCU | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
-| Motorola MC6803 | full ROMless MCU | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
-| normalized M6805 CPU | FPGA core only | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_APPLICABLE |
-| Motorola MC68705P5 | full EPROM MCU | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
-| Hitachi HD6301V1 | full MCU | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
-| Hitachi HD6303R | full ROMless MCU | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
-| Hitachi HD63701V0 | full EPROM MCU | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
-| Hitachi HD63705V0 | full EPROM MCU | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
+| Motorola MC6800 | physical CPU device | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
+| Motorola MC6801 | full MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Motorola MC6803 | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| normalized M6805 CPU | FPGA core only | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
+| Motorola MC68705P5 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
+| Hitachi HD6301V1 | full MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Hitachi HD6303R | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Hitachi HD63701V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Hitachi HD63705V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 
 The normalized M6805 core is not a silicon-device compatibility claim. A device
 profile must provide effective PC width, stack window, vectors, interrupt set,
 and low-power features. MC68705P5 and HD63705V0 are the concrete full-MCU v1
 profiles for the Motorola and Hitachi 6805-derived lineages.
+
+`PARTIAL` CPU status means every documented opcode encoding has architectural,
+cycle-total, and ordered semantic-bus comparison against the independent model,
+but detailed manufacturer bus-waveform coverage and remaining device-specific
+interrupt quirks are not yet complete. The MC68705P5 wrapper additionally has
+tested RAM/register decode, GPIO, base timer behavior, and interrupt priority;
+EPROM programming physics, every timer input/prescaler mode, and bootstrap-mode
+integration remain incomplete.
 
 ## Device differences relevant to implementation
 

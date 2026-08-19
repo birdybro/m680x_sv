@@ -82,7 +82,7 @@
       "clocking": "External phase-one and phase-two clocks; documented bus transfers are referenced to phase two.",
       "documented_quirks": ["VMA distinguishes valid external memory cycles from internal/idle cycles.", "HALT and bus three-state controls affect externally visible bus ownership."],
       "undefined_by_documentation": ["Unassigned opcode results."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_APPLICABLE", "gpio": "NOT_APPLICABLE", "timer": "NOT_APPLICABLE", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_APPLICABLE", "gpio": "NOT_APPLICABLE", "timer": "NOT_APPLICABLE", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
       "references": [{"id": "motorola-m6800-prm-1976", "locators": ["chapters 3-5"]}, {"id": "motorola-mc6800-system-design-data-1976", "locators": ["MC6800 MPU data, printed pages 21-38"]}]
     },
     {
@@ -103,7 +103,7 @@
       "clocking": "On-chip oscillator produces E; idle E-cycles drive a read of FFFF in expanded modes instead of providing MC6800 VMA.",
       "documented_quirks": ["Mode 0 obtains only the reset vector externally, then exposes internal vectors.", "Clearing I is delayed by one E-cycle; setting I is not.", "Several internal flag clear sequences require ordered register reads."],
       "undefined_by_documentation": ["Unassigned opcode results.", "Operation in test modes outside their documented purpose is not generalized."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
       "references": [{"id": "motorola-mc6801-reference-1983", "locators": ["chapters 1-7; figure 5-14"]}]
     },
     {
@@ -124,7 +124,7 @@
       "clocking": "On-chip oscillator and E output as for MC6801 expanded modes.",
       "documented_quirks": ["The reference manual defines MC6803 as an MC6801 limited to modes 2 or 3; modes other than 0, 2, and 3 are undefined.", "Mode 0 ROM contents are undefined."],
       "undefined_by_documentation": ["Modes other than 0, 2, and 3.", "Mode 0 internal ROM contents.", "Unassigned opcode results."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
       "references": [{"id": "motorola-mc6801-reference-1983", "locators": ["section 2.4.2"]}]
     },
     {
@@ -145,7 +145,7 @@
       "clocking": "Single FPGA clock with clock enable; one enable advances one documented processor cycle.",
       "documented_quirks": ["The generic family does not define one PC width, SP window, vector map, or peripheral set; those are mandatory profile inputs."],
       "undefined_by_documentation": ["Behavior without a selected device/profile.", "Unassigned opcode results."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_APPLICABLE", "internal_memory": "NOT_APPLICABLE", "gpio": "NOT_APPLICABLE", "timer": "NOT_APPLICABLE", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_APPLICABLE", "internal_memory": "NOT_APPLICABLE", "gpio": "NOT_APPLICABLE", "timer": "NOT_APPLICABLE", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
       "references": [{"id": "motorola-m6805-family-users-manual-1983", "locators": ["chapters 2 and 4; appendix I"]}]
     },
     {
@@ -166,7 +166,7 @@
       "clocking": "On-chip oscillator option divided by four for the internal processor clock.",
       "documented_quirks": ["SP resets to 007F and wraps within a fixed device stack window; only 31 bytes down to 0061 are documented as usable.", "DDRs are write-only and read as FF.", "The user program counter is 11 bits."],
       "undefined_by_documentation": ["Unassigned opcode results.", "Operation after exceeding documented stack depth."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "PARTIAL", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
       "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locators": ["figures 4-7; CPU, timer, interrupt, reset, and programming sections"]}, {"id": "motorola-m6805-family-users-manual-1983", "locators": ["software description and instruction appendices"]}]
     },
     {
@@ -187,7 +187,7 @@
       "clocking": "Internal oscillator with 1.0/1.5/2.0 MHz speed grades; E defines bus timing.",
       "documented_quirks": ["Address and opcode errors invoke unmaskable TRAP.", "AIM/OIM/EIM/TIM have immediate-mask direct and indexed forms.", "Includes sleep and standby behavior not present on MC6801."],
       "undefined_by_documentation": ["Behavior outside documented address/opcode trap cases."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "PARTIAL"},
       "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["quick reference printed pages 2-3; HD6301V1 user manual printed pages 126-249"]}]
     },
     {
@@ -208,7 +208,7 @@
       "clocking": "Internal oscillator with 1.0/1.5/2.0 MHz speed grades; E defines bus timing.",
       "documented_quirks": ["ROMless counterpart in the V/R architectural pair.", "Address and opcode errors invoke unmaskable TRAP."],
       "undefined_by_documentation": ["Behavior outside documented address/opcode trap cases."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "PARTIAL"},
       "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["quick reference printed pages 2-3; HD6301V1/HD6303R user manual"]}]
     },
     {
@@ -229,7 +229,7 @@
       "clocking": "0.1-2.0 MHz documented range by speed grade; E defines bus timing.",
       "documented_quirks": ["On-chip EPROM replaces mask ROM while retaining HD6301-family CPU extensions.", "TRAP detects address and opcode errors."],
       "undefined_by_documentation": ["EPROM analog programming margins are outside synthesizable digital equivalence."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "PARTIAL"},
       "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD63701V0 user manual printed pages 251-352"]}]
     },
     {
@@ -250,7 +250,7 @@
       "clocking": "On-chip oscillator; 1.0/1.5/2.0 MHz device grades, with E derived from the oscillator for CPU and timer use.",
       "documented_quirks": ["14-bit PC and SP; SP high bits are fixed and reset value is 00FF with documented nesting down to 00C1.", "HD63705V0 is documented as fully compatible with HD6305V0 apart from EPROM substitution/programming behavior.", "After CLI, a pending interrupt is serviced after the following instruction."],
       "undefined_by_documentation": ["Opcode-map cells marked undefined.", "EPROM analog programming margins are outside synthesizable digital equivalence."],
-      "status": {"cpu_core": "NOT_IMPLEMENTED", "architectural_tests": "NOT_IMPLEMENTED", "cycle_count_tests": "NOT_IMPLEMENTED", "bus_trace_tests": "NOT_IMPLEMENTED", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "PARTIAL"},
       "references": [{"id": "hitachi-hd6305-series-handbook-1988", "locators": ["quick reference printed pages 4-5; table 1-7; HD6305U0/V0/HD63705V0 user manual printed pages 101-168"]}]
     }
   ],
