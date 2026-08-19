@@ -69,7 +69,7 @@ module tb_m6800_core;
 
   assign data_in = memory[address];
 
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
 
   always @(posedge clk) begin
     if (clock_enable && bus_ready && bus_valid && write_enable) begin

@@ -35,7 +35,7 @@ module tb_m6800_interrupt_delay #(
   /* verilator lint_on PINCONNECTEMPTY */
 
   assign data_in = memory[address];
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
   always @(posedge clk) begin
     if (bus_valid && write_enable) memory[address] <= data_out;
   end
@@ -140,7 +140,7 @@ module tb_m6805_interrupt_delay;
   /* verilator lint_on PINCONNECTEMPTY */
 
   assign data_in = memory[address];
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
   always @(posedge clk) begin
     if (bus_valid && write_enable) memory[address] <= data_out;
   end

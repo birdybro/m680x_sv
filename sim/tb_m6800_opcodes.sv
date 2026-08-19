@@ -71,7 +71,7 @@ module tb_m6800_opcodes #(
   );
 
   assign data_in = memory[address];
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
 
   always @(posedge clk) begin
     if (bus_valid && write_enable) memory[address] <= data_out;

@@ -47,7 +47,7 @@ module tb_random_m6805 #(
   );
 
   assign data_in = memory[address];
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
   always @(posedge clk) if (bus_valid && write_enable) memory[address] <= data_out;
 
   task automatic tick;

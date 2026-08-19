@@ -64,7 +64,7 @@ module tb_mc68705p5_mcu;
   );
 
   assign program_data = firmware[program_address];
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
 
   task automatic tick;
     begin
