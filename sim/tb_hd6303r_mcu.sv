@@ -4,6 +4,7 @@ module tb_hd6303r_mcu;
   logic reset_n;
   logic nmi_n;
   logic irq1_n;
+  logic [4:0] port2_in;
   logic [15:0] external_address;
   logic [7:0] external_data_in;
   logic [7:0] external_data_out;
@@ -48,7 +49,7 @@ module tb_hd6303r_mcu;
   hd6303r_mcu dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
     .nmi_n_i(nmi_n), .irq1_n_i(irq1_n), .standby_power_ok_i(1'b1),
-    .port1_i(8'h3c), .port2_i(5'h15), .external_data_i(external_data_in),
+    .port1_i(8'h3c), .port2_i(port2_in), .external_data_i(external_data_in),
     .external_address_o(external_address), .external_data_o(external_data_out),
     .external_write_o(external_write), .external_bus_valid_o(external_valid),
     .external_opcode_fetch_o(external_fetch), .port1_o(port1_out),
@@ -82,6 +83,21 @@ module tb_hd6303r_mcu;
     end
   endtask
 
+  task automatic send_misframed_byte(input logic [7:0] value);
+    integer bit_index;
+    begin
+      @(negedge clk);
+      port2_in[3] = 1'b0;
+      ticks(16);
+      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
+        port2_in[3] = value[bit_index];
+        ticks(16);
+      end
+      port2_in[3] = 1'b0;
+      ticks(16);
+    end
+  endtask
+
   task automatic run_instruction(input logic [7:0] expected_opcode);
     begin
       cycles = 0;
@@ -102,6 +118,7 @@ module tb_hd6303r_mcu;
     reset_n = 1'b1;
     nmi_n = 1'b1;
     irq1_n = 1'b1;
+    port2_in = 5'h1d;
     checks = 0;
     for (index = 0; index < 65536; index = index + 1) memory[index] = 8'h01;
 
@@ -198,6 +215,26 @@ module tb_hd6303r_mcu;
     end
     checks = checks + 1;
 
+    // HD6303R shares the HD6301V1 rule: ORFE is set on a missing stop bit,
+    // but the misframed shift-register byte is not transferred into RDR.
+    memory[16'hfffe] = 8'h04; memory[16'hffff] = 8'h00;
+    memory[16'h0400] = 8'h86; memory[16'h0401] = 8'h04;
+    memory[16'h0402] = 8'h97; memory[16'h0403] = 8'h10;
+    memory[16'h0404] = 8'h86; memory[16'h0405] = 8'h08;
+    memory[16'h0406] = 8'h97; memory[16'h0407] = 8'h11;
+    memory[16'h0408] = 8'h20; memory[16'h0409] = 8'hfe;
+    port2_in[3] = 1'b1;
+    #1; reset_n = 1'b0; #1; reset_n = 1'b1;
+    tick(); tick();
+    run_instruction(8'h86); run_instruction(8'h97);
+    run_instruction(8'h86); run_instruction(8'h97);
+    send_misframed_byte(8'ha5);
+    if (!debug_trcsr[6] || debug_trcsr[7] || debug_receive != 8'h00) begin
+      $fatal(1, "HD6303R framing-error RDR inhibition trcsr=%02x rdr=%02x",
+             debug_trcsr, debug_receive);
+    end
+    checks = checks + 1;
+
     if (waiting_state || undefined_value || port1_oe != 8'h00 ||
         port2_oe != 5'h00 || debug_address != external_address ||
         ((external_fetch !== 1'b0) && (external_fetch !== 1'b1)) ||
@@ -210,7 +247,7 @@ module tb_hd6303r_mcu;
         debug_tcsr === 8'hxx || debug_trcsr === 8'hxx || debug_receive === 8'hxx) begin
       $fatal(1, "HD6303R deterministic device outputs");
     end
-    $display("HD6303R MODE 2 PASS: %0d ISA, RAM, sleep, timer, and TRAP checks", checks);
+    $display("HD6303R MODE 2 PASS: %0d ISA, RAM, sleep, timer, SCI, and TRAP checks", checks);
     $finish;
   end
 endmodule

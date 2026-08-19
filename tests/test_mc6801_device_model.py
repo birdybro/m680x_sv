@@ -160,6 +160,18 @@ class MC6801DeviceModelTests(unittest.TestCase):
         self.assertFalse(model.state.rdrf)
         self.assertFalse(model.state.orfe)
 
+    def test_mc6801_framing_error_transfers_misframed_byte(self) -> None:
+        model = MC6801DeviceModel()
+        self.write(model, 0x0010, 0x04)
+        self.write(model, 0x0011, 0x08)
+        levels = [0, *(0xA5 >> bit & 1 for bit in range(8)), 0]
+        for level in levels:
+            for _ in range(16):
+                self.idle(model, port2=level << 3)
+        self.assertTrue(model.state.orfe)
+        self.assertFalse(model.state.rdrf)
+        self.assertEqual(model.state.receive_data, 0xA5)
+
 
 if __name__ == "__main__":
     unittest.main()

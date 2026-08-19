@@ -27,7 +27,7 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
     def __init__(self, *, program_memory: Memory | None = None) -> None:
         # Initialize the common peripheral state through the documented
         # HD6801-compatible profile, then select the Hitachi-only mode map.
-        super().__init__(2)
+        super().__init__(2, transfer_framing_error=False)
         self.operating_mode = 7
         self.program_memory = program_memory if program_memory is not None else Memory()
 

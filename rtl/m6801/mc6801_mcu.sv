@@ -10,7 +10,8 @@
 module mc6801_mcu #(
   parameter logic [2:0] OPERATING_MODE = 3'd2,
   parameter logic       HITACHI_CPU = 1'b0,
-  parameter logic       HD6301_MODE7 = 1'b0
+  parameter logic       HD6301_MODE7 = 1'b0,
+  parameter logic       SCI_TRANSFER_FRAMING_ERROR = 1'b1
 ) (
   input  logic        clk_i,
   input  logic        reset_n_i,
@@ -560,7 +561,9 @@ module mc6801_mcu #(
       end else begin
         rx_busy <= 1'b0;
         if (!port2_i[3]) begin
-          if (!rdrf && !orfe) receive_data <= rx_shift;
+          if (SCI_TRANSFER_FRAMING_ERROR && !rdrf && !orfe) begin
+            receive_data <= rx_shift;
+          end
           orfe <= 1'b1;
           // A following zero is itself the next start bit (continuous BREAK).
           rx_busy <= 1'b1;

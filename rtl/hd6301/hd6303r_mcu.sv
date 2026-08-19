@@ -54,7 +54,8 @@ module hd6303r_mcu (
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
     .OPERATING_MODE(3'd2),
-    .HITACHI_CPU(1'b1)
+    .HITACHI_CPU(1'b1),
+    .SCI_TRANSFER_FRAMING_ERROR(1'b0)
   ) device (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),

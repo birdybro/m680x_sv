@@ -5,6 +5,7 @@ module tb_hd6301v1_mcu;
   logic nmi_n;
   logic irq1_n;
   logic is3_n;
+  logic [4:0] port2_in;
   logic [7:0] port3_in;
   logic [7:0] port4_in;
   logic [15:0] program_address;
@@ -54,7 +55,7 @@ module tb_hd6301v1_mcu;
   hd6301v1_mcu dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
     .nmi_n_i(nmi_n), .irq1_n_i(irq1_n), .standby_power_ok_i(1'b1),
-    .port1_i(8'h3c), .port2_i(5'h15), .port3_i(port3_in),
+    .port1_i(8'h3c), .port2_i(port2_in), .port3_i(port3_in),
     .port4_i(port4_in), .is3_n_i(is3_n),
     .program_address_o(program_address), .program_read_o(program_read),
     .program_data_i(program_data), .port1_o(port1_out), .port1_oe_o(port1_oe),
@@ -81,6 +82,27 @@ module tb_hd6301v1_mcu;
       @(posedge clk);
       if (!os3_n) os3_pulses = os3_pulses + 1;
       #1;
+    end
+  endtask
+
+  task automatic ticks(input integer count);
+    integer tick_index;
+    begin
+      for (tick_index = 0; tick_index < count; tick_index = tick_index + 1) tick();
+    end
+  endtask
+
+  task automatic send_misframed_byte(input logic [7:0] value);
+    integer bit_index;
+    begin
+      port2_in[3] = 1'b0;
+      ticks(16);
+      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
+        port2_in[3] = value[bit_index];
+        ticks(16);
+      end
+      port2_in[3] = 1'b0;
+      ticks(16);
     end
   endtask
 
@@ -128,6 +150,7 @@ module tb_hd6301v1_mcu;
     nmi_n = 1'b1;
     irq1_n = 1'b1;
     is3_n = 1'b1;
+    port2_in = 5'h1d;
     port3_in = 8'h3c;
     port4_in = 8'hc3;
     checks = 0;
@@ -239,6 +262,22 @@ module tb_hd6301v1_mcu;
     end
     checks = checks + 2;
 
+    // HD6301V1 differs from MC6801 and HD63701V0: a framing error sets
+    // ORFE without transferring the misframed shift-register byte into RDR.
+    firmware[12'h300] = 8'h86; firmware[12'h301] = 8'h04;
+    firmware[12'h302] = 8'h97; firmware[12'h303] = 8'h10;
+    firmware[12'h304] = 8'h86; firmware[12'h305] = 8'h08;
+    firmware[12'h306] = 8'h97; firmware[12'h307] = 8'h11;
+    reset_to(16'hf300);
+    run_instruction(8'h86); run_instruction(8'h97);
+    run_instruction(8'h86); run_instruction(8'h97);
+    send_misframed_byte(8'ha5);
+    if (!debug_trcsr[6] || debug_trcsr[7] || debug_receive != 8'h00) begin
+      $fatal(1, "HD6301V1 framing-error RDR inhibition trcsr=%02x rdr=%02x",
+             debug_trcsr, debug_receive);
+    end
+    checks = checks + 1;
+
     // With I clear, the same IS3 flag is the documented IRQ1-priority source.
     firmware[12'h200] = 8'h8e; firmware[12'h201] = 8'h00;
     firmware[12'h202] = 8'hff;
@@ -278,7 +317,7 @@ module tb_hd6301v1_mcu;
         debug_b === 8'hxx || debug_x === 16'hxxxx) begin
       $fatal(1, "HD6301V1 deterministic device outputs");
     end
-    $display("HD6301V1 MODE 7 PASS: %0d memory, GPIO, strobe, TRAP, and IRQ checks",
+    $display("HD6301V1 MODE 7 PASS: %0d memory, GPIO, SCI, strobe, TRAP, and IRQ checks",
              checks);
     $finish;
   end

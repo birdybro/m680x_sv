@@ -163,6 +163,7 @@ class MC6801DeviceModel:
         operating_mode: int = 2,
         *,
         external_memory: Memory | None = None,
+        transfer_framing_error: bool = True,
     ) -> None:
         if operating_mode not in {2, 3}:
             raise ValueError("MC6801/MC6803 device model supports only Modes 2 and 3")
@@ -170,6 +171,7 @@ class MC6801DeviceModel:
         self.external_memory = external_memory if external_memory is not None else Memory()
         self.ram = bytearray(128)
         self.state = MC6801PeripheralState()
+        self.transfer_framing_error = transfer_framing_error
 
     def reset(self) -> None:
         """Reset documented digital state without inventing RAM contents."""
@@ -511,7 +513,7 @@ class MC6801DeviceModel:
         else:
             s.rx_busy = False
             if not receive_pin:
-                if not s.rdrf and not s.orfe:
+                if self.transfer_framing_error and not s.rdrf and not s.orfe:
                     s.receive_data = s.rx_shift
                 s.orfe = True
                 s.rx_busy = True

@@ -84,6 +84,19 @@ class HD6301V1Mode7ModelTests(unittest.TestCase):
         self.assertEqual(self.read(model, 0x0007, port4=0xC3).read_data, 0xC3)
         self.assertEqual(self.read(model, 0x0003, port2=0x15).read_data, 0xF5)
 
+    def test_hd6301_framing_error_does_not_transfer_misframed_byte(self) -> None:
+        model = HD6301V1Mode7Model()
+        model.state.receive_data = 0x3C
+        self.write(model, 0x0010, 0x04)
+        self.write(model, 0x0011, 0x08)
+        levels = [0, *(0xA5 >> bit & 1 for bit in range(8)), 0]
+        for level in levels:
+            for _ in range(16):
+                self.cycle(model, port2=level << 3)
+        self.assertTrue(model.state.orfe)
+        self.assertFalse(model.state.rdrf)
+        self.assertEqual(model.state.receive_data, 0x3C)
+
 
 if __name__ == "__main__":
     unittest.main()

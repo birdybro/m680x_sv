@@ -52,7 +52,7 @@
     "internal_divisors": {"00": 16, "01": 128, "10": 1024, "11": 4096},
     "frame": "one start, eight data bits least-significant first, one stop, no hardware parity",
     "transmitter": "TE rising sends nine marks; TDR transfers at a bit boundary and sets TDRE; status-read-before-TDR-write is required to clear TDRE",
-    "receiver": "valid stop transfers data and sets RDRF; missing stop sets ORFE without RDRF; full RDR causes overrun and inhibits transfer",
+    "receiver": "valid stop transfers data and sets RDRF; a missing stop transfers the misframed byte to RDR and sets ORFE without RDRF; full RDR causes overrun and inhibits transfer",
     "flag_clear": "TRCSR read followed by RDR read clears the RDRF/ORFE bits observed",
     "wake_up": "WU inhibits receive flags until ten consecutive marks",
     "interrupt": "RIE enables RDRF/ORFE and TIE enables TDRE into the retained IRQ2 request; all share the default FFF0:FFF1 priority-encoder vector",

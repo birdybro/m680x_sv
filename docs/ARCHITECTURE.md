@@ -170,6 +170,10 @@ internal divisors, nine-mark transmitter preamble, LSB-first ten-bit frames,
 ordered TDRE/RDRF/ORFE clearing, center-sampled receive, overrun/framing status,
 wake-mark counting, pin overrides, and shared interrupt. Bi-phase coding and
 external 8x clock mode are not approximated and remain outside the claim.
+The common block has an explicit framing-error transfer parameter: MC6801
+transfers a misframed receive byte into RDR while leaving RDRF clear, whereas
+HD6301V1 and HD6303R inhibit that transfer. Device wrappers select the
+manufacturer-documented rule rather than deriving it from the CPU ISA profile.
 
 ## HD6301V1 single-chip Mode-7 integration
 

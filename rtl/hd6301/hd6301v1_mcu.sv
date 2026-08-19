@@ -60,7 +60,8 @@ module hd6301v1_mcu (
   mc6801_mcu #(
     .OPERATING_MODE(3'd7),
     .HITACHI_CPU(1'b1),
-    .HD6301_MODE7(1'b1)
+    .HD6301_MODE7(1'b1),
+    .SCI_TRANSFER_FRAMING_ERROR(1'b0)
   ) device (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),

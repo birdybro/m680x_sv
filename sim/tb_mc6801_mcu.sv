@@ -168,6 +168,21 @@ module tb_mc6801_mcu #(
     end
   endtask
 
+  task automatic send_misframed_byte(input logic [7:0] value);
+    integer bit_index;
+    begin
+      @(negedge clk);
+      port2_in[3] = 1'b0;
+      ticks(16);
+      for (bit_index = 0; bit_index < 8; bit_index = bit_index + 1) begin
+        port2_in[3] = value[bit_index];
+        ticks(16);
+      end
+      port2_in[3] = 1'b0;
+      ticks(16);
+    end
+  endtask
+
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
@@ -379,10 +394,24 @@ module tb_mc6801_mcu #(
       $fatal(1, "MC6801 SCI receive clear status=%02x a=%02x", debug_trcsr, debug_a);
     end
     checks = checks + 1;
-    memory[16'h060e] = 8'h86; memory[16'h060f] = 8'hff;
-    memory[16'h0610] = 8'h97; memory[16'h0611] = 8'h01;
-    memory[16'h0612] = 8'h86; memory[16'h0613] = 8'h00;
-    memory[16'h0614] = 8'h97; memory[16'h0615] = 8'h11;
+
+    // MC6801 transfers a misframed byte into RDR while setting ORFE without
+    // RDRF. This differs from HD6301V1 and HD6303R.
+    memory[16'h060e] = 8'h20; memory[16'h060f] = 8'hfe;
+    send_misframed_byte(8'ha5);
+    if (debug_trcsr[7:6] != 2'b01 || debug_receive_data != 8'ha5) begin
+      $fatal(1, "MC6801 SCI framing transfer status=%02x data=%02x", debug_trcsr,
+             debug_receive_data);
+    end
+    checks = checks + 1;
+    port2_in[3] = 1'b1;
+
+    memory[16'h060f] = 8'h00;
+    memory[16'h0610] = 8'h86; memory[16'h0611] = 8'hff;
+    memory[16'h0612] = 8'h97; memory[16'h0613] = 8'h01;
+    memory[16'h0614] = 8'h86; memory[16'h0615] = 8'h00;
+    memory[16'h0616] = 8'h97; memory[16'h0617] = 8'h11;
+    do run_instruction(8'h20); while (debug_pc != 16'h0610);
     run_instruction(8'h86); run_instruction(8'h97);
     run_instruction(8'h86); run_instruction(8'h97);
     if (port2_oe[3]) $fatal(1, "MC6801 RE sticky DDR/ignored write");

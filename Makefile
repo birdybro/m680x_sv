@@ -120,7 +120,8 @@ test:
 
 test-model:
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model \
-		tests.test_mc6801_device_model tests.test_hd6301v1_device_model -v
+		tests.test_mc6801_device_model tests.test_hd6301v1_device_model \
+		tests.test_hd6303r_device_model -v
 
 test-m6800: test-m6800-rtl
 	$(PYTHON) -m unittest tests.test_m6800_model -v

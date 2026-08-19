@@ -26,13 +26,13 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 76 |
+| Python unit tests | 79 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
-| MC6801/MC6803 Mode 2/3 integration checks | 49 |
+| MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
-| HD6301V1 Mode-7 integration checks | 17 |
-| HD6303R Mode-2 integration checks | 9 |
+| HD6301V1 Mode-7 integration checks | 19 |
+| HD6303R Mode-2 integration checks | 10 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
@@ -76,12 +76,13 @@ external reset-vector decode, expanded-mode register exclusions, physical-pin
 GPIO reads, write-only DDR reads, RAME-controlled RAM, Mode 3 external RAM,
 synchronized input capture, ordered ICF clearing, output compare, IRQ1-over-
 timer priority, distinct vectors, NRZ transmit framing, center-sampled receive,
-SCI overrun retention and status-clearing protocols, sticky SCI pin direction,
+SCI overrun retention, MC6801 misframed-byte transfer, status-clearing
+protocols, sticky SCI pin direction,
 and a one-cycle IRQ1 pulse which arrives after IRQ2 entry has started and wins
 the documented late vector-priority selection. It also removes a timer source's
 identity after latching IRQ2 and verifies the documented default SCI vector.
 
-The independent Python device model has seven focused regressions for Mode 2/3
+The independent Python device model has eight focused regressions for Mode 2/3
 decode and RAM, physical-pin GPIO behavior and SCI direction overrides,
 coherent timer reads and ordered status clears, second-cycle input capture,
 overflow/compare events, retained IRQ priority, and internally clocked NRZ
@@ -109,8 +110,9 @@ The HD6303R Mode-2 suite executes through the integrated device wrapper. It
 checks external reset vectors, internal RAM exclusion from the external bus,
 AIM and XGDX, timer continuity while sleeping, masked IRQ release from SLP
 without stacking or vectoring, simultaneous NMI/IRQ priority, and opcode-error
-TRAP through the external `$ffee:$ffef` vector. The independent model has a
-matching regression for the masked-request SLP rule.
+TRAP through the external `$ffee:$ffef` vector. It also verifies that a framing
+error leaves RDR unchanged, with a separate HD6303R peripheral-model regression.
+The instruction model has a matching regression for the masked-request SLP rule.
 
 The HD6301V1 Mode-7 suite fetches reset and interrupt vectors through the
 internal program-image interface, executes from both the 4-KiB program window
@@ -120,7 +122,8 @@ P3CSR's ordered flag-clear protocol, read- and write-selected active-low OS3
 pulses, masked IS3 release from SLP, and enabled IS3 vectoring through the IRQ1
 priority slot. Three independent Python model tests cover the Mode-7 address
 partition, program-select/address-error distinction, GPIO, latch, flag, strobe,
-and interrupt state.
+and interrupt state. A fourth model test and the RTL suite verify that a
+framing error sets ORFE without transferring the misframed byte into RDR.
 
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction

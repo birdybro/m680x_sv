@@ -65,6 +65,9 @@ MC6803 profile inherits those facts under the manufacturer's explicit
 functional-identity statement and rejects modes beyond 2/3. MC6801 Modes
 0/1/4/5/6/7, mask ROM, Port 3 handshakes, physical multiplexed-bus waveforms,
 bi-phase SCI, and external-clock SCI remain outside this partial claim.
+For a framing error, MC6801 transfers the misframed byte into RDR while setting
+ORFE without RDRF. This behavior is independently selected and tested rather
+than generalized to Hitachi parts.
 
 The HD6303R claim currently binds the HD6301 instruction profile to the
 manufacturer-compatible register, 128-byte RAM, Port 1/2, timer, SCI, and
@@ -73,6 +76,8 @@ tests cover HD6301-only instructions, opcode TRAP, continued timer operation in
 SLP, masked-request wake without vectoring, and simultaneous NMI/IRQ priority.
 Modes 1/5, standby entry, Port 3 handshakes, the physical multiplexed waveform,
 bi-phase SCI, and external-clock SCI remain outside this partial claim.
+HD6303R follows the HD6301V1-specific framing-error rule: the shift-register
+byte is not transferred to RDR when the stop bit is missing.
 
 The HD6301V1 claim covers single-chip Mode 7: its internal register window,
 RAME-controlled executable 128-byte RAM, four GPIO ports, IS3 input latch and
@@ -82,6 +87,7 @@ integration input. Directed tests verify that instruction fetches in both
 documented non-memory ranges enter the 13-cycle address TRAP while normal data
 accesses do not. Expanded modes, standby entry, bi-phase/external-clock SCI,
 physical timing, and actual mask-ROM contents remain outside this partial claim.
+Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
 
 ## Device differences relevant to implementation
 

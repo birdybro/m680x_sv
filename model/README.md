@@ -55,6 +55,12 @@ internally clocked NRZ SCI framing/status, and the retained IRQ1/IRQ2 request
 and late vector-priority behavior. Manufacturer-undefined modes are rejected
 instead of being assigned invented behavior.
 
+`hd6301v1_device.py` and `hd6303r_device.py` specialize only documented device
+differences. In particular, both select Hitachi's rule that a framing-error
+byte is not transferred into RDR, while the MC6801 model selects Motorola's
+documented transfer behavior. The Mode-7 model additionally owns the HD6301V1
+memory, Port 3/4, strobe, IS3, and address-error facts.
+
 `tools/build_mc6801_peripheral_vectors.py` records independent model results
 for 768 transactions in each expanded mode. A verification-only bus source
 then presents those exact transactions to the peripheral RTL without using the
