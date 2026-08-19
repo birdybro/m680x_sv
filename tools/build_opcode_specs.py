@@ -1,0 +1,764 @@
+#!/usr/bin/env python3
+"""Build expanded opcode records from primary-manual factual tables."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import sys
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[1]
+OUTPUT_DIR = ROOT / "spec" / "opcodes"
+ALL_FLAGS = ["H", "I", "N", "Z", "V", "C"]
+
+
+BRANCHES = {
+    0x20: ("BRA", "always"),
+    0x22: ("BHI", "C=0 and Z=0"),
+    0x23: ("BLS", "C=1 or Z=1"),
+    0x24: ("BCC", "C=0"),
+    0x25: ("BCS", "C=1"),
+    0x26: ("BNE", "Z=0"),
+    0x27: ("BEQ", "Z=1"),
+    0x28: ("BVC", "V=0"),
+    0x29: ("BVS", "V=1"),
+    0x2A: ("BPL", "N=0"),
+    0x2B: ("BMI", "N=1"),
+    0x2C: ("BGE", "N xor V=0"),
+    0x2D: ("BLT", "N xor V=1"),
+    0x2E: ("BGT", "Z=0 and (N xor V)=0"),
+    0x2F: ("BLE", "Z=1 or (N xor V)=1"),
+}
+
+
+RMW_ROWS = {
+    0x0: "NEG",
+    0x3: "COM",
+    0x4: "LSR",
+    0x6: "ROR",
+    0x7: "ASR",
+    0x8: "ASL",
+    0x9: "ROL",
+    0xA: "DEC",
+    0xC: "INC",
+    0xD: "TST",
+    0xF: "CLR",
+}
+
+
+AB_ROWS = {
+    0x0: "SUB",
+    0x1: "CMP",
+    0x2: "SBC",
+    0x4: "AND",
+    0x5: "BIT",
+    0x6: "LDA",
+    0x7: "STA",
+    0x8: "EOR",
+    0x9: "ADC",
+    0xA: "ORA",
+    0xB: "ADD",
+}
+
+
+def _dedupe(items: list[str]) -> list[str]:
+    return list(dict.fromkeys(items))
+
+
+def _undefined(opcode: int, architecture: str, reference_id: str, locator: str) -> dict:
+    return {
+        "opcode": opcode,
+        "opcode_hex": f"{opcode:02X}",
+        "classification": "undefined_behavior",
+        "mnemonic": None,
+        "aliases": [],
+        "architectural_applicability": [architecture],
+        "addressing_mode": None,
+        "length": None,
+        "cycles": None,
+        "conditional_cycles": [],
+        "registers_read": [],
+        "registers_written": [],
+        "flags_read": [],
+        "flags_affected": [],
+        "flags_undefined": [],
+        "flag_semantics": {},
+        "memory_operations": [],
+        "stack_effects": [],
+        "branch_behavior": None,
+        "vector_behavior": None,
+        "primary_reference": {"id": reference_id, "locator": locator},
+        "notes": "No architectural behavior is assigned by the cited manufacturer instruction set.",
+    }
+
+
+def _operation_root(mnemonic: str) -> str:
+    roots = (
+        "SUBD",
+        "ADDD",
+        "LSRD",
+        "ASLD",
+        "SUB",
+        "CMP",
+        "SBC",
+        "AND",
+        "BIT",
+        "LDA",
+        "STA",
+        "EOR",
+        "ADC",
+        "ORA",
+        "ADD",
+        "NEG",
+        "COM",
+        "LSR",
+        "ROR",
+        "ASR",
+        "ASL",
+        "ROL",
+        "DEC",
+        "INC",
+        "TST",
+        "CLR",
+    )
+    for root in roots:
+        if mnemonic.startswith(root):
+            return root
+    return mnemonic
+
+
+def _flag_facts(mnemonic: str, architecture: str) -> tuple[list[str], list[str], list[str], dict[str, str]]:
+    root = _operation_root(mnemonic)
+    read: list[str] = []
+    affected: list[str] = []
+    undefined: list[str] = []
+    semantics: dict[str, str] = {}
+
+    if root in {"ADD", "ADC"} or mnemonic == "ABA":
+        affected = ["H", "N", "Z", "V", "C"]
+        semantics = {
+            "H": "carry from result bit 3 into bit 4",
+            "N": "most-significant result bit",
+            "Z": "1 exactly when the result is zero",
+            "V": "two's-complement addition overflow",
+            "C": "carry out of the most-significant result bit",
+        }
+        if root == "ADC":
+            read = ["C"]
+    elif root in {"SUB", "CMP", "SBC"} or mnemonic in {"SBA", "CBA"}:
+        affected = ["N", "Z", "V", "C"]
+        semantics = {
+            "N": "most-significant result bit",
+            "Z": "1 exactly when the subtraction result is zero",
+            "V": "two's-complement subtraction overflow",
+            "C": "borrow from the most-significant result bit",
+        }
+        if root == "SBC":
+            read = ["C"]
+    elif root in {"SUBD", "ADDD"}:
+        affected = ["N", "Z", "V", "C"]
+        semantics = {
+            "N": "result bit 15",
+            "Z": "1 exactly when the 16-bit result is zero",
+            "V": "16-bit two's-complement overflow",
+            "C": "16-bit carry or borrow",
+        }
+    elif mnemonic == "CPX":
+        affected = ["N", "Z", "V"] + (["C"] if architecture == "m6801" else [])
+        semantics = {
+            "N": "most-significant bit of the 16-bit comparison result",
+            "Z": "1 exactly when X equals the 16-bit operand",
+            "V": "two's-complement overflow from the high-byte comparison",
+        }
+        if architecture == "m6801":
+            semantics["C"] = "borrow from the 16-bit comparison"
+    elif root in {"AND", "BIT", "LDA", "STA", "EOR", "ORA"} or mnemonic in {
+        "LDX",
+        "STX",
+        "LDS",
+        "STS",
+        "TAB",
+        "TBA",
+    }:
+        affected = ["N", "Z", "V"]
+        semantics = {
+            "N": "most-significant result bit",
+            "Z": "1 exactly when the result is zero",
+            "V": "cleared",
+        }
+    elif mnemonic in {"LDD", "STD"}:
+        affected = ["N", "Z", "V"]
+        semantics = {"N": "result bit 15", "Z": "1 exactly when D is zero", "V": "cleared"}
+    elif root == "NEG":
+        affected = ["N", "Z", "V", "C"]
+        semantics = {
+            "N": "result bit 7",
+            "Z": "1 exactly when the result is zero",
+            "V": "1 exactly when the original operand is 80 hex",
+            "C": "1 exactly when the original operand is nonzero",
+        }
+    elif root == "COM":
+        affected = ["N", "Z", "V", "C"]
+        semantics = {"N": "result bit 7", "Z": "1 exactly when the result is zero", "V": "cleared", "C": "set"}
+    elif root in {"ASL", "ROL", "ROR", "ASR", "LSR"} or mnemonic in {"ASLD", "LSRD"}:
+        affected = ["N", "Z", "V", "C"]
+        width = "16-bit" if mnemonic in {"ASLD", "LSRD"} else "8-bit"
+        semantics = {
+            "N": "most-significant result bit",
+            "Z": f"1 exactly when the {width} result is zero",
+            "V": "N xor C after the shift",
+            "C": "bit shifted out of the operand",
+        }
+        if root in {"ROL", "ROR"}:
+            read = ["C"]
+        if root in {"LSR", "LSRD"}:
+            semantics["N"] = "cleared"
+    elif root in {"INC", "DEC"}:
+        affected = ["N", "Z", "V"]
+        boundary = "7F hex" if root == "INC" else "80 hex"
+        semantics = {
+            "N": "result bit 7",
+            "Z": "1 exactly when the result is zero",
+            "V": f"1 exactly when the original operand is {boundary}",
+        }
+    elif root == "TST":
+        affected = ["N", "Z", "V", "C"]
+        semantics = {"N": "operand bit 7", "Z": "1 exactly when the operand is zero", "V": "cleared", "C": "cleared"}
+    elif root == "CLR":
+        affected = ["N", "Z", "V", "C"]
+        semantics = {"N": "cleared", "Z": "set", "V": "cleared", "C": "cleared"}
+    elif mnemonic in {"INX", "DEX"}:
+        affected = ["Z"]
+        semantics = {"Z": "1 exactly when the 16-bit result is zero"}
+    elif mnemonic == "DAA":
+        read = ["H", "C"]
+        affected = ["N", "Z", "C"]
+        undefined = ["V"]
+        semantics = {
+            "N": "adjusted result bit 7",
+            "Z": "1 exactly when the adjusted result is zero",
+            "C": "decimal carry selected by the manufacturer adjustment table",
+            "V": "undefined by the manufacturer manual",
+        }
+    elif mnemonic == "MUL":
+        affected = ["C"]
+        semantics = {"C": "product bit 7 (bit 7 of accumulator B after multiplication)"}
+    elif mnemonic in {"CLC", "SEC", "CLI", "SEI", "CLV", "SEV"}:
+        flag = {"CLC": "C", "SEC": "C", "CLI": "I", "SEI": "I", "CLV": "V", "SEV": "V"}[mnemonic]
+        affected = [flag]
+        semantics = {flag: "set" if mnemonic.startswith("SE") else "cleared"}
+    elif mnemonic == "TAP":
+        affected = ALL_FLAGS.copy()
+        semantics = {flag: f"loaded from accumulator A bit {5 - index}" for index, flag in enumerate(ALL_FLAGS)}
+    elif mnemonic == "RTI":
+        affected = ALL_FLAGS.copy()
+        semantics = {flag: "restored from the stacked CCR" for flag in ALL_FLAGS}
+    elif mnemonic == "SWI":
+        affected = ["I"]
+        semantics = {"I": "set after CCR is stacked"}
+    elif mnemonic == "BRN":
+        pass
+    elif mnemonic.startswith("B") and mnemonic not in {"BSR"}:
+        condition = next((condition for name, condition in BRANCHES.values() if name == mnemonic), None)
+        if mnemonic in {"BCC", "BCS"}:
+            read = ["C"]
+        elif mnemonic in {"BNE", "BEQ"}:
+            read = ["Z"]
+        elif mnemonic in {"BVC", "BVS"}:
+            read = ["V"]
+        elif mnemonic in {"BPL", "BMI"}:
+            read = ["N"]
+        elif condition and "C" in condition and "Z" in condition:
+            read = ["C", "Z"]
+        elif condition and "N" in condition and "V" in condition and "Z" in condition:
+            read = ["N", "V", "Z"]
+        elif condition and "N" in condition and "V" in condition:
+            read = ["N", "V"]
+    return read, affected, undefined, semantics
+
+
+def _register_facts(mnemonic: str, mode: str) -> tuple[list[str], list[str]]:
+    read = ["PC"]
+    written = ["PC"]
+    if mode == "indexed-unsigned-8":
+        read.append("X")
+
+    root = _operation_root(mnemonic)
+    if mnemonic in {"ABA", "SBA", "CBA"}:
+        read += ["A", "B"]
+        if mnemonic != "CBA":
+            written.append("A")
+    elif mnemonic == "TAB":
+        read.append("A")
+        written.append("B")
+    elif mnemonic == "TBA":
+        read.append("B")
+        written.append("A")
+    elif mnemonic in {"TAP"}:
+        read.append("A")
+        written.append("CCR")
+    elif mnemonic == "TPA":
+        read.append("CCR")
+        written.append("A")
+    elif mnemonic in {"INX", "DEX", "ABX"}:
+        read.append("X")
+        written.append("X")
+        if mnemonic == "ABX":
+            read.append("B")
+    elif mnemonic == "TSX":
+        read.append("SP")
+        written.append("X")
+    elif mnemonic == "TXS":
+        read.append("X")
+        written.append("SP")
+    elif mnemonic in {"INS", "DES"}:
+        read.append("SP")
+        written.append("SP")
+    elif mnemonic.startswith("PSH"):
+        register = mnemonic[-1]
+        read += [register, "SP"]
+        written.append("SP")
+    elif mnemonic.startswith("PUL"):
+        register = mnemonic[-1]
+        read.append("SP")
+        written += ["SP", register]
+    elif mnemonic in {"BSR", "JSR"}:
+        read.append("SP")
+        written.append("SP")
+    elif mnemonic == "RTS":
+        read.append("SP")
+        written.append("SP")
+    elif mnemonic == "RTI":
+        read.append("SP")
+        written += ["SP", "CCR", "X", "A", "B"]
+    elif mnemonic in {"SWI", "WAI"}:
+        read += ["SP", "CCR", "X", "A", "B"]
+        written.append("SP")
+        if mnemonic == "SWI":
+            written.append("CCR")
+    elif mnemonic == "MUL":
+        read += ["A", "B"]
+        written += ["A", "B"]
+    elif mnemonic == "DAA":
+        read.append("A")
+        written.append("A")
+    elif mnemonic in {"ASLD", "LSRD", "ADDD", "SUBD"}:
+        read += ["A", "B"]
+        written += ["A", "B"]
+    elif mnemonic == "LDD":
+        written += ["A", "B"]
+    elif mnemonic == "STD":
+        read += ["A", "B"]
+    elif mnemonic == "CPX":
+        read.append("X")
+    elif mnemonic == "LDX":
+        written.append("X")
+    elif mnemonic == "STX":
+        read.append("X")
+    elif mnemonic == "LDS":
+        written.append("SP")
+    elif mnemonic == "STS":
+        read.append("SP")
+    elif root in RMW_ROWS.values() and mnemonic != root:
+        register = mnemonic[-1]
+        if root != "CLR":
+            read.append(register)
+        if root != "TST":
+            written.append(register)
+    elif root in AB_ROWS.values():
+        register = mnemonic[-1]
+        if root == "LDA":
+            written.append(register)
+        elif root == "STA":
+            read.append(register)
+        elif root in {"CMP", "BIT"}:
+            read.append(register)
+        else:
+            read.append(register)
+            written.append(register)
+    return _dedupe(read), _dedupe(written)
+
+
+def _memory_facts(mnemonic: str, mode: str, length: int) -> list[str]:
+    operations = ["read opcode at PC"]
+    if length > 1:
+        operations.append(f"read {length - 1} instruction operand byte(s)")
+    root = _operation_root(mnemonic)
+    memory_mode = mode in {"direct", "indexed-unsigned-8", "extended"}
+    if memory_mode and mnemonic not in {"JMP", "JSR"}:
+        if root == "STA" or mnemonic in {"STX", "STS", "STD"}:
+            width = 2 if mnemonic in {"STX", "STS", "STD"} else 1
+            operations.append(f"write {width} effective-address byte(s)")
+        elif root in RMW_ROWS.values():
+            if root != "CLR":
+                operations.append("read effective-address byte")
+            if root == "CLR":
+                operations.append("write zero to effective-address byte")
+            elif root != "TST":
+                operations.append("write modified effective-address byte")
+        else:
+            width = 2 if mnemonic in {"CPX", "LDX", "LDS", "LDD", "ADDD", "SUBD"} else 1
+            operations.append(f"read {width} effective-address byte(s)")
+    if mnemonic in {"BSR", "JSR"}:
+        operations += ["write return-PC low byte to stack", "write return-PC high byte to stack"]
+    elif mnemonic in {"PSHA", "PSHB"}:
+        operations.append("write register byte to stack")
+    elif mnemonic == "PSHX":
+        operations.append("write two X bytes to stack")
+    elif mnemonic in {"PULA", "PULB"}:
+        operations.append("read register byte from stack")
+    elif mnemonic == "PULX":
+        operations.append("read two X bytes from stack")
+    elif mnemonic == "RTS":
+        operations.append("read two return-PC bytes from stack")
+    elif mnemonic == "RTI":
+        operations.append("read CCR, B, A, X, and PC bytes from stack")
+    elif mnemonic in {"SWI", "WAI"}:
+        operations.append("write PC, X, A, B, and CCR bytes to stack")
+        if mnemonic == "SWI":
+            operations.append("read SWI vector at FFFA:FFFB")
+    return operations
+
+
+def _control_facts(mnemonic: str, condition: str | None = None) -> tuple[list[str], str | None, str | None]:
+    stack: list[str] = []
+    branch: str | None = None
+    vector: str | None = None
+    if condition is not None:
+        branch = f"add signed 8-bit displacement to post-instruction PC when {condition}"
+    elif mnemonic == "BRN":
+        branch = "never changes PC beyond normal two-byte instruction advance"
+    elif mnemonic == "BSR":
+        branch = "push post-instruction PC and add signed 8-bit displacement"
+        stack = ["push PCL, then PCH; SP decrements after each byte"]
+    elif mnemonic == "JMP":
+        branch = "load PC with the effective address"
+    elif mnemonic == "JSR":
+        branch = "push post-instruction PC and load PC with the effective address"
+        stack = ["push PCL, then PCH; SP decrements after each byte"]
+    elif mnemonic == "RTS":
+        branch = "pull the saved PC and resume at it"
+        stack = ["increment SP and pull PCH, then increment SP and pull PCL"]
+    elif mnemonic == "RTI":
+        branch = "restore saved PC after restoring the complete machine state"
+        stack = ["pull CCR, B, A, X high, X low, PC high, and PC low in documented order"]
+    elif mnemonic in {"PSHA", "PSHB"}:
+        stack = [f"store {mnemonic[-1]} at SP, then decrement SP"]
+    elif mnemonic in {"PULA", "PULB"}:
+        stack = [f"increment SP, then load {mnemonic[-1]} from stack"]
+    elif mnemonic == "PSHX":
+        stack = ["push X low, then X high; decrement SP after each byte"]
+    elif mnemonic == "PULX":
+        stack = ["increment SP and pull X high, then increment SP and pull X low"]
+    elif mnemonic == "INS":
+        stack = ["increment SP by one without accessing stack memory"]
+    elif mnemonic == "DES":
+        stack = ["decrement SP by one without accessing stack memory"]
+    elif mnemonic == "TXS":
+        stack = ["replace SP with X minus one"]
+    elif mnemonic == "LDS":
+        stack = ["replace SP with the 16-bit operand"]
+    elif mnemonic == "SWI":
+        stack = ["push PCL, PCH, X low, X high, A, B, and CCR; decrement SP after each byte"]
+        vector = "load PC from the software-interrupt vector at FFFA:FFFB"
+    elif mnemonic == "WAI":
+        stack = ["push PCL, PCH, X low, X high, A, B, and CCR once, then wait"]
+        vector = "on an accepted interrupt, load that source's vector without stacking the state again"
+    return stack, branch, vector
+
+
+def _aliases(mnemonic: str, architecture: str) -> list[str]:
+    aliases = {
+        "ASL": ["LSL"],
+        "ASLA": ["LSLA"],
+        "ASLB": ["LSLB"],
+        "ASLD": ["LSLD"],
+    }.get(mnemonic, [])
+    if architecture == "m6801" and mnemonic == "BCC":
+        aliases.append("BHS")
+    if architecture == "m6801" and mnemonic == "BCS":
+        aliases.append("BLO")
+    return aliases
+
+
+def _instruction(
+    opcode: int,
+    architecture: str,
+    mnemonic: str,
+    mode: str,
+    length: int,
+    cycles: int,
+    reference_id: str,
+    locator: str,
+    *,
+    condition: str | None = None,
+    notes: str = "",
+) -> dict:
+    flags_read, flags_affected, flags_undefined, flag_semantics = _flag_facts(
+        mnemonic, architecture
+    )
+    registers_read, registers_written = _register_facts(mnemonic, mode)
+    stack_effects, branch_behavior, vector_behavior = _control_facts(mnemonic, condition)
+    return {
+        "opcode": opcode,
+        "opcode_hex": f"{opcode:02X}",
+        "classification": "documented_instruction",
+        "mnemonic": mnemonic,
+        "aliases": _aliases(mnemonic, architecture),
+        "architectural_applicability": [architecture],
+        "addressing_mode": mode,
+        "length": length,
+        "cycles": cycles,
+        "conditional_cycles": [],
+        "registers_read": registers_read,
+        "registers_written": registers_written,
+        "flags_read": flags_read,
+        "flags_affected": flags_affected,
+        "flags_undefined": flags_undefined,
+        "flag_semantics": flag_semantics,
+        "memory_operations": _memory_facts(mnemonic, mode, length),
+        "stack_effects": stack_effects,
+        "branch_behavior": branch_behavior,
+        "vector_behavior": vector_behavior,
+        "primary_reference": {"id": reference_id, "locator": locator},
+        "notes": notes,
+    }
+
+
+def _empty_architecture(architecture: str, reference_id: str, locator: str) -> list[dict]:
+    return [_undefined(opcode, architecture, reference_id, locator) for opcode in range(256)]
+
+
+def _put(records: list[dict], record: dict) -> None:
+    opcode = record["opcode"]
+    if records[opcode]["classification"] != "undefined_behavior":
+        raise ValueError(f"duplicate opcode definition {opcode:02X}")
+    records[opcode] = record
+
+
+def build_m6800() -> dict:
+    architecture = "m6800"
+    reference_id = "motorola-m6800-prm-1976"
+    undefined_reference_id = "motorola-mc6800-system-design-data-1976"
+    undefined_locator = "MC6800 MPU tables 2-7 complete instruction set; opcode is not assigned"
+    records = _empty_architecture(architecture, undefined_reference_id, undefined_locator)
+
+    inherent = {
+        0x01: ("NOP", 2), 0x06: ("TAP", 2), 0x07: ("TPA", 2),
+        0x08: ("INX", 4), 0x09: ("DEX", 4), 0x0A: ("CLV", 2),
+        0x0B: ("SEV", 2), 0x0C: ("CLC", 2), 0x0D: ("SEC", 2),
+        0x0E: ("CLI", 2), 0x0F: ("SEI", 2), 0x10: ("SBA", 2),
+        0x11: ("CBA", 2), 0x16: ("TAB", 2), 0x17: ("TBA", 2),
+        0x19: ("DAA", 2), 0x1B: ("ABA", 2), 0x30: ("TSX", 4),
+        0x31: ("INS", 4), 0x32: ("PULA", 4), 0x33: ("PULB", 4),
+        0x34: ("DES", 4), 0x35: ("TXS", 4), 0x36: ("PSHA", 4),
+        0x37: ("PSHB", 4), 0x39: ("RTS", 5), 0x3B: ("RTI", 10),
+        0x3E: ("WAI", 9), 0x3F: ("SWI", 12),
+    }
+    for opcode, (mnemonic, cycles) in inherent.items():
+        _put(records, _instruction(opcode, architecture, mnemonic, "inherent", 1, cycles, reference_id, f"appendix A, {mnemonic} instruction entry"))
+
+    for opcode, (mnemonic, condition) in BRANCHES.items():
+        _put(records, _instruction(opcode, architecture, mnemonic, "relative", 2, 4, reference_id, f"appendix A, {mnemonic} instruction entry", condition=condition))
+    _put(records, _instruction(0x8D, architecture, "BSR", "relative", 2, 8, reference_id, "appendix A, BSR instruction entry"))
+
+    for low, root in RMW_ROWS.items():
+        for high, suffix, mode, length, cycles in (
+            (0x4, "A", "accumulator-a", 1, 2),
+            (0x5, "B", "accumulator-b", 1, 2),
+            (0x6, "", "indexed-unsigned-8", 2, 7),
+            (0x7, "", "extended", 3, 6),
+        ):
+            mnemonic = root + suffix
+            _put(records, _instruction((high << 4) | low, architecture, mnemonic, mode, length, cycles, reference_id, f"appendix A, {root} instruction entry"))
+    for high, mode, length, cycles in ((0x6, "indexed-unsigned-8", 2, 4), (0x7, "extended", 3, 3)):
+        _put(records, _instruction((high << 4) | 0xE, architecture, "JMP", mode, length, cycles, reference_id, "appendix A, JMP instruction entry"))
+
+    modes_8 = {
+        0x8: ("immediate-8", 2, 2),
+        0x9: ("direct", 2, 3),
+        0xA: ("indexed-unsigned-8", 2, 5),
+        0xB: ("extended", 3, 4),
+        0xC: ("immediate-8", 2, 2),
+        0xD: ("direct", 2, 3),
+        0xE: ("indexed-unsigned-8", 2, 5),
+        0xF: ("extended", 3, 4),
+    }
+    for high, (mode, length, cycles) in modes_8.items():
+        accumulator = "A" if high < 0xC else "B"
+        for low, root in AB_ROWS.items():
+            if root == "STA" and mode.startswith("immediate"):
+                continue
+            mnemonic = root + accumulator
+            actual_cycles = cycles + (1 if root == "STA" else 0)
+            _put(records, _instruction((high << 4) | low, architecture, mnemonic, mode, length, actual_cycles, reference_id, f"appendix A, {root} instruction entry"))
+
+    for opcode, mode, length, cycles in (
+        (0x8C, "immediate-16", 3, 3), (0x9C, "direct", 2, 4),
+        (0xAC, "indexed-unsigned-8", 2, 6), (0xBC, "extended", 3, 5),
+    ):
+        _put(records, _instruction(opcode, architecture, "CPX", mode, length, cycles, reference_id, "appendix A, CPX instruction entry", notes="On MC6800, C is not affected and N/V are not intended for conditional branching."))
+    for base, load, store in ((0x80, "LDS", "STS"), (0xC0, "LDX", "STX")):
+        for offset, mode, length, cycles in (
+            (0x0E, "immediate-16", 3, 3), (0x1E, "direct", 2, 4),
+            (0x2E, "indexed-unsigned-8", 2, 6), (0x3E, "extended", 3, 5),
+        ):
+            _put(records, _instruction(base + offset, architecture, load, mode, length, cycles, reference_id, f"appendix A, {load} instruction entry"))
+        for offset, mode, length, cycles in (
+            (0x1F, "direct", 2, 5), (0x2F, "indexed-unsigned-8", 2, 7),
+            (0x3F, "extended", 3, 6),
+        ):
+            _put(records, _instruction(base + offset, architecture, store, mode, length, cycles, reference_id, f"appendix A, {store} instruction entry"))
+    for opcode, mode, length, cycles in ((0xAD, "indexed-unsigned-8", 2, 8), (0xBD, "extended", 3, 9)):
+        _put(records, _instruction(opcode, architecture, "JSR", mode, length, cycles, reference_id, "appendix A, JSR instruction entry"))
+
+    return {
+        "schema_version": 1,
+        "architecture": architecture,
+        "title": "Motorola M6800 opcode classification",
+        "primary_references": [
+            {"id": reference_id, "locators": ["appendix A instruction entries", "chapters 4-5"]},
+            {"id": undefined_reference_id, "locators": ["MC6800 MPU tables 2-7"]},
+        ],
+        "opcodes": records,
+    }
+
+
+def build_m6801() -> dict:
+    architecture = "m6801"
+    reference_id = "motorola-mc6801-reference-1983"
+    records = _empty_architecture(architecture, reference_id, "appendix B operation code map, cell marked undefined")
+
+    inherent = {
+        0x01: ("NOP", 2), 0x04: ("LSRD", 3), 0x05: ("ASLD", 3),
+        0x06: ("TAP", 2), 0x07: ("TPA", 2), 0x08: ("INX", 3),
+        0x09: ("DEX", 3), 0x0A: ("CLV", 2), 0x0B: ("SEV", 2),
+        0x0C: ("CLC", 2), 0x0D: ("SEC", 2), 0x0E: ("CLI", 2),
+        0x0F: ("SEI", 2), 0x10: ("SBA", 2), 0x11: ("CBA", 2),
+        0x16: ("TAB", 2), 0x17: ("TBA", 2), 0x19: ("DAA", 2),
+        0x1B: ("ABA", 2), 0x30: ("TSX", 3), 0x31: ("INS", 3),
+        0x32: ("PULA", 4), 0x33: ("PULB", 4), 0x34: ("DES", 3),
+        0x35: ("TXS", 3), 0x36: ("PSHA", 3), 0x37: ("PSHB", 3),
+        0x38: ("PULX", 5), 0x39: ("RTS", 5), 0x3A: ("ABX", 3),
+        0x3B: ("RTI", 10), 0x3C: ("PSHX", 4), 0x3D: ("MUL", 10),
+        0x3E: ("WAI", 9), 0x3F: ("SWI", 12),
+    }
+    for opcode, (mnemonic, cycles) in inherent.items():
+        _put(records, _instruction(opcode, architecture, mnemonic, "inherent", 1, cycles, reference_id, f"appendix A, {mnemonic} instruction entry"))
+
+    for opcode, (mnemonic, condition) in BRANCHES.items():
+        _put(records, _instruction(opcode, architecture, mnemonic, "relative", 2, 3, reference_id, f"figure 4-2 and appendix A, {mnemonic}", condition=condition))
+    _put(records, _instruction(0x21, architecture, "BRN", "relative", 2, 3, reference_id, "figure 4-2 and appendix A, BRN"))
+    _put(records, _instruction(0x8D, architecture, "BSR", "relative", 2, 6, reference_id, "figure 4-2 and appendix A, BSR"))
+
+    for low, root in RMW_ROWS.items():
+        for high, suffix, mode, length, cycles in (
+            (0x4, "A", "accumulator-a", 1, 2),
+            (0x5, "B", "accumulator-b", 1, 2),
+            (0x6, "", "indexed-unsigned-8", 2, 6),
+            (0x7, "", "extended", 3, 6),
+        ):
+            mnemonic = root + suffix
+            _put(records, _instruction((high << 4) | low, architecture, mnemonic, mode, length, cycles, reference_id, f"figure 4-2 and appendix A, {root}"))
+    for high, mode, length in ((0x6, "indexed-unsigned-8", 2), (0x7, "extended", 3)):
+        _put(records, _instruction((high << 4) | 0xE, architecture, "JMP", mode, length, 3, reference_id, "figure 4-2 and appendix A, JMP"))
+
+    modes_8 = {
+        0x8: ("immediate-8", 2, 2), 0x9: ("direct", 2, 3),
+        0xA: ("indexed-unsigned-8", 2, 4), 0xB: ("extended", 3, 4),
+        0xC: ("immediate-8", 2, 2), 0xD: ("direct", 2, 3),
+        0xE: ("indexed-unsigned-8", 2, 4), 0xF: ("extended", 3, 4),
+    }
+    for high, (mode, length, cycles) in modes_8.items():
+        accumulator = "A" if high < 0xC else "B"
+        for low, root in AB_ROWS.items():
+            if root == "STA" and mode.startswith("immediate"):
+                continue
+            _put(records, _instruction((high << 4) | low, architecture, root + accumulator, mode, length, cycles, reference_id, f"figure 4-2 and appendix A, {root}"))
+
+    for mnemonic, opcodes in {
+        "SUBD": [(0x83, "immediate-16", 3, 4), (0x93, "direct", 2, 5), (0xA3, "indexed-unsigned-8", 2, 6), (0xB3, "extended", 3, 6)],
+        "ADDD": [(0xC3, "immediate-16", 3, 4), (0xD3, "direct", 2, 5), (0xE3, "indexed-unsigned-8", 2, 6), (0xF3, "extended", 3, 6)],
+        "LDD": [(0xCC, "immediate-16", 3, 3), (0xDC, "direct", 2, 4), (0xEC, "indexed-unsigned-8", 2, 5), (0xFC, "extended", 3, 5)],
+        "STD": [(0xDD, "direct", 2, 4), (0xED, "indexed-unsigned-8", 2, 5), (0xFD, "extended", 3, 5)],
+    }.items():
+        for opcode, mode, length, cycles in opcodes:
+            _put(records, _instruction(opcode, architecture, mnemonic, mode, length, cycles, reference_id, f"figure 4-2 and appendix A, {mnemonic}"))
+
+    for opcode, mode, length, cycles in (
+        (0x8C, "immediate-16", 3, 4), (0x9C, "direct", 2, 5),
+        (0xAC, "indexed-unsigned-8", 2, 6), (0xBC, "extended", 3, 6),
+    ):
+        _put(records, _instruction(opcode, architecture, "CPX", mode, length, cycles, reference_id, "figure 4-2 and appendix A, CPX", notes="MC6801 CPX sets C and supports every applicable conditional branch."))
+    for base, load, store in ((0x80, "LDS", "STS"), (0xC0, "LDX", "STX")):
+        for offset, mode, length, cycles in (
+            (0x0E, "immediate-16", 3, 3), (0x1E, "direct", 2, 4),
+            (0x2E, "indexed-unsigned-8", 2, 5), (0x3E, "extended", 3, 5),
+        ):
+            _put(records, _instruction(base + offset, architecture, load, mode, length, cycles, reference_id, f"figure 4-2 and appendix A, {load}"))
+        for offset, mode, length, cycles in (
+            (0x1F, "direct", 2, 4), (0x2F, "indexed-unsigned-8", 2, 5),
+            (0x3F, "extended", 3, 5),
+        ):
+            _put(records, _instruction(base + offset, architecture, store, mode, length, cycles, reference_id, f"figure 4-2 and appendix A, {store}"))
+    for opcode, mode, length, cycles in (
+        (0x9D, "direct", 2, 5), (0xAD, "indexed-unsigned-8", 2, 6),
+        (0xBD, "extended", 3, 6),
+    ):
+        _put(records, _instruction(opcode, architecture, "JSR", mode, length, cycles, reference_id, "figure 4-2 and appendix A, JSR"))
+
+    return {
+        "schema_version": 1,
+        "architecture": architecture,
+        "title": "Motorola MC6801/MC6803 opcode classification",
+        "primary_references": [{"id": reference_id, "locators": ["figure 4-2 instruction summary", "appendix A instruction entries", "appendix B operation code map"]}],
+        "opcodes": records,
+    }
+
+
+BUILDERS = {"m6800": build_m6800, "m6801": build_m6801}
+
+
+def rendered_specs() -> dict[Path, str]:
+    return {
+        OUTPUT_DIR / f"{architecture}.json": json.dumps(builder(), indent=2, sort_keys=False) + "\n"
+        for architecture, builder in BUILDERS.items()
+    }
+
+
+def write_specs(check: bool) -> bool:
+    success = True
+    for path, expected in rendered_specs().items():
+        if check:
+            try:
+                actual = path.read_text(encoding="utf-8")
+            except OSError:
+                actual = ""
+            if actual != expected:
+                print(f"generated opcode specification is stale: {path}", file=sys.stderr)
+                success = False
+            continue
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as output:
+            output.write(expected)
+            temporary = Path(output.name)
+        temporary.replace(path)
+        print(f"wrote {path}")
+    return success
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="fail if committed outputs are stale")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    return 0 if write_specs(parse_args(argv).check) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

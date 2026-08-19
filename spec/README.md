@@ -26,3 +26,9 @@ Status values have evidentiary meaning:
 Later opcode files cite reference IDs from `docs/references.yml` plus precise
 printed-page, table, figure, or section locators. Generated validators reject
 missing or duplicate opcode values and incomplete factual records.
+
+Expanded opcode classifications live in `spec/opcodes/`. Run `make spec-build`
+after changing the compact primary-manual tables in
+`tools/build_opcode_specs.py`; `make spec-check` fails if the committed outputs
+are stale or if any architecture has anything other than one validated record
+for each value from `00` through `FF`.
