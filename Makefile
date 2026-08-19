@@ -1,7 +1,7 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-hitachi test-hd6301-opcodes test-alu test-alu-rtl quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -19,8 +19,11 @@ help:
 	@echo "  test-m6801  run MC6801/MC6803 model regressions"
 	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
 	@echo "  test-m6805  run M6805-lineage model regressions"
+	@echo "  test-m6805-rtl run directed and exhaustive M6805 RTL regressions"
+	@echo "  test-m6805-opcodes compare all documented M6805 encodings to the model"
 	@echo "  test-hitachi run HD6301/HD6305 model regressions"
 	@echo "  test-hd6301-opcodes compare all documented HD6301 encodings to the model"
+	@echo "  test-hd6305-opcodes compare all documented HD6305 encodings to the model"
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
 	@echo "  quick       run the fast local gate"
@@ -37,6 +40,7 @@ spec-build:
 	$(PYTHON) -m tools.build_opcode_specs
 	$(PYTHON) -m tools.build_rtl_decode
 	$(PYTHON) -m tools.build_m6800_rtl_vectors
+	$(PYTHON) -m tools.build_m6805_rtl_vectors
 
 spec-check: refs-check
 	$(PYTHON) -m tools.validate_devices
@@ -44,6 +48,7 @@ spec-check: refs-check
 	$(PYTHON) -m tools.validate_opcodes
 	$(PYTHON) -m tools.build_rtl_decode --check
 	$(PYTHON) -m tools.build_m6800_rtl_vectors --check
+	$(PYTHON) -m tools.build_m6805_rtl_vectors --check
 
 lint: spec-check lint-rtl
 	$(PYTHON) -m compileall -q model tools tests
@@ -59,6 +64,12 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core "-GARCHITECTURE=2'b10" \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module m6805_core \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6805/m6805_core.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module m6805_core -GHITACHI_PROFILE=1 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6805/m6805_core.sv
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -98,10 +109,27 @@ test-m6801-opcodes:
 		sim/tb_m6800_opcodes.sv
 	build/obj_m6801_opcodes/Vtb_m6801_opcodes
 
-test-m6805:
+test-m6805: test-m6805-rtl
 	$(PYTHON) -m unittest tests.test_m6805_model -v
 
-test-hitachi: test-hd6301-opcodes
+test-m6805-rtl: test-m6805-opcodes
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6805_core \
+		-Mdir build/obj_m6805_core -o Vtb_m6805_core \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6805/m6805_core.sv sim/tb_m6805_core.sv
+	build/obj_m6805_core/Vtb_m6805_core
+
+test-m6805-opcodes:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6805_opcodes \
+		-Mdir build/obj_m6805_opcodes -o Vtb_m6805_opcodes \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/m6805_opcode_vectors_pkg.sv rtl/m6805/m6805_core.sv \
+		sim/tb_m6805_opcodes.sv
+	build/obj_m6805_opcodes/Vtb_m6805_opcodes
+
+test-hitachi: test-hd6301-opcodes test-hd6305-opcodes
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model -v
 
 test-hd6301-opcodes:
@@ -113,6 +141,15 @@ test-hd6301-opcodes:
 		sim/tb_m6800_opcodes.sv
 	build/obj_hd6301_opcodes/Vtb_hd6301_opcodes
 
+test-hd6305-opcodes:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6805_opcodes \
+		-GTEST_HITACHI=1 -Mdir build/obj_hd6305_opcodes -o Vtb_hd6305_opcodes \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/m6805_opcode_vectors_pkg.sv rtl/m6805/m6805_core.sv \
+		sim/tb_m6805_opcodes.sv
+	build/obj_hd6305_opcodes/Vtb_hd6305_opcodes
+
 test-alu: test-alu-rtl
 	$(PYTHON) -m unittest tests.test_alu_exhaustive -v
 
@@ -123,7 +160,7 @@ test-alu-rtl:
 		rtl/common/m680x_alu_pkg.sv sim/tb_alu.sv
 	build/obj_alu/Vtb_alu
 
-quick: lint test test-m6800-rtl
+quick: lint test test-m6800-rtl test-m6805-rtl
 
 ci: quick
 
