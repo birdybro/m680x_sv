@@ -30,11 +30,13 @@ refs-check:
 
 spec-build:
 	$(PYTHON) -m tools.build_opcode_specs
+	$(PYTHON) -m tools.build_rtl_decode
 
 spec-check: refs-check
 	$(PYTHON) -m tools.validate_devices
 	$(PYTHON) -m tools.build_opcode_specs --check
 	$(PYTHON) -m tools.validate_opcodes
+	$(PYTHON) -m tools.build_rtl_decode --check
 
 lint: spec-check
 	$(PYTHON) -m compileall -q model tools tests
