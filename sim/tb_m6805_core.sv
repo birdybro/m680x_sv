@@ -35,7 +35,8 @@ module tb_m6805_core;
 
   m6805_core dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(clock_enable),
-    .bus_ready_i(bus_ready), .irq_n_i(irq_n), .data_i(data_in),
+    .bus_ready_i(bus_ready), .irq_n_i(irq_n), .interrupt_pin_n_i(irq_n),
+    .irq_vector_i(16'hfffa), .data_i(data_in),
     .address_o(address), .data_o(data_out), .write_o(write_enable),
     .bus_valid_o(bus_valid), .opcode_fetch_o(opcode_fetch), .retire_o(retire),
     .illegal_o(illegal), .undefined_o(undefined_value), .waiting_o(waiting_state),

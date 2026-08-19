@@ -37,7 +37,8 @@ module tb_m6805_opcodes #(
 
   m6805_core #(.HITACHI_PROFILE(TEST_HITACHI)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1), .bus_ready_i(1'b1),
-    .irq_n_i(1'b1), .data_i(data_in), .address_o(address), .data_o(data_out),
+    .irq_n_i(1'b1), .interrupt_pin_n_i(1'b1), .irq_vector_i(16'hfffa),
+    .data_i(data_in), .address_o(address), .data_o(data_out),
     .write_o(write_enable), .bus_valid_o(bus_valid), .opcode_fetch_o(opcode_fetch),
     .retire_o(retire), .illegal_o(illegal), .undefined_o(undefined_value),
     .waiting_o(waiting_state), .stopped_o(stopped_state), .interrupt_ack_o(interrupt_ack),

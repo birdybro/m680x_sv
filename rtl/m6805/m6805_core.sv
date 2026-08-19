@@ -5,7 +5,6 @@ module m6805_core #(
   parameter logic [15:0] STACK_BASE = 16'h0060,
   parameter logic [15:0] STACK_MASK = 16'h001f,
   parameter logic [15:0] STACK_TOP = 16'h007f,
-  parameter logic [15:0] IRQ_VECTOR = 16'hfffa,
   parameter logic [15:0] SWI_VECTOR = 16'hfffc,
   parameter logic [15:0] RESET_VECTOR = 16'hfffe
 ) (
@@ -14,6 +13,8 @@ module m6805_core #(
   input  logic        clock_enable_i,
   input  logic        bus_ready_i,
   input  logic        irq_n_i,
+  input  logic        interrupt_pin_n_i,
+  input  logic [15:0] irq_vector_i,
   input  logic [7:0]  data_i,
   output logic [15:0] address_o,
   output logic [7:0]  data_o,
@@ -144,8 +145,8 @@ module m6805_core #(
         OP_BMI: branch_condition = n;
         OP_BMC: branch_condition = !i;
         OP_BMS: branch_condition = i;
-        OP_BIL: branch_condition = !irq_n_i;
-        OP_BIH: branch_condition = irq_n_i;
+        OP_BIL: branch_condition = !interrupt_pin_n_i;
+        OP_BIH: branch_condition = interrupt_pin_n_i;
         default: branch_condition = 1'b0;
       endcase
     end
@@ -520,7 +521,7 @@ module m6805_core #(
         end
         ST_FETCH: begin
           if (!irq_n_i && !condition_codes[CCR_I]) begin
-            vector_address <= IRQ_VECTOR;
+            vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
             phase <= 3'd0;
             state <= ST_INTERRUPT_PUSH;
@@ -690,7 +691,7 @@ module m6805_core #(
         end
         ST_WAITING, ST_STOPPED: begin
           if (!irq_n_i) begin
-            vector_address <= IRQ_VECTOR;
+            vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
             phase <= 3'd0;
             state <= ST_INTERRUPT_PUSH;

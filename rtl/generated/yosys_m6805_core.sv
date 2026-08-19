@@ -7,7 +7,6 @@ module m6805_core #(
   parameter logic [15:0] STACK_BASE = 16'h0060,
   parameter logic [15:0] STACK_MASK = 16'h001f,
   parameter logic [15:0] STACK_TOP = 16'h007f,
-  parameter logic [15:0] IRQ_VECTOR = 16'hfffa,
   parameter logic [15:0] SWI_VECTOR = 16'hfffc,
   parameter logic [15:0] RESET_VECTOR = 16'hfffe
 ) (
@@ -16,6 +15,8 @@ module m6805_core #(
   input  logic        clock_enable_i,
   input  logic        bus_ready_i,
   input  logic        irq_n_i,
+  input  logic        interrupt_pin_n_i,
+  input  logic [15:0] irq_vector_i,
   input  logic [7:0]  data_i,
   output logic [15:0] address_o,
   output logic [7:0]  data_o,
@@ -69,10 +70,10 @@ module m6805_core #(
   );
     logic [8:0] total;
     begin
-      total = {1'b0, left} + {1'b0, right} + carry_in;
+      total = {1'b0, left} + {1'b0, right} + {8'h00, carry_in};
       add8 = {
         total[7:0],
-        ({1'b0, left[3:0]} + {1'b0, right[3:0]} + carry_in) > 5'h0f,
+        ({1'b0, left[3:0]} + {1'b0, right[3:0]} + {4'h0, carry_in}) > 5'h0f,
         total[7],
         total[7:0] == 8'h00,
         (~(left[7] ^ right[7])) & (left[7] ^ total[7]),
@@ -89,7 +90,7 @@ module m6805_core #(
     logic [8:0] subtrahend;
     logic [7:0] value;
     begin
-      subtrahend = {1'b0, right} + borrow_in;
+      subtrahend = {1'b0, right} + {8'h00, borrow_in};
       value = left - subtrahend[7:0];
       sub8 = {
         value, 1'b0, value[7], value == 8'h00,
@@ -1682,8 +1683,8 @@ module m6805_core #(
         OP_BMI: branch_condition = n;
         OP_BMC: branch_condition = !i;
         OP_BMS: branch_condition = i;
-        OP_BIL: branch_condition = !irq_n_i;
-        OP_BIH: branch_condition = irq_n_i;
+        OP_BIL: branch_condition = !interrupt_pin_n_i;
+        OP_BIH: branch_condition = interrupt_pin_n_i;
         default: branch_condition = 1'b0;
       endcase
     end
@@ -2058,7 +2059,7 @@ module m6805_core #(
         end
         ST_FETCH: begin
           if (!irq_n_i && !condition_codes[CCR_I]) begin
-            vector_address <= IRQ_VECTOR;
+            vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
             phase <= 3'd0;
             state <= ST_INTERRUPT_PUSH;
@@ -2228,7 +2229,7 @@ module m6805_core #(
         end
         ST_WAITING, ST_STOPPED: begin
           if (!irq_n_i) begin
-            vector_address <= IRQ_VECTOR;
+            vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
             phase <= 3'd0;
             state <= ST_INTERRUPT_PUSH;
