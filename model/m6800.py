@@ -104,6 +104,11 @@ class M6800Model:
         if source not in {"nmi", "irq"}:
             raise ValueError("source must be 'nmi' or 'irq'")
         if source == "irq" and (self.flag("I") or self._irq_defer_cycles):
+            # HD6301 SLP is released by an active interrupt request even when
+            # the mask prevents entry; execution then resumes at the next
+            # instruction without stacking or vectoring.
+            if self.architecture == "hd6301" and self.state.sleeping:
+                self.state.sleeping = False
             return False
         self._accesses = []
         if not self.state.waiting:

@@ -6,7 +6,8 @@
 // clk_i/clock_enable_i step represents one complete E-cycle. Physical Port 3
 // address/data multiplexing and the E/AS waveform belong in a pin wrapper.
 module mc6801_mcu #(
-  parameter logic [2:0] OPERATING_MODE = 3'd2
+  parameter logic [2:0] OPERATING_MODE = 3'd2,
+  parameter logic       HITACHI_CPU = 1'b0
 ) (
   input  logic        clk_i,
   input  logic        reset_n_i,
@@ -35,6 +36,7 @@ module mc6801_mcu #(
   output logic        illegal_o,
   output logic        undefined_o,
   output logic        waiting_o,
+  output logic        sleeping_o,
   output logic        interrupt_ack_o,
   output logic [15:0] debug_address_o,
   output logic [15:0] debug_pc_o,
@@ -525,7 +527,7 @@ module mc6801_mcu #(
   end
 
   /* verilator lint_off PINCONNECTEMPTY */
-  m6800_core #(.ARCHITECTURE(2'd1)) cpu (
+  m6800_core #(.ARCHITECTURE(HITACHI_CPU ? 2'd2 : 2'd1)) cpu (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),
     .clock_enable_i(clock_enable_i),
@@ -544,7 +546,7 @@ module mc6801_mcu #(
     .illegal_o(illegal_o),
     .undefined_o(undefined_o),
     .waiting_o(waiting_o),
-    .sleeping_o(),
+    .sleeping_o(sleeping_o),
     .interrupt_ack_o(interrupt_ack_o),
     .interrupt_vector_o(),
     .debug_a_o(debug_a_o),

@@ -26,18 +26,19 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 72 |
+| Python unit tests | 73 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 49 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
+| HD6303R Mode-2 integration checks | 9 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
 | Bounded formal profiles | 7 at depth 10 |
-| Synthesis tops | 8 |
+| Synthesis tops | 9 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -103,6 +104,13 @@ two `$ffff` reads, seven stack writes, and `$ffee:$ffef` vector reads. It checks
 the complete stacked state, unmaskable I-bit update, RTI restoration of the
 faulting PC, and immediate retrap when the invalid opcode remains present.
 
+The HD6303R Mode-2 suite executes through the integrated device wrapper. It
+checks external reset vectors, internal RAM exclusion from the external bus,
+AIM and XGDX, timer continuity while sleeping, masked IRQ release from SLP
+without stacking or vectoring, simultaneous NMI/IRQ priority, and opcode-error
+TRAP through the external `$ffee:$ffef` vector. The independent model has a
+matching regression for the masked-request SLP rule.
+
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction
 release, NMI retention on the exact HALT-entry boundary, RTI/re-halt behavior,
@@ -129,6 +137,7 @@ safety properties for all symbolic input sequences:
 - a write is always a valid bus cycle;
 - an opcode fetch is a valid read;
 - waiting and sleeping/stopped states are mutually exclusive;
+- a masked request releases HD6301 SLP without leaving the core asleep;
 - interrupt-vector selection is legal;
 - the M6805 stack remains inside `$0060`-`$007f`; and
 - architectural state, bus outputs, and status remain stable when clock enable
@@ -146,8 +155,8 @@ full instruction-correctness proof.
 
 Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
-delay traces, the MC68705P5 device suite, and both MC6801/MC6803 peripheral
-differential profiles from the generated
+delay traces, the MC68705P5 and HD6303R device suites, and both MC6801/MC6803
+peripheral differential profiles from the generated
 package-flattened view. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
 hide it.
@@ -156,11 +165,12 @@ Representative generic Yosys 0.68 results from the current source are:
 
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
-| M6800 | 6,205 | 217 |
-| MC6800 bus wrapper | 6,250 | 223 |
-| MC6801 | 6,155 | 217 |
-| MC6801 Mode 2 integration | 10,674 | 1,422 |
-| HD6301 | 7,258 | 218 |
+| M6800 | 6,213 | 217 |
+| MC6800 bus wrapper | 6,274 | 223 |
+| MC6801 | 6,165 | 217 |
+| MC6801 Mode 2 integration | 10,755 | 1,422 |
+| HD6301 | 7,289 | 218 |
+| HD6303R Mode 2 integration | 11,856 | 1,423 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,711 | 1,122 |

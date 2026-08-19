@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "device": "hd6303r",
+  "address_width": 16,
+  "inherits": {
+    "device": "mc6801",
+    "sections": ["registers", "timer", "gpio", "sci", "memory_control"],
+    "scope": "The HD6303R uses the documented HD6801-compatible timer, SCI, GPIO, register, and RAM-control functions on the same die as the HD6301V1, with mask ROM disabled.",
+    "restrictions": [
+      "The current RTL profile implements expanded multiplexed Mode 2 only.",
+      "Modes 0, 4, 6, and 7 are unavailable on the HD6303R; Modes 1 and 5 remain outside the current normalized wrapper.",
+      "Physical Port 3 address/data multiplexing, address strobe, and electrical timing are not claimed by the normalized external-memory interface.",
+      "Standby entry and analog RAM-retention thresholds remain outside this digital profile."
+    ],
+    "reference": {
+      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
+      "locator": "HD6301V1/HD6303R notice and sections 1.1, 2.1-2.12, printed pages 126-166"
+    }
+  },
+  "memory_regions": [
+    {
+      "start": "0000",
+      "end": "001F",
+      "kind": "internal-register-window",
+      "access": "Mode 2 keeps 0004-0007 and 000F external; the implemented common registers remain internal and 0015-001F are reserved"
+    },
+    {
+      "start": "0020",
+      "end": "007F",
+      "kind": "external-memory",
+      "access": "read-write"
+    },
+    {
+      "start": "0080",
+      "end": "00FF",
+      "kind": "internal-ram",
+      "access": "128 bytes when RAME=1; external memory when RAME=0"
+    },
+    {
+      "start": "0100",
+      "end": "FFFF",
+      "kind": "external-memory",
+      "access": "read-write; all interrupt and reset vectors are external in Mode 2"
+    }
+  ],
+  "interrupts": [
+    {"source": "reset", "vector": "FFFE:FFFF", "priority": 0},
+    {"source": "trap", "vector": "FFEE:FFEF", "priority": 1},
+    {"source": "nmi", "vector": "FFFC:FFFD", "priority": 2},
+    {"source": "swi", "vector": "FFFA:FFFB", "priority": "synchronous"},
+    {"source": "irq1-or-is3", "vector": "FFF8:FFF9", "priority": 3},
+    {"source": "timer-input-capture", "vector": "FFF6:FFF7", "priority": 4},
+    {"source": "timer-output-compare", "vector": "FFF4:FFF5", "priority": 5},
+    {"source": "timer-overflow", "vector": "FFF2:FFF3", "priority": 6},
+    {"source": "sci", "vector": "FFF0:FFF1", "priority": 7}
+  ],
+  "operating_modes": {
+    "mode2": "expanded multiplexed ROMless operation with internal registers and RAME-controlled 128-byte RAM; implemented by the current wrapper",
+    "mode1": "expanded non-multiplexed ROMless operation; outside the current profile",
+    "mode5": "expanded non-multiplexed partial-decode operation; outside the current profile",
+    "unavailable": "Modes 0, 4, 6, and 7 are not available on HD6303R",
+    "sleep": "SLP stops CPU execution while peripherals continue; an enabled interrupt vectors, while a masked interrupt request resumes at the following instruction",
+    "standby": "STBY stops clocks and resets internal registers while retaining RAM only under the documented supply conditions; outside the current profile",
+    "reference": {
+      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
+      "locator": "HD6301V1/HD6303R notice; sections 2.1, 2.2, and 2.12, tables 2-1-1 and 2-2-1, printed pages 126-139 and 162-166"
+    }
+  },
+  "implementation_scope": {
+    "rtl": "rtl/hd6301/hd6303r_mcu.sv binds the HD6301 CPU profile to the manufacturer-compatible Mode-2 peripheral and RAM integration",
+    "verification": "Directed execution covers external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, and opcode TRAP through the integrated wrapper",
+    "address_error": "Mode 2 defines no non-memory instruction-fetch region, so the wrapper does not assert an instruction-address-error input; opcode error still invokes TRAP",
+    "excluded_modes": "Modes 1 and 5, standby entry, Port 3 handshake, physical multiplexed-bus waveforms, bi-phase SCI, and external-clock SCI remain unclaimed",
+    "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
+  }
+}

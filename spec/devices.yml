@@ -208,7 +208,7 @@
       "clocking": "Internal oscillator with 1.0/1.5/2.0 MHz speed grades; E defines bus timing.",
       "documented_quirks": ["ROMless counterpart in the V/R architectural pair.", "Address and opcode errors invoke unmaskable TRAP."],
       "undefined_by_documentation": ["Behavior outside documented address/opcode trap cases."],
-      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "PARTIAL"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "PARTIAL", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "PARTIAL", "low_power": "PARTIAL"},
       "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["quick reference printed pages 2-3; HD6301V1/HD6303R user manual"]}]
     },
     {

@@ -171,6 +171,22 @@ ordered TDRE/RDRF/ORFE clearing, center-sampled receive, overrun/framing status,
 wake-mark counting, pin overrides, and shared interrupt. Bi-phase coding and
 external 8x clock mode are not approximated and remain outside the claim.
 
+## HD6303R Mode-2 integration
+
+`rtl/hd6301/hd6303r_mcu.sv` selects the HD6301 CPU profile around the common
+HD6801-compatible device block in expanded multiplexed Mode 2. This sharing is
+grounded in the Hitachi handbook's same-die statement for HD6301V1/HD6303R and
+its explicit compatibility claim, rather than device-number similarity. The
+wrapper exposes the normalized external-memory boundary; the physical Port 3
+address/data and AS waveform remains a separate pin-interface task.
+
+The wrapper keeps all vectors external, decodes the common internal register
+window and RAME-controlled 128-byte RAM, and leaves Mode-2 program space
+external. Its CPU profile adds AIM/OIM/EIM/TIM, XGDX, SLP, Hitachi timing, and
+opcode-error TRAP. During SLP the CPU state stops while the timer and SCI remain
+clocked. An enabled request vectors normally; a masked request releases sleep
+at the following instruction without stacking, as the manufacturer specifies.
+
 ## MC68705P5 integration
 
 `rtl/m6805/mc68705p5_mcu.sv` configures the M6805 core for an 11-bit PC, stack

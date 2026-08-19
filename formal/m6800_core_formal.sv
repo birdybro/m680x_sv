@@ -59,6 +59,10 @@ module m6800_core_formal #(
   end
 
   always @(posedge clk) begin
+    if (ARCHITECTURE == 2'd2 && past_valid && $past(reset_n) &&
+        $past(clock_enable && sleeping_state && !irq_n && debug_ccr[4])) begin
+      assert (!sleeping_state);
+    end
     if (past_valid && $past(past_valid) &&
         (!$past(clock_enable) || ($past(bus_valid) && !$past(bus_ready)))) begin
       assert ({debug_a, debug_b, debug_x, debug_sp, debug_pc, debug_ccr,

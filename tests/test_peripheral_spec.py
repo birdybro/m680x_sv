@@ -17,14 +17,16 @@ class PeripheralSpecificationTests(unittest.TestCase):
         self.spec = json.loads((ROOT / "spec/peripherals/mc68705p5.json").read_text())
         self.mc6801 = json.loads((ROOT / "spec/peripherals/mc6801.json").read_text())
         self.mc6803 = json.loads((ROOT / "spec/peripherals/mc6803.json").read_text())
+        self.hd6303r = json.loads((ROOT / "spec/peripherals/hd6303r.json").read_text())
         self.devices = validate_devices._load_json(ROOT / "spec/devices.yml")
         self.references = load_manifest(ROOT / "docs/references.yml")
 
     def test_repository_peripheral_specification_is_valid(self) -> None:
         validate_peripherals.validate_peripheral(self.spec, self.devices, self.references)
         validate_peripherals.validate_peripheral(self.mc6803, self.devices, self.references)
+        validate_peripherals.validate_peripheral(self.hd6303r, self.devices, self.references)
         validate_peripherals.validate_inheritance_graph(
-            {"mc6801": self.mc6801, "mc6803": self.mc6803}
+            {"mc6801": self.mc6801, "mc6803": self.mc6803, "hd6303r": self.hd6303r}
         )
 
     def test_unknown_inherited_profile_is_rejected(self) -> None:

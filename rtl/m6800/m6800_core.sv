@@ -1183,7 +1183,11 @@ module m6800_core #(
           end
         end
         ST_SLEEPING: begin
-          if (nmi_requested() || (!irq_n_i && !condition_codes[CCR_I])) begin
+          if (!nmi_requested() && !irq_n_i && condition_codes[CCR_I]) begin
+            // HD6301V1 section 2.12: a masked request releases SLP and
+            // execution resumes without interrupt entry.
+            state <= ST_FETCH;
+          end else if (nmi_requested() || !irq_n_i) begin
             phase <= 3'd0;
             interrupt_is_wait <= 1'b0;
             external_interrupt <= 1'b1;

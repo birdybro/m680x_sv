@@ -240,6 +240,23 @@ class M6800ModelTests(unittest.TestCase):
             self.assertTrue(model.service_interrupt("irq"), architecture)
             self.assertEqual(model.state.pc, 0x2400)
 
+    def test_hd6301_masked_irq_releases_sleep_without_vectoring(self) -> None:
+        model = _fixture("hd6301", 0x1A)
+        model.set_flag("I", True)
+        model.step()
+        self.assertTrue(model.state.sleeping)
+        stacked_sp = model.state.sp
+        resume_pc = model.state.pc
+
+        self.assertFalse(model.service_interrupt("irq"))
+        self.assertFalse(model.state.sleeping)
+        self.assertEqual(model.state.sp, stacked_sp)
+        self.assertEqual(model.state.pc, resume_pc)
+
+        model.memory[resume_pc] = 0x01
+        model.step()
+        self.assertEqual(model.state.pc, (resume_pc + 1) & 0xFFFF)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -30,6 +30,7 @@ module tb_mc6801_peripheral_diff #(
   logic illegal;
   logic undefined_value;
   logic waiting_state;
+  logic sleeping_state;
   logic interrupt_ack;
   logic [15:0] debug_address;
   logic [15:0] debug_pc;
@@ -60,6 +61,7 @@ module tb_mc6801_peripheral_diff #(
     .sci_tx_o(sci_tx), .sci_clock_o(sci_clock), .timer_irq_o(timer_irq),
     .sci_irq_o(sci_irq), .opcode_fetch_o(opcode_fetch), .retire_o(retire),
     .illegal_o(illegal), .undefined_o(undefined_value), .waiting_o(waiting_state),
+    .sleeping_o(sleeping_state),
     .interrupt_ack_o(interrupt_ack), .debug_address_o(debug_address),
     .debug_pc_o(debug_pc), .debug_sp_o(debug_sp), .debug_a_o(debug_a),
     .debug_b_o(debug_b), .debug_x_o(debug_x), .debug_ccr_o(debug_ccr),
@@ -134,7 +136,8 @@ module tb_mc6801_peripheral_diff #(
           dut.irq2_pending !== expected.irq2_pending ||
           dut.rame !== expected.rame || dut.standby_power !== expected.standby_power ||
           sci_tx !== expected.sci_tx || sci_clock !== expected.sci_clock ||
-          retire || illegal || undefined_value || waiting_state || interrupt_ack ||
+          retire || illegal || undefined_value || waiting_state || sleeping_state ||
+          interrupt_ack ||
           debug_pc !== 16'h0000 || debug_sp !== 16'h0000 || debug_a !== 8'h00 ||
           debug_b !== 8'h00 || debug_x !== 16'h0000 || debug_opcode !== 8'h00) begin
         $fatal(1, "MC6801 peripheral state mismatch mode=%0d cycle=%0d timer=%04x/%04x TCSR=%02x/%02x TRCSR=%02x/%02x vector=%04x/%04x",

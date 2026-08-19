@@ -32,7 +32,7 @@ and low-power modes have separate specifications.
 | normalized M6805 CPU | FPGA core only | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
 | Motorola MC68705P5 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD6301V1 | full MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
-| Hitachi HD6303R | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Hitachi HD6303R | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD63701V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 | Hitachi HD63705V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 
@@ -66,6 +66,14 @@ functional-identity statement and rejects modes beyond 2/3. MC6801 Modes
 0/1/4/5/6/7, mask ROM, Port 3 handshakes, physical multiplexed-bus waveforms,
 bi-phase SCI, and external-clock SCI remain outside this partial claim.
 
+The HD6303R claim currently binds the HD6301 instruction profile to the
+manufacturer-compatible register, 128-byte RAM, Port 1/2, timer, SCI, and
+interrupt integration in expanded multiplexed Mode 2. Directed integration
+tests cover HD6301-only instructions, opcode TRAP, continued timer operation in
+SLP, masked-request wake without vectoring, and simultaneous NMI/IRQ priority.
+Modes 1/5, standby entry, Port 3 handshakes, the physical multiplexed waveform,
+bi-phase SCI, and external-clock SCI remain outside this partial claim.
+
 ## Device differences relevant to implementation
 
 - MC6800 has no internal RAM or MCU peripherals. Its normalized device wrapper
@@ -91,6 +99,9 @@ The normalized HD6301 CPU accepts a wrapper-generated instruction-address-error
 request and implements the documented 13-cycle TRAP entry, complete state
 stack, `$ffee:$ffef` vector, and retry PC. A full MCU claim still requires each
 device wrapper to decode its own non-memory space and generate that request.
+HD6303R Mode 2 spans external memory around the internal register/RAM windows,
+so the manufacturer's address-error table defines no non-memory fetch region
+for that implemented profile; opcode-error TRAP remains active.
 
 ## Deferred documented variants
 

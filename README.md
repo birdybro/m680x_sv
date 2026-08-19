@@ -34,7 +34,9 @@ with device wrappers kept at separate integration boundaries:
 - `mc6800_bus_wrapper`: MC6800 HALT, TSC, DBE, VMA, BA, and three-state bus
   ownership around the normalized M6800 core;
 - `mc6801_mcu`: normalized MC6801/MC6803 expanded Mode 2/3 RAM, GPIO, timer,
-  SCI, interrupt priority, and external-memory integration; and
+  SCI, interrupt priority, and external-memory integration;
+- `hd6303r_mcu`: HD6303R Mode-2 ROMless integration with the HD6301 ISA,
+  opcode TRAP, SLP behavior, RAM, GPIO, timer, and SCI; and
 - `mc68705p5_mcu`: an initial concrete 11-bit device integration with RAM and
   register decode, GPIO, programmable timer, interrupt priority/vectors, and a
   separate FPGA firmware-memory port for EPROM/bootstrap/vector bytes.
@@ -87,7 +89,7 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803 peripheral cycle comparisons, and
 directed reset/stack/interrupt/device tests across two simulators, seven bounded
-formal profiles, and eight synthesis tops.
+formal profiles, and nine synthesis tops.
 Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
@@ -102,7 +104,7 @@ cycle boundaries being checked.
 
 Pin-level MC6800 phase generation/electrical timing, MC6801 modes outside the
 normalized Mode 2/3 boundary, physical MC6801/MC6803 bus multiplexing, Hitachi
-MCU peripherals, complete
+MCU modes and peripherals outside the HD6303R Mode-2 subset, complete
 manufacturer bus waveforms outside the specifically verified traces, and
 several P5 timer/programming modes remain incomplete.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,

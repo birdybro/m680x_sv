@@ -29,6 +29,7 @@ module tb_mc6801_mcu #(
   logic illegal;
   logic undefined_value;
   logic waiting_state;
+  logic sleeping_state;
   logic interrupt_ack;
   logic [15:0] debug_address;
   logic [15:0] debug_pc;
@@ -61,6 +62,7 @@ module tb_mc6801_mcu #(
     .sci_tx_o(sci_tx), .sci_clock_o(sci_clock), .timer_irq_o(timer_irq),
     .sci_irq_o(sci_irq), .opcode_fetch_o(opcode_fetch), .retire_o(retire),
     .illegal_o(illegal), .undefined_o(undefined_value), .waiting_o(waiting_state),
+    .sleeping_o(sleeping_state),
     .interrupt_ack_o(interrupt_ack), .debug_address_o(debug_address),
     .debug_pc_o(debug_pc), .debug_sp_o(debug_sp), .debug_a_o(debug_a),
     .debug_b_o(debug_b), .debug_x_o(debug_x), .debug_ccr_o(debug_ccr),
@@ -381,7 +383,8 @@ module tb_mc6801_mcu #(
     if (port2_oe[3]) $fatal(1, "MC6801 RE sticky DDR/ignored write");
     checks = checks + 1;
 
-    if (waiting_state || illegal || undefined_value || (^debug_ccr === 1'bx) ||
+    if (waiting_state || sleeping_state || illegal || undefined_value ||
+        (^debug_ccr === 1'bx) ||
         ((external_fetch !== 1'b0) && (external_fetch !== 1'b1)) ||
         ((opcode_fetch !== 1'b0) && (opcode_fetch !== 1'b1)) ||
         debug_address != external_address || debug_sp === 16'hxxxx ||
