@@ -23,7 +23,7 @@ Status values have evidentiary meaning:
 - `UNDEFINED_BY_DOCUMENTATION`: the permitted primary references do not define
   the behavior strongly enough to implement or verify it.
 
-Later opcode files cite reference IDs from `docs/references.yml` plus precise
+Opcode and peripheral files cite reference IDs from `docs/references.yml` plus precise
 printed-page, table, figure, or section locators. Generated validators reject
 missing or duplicate opcode values and incomplete factual records.
 

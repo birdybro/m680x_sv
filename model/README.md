@@ -5,7 +5,7 @@ for obvious architectural behavior and deterministic verification, not by
 translation from RTL. The RTL and model will retain separate control
 structures so that differential tests can expose mistakes in either one.
 
-`alu.py` is the first completed layer. It reports only the flags an operation
+`alu.py` reports only the flags an operation
 defines, leaving each CPU lineage to preserve unaffected condition-code bits.
 The DAA function transcribes the nine manufacturer table rows and explicitly
 marks every other input state undefined instead of inventing silicon behavior.

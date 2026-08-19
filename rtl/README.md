@@ -13,3 +13,6 @@ affected. No function mutates unaffected condition-code state.
 1,969,155 finite cases in a SystemVerilog bench. This is independent of the
 Python exhaustive model regression and is intended to catch translation or
 bit-width errors before the package is used by a CPU state machine.
+
+The maintained CPU and device interfaces, lineages, timing contract, and
+generated Yosys views are documented in `docs/ARCHITECTURE.md`.

@@ -1,23 +1,98 @@
 # m680x_sv
 
-`m680x_sv` is an independent, clean-room SystemVerilog implementation project
-for documented Motorola M6800/M6801/M6803/M6805 and related Hitachi processor
-families. The repository is in active architecture and verification development;
-no device is yet claimed as production-complete.
+`m680x_sv` is an MIT-licensed, independent clean-room SystemVerilog project for
+the documented Motorola M6800, MC6801/MC6803, M6805/MC68705 and related Hitachi
+HD6301/HD6303/HD6305 processor families. It provides synthesizable FPGA RTL,
+machine-readable architecture facts, a structurally independent Python model,
+and deterministic verification.
 
-Implementation facts come only from primary manufacturer hardware documents.
-Existing HDL cores and emulator implementations are prohibited as source or as
-behavioral/timing oracles. See [the clean-room policy](docs/CLEAN_ROOM.md) and
-[the checksummed reference manifest](docs/references.yml).
+The project is under active development. Every current implementation claim is
+`PARTIAL`; no processor or MCU is represented as production-complete. The
+evidence-backed target matrix is in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)
+and its authoritative structured form is [spec/devices.yml](spec/devices.yml).
 
-Downloaded manuals are never committed. Run `make refs` to populate the ignored
-`.reference/` cache and verify every file against its recorded SHA-256 digest.
-`make quick` runs the current offline validation gate; `make help` lists the
-available developer commands.
+## Clean-room engineering
 
-The initial v1 target matrix and its deliberately conservative status are in
-[docs/COMPATIBILITY.md](docs/COMPATIBILITY.md). Machine-readable device and
-architecture facts live under [`spec/`](spec/); `make spec-check` validates
-their references, required fields, and support-status dimensions.
+Implementation facts come only from original manufacturer hardware documents.
+Existing HDL cores and emulator implementations are prohibited as source,
+organization, test, trace, interface, behavioral oracle, or timing oracle. The
+full rules are in [docs/CLEAN_ROOM.md](docs/CLEAN_ROOM.md) and [AGENTS.md](AGENTS.md).
 
-All original project code and documentation are licensed under the MIT License.
+Downloaded manuals are never committed. [docs/references.yml](docs/references.yml)
+records their provenance, identity, subjects, filenames, and SHA-256 digests.
+Run `make refs` to populate the ignored `.reference/` cache; CI validates the
+manifest without downloading or redistributing copyrighted documents.
+
+## Implemented architecture
+
+Two independent CPU state machines currently cover five instruction profiles:
+
+- `m6800_core`: M6800, MC6801/MC6803, and HD6301-family instruction profiles;
+- `m6805_core`: Motorola M6805 and Hitachi HD6305 instruction profiles; and
+- `mc68705p5_mcu`: an initial concrete 11-bit device integration with RAM and
+  register decode, GPIO, programmable timer, interrupt priority/vectors, and a
+  separate FPGA firmware-memory port for EPROM/bootstrap/vector bytes.
+
+All 256 opcode values are explicitly classified for each profile. The current
+five maps contain 1,064 documented instruction encodings and 216 explicitly
+reserved or manufacturer-undefined values. The generated decoder is derived
+from those factual maps, while the Python execution model remains independently
+organized. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for interfaces and
+design boundaries.
+
+The normalized CPU bus uses a single FPGA clock and clock enable. A cycle
+advances on a rising clock edge when `clock_enable_i` is asserted and either no
+bus transfer is active or `bus_ready_i` is asserted. `bus_valid_o` qualifies
+`address_o`, `write_o`, and write data; read data is sampled from `data_i` on
+the completing edge. Active-low interrupt pins and asynchronous active-low reset
+match their documented logical polarity without generating internal clocks.
+
+## Build and verification
+
+The local toolchain is Python 3, GNU Make, Verilator, Icarus Verilog, and Yosys.
+No Python package installation is required. `make help` lists every target.
+
+```text
+make quick             fast lint, model, and directed RTL gate
+make test-alu          independent Python plus RTL exhaustive ALU tests
+make test-cycle        all documented opcode cycle/access comparisons
+make test-interrupts   directed reset and interrupt regressions
+make test-peripherals  implemented MCU peripheral profiles
+make test-random       deterministic differential programs
+make test-iverilog     secondary-simulator compatibility
+make formal            bounded safety and stall proofs
+make synth             all generic synthesis smoke tests
+make ci                authoritative complete committed-source gate
+```
+
+The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
+cases, every documented opcode encoding, 5,120 deterministic model/RTL
+retirement comparisons, directed reset/stack/interrupt/device tests, five
+formal profiles, two simulators, and six synthesis tops. Detailed counts,
+coverage limits, formal properties, and representative synthesis statistics are
+in [docs/VERIFICATION.md](docs/VERIFICATION.md).
+
+For this project, architectural correctness, total-cycle correctness, ordered
+semantic memory accesses, and exact external bus-waveform correctness are
+separate claims. A passing cycle total is not described as a verified waveform.
+Exact bus-trace status is claimed only where primary documentation supplies the
+cycle boundaries being checked.
+
+## Known limitations
+
+The physical MC6800 signal wrapper, MC6801/MC6803 and Hitachi MCU peripherals,
+HD6301 TRAP entry, documented delayed-CLI interrupt recognition on applicable
+MC6801/Hitachi devices, complete manufacturer bus waveforms, and several P5
+timer/programming modes remain incomplete. Manufacturer-undefined reset values,
+reserved opcodes, analog oscillators, EPROM voltage physics, pad strength, and
+metastability are not assigned invented silicon behavior. These limitations are
+tracked as `PARTIAL`, `NOT_IMPLEMENTED`, or `UNDEFINED_BY_DOCUMENTATION`, never
+hidden behind a support claim.
+
+## License and contribution
+
+Original code and documentation are licensed under the [MIT License](LICENSE).
+Contributions must preserve reference provenance, architecture boundaries, the
+independence of model and RTL, strict warnings, and permanent regressions for
+every discovered bug. Tests and expected traces must not be weakened to obtain
+a green build.
