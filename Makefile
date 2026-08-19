@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -23,6 +23,7 @@ help:
 	@echo "  test-m6801  run MC6801/MC6803 model regressions"
 	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
 	@echo "  test-mc6801-mcu verify Mode 2/3 RAM, GPIO, timer, SCI, and interrupts"
+	@echo "  test-mc6801-peripheral-diff compare 1,536 model/RTL E-cycles"
 	@echo "  test-mc6803 verify the inherited MC6801 Mode 2/3 device profile"
 	@echo "  test-m6805  run M6805-lineage model regressions"
 	@echo "  test-m6805-rtl run directed and exhaustive M6805 RTL regressions"
@@ -58,6 +59,7 @@ spec-build:
 	$(PYTHON) -m tools.build_m6800_rtl_vectors
 	$(PYTHON) -m tools.build_m6805_rtl_vectors
 	$(PYTHON) -m tools.build_random_programs
+	$(PYTHON) -m tools.build_mc6801_peripheral_vectors
 	$(PYTHON) -m tools.build_yosys_sources
 
 spec-check: refs-check
@@ -70,6 +72,7 @@ spec-check: refs-check
 	$(PYTHON) -m tools.build_m6800_rtl_vectors --check
 	$(PYTHON) -m tools.build_m6805_rtl_vectors --check
 	$(PYTHON) -m tools.build_random_programs --check
+	$(PYTHON) -m tools.build_mc6801_peripheral_vectors --check
 	$(PYTHON) -m tools.build_yosys_sources --check
 
 lint: spec-check lint-rtl
@@ -165,6 +168,22 @@ test-mc6801-mcu:
 test-mc6803: test-mc6801-mcu
 	$(PYTHON) -m unittest tests.test_peripheral_spec tests.test_mc6801_device_model -v
 
+test-mc6801-peripheral-diff:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_mc6801_peripheral_diff \
+		-Mdir build/obj_mc6801_peripheral_diff -o Vtb_mc6801_peripheral_diff \
+		sim/generated/mc6801_peripheral_vectors_pkg.sv \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_peripheral_diff.sv
+	build/obj_mc6801_peripheral_diff/Vtb_mc6801_peripheral_diff
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_mc6801_peripheral_diff \
+		"-GTEST_MODE=3'd3" -Mdir build/obj_mc6801_peripheral_diff_mode3 \
+		-o Vtb_mc6801_peripheral_diff_mode3 \
+		sim/generated/mc6801_peripheral_vectors_pkg.sv \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_peripheral_diff.sv
+	build/obj_mc6801_peripheral_diff_mode3/Vtb_mc6801_peripheral_diff_mode3
+
 test-m6805: test-m6805-rtl
 	$(PYTHON) -m unittest tests.test_m6805_model -v
 
@@ -246,7 +265,7 @@ test-interrupt-delay:
 		rtl/m6805/m6805_core.sv sim/tb_interrupt_delay.sv
 	build/obj_delay_hd6305/Vdelay_hd6305
 
-test-peripherals: test-mc6803 test-mc68705p5
+test-peripherals: test-mc6803 test-mc6801-peripheral-diff test-mc68705p5
 
 test-mc68705p5:
 	mkdir -p build
@@ -320,6 +339,19 @@ test-iverilog: spec-check
 		-o build/iverilog/tb_mc6801_mcu_mode3 rtl/generated/yosys_m6800_core.sv \
 		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_mcu.sv
 	$(VVP) build/iverilog/tb_mc6801_mcu_mode3
+	$(IVERILOG) -g2012 -Wall -s tb_mc6801_peripheral_diff \
+		-o build/iverilog/mc6801_peripheral_diff \
+		sim/generated/mc6801_peripheral_vectors_pkg.sv \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_peripheral_diff.sv
+	$(VVP) build/iverilog/mc6801_peripheral_diff
+	$(IVERILOG) -g2012 -Wall -s tb_mc6801_peripheral_diff \
+		-Ptb_mc6801_peripheral_diff.TEST_MODE=3 \
+		-o build/iverilog/mc6801_peripheral_diff_mode3 \
+		sim/generated/mc6801_peripheral_vectors_pkg.sv \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_peripheral_diff.sv
+	$(VVP) build/iverilog/mc6801_peripheral_diff_mode3
 	$(IVERILOG) -g2012 -Wall -s tb_m6800_interrupt_delay \
 		-Ptb_m6800_interrupt_delay.TEST_ARCHITECTURE=1 -o build/iverilog/delay_m6801 \
 		rtl/generated/yosys_m6800_core.sv sim/tb_interrupt_delay.sv

@@ -81,6 +81,7 @@
   ],
   "implementation_scope": {
     "current_profile": "Normalized mode-2/mode-3 expanded-bus integration. Other modes, physical bus multiplexing, Port 3 handshake, bi-phase SCI, and external-clock SCI remain separate profiles.",
+    "differential_evidence": "Two deterministic seeds compare 768 independent-model E-cycle transactions per mode against internal decode, GPIO, timer, SCI, and interrupt RTL state.",
     "undefined_output_latches": "RTL selects deterministic zero after reset without claiming that manufacturer-undefined silicon latch value.",
     "standby_retention": "RTL exposes standby validity without claiming analog threshold or power-domain retention equivalence.",
     "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]

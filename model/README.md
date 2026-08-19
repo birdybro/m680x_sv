@@ -54,3 +54,8 @@ overrides, the capture/compare/overflow timer and ordered flag protocols,
 internally clocked NRZ SCI framing/status, and the retained IRQ1/IRQ2 request
 and late vector-priority behavior. Manufacturer-undefined modes are rejected
 instead of being assigned invented behavior.
+
+`tools/build_mc6801_peripheral_vectors.py` records independent model results
+for 768 transactions in each expanded mode. A verification-only bus source
+then presents those exact transactions to the peripheral RTL without using the
+CPU execution engine as an oracle.

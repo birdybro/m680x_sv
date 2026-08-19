@@ -254,8 +254,11 @@ class MC6801DeviceModel:
 
         timer_irq_before = self.timer_irq
         sci_irq_before = self.sci_irq
+        capture_pin = bool(
+            (self.state.port2_latch if self.state.port2_ddr & 1 else inputs.port2) & 1
+        )
         self._advance_memory_and_gpio(inputs, address, internal_write, ram_select, external_bus)
-        self._advance_timer(inputs, address, internal_read, internal_write)
+        self._advance_timer(inputs, address, internal_read, internal_write, capture_pin)
         self._advance_sci(inputs, address, internal_read, internal_write)
         self._advance_interrupt_latches(
             inputs, timer_irq_before=timer_irq_before, sci_irq_before=sci_irq_before
@@ -327,6 +330,7 @@ class MC6801DeviceModel:
         address: int,
         internal_read: bool,
         internal_write: bool,
+        capture_pin: bool,
     ) -> None:
         s = self.state
         old_tcsr = s.tcsr
@@ -335,7 +339,6 @@ class MC6801DeviceModel:
         next_timer = (old_timer + 1) & 0xFFFF
         counter_write = internal_write and address == 0x0009
         capture_high_read = internal_read and address == 0x000D
-        pin = bool((s.port2_latch if s.port2_ddr & 1 else inputs.port2) & 1)
         selected_edge = (
             s.capture_sync == [True, False]
             if old_tcsr & 0x02
@@ -346,7 +349,7 @@ class MC6801DeviceModel:
         )
         overflow_event = not counter_write and next_timer == 0xFFFF
 
-        s.capture_sync = [pin, s.capture_sync[0]]
+        s.capture_sync = [capture_pin, s.capture_sync[0]]
         s.compare_inhibit = False
         s.capture_inhibit = False
         s.timer = 0xFFF8 if counter_write else next_timer

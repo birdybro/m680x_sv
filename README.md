@@ -84,9 +84,10 @@ make ci                authoritative complete committed-source gate
 ```
 
 The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
-cases, every documented opcode encoding, 5,120 deterministic model/RTL
-retirement comparisons and directed reset/stack/interrupt/device tests across
-two simulators, seven bounded formal profiles, and eight synthesis tops.
+cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
+retirement comparisons, 1,536 MC6801/MC6803 peripheral cycle comparisons, and
+directed reset/stack/interrupt/device tests across two simulators, seven bounded
+formal profiles, and eight synthesis tops.
 Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).

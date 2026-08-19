@@ -30,6 +30,7 @@ The committed tests cover:
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 49 |
+| MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
@@ -85,6 +86,16 @@ overflow/compare events, retained IRQ priority, and internally clocked NRZ
 transmit/receive with unread-data overrun retention. Its cycle/event structure
 is separate from the RTL wrapper.
 
+Two recorded seeds, `0x68030002` and `0x68030003`, drive 768 E-cycle
+transactions per mode through a verification-only CPU bus source. After every
+cycle, the RTL is compared with model-generated internal read data, external
+decode, RAM/control state, GPIO value and direction, timer/capture/compare
+state, SCI state and pins, interrupt requests, retained request latches, and
+late priority vector. Directed protocol sequences precede the deterministic
+random register/pin traffic. These checks establish peripheral transaction and
+state timing at the normalized E-cycle boundary; they do not claim the physical
+Port 3 multiplexed waveform.
+
 The HD6301 TRAP suite independently exercises an unassigned opcode and an
 instruction-address-error input. It compares the exact 13-cycle normalized bus
 trace documented by handbook figure III-8: faulting opcode, discarded PC+1,
@@ -135,7 +146,8 @@ full instruction-correctness proof.
 
 Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
-delay traces, and the MC68705P5 device suite from the generated
+delay traces, the MC68705P5 device suite, and both MC6801/MC6803 peripheral
+differential profiles from the generated
 package-flattened view. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
 hide it.
