@@ -1,0 +1,89 @@
+from __future__ import annotations
+
+import unittest
+
+from model.common import Memory
+from model.hd6301v1_device import HD6301V1Mode7Model
+from model.mc6801_device import MC6801CycleInputs, VECTOR_IRQ1
+
+
+class HD6301V1Mode7ModelTests(unittest.TestCase):
+    @staticmethod
+    def cycle(model: HD6301V1Mode7Model, **values: int | bool):
+        return model.cycle(MC6801CycleInputs(**values))
+
+    @classmethod
+    def write(cls, model: HD6301V1Mode7Model, address: int, data: int, **values):
+        return cls.cycle(model, address=address, valid=True, write=True, data=data, **values)
+
+    @classmethod
+    def read(cls, model: HD6301V1Mode7Model, address: int, **values):
+        return cls.cycle(model, address=address, valid=True, write=False, **values)
+
+    def test_mode7_memory_classification_and_address_error(self) -> None:
+        program = Memory()
+        program[0xF000] = 0xA5
+        program[0xFFFE] = 0xF0
+        model = HD6301V1Mode7Model(program_memory=program)
+
+        result = self.read(model, 0xF000, opcode_fetch=True)
+        self.assertEqual(result.read_data, 0xA5)
+        self.assertTrue(result.program_bus)
+        self.assertFalse(result.external_bus)
+        self.assertFalse(result.address_error)
+
+        self.write(model, 0x0080, 0x3C)
+        result = self.read(model, 0x0080, opcode_fetch=True)
+        self.assertEqual(result.read_data, 0x3C)
+        self.assertFalse(result.program_bus)
+        self.assertFalse(result.address_error)
+
+        self.assertFalse(self.read(model, 0x0100).address_error)
+        result = self.read(model, 0x0100, opcode_fetch=True)
+        self.assertEqual(result.read_data, 0xFF)
+        self.assertTrue(result.address_error)
+        self.assertFalse(result.external_bus)
+        self.assertTrue(self.read(model, 0x000F, opcode_fetch=True).address_error)
+        self.assertFalse(self.read(model, 0x0080, opcode_fetch=True).address_error)
+        self.assertFalse(self.read(model, 0xF000, opcode_fetch=True).address_error)
+
+    def test_port3_latch_strobe_and_ordered_flag_clear(self) -> None:
+        model = HD6301V1Mode7Model()
+        self.write(model, 0x000F, 0x48)
+        self.assertEqual(self.read(model, 0x000F).read_data, 0x6F)
+
+        self.cycle(model, port3=0x96, is3_n=False)
+        self.cycle(model, port3=0x96, is3_n=False)
+        self.assertEqual(model.state.snapshot()["P3CSR"], 0xEF)
+        self.assertTrue(model.port3_irq)
+        self.assertEqual(model.irq_vector(), VECTOR_IRQ1)
+
+        status = self.read(model, 0x000F)
+        self.assertEqual(status.read_data, 0xEF)
+        latched = self.read(model, 0x0006, port3=0x55)
+        self.assertEqual(latched.read_data, 0x96)
+        self.assertFalse(latched.os3_n)
+        self.assertFalse(model.port3_irq)
+        self.assertEqual(self.read(model, 0x000F).read_data, 0x6F)
+
+        self.write(model, 0x000F, 0x58)
+        self.assertTrue(self.read(model, 0x0006, port3=0x22).os3_n)
+        self.assertFalse(self.write(model, 0x0006, 0xA5).os3_n)
+
+    def test_port34_gpio_and_reset_values(self) -> None:
+        model = HD6301V1Mode7Model()
+        self.assertEqual(model.state.snapshot()["P3CSR"], 0x27)
+        self.assertEqual(model.port34_outputs(), (0, 0, 0, 0))
+
+        self.write(model, 0x0004, 0xF0)
+        self.write(model, 0x0005, 0x0F)
+        self.write(model, 0x0006, 0xA5)
+        self.write(model, 0x0007, 0x5A)
+        self.assertEqual(model.port34_outputs(), (0xA5, 0xF0, 0x5A, 0x0F))
+        self.assertEqual(self.read(model, 0x0006, port3=0x3C).read_data, 0x3C)
+        self.assertEqual(self.read(model, 0x0007, port4=0xC3).read_data, 0xC3)
+        self.assertEqual(self.read(model, 0x0003, port2=0x15).read_data, 0xF5)
+
+
+if __name__ == "__main__":
+    unittest.main()

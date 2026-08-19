@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: MIT
-// MC6801/MC6803 normalized expanded-bus integration for operating modes 2/3.
+// MC6801-lineage common digital MCU integration.
 //
 // Register, timer, SCI, and interrupt behavior is derived from Motorola
 // MC6801 Reference Manual MC6801RM(AD2), chapters 2, 3, 5, 6, and 7. One
 // clk_i/clock_enable_i step represents one complete E-cycle. Physical Port 3
 // address/data multiplexing and the E/AS waveform belong in a pin wrapper.
+// HD6301_MODE7 enables the separately documented HD6301V1 single-chip decode,
+// Port 3/4 registers, handshake, and internal program-memory interface.
 module mc6801_mcu #(
   parameter logic [2:0] OPERATING_MODE = 3'd2,
-  parameter logic       HITACHI_CPU = 1'b0
+  parameter logic       HITACHI_CPU = 1'b0,
+  parameter logic       HD6301_MODE7 = 1'b0
 ) (
   input  logic        clk_i,
   input  logic        reset_n_i,
@@ -17,7 +20,13 @@ module mc6801_mcu #(
   input  logic        standby_power_ok_i,
   input  logic [7:0]  port1_i,
   input  logic [4:0]  port2_i,
+  input  logic [7:0]  port3_i,
+  input  logic [7:0]  port4_i,
+  input  logic        is3_n_i,
+  input  logic [7:0]  program_data_i,
   input  logic [7:0]  external_data_i,
+  output logic [15:0] program_address_o,
+  output logic        program_read_o,
   output logic [15:0] external_address_o,
   output logic [7:0]  external_data_o,
   output logic        external_write_o,
@@ -27,6 +36,11 @@ module mc6801_mcu #(
   output logic [7:0]  port1_oe_o,
   output logic [4:0]  port2_o,
   output logic [4:0]  port2_oe_o,
+  output logic [7:0]  port3_o,
+  output logic [7:0]  port3_oe_o,
+  output logic [7:0]  port4_o,
+  output logic [7:0]  port4_oe_o,
+  output logic        os3_n_o,
   output logic        sci_tx_o,
   output logic        sci_clock_o,
   output logic        timer_irq_o,
@@ -53,6 +67,8 @@ module mc6801_mcu #(
   output logic [7:0]  debug_receive_data_o,
   output logic [7:0]  debug_opcode_o
 );
+  localparam logic MODE7 = HITACHI_CPU && HD6301_MODE7 &&
+    (OPERATING_MODE == 3'd7);
   localparam logic [15:0] VECTOR_IRQ1 = 16'hfff8;
   localparam logic [15:0] VECTOR_INPUT_CAPTURE = 16'hfff6;
   localparam logic [15:0] VECTOR_OUTPUT_COMPARE = 16'hfff4;
@@ -62,8 +78,21 @@ module mc6801_mcu #(
   logic [7:0] ram [0:127];
   logic [7:0] port1_latch;
   logic [4:0] port2_latch;
+  logic [7:0] port3_latch;
+  logic [7:0] port4_latch;
   logic [7:0] port1_ddr;
   logic [4:0] port2_ddr;
+  logic [7:0] port3_ddr;
+  logic [7:0] port4_ddr;
+  logic [7:0] port3_input_latch;
+  logic port3_latch_valid;
+  logic port3_latch_enable;
+  logic port3_output_strobe_select;
+  logic port3_is3_enable;
+  logic port3_is3_flag;
+  logic is3_sync1;
+  logic is3_sync2;
+  logic port3_clear_armed;
   logic rame;
   logic standby_power;
 
@@ -113,6 +142,8 @@ module mc6801_mcu #(
   logic irq2_pending;
   logic internal_register_select;
   logic internal_ram_select;
+  logic internal_program_select;
+  logic unusable_select;
   logic internal_read;
   logic internal_write;
   logic [15:0] timer_next;
@@ -126,6 +157,10 @@ module mc6801_mcu #(
   logic sci_clock_level;
   logic timer_counter_write;
   logic capture_high_read;
+  logic is3_falling_edge;
+  logic port3_access;
+  logic instruction_address_error;
+  logic port3_irq;
 
   function automatic logic register_is_internal(input logic [15:0] address_value);
     begin
@@ -135,6 +170,8 @@ module mc6801_mcu #(
         16'h000c, 16'h000d, 16'h000e,
         16'h0010, 16'h0011, 16'h0012, 16'h0013,
         16'h0014: register_is_internal = 1'b1;
+        16'h0004, 16'h0005, 16'h0006, 16'h0007,
+        16'h000f: register_is_internal = MODE7;
         default: register_is_internal = 1'b0;
       endcase
     end
@@ -144,19 +181,35 @@ module mc6801_mcu #(
     internal_register_select = core_bus_valid && register_is_internal(core_address);
     internal_ram_select = core_bus_valid && rame && (OPERATING_MODE != 3'd3) &&
       (core_address >= 16'h0080) && (core_address <= 16'h00ff);
+    internal_program_select = core_bus_valid && MODE7 &&
+      (core_address >= 16'hf000);
+    unusable_select = core_bus_valid && MODE7 && !internal_register_select &&
+      !internal_ram_select && !internal_program_select;
     internal_read = clock_enable_i && internal_register_select && !core_write;
     internal_write = clock_enable_i && internal_register_select && core_write;
     timer_counter_write = internal_write && (core_address == 16'h0009);
     capture_high_read = internal_read && (core_address == 16'h000d);
+    port3_access = clock_enable_i && internal_register_select &&
+      (core_address == 16'h0006);
+    instruction_address_error = MODE7 && core_opcode_fetch &&
+      ((core_address <= 16'h007f) ||
+       ((core_address >= 16'h0100) && (core_address <= 16'hefff)));
 
     core_data_in = external_data_i;
-    if (internal_ram_select) begin
+    if (internal_program_select) begin
+      core_data_in = program_data_i;
+    end else if (unusable_select) begin
+      core_data_in = 8'hff;
+    end else if (internal_ram_select) begin
       core_data_in = ram[core_address[6:0]];
     end else if (internal_register_select) begin
       case (core_address)
         16'h0000, 16'h0001: core_data_in = 8'hff;
         16'h0002: core_data_in = port1_i;
         16'h0003: core_data_in = {OPERATING_MODE, port2_i};
+        16'h0004, 16'h0005: core_data_in = 8'hff;
+        16'h0006: core_data_in = port3_latch_valid ? port3_input_latch : port3_i;
+        16'h0007: core_data_in = port4_i;
         16'h0008: core_data_in = tcsr;
         16'h0009: core_data_in = timer_counter[15:8];
         16'h000a: core_data_in = counter_low_latch;
@@ -164,6 +217,8 @@ module mc6801_mcu #(
         16'h000c: core_data_in = output_compare[7:0];
         16'h000d: core_data_in = input_capture[15:8];
         16'h000e: core_data_in = input_capture[7:0];
+        16'h000f: core_data_in = {port3_is3_flag, port3_is3_enable, 1'b1,
+          port3_output_strobe_select, port3_latch_enable, 3'b111};
         16'h0011: core_data_in = {rdrf, orfe, tdre, trcsr_control};
         16'h0012: core_data_in = receive_data;
         16'h0014: core_data_in = {standby_power, rame, 6'h00};
@@ -180,6 +235,7 @@ module mc6801_mcu #(
     timer_compare_event = !timer_counter_write && !compare_inhibit &&
       (timer_next == output_compare);
     timer_overflow_event = !timer_counter_write && (timer_next == 16'hffff);
+    is3_falling_edge = is3_sync2 && !is3_sync1;
 
     case (rmcr[1:0])
       2'b00: begin
@@ -210,13 +266,28 @@ module mc6801_mcu #(
     if (!reset_n_i) begin
       port1_latch <= 8'h00;
       port2_latch <= 5'h00;
+      port3_latch <= 8'h00;
+      port4_latch <= 8'h00;
       port1_ddr <= 8'h00;
       port2_ddr <= 5'h00;
+      port3_ddr <= 8'h00;
+      port4_ddr <= 8'h00;
+      port3_input_latch <= 8'h00;
+      port3_latch_valid <= 1'b0;
+      port3_latch_enable <= 1'b0;
+      port3_output_strobe_select <= 1'b0;
+      port3_is3_enable <= 1'b0;
+      port3_is3_flag <= 1'b0;
+      is3_sync1 <= 1'b1;
+      is3_sync2 <= 1'b1;
+      port3_clear_armed <= 1'b0;
       rame <= 1'b1;
       // Silicon reset preserves this bit. A deterministic zero is selected at
       // the FPGA boundary; analog retention remains outside the digital claim.
       standby_power <= 1'b0;
     end else if (clock_enable_i) begin
+      is3_sync1 <= is3_n_i;
+      is3_sync2 <= is3_sync1;
       if (!standby_power_ok_i) begin
         standby_power <= 1'b0;
         rame <= 1'b0;
@@ -237,6 +308,15 @@ module mc6801_mcu #(
             if (!trcsr_control[3]) port2_latch[3] <= core_data_out[3];
             if (!trcsr_control[1]) port2_latch[4] <= core_data_out[4];
           end
+          16'h0004: if (MODE7) port3_ddr <= core_data_out;
+          16'h0005: if (MODE7) port4_ddr <= core_data_out;
+          16'h0006: if (MODE7) port3_latch <= core_data_out;
+          16'h0007: if (MODE7) port4_latch <= core_data_out;
+          16'h000f: if (MODE7) begin
+            port3_is3_enable <= core_data_out[6];
+            port3_output_strobe_select <= core_data_out[4];
+            port3_latch_enable <= core_data_out[3];
+          end
           16'h0010: begin
             if (core_data_out[3]) port2_ddr[2] <= !core_data_out[2];
           end
@@ -250,6 +330,25 @@ module mc6801_mcu #(
           end
           default: ;
         endcase
+      end
+
+      if (MODE7 && internal_read && (core_address == 16'h000f)) begin
+        port3_clear_armed <= port3_is3_flag;
+      end
+      if (MODE7 && port3_access) begin
+        if (!core_write) port3_latch_valid <= 1'b0;
+        if (port3_clear_armed) begin
+          port3_is3_flag <= 1'b0;
+          port3_clear_armed <= 1'b0;
+        end
+      end
+      // A new IS3 edge wins over a coincident software clear.
+      if (MODE7 && is3_falling_edge) begin
+        port3_is3_flag <= 1'b1;
+        if (port3_latch_enable && !port3_latch_valid) begin
+          port3_input_latch <= port3_i;
+          port3_latch_valid <= 1'b1;
+        end
       end
     end
   end
@@ -479,7 +578,7 @@ module mc6801_mcu #(
 
   // The IRQ1 request flip-flop is held reset while I is set and retains a
   // sampled low pulse while interrupts are enabled. This is separate from the
-  // level-sensitive timer and SCI flag sources.
+  // level-sensitive Port 3, timer, and SCI flag sources.
   always_ff @(posedge clk_i or negedge reset_n_i) begin
     if (!reset_n_i) begin
       irq1_pending <= 1'b0;
@@ -500,13 +599,15 @@ module mc6801_mcu #(
       (trcsr_control[2] && tdre);
     timer_irq_o = (tcsr[7] && tcsr[4]) || (tcsr[6] && tcsr[3]) ||
       (tcsr[5] && tcsr[2]);
+    port3_irq = MODE7 && port3_is3_flag && port3_is3_enable;
 
-    if (irq1_pending || !irq1_n_i) core_irq_vector = VECTOR_IRQ1;
+    if (irq1_pending || !irq1_n_i || port3_irq) core_irq_vector = VECTOR_IRQ1;
     else if (tcsr[7] && tcsr[4]) core_irq_vector = VECTOR_INPUT_CAPTURE;
     else if (tcsr[6] && tcsr[3]) core_irq_vector = VECTOR_OUTPUT_COMPARE;
     else if (tcsr[5] && tcsr[2]) core_irq_vector = VECTOR_TIMER_OVERFLOW;
     else core_irq_vector = VECTOR_SCI;
-    irq_n = !(irq1_pending || !irq1_n_i || irq2_pending || timer_irq_o || sci_irq_o);
+    irq_n = !(irq1_pending || !irq1_n_i || port3_irq || irq2_pending ||
+      timer_irq_o || sci_irq_o);
 
     sci_tx_o = (trcsr_control[1] && tx_active) ? tx_shift[0] : 1'b1;
     sci_clock_o = sci_clock_level;
@@ -514,6 +615,12 @@ module mc6801_mcu #(
     port1_oe_o = port1_ddr;
     port2_o = port2_latch;
     port2_oe_o = port2_ddr;
+    port3_o = port3_latch;
+    port3_oe_o = MODE7 ? port3_ddr : 8'h00;
+    port4_o = port4_latch;
+    port4_oe_o = MODE7 ? port4_ddr : 8'h00;
+    os3_n_o = !(MODE7 && port3_access &&
+      (core_write == port3_output_strobe_select));
     port2_o[1] = output_level;
     if (rmcr[3]) begin
       port2_oe_o[2] = !rmcr[2];
@@ -535,7 +642,7 @@ module mc6801_mcu #(
     .irq_n_i(irq_n),
     .irq_vector_i(core_irq_vector),
     .nmi_n_i(nmi_n_i),
-    .instruction_address_error_i(1'b0),
+    .instruction_address_error_i(instruction_address_error),
     .data_i(core_data_in),
     .address_o(core_address),
     .data_o(core_data_out),
@@ -561,10 +668,12 @@ module mc6801_mcu #(
   /* verilator lint_on PINCONNECTEMPTY */
 
   assign external_address_o = core_address;
+  assign program_address_o = core_address;
+  assign program_read_o = internal_program_select && !core_write;
   assign external_data_o = core_data_out;
   assign external_write_o = core_write;
   assign external_bus_valid_o = core_bus_valid && !internal_register_select &&
-    !internal_ram_select;
+    !internal_ram_select && !internal_program_select && !unusable_select;
   assign external_opcode_fetch_o = core_opcode_fetch && external_bus_valid_o;
   assign opcode_fetch_o = core_opcode_fetch;
   assign debug_address_o = core_address;

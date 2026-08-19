@@ -31,7 +31,7 @@ and low-power modes have separate specifications.
 | Motorola MC6803 | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | normalized M6805 CPU | FPGA core only | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
 | Motorola MC68705P5 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Hitachi HD6301V1 | full MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Hitachi HD6301V1 | full MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD6303R | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD63701V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 | Hitachi HD63705V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
@@ -74,6 +74,15 @@ SLP, masked-request wake without vectoring, and simultaneous NMI/IRQ priority.
 Modes 1/5, standby entry, Port 3 handshakes, the physical multiplexed waveform,
 bi-phase SCI, and external-clock SCI remain outside this partial claim.
 
+The HD6301V1 claim covers single-chip Mode 7: its internal register window,
+RAME-controlled executable 128-byte RAM, four GPIO ports, IS3 input latch and
+IRQ1 source, read/write-selected OS3, common timer/SCI functions, SLP behavior,
+and the `$f000`-`$ffff` internal program/vector window. The program image is an
+integration input. Directed tests verify that instruction fetches in both
+documented non-memory ranges enter the 13-cycle address TRAP while normal data
+accesses do not. Expanded modes, standby entry, bi-phase/external-clock SCI,
+physical timing, and actual mask-ROM contents remain outside this partial claim.
+
 ## Device differences relevant to implementation
 
 - MC6800 has no internal RAM or MCU peripherals. Its normalized device wrapper
@@ -99,6 +108,8 @@ The normalized HD6301 CPU accepts a wrapper-generated instruction-address-error
 request and implements the documented 13-cycle TRAP entry, complete state
 stack, `$ffee:$ffef` vector, and retry PC. A full MCU claim still requires each
 device wrapper to decode its own non-memory space and generate that request.
+The HD6301V1 Mode-7 wrapper now performs this decode for `$0000`-`$007f` and
+`$0100`-`$efff` and keeps its vector reads on the internal program interface.
 HD6303R Mode 2 spans external memory around the internal register/RAM windows,
 so the manufacturer's address-error table defines no non-memory fetch region
 for that implemented profile; opcode-error TRAP remains active.

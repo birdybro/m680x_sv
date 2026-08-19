@@ -26,19 +26,20 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 73 |
+| Python unit tests | 76 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 49 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
+| HD6301V1 Mode-7 integration checks | 17 |
 | HD6303R Mode-2 integration checks | 9 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 7 at depth 10 |
-| Synthesis tops | 9 |
+| Bounded formal profiles | 8 at depth 10 |
+| Synthesis tops | 10 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -111,6 +112,16 @@ without stacking or vectoring, simultaneous NMI/IRQ priority, and opcode-error
 TRAP through the external `$ffee:$ffef` vector. The independent model has a
 matching regression for the masked-request SLP rule.
 
+The HD6301V1 Mode-7 suite fetches reset and interrupt vectors through the
+internal program-image interface, executes from both the 4-KiB program window
+and 128-byte RAM, and verifies a 13-cycle address TRAP from documented
+non-memory space. It checks Port 3/4 DDRs and pin reads, the IS3 input latch,
+P3CSR's ordered flag-clear protocol, read- and write-selected active-low OS3
+pulses, masked IS3 release from SLP, and enabled IS3 vectoring through the IRQ1
+priority slot. Three independent Python model tests cover the Mode-7 address
+partition, program-select/address-error distinction, GPIO, latch, flag, strobe,
+and interrupt state.
+
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction
 release, NMI retention on the exact HALT-entry boundary, RTI/re-halt behavior,
@@ -130,7 +141,8 @@ priority, distinct vectors, and firmware-memory decode.
 ## Formal checks
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
-HD6305 profiles plus the MC6800 bus wrapper and MC6801 Mode 3 integration. At
+HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration, and
+HD6301V1 Mode-7 integration. At
 depth 10 it proves the committed
 safety properties for all symbolic input sequences:
 
@@ -147,6 +159,9 @@ safety properties for all symbolic input sequences:
 - MC6801 external fetches are qualified reads, internal register addresses do
   not escape onto the expanded bus, SCI overrides force documented Port 2
   directions, and MCU state is stable while clock enable is inactive.
+- HD6301V1 program reads occur only in `$f000`-`$ffff`, non-memory instruction
+  fetches never select program memory, OS3 is confined to PORT3 accesses, and
+  complete digital device state is stable while clock enable is inactive.
 
 These bounded safety proofs complement simulation; they are not a liveness or
 full instruction-correctness proof.
@@ -155,7 +170,7 @@ full instruction-correctness proof.
 
 Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
-delay traces, the MC68705P5 and HD6303R device suites, and both MC6801/MC6803
+delay traces, the MC68705P5, HD6301V1, and HD6303R device suites, and both MC6801/MC6803
 peripheral differential profiles from the generated
 package-flattened view. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
@@ -168,9 +183,10 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 10,755 | 1,422 |
+| MC6801 Mode 2 integration | 10,783 | 1,422 |
 | HD6301 | 7,289 | 218 |
-| HD6303R Mode 2 integration | 11,856 | 1,423 |
+| HD6301V1 Mode 7 integration | 11,936 | 1,471 |
+| HD6303R Mode 2 integration | 11,893 | 1,423 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,711 | 1,122 |

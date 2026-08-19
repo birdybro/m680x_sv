@@ -49,15 +49,19 @@ module tb_mc6801_peripheral_diff #(
   mc6801_peripheral_vector_t expected;
   integer cycle_index;
 
+  /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(.OPERATING_MODE(TEST_MODE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
     .nmi_n_i(1'b1), .irq1_n_i(irq1_n),
     .standby_power_ok_i(standby_power_ok), .port1_i(port1_in),
-    .port2_i(port2_in), .external_data_i(external_data_in),
+    .port2_i(port2_in), .port3_i(8'hff), .port4_i(8'hff), .is3_n_i(1'b1),
+    .program_data_i(8'hff), .external_data_i(external_data_in),
+    .program_address_o(), .program_read_o(),
     .external_address_o(external_address), .external_data_o(external_data_out),
     .external_write_o(external_write), .external_bus_valid_o(external_valid),
     .external_opcode_fetch_o(external_fetch), .port1_o(port1_out),
     .port1_oe_o(port1_oe), .port2_o(port2_out), .port2_oe_o(port2_oe),
+    .port3_o(), .port3_oe_o(), .port4_o(), .port4_oe_o(), .os3_n_o(),
     .sci_tx_o(sci_tx), .sci_clock_o(sci_clock), .timer_irq_o(timer_irq),
     .sci_irq_o(sci_irq), .opcode_fetch_o(opcode_fetch), .retire_o(retire),
     .illegal_o(illegal), .undefined_o(undefined_value), .waiting_o(waiting_state),
@@ -70,6 +74,7 @@ module tb_mc6801_peripheral_diff #(
     .debug_trcsr_o(debug_trcsr), .debug_receive_data_o(debug_receive),
     .debug_opcode_o(debug_opcode)
   );
+  /* verilator lint_on PINCONNECTEMPTY */
 
   always #5 clk <= ~clk;
 

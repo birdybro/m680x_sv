@@ -171,6 +171,34 @@ ordered TDRE/RDRF/ORFE clearing, center-sampled receive, overrun/framing status,
 wake-mark counting, pin overrides, and shared interrupt. Bi-phase coding and
 external 8x clock mode are not approximated and remain outside the claim.
 
+## HD6301V1 single-chip Mode-7 integration
+
+`rtl/hd6301/hd6301v1_mcu.sv` selects the Hitachi CPU profile and the guarded
+Mode-7 path in the common HD6801-compatible device block. The sharing is based
+on Hitachi's compatibility statement and is limited by explicit parameters;
+the distinct memory map, Port 3/4 registers, strobe state, and address-error
+decode are enabled only for this wrapper.
+
+Mode 7 decodes registers at `$0000`-`$001f`, RAME-controlled executable RAM at
+`$0080`-`$00ff`, and read-only program space at `$f000`-`$ffff`. Instruction
+fetches from `$0000`-`$007f` or `$0100`-`$efff` assert the HD6301 address-error
+input and enter the unmaskable TRAP sequence. Ordinary data accesses to those
+unusable regions neither trap nor escape onto an invented external bus.
+
+`program_address_o`, `program_read_o`, and `program_data_i` connect the
+documented 4-KiB internal mask-ROM window to an integration-owned FPGA image,
+including reset and interrupt vectors. The clean-room repository supplies no
+copyrighted mask-ROM contents. Reads and writes to RAM and peripheral registers
+do not assert `program_read_o`.
+
+Ports 3 and 4 expose separate input, output-latch, and output-enable vectors.
+The active-low `is3_n_i` input sets the P3CSR flag and optionally captures Port
+3. Reading P3CSR while set arms the documented clear; the following PORT3 read
+or write clears it unless a new edge occurs. `os3_n_o` pulses during the
+P3CSR-selected PORT3 read or write E-cycle. The exact interface contract and
+electrical exclusions are recorded in
+`../spec/interfaces/hd6301v1_mode7.json`.
+
 ## HD6303R Mode-2 integration
 
 `rtl/hd6301/hd6303r_mcu.sv` selects the HD6301 CPU profile around the common

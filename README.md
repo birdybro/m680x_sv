@@ -4,8 +4,8 @@
 the documented Motorola M6800, MC6801/MC6803, M6805/MC68705 and related Hitachi
 HD6301/HD6303/HD6305 processor families. It provides synthesizable FPGA RTL,
 machine-readable architecture facts, a structurally independent Python model,
-and deterministic verification. The model includes separate CPU-instruction
-and MC6801/MC6803 device-cycle paths.
+and deterministic verification. The model includes separate CPU-instruction,
+MC6801/MC6803 device-cycle, and HD6301V1 Mode-7 transaction paths.
 
 The project is under active development. Every current implementation claim is
 `PARTIAL`; no processor or MCU is represented as production-complete. The
@@ -35,6 +35,9 @@ with device wrappers kept at separate integration boundaries:
   ownership around the normalized M6800 core;
 - `mc6801_mcu`: normalized MC6801/MC6803 expanded Mode 2/3 RAM, GPIO, timer,
   SCI, interrupt priority, and external-memory integration;
+- `hd6301v1_mcu`: HD6301V1 single-chip Mode-7 integration with a separate
+  4-KiB FPGA program-image port, executable RAM, four GPIO ports, IS3/OS3,
+  timer/SCI, SLP, and device-generated address/opcode TRAP;
 - `hd6303r_mcu`: HD6303R Mode-2 ROMless integration with the HD6301 ISA,
   opcode TRAP, SLP behavior, RAM, GPIO, timer, and SCI; and
 - `mc68705p5_mcu`: an initial concrete 11-bit device integration with RAM and
@@ -88,8 +91,8 @@ make ci                authoritative complete committed-source gate
 The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803 peripheral cycle comparisons, and
-directed reset/stack/interrupt/device tests across two simulators, seven bounded
-formal profiles, and nine synthesis tops.
+directed reset/stack/interrupt/device tests across two simulators, eight bounded
+formal profiles, and ten synthesis tops.
 Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
@@ -104,7 +107,8 @@ cycle boundaries being checked.
 
 Pin-level MC6800 phase generation/electrical timing, MC6801 modes outside the
 normalized Mode 2/3 boundary, physical MC6801/MC6803 bus multiplexing, Hitachi
-MCU modes and peripherals outside the HD6303R Mode-2 subset, complete
+MCU modes outside HD6301V1 Mode 7 and HD6303R Mode 2, HD6301V1 standby and
+unsupported SCI clock formats, complete
 manufacturer bus waveforms outside the specifically verified traces, and
 several P5 timer/programming modes remain incomplete.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,

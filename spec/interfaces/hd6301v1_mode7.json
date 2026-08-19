@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "interface": "hd6301v1-mode7-digital",
+  "device": "hd6301v1",
+  "clock_model": {
+    "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
+    "historical_boundary": "HD6301V1 derives E from its oscillator; E is the documented peripheral and processor cycle reference",
+    "status": "PARTIAL",
+    "limitation": "Oscillator division, duty cycle, pad delays, setup/hold, and electrical timing are outside this normalized digital boundary"
+  },
+  "signals": [
+    {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
+    {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "active-high normalized-cycle enable; low preserves all synchronous digital state"},
+    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "asynchronous active-low reset"},
+    {"name": "nmi_n_i", "historical": "NMI", "direction": "input", "fact": "active-low non-maskable interrupt whose falling edge is retained"},
+    {"name": "irq1_n_i", "historical": "IRQ1", "direction": "input", "fact": "active-low maskable interrupt above internal timer and SCI sources"},
+    {"name": "standby_power_ok_i", "historical": "standby RAM supply validity", "direction": "input", "fact": "digital integration indication only; it does not model an analog threshold"},
+    {"name": "port1_i", "historical": "P10-P17 pin sample", "direction": "input", "fact": "physical pin levels returned by PORT1 reads"},
+    {"name": "port1_o", "historical": "P10-P17 output latch", "direction": "output", "fact": "latched GPIO output values"},
+    {"name": "port1_oe_o", "historical": "P10-P17 direction", "direction": "output", "fact": "one enables the corresponding output driver"},
+    {"name": "port2_i", "historical": "P20-P24 pin sample", "direction": "input", "fact": "physical pin levels used by GPIO, timer capture, and SCI receive"},
+    {"name": "port2_o", "historical": "P20-P24 output function", "direction": "output", "fact": "GPIO latch with timer and SCI output overrides"},
+    {"name": "port2_oe_o", "historical": "P20-P24 direction", "direction": "output", "fact": "GPIO direction with timer and SCI overrides"},
+    {"name": "port3_i", "historical": "P30-P37 pin sample", "direction": "input", "fact": "physical or IS3-latched levels returned by PORT3 reads"},
+    {"name": "port3_o", "historical": "P30-P37 output latch", "direction": "output", "fact": "latched Mode-7 Port 3 output values"},
+    {"name": "port3_oe_o", "historical": "P30-P37 direction", "direction": "output", "fact": "one enables the corresponding Mode-7 Port 3 output driver"},
+    {"name": "port4_i", "historical": "P40-P47 pin sample", "direction": "input", "fact": "physical pin levels returned by PORT4 reads"},
+    {"name": "port4_o", "historical": "P40-P47 output latch", "direction": "output", "fact": "latched Mode-7 Port 4 output values"},
+    {"name": "port4_oe_o", "historical": "P40-P47 direction", "direction": "output", "fact": "one enables the corresponding Mode-7 Port 4 output driver"},
+    {"name": "is3_n_i", "historical": "SC1/IS3", "direction": "input", "fact": "falling edge sets the P3CSR flag and captures Port 3 when latch enable is set"},
+    {"name": "os3_n_o", "historical": "SC2/OS3", "direction": "output", "fact": "active-low during the selected Port 3 read or write E-cycle"},
+    {"name": "program_address_o", "historical": "internal mask-ROM address", "direction": "output", "fact": "full CPU address, valid for the separately supplied F000-FFFF program image when program_read_o is high"},
+    {"name": "program_read_o", "historical": "internal mask-ROM select", "direction": "output", "fact": "active for read cycles in F000-FFFF; never selects non-memory or RAM/register addresses"},
+    {"name": "program_data_i", "historical": "internal mask-ROM data", "direction": "input", "fact": "FPGA firmware byte sampled for F000-FFFF reads, including all vectors"},
+    {"name": "sci_tx_o", "historical": "P24/TXD", "direction": "output", "fact": "normalized asynchronous transmit level when transmitter override is enabled"},
+    {"name": "sci_clock_o", "historical": "P22/SCK", "direction": "output", "fact": "normalized internal serial clock output for the selected supported mode"},
+    {"name": "timer_irq_o", "historical": "internal IRQ2 timer request", "direction": "output", "fact": "diagnostic indication of an enabled input-capture, output-compare, or overflow flag"},
+    {"name": "sci_irq_o", "historical": "internal IRQ2 SCI request", "direction": "output", "fact": "diagnostic indication of an enabled SCI status request"}
+  ],
+  "halt_interrupt_behavior": "HD6301V1 has no HALT input in this Mode-7 profile; SLP retains CPU state while peripherals run, an enabled request vectors, and a masked request resumes at the following instruction",
+  "references": [
+    {
+      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
+      "locators": [
+        "HD6301V1 sections 2.1-2.4, 2.7, 2.9-2.13 and figures 5-3 to 5-6, printed pages 128-145, 156-167, and 189-190"
+      ]
+    }
+  ],
+  "implementation_status": {
+    "normalized_digital_interface": "PARTIAL",
+    "mode7_program_memory": "PARTIAL",
+    "gpio_and_strobes": "PARTIAL",
+    "electrical_timing": "NOT_IMPLEMENTED",
+    "analog_behavior": "NOT_APPLICABLE"
+  }
+}

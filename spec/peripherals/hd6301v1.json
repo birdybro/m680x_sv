@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "device": "hd6301v1",
+  "address_width": 16,
+  "inherits": {
+    "device": "mc6801",
+    "sections": ["timer", "sci"],
+    "scope": "Hitachi documents HD6801-compatible CPU, timer, and asynchronous SCI functions for HD6301V1; this profile supplies the distinct Hitachi Mode-7 map, GPIO, handshake, low-power, and TRAP facts separately.",
+    "restrictions": [
+      "The current device wrapper implements single-chip Mode 7 only.",
+      "The mask-ROM image is supplied through the FPGA program-memory interface and is not distributed with the core.",
+      "Standby clock shutdown and analog RAM-retention thresholds remain outside the current digital profile.",
+      "Bi-phase and external-clock SCI modes remain outside the current serial implementation claim."
+    ],
+    "reference": {
+      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
+      "locator": "HD6301V1 sections 1.1 and 2.5-2.8, printed pages 126-127 and 145-160"
+    }
+  },
+  "memory_regions": [
+    {"start": "0000", "end": "001F", "kind": "internal-register-window", "access": "0000-0014 contain registers and 0015-001F are reserved; instruction fetches from the entire range cause address TRAP"},
+    {"start": "0020", "end": "007F", "kind": "unusable", "access": "ordinary reads return the normalized undriven value FF and writes have no effect; instruction fetch causes address TRAP"},
+    {"start": "0080", "end": "00FF", "kind": "internal-ram", "access": "128 bytes when RAME=1; executable and readable/writable"},
+    {"start": "0100", "end": "EFFF", "kind": "unusable", "access": "ordinary reads return the normalized undriven value FF and writes have no effect; instruction fetch causes address TRAP"},
+    {"start": "F000", "end": "FFFF", "kind": "internal-mask-rom", "access": "4 KiB read-only program image including all vectors, supplied by the FPGA integration"}
+  ],
+  "registers": [
+    {"address": "0000", "name": "P1DDR", "read": "FF", "write": "one selects output", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 142"}},
+    {"address": "0001", "name": "P2DDR", "read": "FF", "write": "one selects output subject to timer and SCI overrides", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 143"}},
+    {"address": "0002", "name": "PORT1", "read": "physical pin levels", "write": "output latch", "reset": "output latch undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 142"}},
+    {"address": "0003", "name": "PORT2_MODE", "read": "latched PC2:PC0 in bits 7:5 and physical P24:P20 in bits 4:0", "write": "output latch subject to timer and SCI overrides", "reset": "DDR 00; output latch undefined", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1 and 2.4, printed pages 128-134 and 143"}},
+    {"address": "0004", "name": "P3DDR", "read": "FF", "write": "one selects output in Mode 7", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 143-145"}},
+    {"address": "0005", "name": "P4DDR", "read": "FF", "write": "one selects output in Mode 7", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 145"}},
+    {"address": "0006", "name": "PORT3", "read": "physical pins or IS3-latched input", "write": "output latch and selected OS3 strobe", "reset": "output latch undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4 and figures 5-5 to 5-6, printed pages 143-145 and 190"}},
+    {"address": "0007", "name": "PORT4", "read": "physical pin levels", "write": "output latch", "reset": "output latch undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4, printed page 145"}},
+    {"address": "0008", "name": "TCSR", "read": "ICF OCF TOF EICI EOCI ETOI IEDG OLVL", "write": "control bits 4:0", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.5 and 2.7, printed pages 145-153 and 156-160"}},
+    {"address": "0009", "name": "FRC_MSB", "read": "counter high and latch low", "write": "preset counter to FFF8", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
+    {"address": "000A", "name": "FRC_LSB", "read": "latched counter low", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
+    {"address": "000B", "name": "OCR_MSB", "read": "output compare high", "write": "output compare high and inhibit compare one cycle", "reset": "FF", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
+    {"address": "000C", "name": "OCR_LSB", "read": "output compare low", "write": "output compare low", "reset": "FF", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
+    {"address": "000D", "name": "ICR_MSB", "read": "input capture high", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
+    {"address": "000E", "name": "ICR_LSB", "read": "input capture low", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
+    {"address": "000F", "name": "P3CSR", "read": "IS3 flag/enable, OSS, latch enable, and documented fixed bits", "write": "IS3 enable, OSS, and latch enable", "reset": "27", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 143-145"}},
+    {"address": "0010", "name": "RMCR", "read": "FF", "write": "SCI clock/mode low nibble", "reset": "0", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 152-156"}},
+    {"address": "0011", "name": "TRCSR", "read": "RDRF ORFE TDRE RIE RE TIE TE WU", "write": "control bits 4:0", "reset": "20", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 152-156"}},
+    {"address": "0012", "name": "RDR", "read": "received byte", "write": "no documented effect", "reset": "data undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 152-156"}},
+    {"address": "0013", "name": "TDR", "read": "FF", "write": "next transmit byte", "reset": "data undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 152-156"}},
+    {"address": "0014", "name": "RAMCR", "read": "STBY_PWR RAME and normalized zero unused bits", "write": "standby validity and RAM enable", "reset": "RAME 1; standby reflects retained supply", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.11, printed pages 161-162"}}
+  ],
+  "gpio": {
+    "port1": "eight independent Mode-7 GPIO pins",
+    "port2": "five GPIO pins with timer and SCI overrides; P21 is input or timer output only",
+    "port3": "eight GPIO pins with DDR, optional IS3 input latch, read- or write-selected active-low OS3 pulse, and IS3 interrupt flag",
+    "port4": "eight independent Mode-7 GPIO pins",
+    "p3csr_clear": "IS3 flag clears only after P3CSR is read while set followed by a read or write of PORT3; a new falling edge wins over a coincident clear",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4 and timing figures 5-3 to 5-6, printed pages 142-145 and 189-190"}
+  },
+  "operating_modes": {
+    "mode7": "single-chip operation with all program memory and vectors in the internal F000-FFFF mask-ROM window; implemented",
+    "other_modes": "Modes 0, 1, 2, 4, 5, and 6 are documented but outside the current HD6301V1 wrapper",
+    "sleep": "SLP stops CPU execution while peripherals continue; an enabled interrupt vectors and a masked request resumes at the following instruction",
+    "standby": "STBY stops all clocks and enters reset while RAM retention depends on documented supply conditions; not yet implemented",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1, 2.2, and 2.12, printed pages 128-139 and 162-166"}
+  },
+  "memory_control": {
+    "RAME": "bit 6 resets set and enables the 0080-00FF internal RAM; clearing it disables that physical RAM, leaving the Mode-7 addresses without an externally accessible memory device",
+    "STBY_PWR": "read/write retained-supply validity bit; FPGA profile deterministically clears it on reset and when standby_power_ok_i is false",
+    "address_trap": "instruction fetches from 0000-007F or 0100-EFFF invoke unmaskable TRAP; normal data accesses do not",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.11 and 2.13, table 2-13-1, printed pages 161-162 and 166-167"}
+  },
+  "interrupts": [
+    {"source": "reset", "vector": "FFFE:FFFF", "priority": 0},
+    {"source": "trap", "vector": "FFEE:FFEF", "priority": 1},
+    {"source": "nmi", "vector": "FFFC:FFFD", "priority": 2},
+    {"source": "swi", "vector": "FFFA:FFFB", "priority": "synchronous"},
+    {"source": "irq1-or-is3", "vector": "FFF8:FFF9", "priority": 3},
+    {"source": "timer-input-capture", "vector": "FFF6:FFF7", "priority": 4},
+    {"source": "timer-output-compare", "vector": "FFF4:FFF5", "priority": 5},
+    {"source": "timer-overflow", "vector": "FFF2:FFF3", "priority": 6},
+    {"source": "sci", "vector": "FFF0:FFF1", "priority": 7}
+  ],
+  "implementation_scope": {
+    "rtl": "rtl/hd6301/hd6301v1_mcu.sv implements the single-chip Mode-7 digital boundary and accepts a separate 4-KiB FPGA program image",
+    "model": "model/hd6301v1_device.py independently classifies Mode-7 E-cycle transactions, GPIO/handshake state, program memory, and address errors",
+    "verification": "Directed RTL execution covers internal reset/vector fetch, executable RAM, both address-error ranges through representative fetch, Port 3/4 GPIO, IS3 latch and ordered flag clear, both OS3 selections, masked SLP wake, and enabled IS3 interrupt vectoring",
+    "excluded_modes": "Expanded modes, physical multiplexed/non-multiplexed bus pins, standby entry, bi-phase SCI, and external-clock SCI remain unclaimed",
+    "analog_exclusions": ["mask-ROM contents", "oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
+  }
+}

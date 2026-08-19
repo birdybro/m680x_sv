@@ -34,6 +34,10 @@ class MC6801CycleInputs:
     data: int = 0
     port1: int = 0xFF
     port2: int = 0x1F
+    port3: int = 0xFF
+    port4: int = 0xFF
+    is3_n: bool = True
+    opcode_fetch: bool = False
     irq1_n: bool = True
     interrupt_mask: bool = True
     standby_power_ok: bool = True
@@ -50,6 +54,9 @@ class MC6801CycleResult:
     irq_request: bool
     irq_vector: int
     state: dict[str, int | bool]
+    program_bus: bool = False
+    address_error: bool = False
+    os3_n: bool = True
 
 
 @dataclass
@@ -58,6 +65,18 @@ class MC6801PeripheralState:
     port2_latch: int = 0
     port1_ddr: int = 0
     port2_ddr: int = 0
+    port3_latch: int = 0
+    port4_latch: int = 0
+    port3_ddr: int = 0
+    port4_ddr: int = 0
+    port3_input_latch: int = 0
+    port3_latch_valid: bool = False
+    port3_latch_enable: bool = False
+    port3_output_strobe_select: bool = False
+    port3_is3_enable: bool = False
+    port3_is3_flag: bool = False
+    port3_clear_armed: bool = False
+    is3_sync: list[bool] = field(default_factory=lambda: [True, True])
     rame: bool = True
     standby_power: bool = False
     timer: int = 0
@@ -96,6 +115,18 @@ class MC6801PeripheralState:
             "port2_latch": self.port2_latch,
             "port1_ddr": self.port1_ddr,
             "port2_ddr": self.port2_ddr,
+            "port3_latch": self.port3_latch,
+            "port4_latch": self.port4_latch,
+            "port3_ddr": self.port3_ddr,
+            "port4_ddr": self.port4_ddr,
+            "P3CSR": (
+                (int(self.port3_is3_flag) << 7)
+                | (int(self.port3_is3_enable) << 6)
+                | 0x20
+                | (int(self.port3_output_strobe_select) << 4)
+                | (int(self.port3_latch_enable) << 3)
+                | 0x07
+            ),
             "RAME": self.rame,
             "STBY_PWR": self.standby_power,
             "timer": self.timer,

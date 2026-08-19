@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-// HD6303R normalized expanded-multiplexed Mode-2 integration.
+// HD6301V1 normalized single-chip Mode-7 digital integration.
 //
-// The Hitachi HD6301V1/HD6303R handbook identifies the HD6303R as the same
-// die with mask ROM disabled and states that HD6301V1 information otherwise
-// applies. Mode 2 supplies the documented internal register block and 128-byte
-// RAM while leaving program memory and all vectors on the external bus.
-module hd6303r_mcu (
+// The 4-KiB mask-ROM image is an FPGA integration input rather than part of
+// this clean-room core. program_read_o selects documented F000-FFFF accesses;
+// RAM, registers, GPIO, timer, SCI, strobes, and TRAP decode remain internal.
+module hd6301v1_mcu (
   input  logic        clk_i,
   input  logic        reset_n_i,
   input  logic        clock_enable_i,
@@ -14,16 +13,21 @@ module hd6303r_mcu (
   input  logic        standby_power_ok_i,
   input  logic [7:0]  port1_i,
   input  logic [4:0]  port2_i,
-  input  logic [7:0]  external_data_i,
-  output logic [15:0] external_address_o,
-  output logic [7:0]  external_data_o,
-  output logic        external_write_o,
-  output logic        external_bus_valid_o,
-  output logic        external_opcode_fetch_o,
+  input  logic [7:0]  port3_i,
+  input  logic [7:0]  port4_i,
+  input  logic        is3_n_i,
+  output logic [15:0] program_address_o,
+  output logic        program_read_o,
+  input  logic [7:0]  program_data_i,
   output logic [7:0]  port1_o,
   output logic [7:0]  port1_oe_o,
   output logic [4:0]  port2_o,
   output logic [4:0]  port2_oe_o,
+  output logic [7:0]  port3_o,
+  output logic [7:0]  port3_oe_o,
+  output logic [7:0]  port4_o,
+  output logic [7:0]  port4_oe_o,
+  output logic        os3_n_o,
   output logic        sci_tx_o,
   output logic        sci_clock_o,
   output logic        timer_irq_o,
@@ -50,11 +54,13 @@ module hd6303r_mcu (
   output logic [7:0]  debug_receive_data_o,
   output logic [7:0]  debug_opcode_o
 );
-  // HD6303R Mode 2 has neither on-chip program ROM nor Port 3/4 GPIO.
+  // Mode 7 has no external memory bus; these common integration outputs are
+  // intentionally left unconnected at this device-specific boundary.
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
-    .OPERATING_MODE(3'd2),
-    .HITACHI_CPU(1'b1)
+    .OPERATING_MODE(3'd7),
+    .HITACHI_CPU(1'b1),
+    .HD6301_MODE7(1'b1)
   ) device (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),
@@ -64,27 +70,27 @@ module hd6303r_mcu (
     .standby_power_ok_i(standby_power_ok_i),
     .port1_i(port1_i),
     .port2_i(port2_i),
-    .port3_i(8'hff),
-    .port4_i(8'hff),
-    .is3_n_i(1'b1),
-    .program_data_i(8'hff),
-    .external_data_i(external_data_i),
-    .program_address_o(),
-    .program_read_o(),
-    .external_address_o(external_address_o),
-    .external_data_o(external_data_o),
-    .external_write_o(external_write_o),
-    .external_bus_valid_o(external_bus_valid_o),
-    .external_opcode_fetch_o(external_opcode_fetch_o),
+    .port3_i(port3_i),
+    .port4_i(port4_i),
+    .is3_n_i(is3_n_i),
+    .program_data_i(program_data_i),
+    .external_data_i(8'hff),
+    .program_address_o(program_address_o),
+    .program_read_o(program_read_o),
+    .external_address_o(),
+    .external_data_o(),
+    .external_write_o(),
+    .external_bus_valid_o(),
+    .external_opcode_fetch_o(),
     .port1_o(port1_o),
     .port1_oe_o(port1_oe_o),
     .port2_o(port2_o),
     .port2_oe_o(port2_oe_o),
-    .port3_o(),
-    .port3_oe_o(),
-    .port4_o(),
-    .port4_oe_o(),
-    .os3_n_o(),
+    .port3_o(port3_o),
+    .port3_oe_o(port3_oe_o),
+    .port4_o(port4_o),
+    .port4_oe_o(port4_oe_o),
+    .os3_n_o(os3_n_o),
     .sci_tx_o(sci_tx_o),
     .sci_clock_o(sci_clock_o),
     .timer_irq_o(timer_irq_o),
