@@ -1,11 +1,12 @@
 PYTHON ?= python3
 
-.PHONY: help refs refs-check lint test quick ci clean
+.PHONY: help refs refs-check spec-check lint test quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
 	@echo "  refs        download/verify ignored primary-reference cache"
 	@echo "  refs-check  validate reference metadata without network access"
+	@echo "  spec-check  validate architecture and device specifications"
 	@echo "  lint        run source and policy consistency checks"
 	@echo "  test        run current automated tests"
 	@echo "  quick       run the fast local gate"
@@ -13,12 +14,15 @@ help:
 	@echo "  clean       remove generated local build products"
 
 refs:
-	$(PYTHON) tools/fetch_references.py
+	$(PYTHON) -m tools.fetch_references
 
 refs-check:
-	$(PYTHON) tools/fetch_references.py --manifest-only
+	$(PYTHON) -m tools.fetch_references --manifest-only
 
-lint: refs-check
+spec-check: refs-check
+	$(PYTHON) -m tools.validate_devices
+
+lint: spec-check
 	$(PYTHON) -m compileall -q tools tests
 	git diff --check
 

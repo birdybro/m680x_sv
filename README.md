@@ -15,4 +15,9 @@ Downloaded manuals are never committed. Run `make refs` to populate the ignored
 `make quick` runs the current offline validation gate; `make help` lists the
 available developer commands.
 
+The initial v1 target matrix and its deliberately conservative status are in
+[docs/COMPATIBILITY.md](docs/COMPATIBILITY.md). Machine-readable device and
+architecture facts live under [`spec/`](spec/); `make spec-check` validates
+their references, required fields, and support-status dimensions.
+
 All original project code and documentation are licensed under the MIT License.
