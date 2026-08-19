@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "device": "hd63705v0",
+  "address_width": 14,
+  "memory_regions": [
+    {"start": "0000", "end": "0012", "kind": "internal-registers", "access": "device-register-dependent"},
+    {"start": "0013", "end": "003F", "kind": "unused", "access": "normalized FF reads; writes ignored"},
+    {"start": "0040", "end": "00FF", "kind": "internal-ram", "access": "192-byte read-write RAM retained through reset and standby"},
+    {"start": "0100", "end": "0FFF", "kind": "unused", "access": "normalized FF reads; writes ignored"},
+    {"start": "1000", "end": "1FFF", "kind": "internal-eprom", "access": "4-KiB read-only MCU image including vectors; supplied through the FPGA program-memory port"},
+    {"start": "2000", "end": "3FFF", "kind": "unused", "access": "normalized FF reads; writes ignored"}
+  ],
+  "registers": [
+    {"address": "0000", "name": "PORTA", "read": "output latch where DDRA is one, pin where DDRA is zero", "write": "eight-bit output latch", "reset": "00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.1 and 2.8 and table 2-8, printed pages 107, 124-125, and 134"}},
+    {"address": "0001", "name": "PORTB", "read": "output latch where DDRB is one, pin where DDRB is zero", "write": "eight-bit output latch", "reset": "00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.1 and 2.8 and table 2-8, printed pages 107, 124-125, and 134"}},
+    {"address": "0002", "name": "PORTC", "read": "output latch where DDRC is one, pin where DDRC is zero", "write": "eight-bit output latch", "reset": "00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.1 and 2.8 and table 2-8, printed pages 107, 124-125, and 134"}},
+    {"address": "0003", "name": "PORTD", "read": "bit seven reads one; bits six through zero select output latch or pin by DDRD", "write": "seven-bit output latch; bit seven unused", "reset": "00 in implemented bits", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 terminal description, section 2.8, and table 2-8, printed pages 105-106, 124-125, and 134"}},
+    {"address": "0004", "name": "DDRA", "read": "direction bits", "write": "one selects output", "reset": "00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.8 and table 2-8, printed pages 124-125 and 134"}},
+    {"address": "0005", "name": "DDRB", "read": "direction bits", "write": "one selects output", "reset": "00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.8 and table 2-8, printed pages 124-125 and 134"}},
+    {"address": "0006", "name": "DDRC", "read": "direction bits", "write": "one selects output", "reset": "00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.8 and table 2-8, printed pages 124-125 and 134"}},
+    {"address": "0007", "name": "DDRD", "read": "bit seven reads one; implemented direction bits six through zero", "write": "one selects output in bits six through zero", "reset": "00 in implemented bits", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.8 and table 2-8, printed pages 124-125 and 134"}},
+    {"address": "0008", "name": "TDR", "read": "current eight-bit wrapping down-counter", "write": "load down-counter", "reset": "F0", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.3 and table 2-8, printed pages 110-112 and 134"}},
+    {"address": "0009", "name": "TCR", "read": "request, mask, source, read-zero prescaler reset, and divide selection", "write": "zero clears request; mask/source/divide are writable; bit three one initializes prescaler", "reset": "50", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.3, figures 2-4 and 2-5, and tables 2-1 through 2-3, printed pages 110-112"}},
+    {"address": "000A", "name": "MR", "read": "INT2 request/mask, INT edge-or-level selection, and fixed-one low bits", "write": "zero clears INT2 request; bit six masks INT2; bit five selects INT level-and-edge sensing", "reset": "5F", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.7(1) and 2.7(3) and table 2-8, printed pages 120 and 123-124 and 134"}},
+    {"address": "0010", "name": "SCR", "read": "transmit, receive, clock source, and four-bit transfer-width selection", "write": "select Tx/Rx pin overrides, internal or external serial clock, and transfer width", "reset": "00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.4(1), figure 2-7, printed pages 113-115"}},
+    {"address": "0011", "name": "SSR", "read": "SCI and Timer2 requests/masks, bit three zero, and fixed-one low bits", "write": "zero clears request bits; masks are writable; bit three one initializes transfer-clock prescaler", "reset": "internal state 3F; visible readback 37 because bit three always reads zero", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.4(3), printed pages 115-116; reset flow printed page 122; table 2-8 printed page 134"}},
+    {"address": "0012", "name": "SDR", "read": "received synchronous byte and, with SCR5 one, clear SCI request/arm reception", "write": "load transmit byte and, with SCR5 one, clear SCI request/start transmission/arm reception", "reset": "UNDEFINED_BY_DOCUMENTATION; normalized to 00", "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.4(2), 2.4(4), and 2.4(5), printed pages 115-117; table 2-8 printed page 134"}}
+  ],
+  "timer": {
+    "counter": "Eight-bit wrapping down-counter; transition from 01 to 00 sets TCR7 and the following event changes 00 to FF.",
+    "prescaler": "Seven-bit divider by 1, 2, 4, 8, 16, 32, 64, or 128; reset and a TCR3 write-one pulse initialize it to 7F.",
+    "clock_modes": {"00": "every internal E cycle", "01": "internal E cycles while TIMER is high", "10": "stopped", "11": "TIMER rising edges"},
+    "wait_vector": "An enabled timer request accepted from WAIT uses 1FF6:1FF7; normal timer and INT2 share 1FF8:1FF9.",
+    "external_edge": "Manufacturer Q&A QA635-315A resolves the event-input edge as rising.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.3, printed pages 110-112; Q&A QA635-315A, handbook printed page 902"}
+  },
+  "interrupts": [
+    {"source": "reset", "vector": "1FFE:1FFF", "priority": 1},
+    {"source": "swi", "vector": "1FFC:1FFD", "priority": 2},
+    {"source": "INT", "vector": "1FFA:1FFB", "priority": 3},
+    {"source": "timer-or-INT2", "vector": "1FF8:1FF9", "priority": 4},
+    {"source": "timer-accepted-from-WAIT", "vector": "1FF6:1FF7", "priority": 5},
+    {"source": "SCI-or-Timer2", "vector": "1FF4:1FF5", "priority": 6}
+  ],
+  "gpio": {
+    "ports": "Ports A, B, and C have eight bits; Port D has seven bits. Every bit has a direction bit and reset selects input.",
+    "multiplexing": "D3 is synchronous Tx, D4 is Rx, D5 is CK, and D6 shares the INT2 package pin. Enabled SCI functions override GPIO direction for D3-D5.",
+    "readback": "The common-port diagram documents latch readback for outputs and pin readback for inputs.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 terminal description and section 2.8, printed pages 105-106 and 124-125"}
+  },
+  "sci": {
+    "format": "Eight-bit synchronous transfer, least-significant bit first; transmit changes on negative CK edges and receive samples positive CK edges.",
+    "clock": "SCR5:SCR4 selects disabled GPIO, internal clock/output, or external clock/input. Sixteen documented clock widths are powers of two from 1 us through 32768 us at a 4-MHz oscillator.",
+    "timer2": "The internal 15-bit transfer-clock generator sets SSR6 on each negative edge even while the serial shifter uses external CK.",
+    "completion": "SSR7 sets on completion of either eight-bit transmit or receive; an SDR access with SCR5 one clears it, starts transmission for a write, and arms initial reception.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.4 and figures 2-6 through 2-8, printed pages 113-117"}
+  },
+  "operating_modes": {
+    "mcu": "NUM low selects single-chip execution from the internal 1000-1FFF EPROM and 0040-00FF RAM.",
+    "wait": "WAIT stops the CPU while timer and SCI continue; an enabled request vectors, with the timer-specific wait vector.",
+    "stop": "STOP halts oscillator, CPU, and peripherals; TDR becomes F0, timer/SCI request flags clear, their masks set, and only INT or enabled INT2 wakes the core.",
+    "standby": "STBY low asynchronously resets internal registers and makes I/O high impedance while retaining RAM; normalized standby_n_i represents the digital boundary.",
+    "eprom": "The digital programming interface maps twelve external EPROM addresses to 1000-1FFF and exposes VPP/OE-qualified verify data and CE/OE/VPP-qualified program strobes.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.9 and 2.10 and tables 2-5 through 2-9, printed pages 125-136"}
+  },
+  "memory_control": {
+    "pc": "The CPU masks every program-counter result to fourteen bits.",
+    "stack": "The physical stack wraps in 00C0-00FF and resets to 00FF; documented nesting leaves 00C0 as the wrap boundary.",
+    "unmapped": "The handbook defines no external MCU-mode memory bus. The FPGA wrapper returns FF and ignores writes outside registers, RAM, and EPROM without claiming an undocumented silicon read value.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.1 and 2.2 and figures 2-1 through 2-3, printed pages 107-109"}
+  },
+  "implementation_scope": {
+    "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, documented low-power transitions, and normalized EPROM programming pins.",
+    "model": "model/hd63705v0_device.py independently models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, and STOP state changes per E cycle.",
+    "verification": "Model and RTL suites cover both RAM boundaries, register reset/readback, GPIO, timer sources and wait vector, external interrupt priority, eight-bit serial transfer, STOP/STBY, and EPROM verify/program controls.",
+    "undefined_policy": "Unmapped MCU-mode read values and SDR reset data are deterministic FPGA normalizations, not silicon-equivalence claims.",
+    "analog_exclusions": ["oscillator startup and duty cycle", "EPROM charge programming, voltage margins, and retention", "pad drive strength", "metastability"]
+  }
+}

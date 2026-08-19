@@ -57,29 +57,39 @@ class DeviceSpecificationTests(unittest.TestCase):
             "device_wrapper", "internal_memory", "gpio", "timer", "serial"
         ):
             self.assertEqual(hd63701v0[dimension], "PARTIAL")
+        hd63705v0 = devices["hd63705v0"]["status"]
+        for dimension in (
+            "device_wrapper", "internal_memory", "gpio", "timer", "serial"
+        ):
+            self.assertEqual(hd63705v0[dimension], "PARTIAL")
         for evidence_path in (
             "rtl/m6801/mc6801_mcu.sv",
             "rtl/hd6301/hd6301v1_mcu.sv",
             "rtl/hd6301/hd6303r_mcu.sv",
             "rtl/hd6301/hd63701v0_mcu.sv",
+            "rtl/hd6305/hd63705v0_mcu.sv",
             "sim/tb_mc6801_mcu.sv",
             "sim/tb_hd6301v1_mcu.sv",
             "sim/tb_hd6303r_mcu.sv",
             "sim/tb_hd63701v0_mcu.sv",
+            "sim/tb_hd63705v0_mcu.sv",
             "model/hd6301v1_device.py",
             "model/hd63701v0_device.py",
+            "model/hd63705v0_device.py",
             "spec/peripherals/mc6801.json",
             "spec/peripherals/mc6803.json",
             "spec/peripherals/hd6301v1.json",
             "spec/peripherals/hd6303r.json",
             "spec/peripherals/hd63701v0.json",
+            "spec/peripherals/hd63705v0.json",
             "spec/interfaces/hd6301v1_mode7.json",
             "spec/interfaces/hd63701v0_mode7.json",
+            "spec/interfaces/hd63705v0_mcu.json",
         ):
             self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)
         implemented_full_mcus = {
             "mc6801", "mc6803", "mc68705p5", "hd6301v1", "hd6303r",
-            "hd63701v0",
+            "hd63701v0", "hd63705v0",
         }
         for device_id, device in devices.items():
             if (

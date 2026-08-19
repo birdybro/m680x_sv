@@ -34,7 +34,7 @@ and low-power modes have separate specifications.
 | Hitachi HD6301V1 | full MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD6303R | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD63701V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Hitachi HD63705V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Hitachi HD63705V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 
 The normalized M6805 core is not a silicon-device compatibility claim. A device
 profile must provide effective PC width, stack window, vectors, interrupt set,
@@ -104,6 +104,16 @@ range. Expanded modes, explicit asynchronous STBY entry, alternate SCI clock
 formats, physical timing, and EPROM programming mode remain outside the claim.
 The V0 regression verifies its distinct asynchronous DDR reset at the digital
 boundary.
+
+The HD63705V0 claim covers its distinct 14-bit CPU/device boundary, physical
+`$00c0`-`$00ff` stack window, `$0040`-`$00ff` RAM, `$1000`-`$1fff` EPROM,
+31 GPIO lines, all four primary-timer clock selections and eight prescalers,
+INT/INT2 sensing and documented vector priority, synchronous SCI/Timer2,
+WAIT/STOP/STBY digital state changes, and normalized EPROM verify/program
+controls. Directed integration checks and 768 independent model/RTL E-cycle
+comparisons cover these features. Oscillator/STOP recovery time, electrical
+pin timing, EPROM voltage/pulse/retention physics, and silicon values on unused
+memory reads remain outside the partial digital claim.
 
 The manufacturer manual is internally inconsistent for Mode-7 instruction
 fetches at `$0040`-`$007f`: the memory map and address-error prose identify the

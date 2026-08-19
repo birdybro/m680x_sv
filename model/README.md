@@ -69,7 +69,17 @@ the manual's contradictory `$0040-$007f` address-error statements, the model
 permits execution from physical RAM and reports that policy separately from
 verified behavior.
 
+`hd63705v0_device.py` is a separate E-cycle device model for the 14-bit
+HD63705V0 boundary. It owns the 192-byte RAM/4-KiB EPROM partition, four GPIO
+ports, all primary-timer clock modes, INT/INT2 priority, synchronous SCI and
+Timer2 edges, and STOP state changes. It does not reuse the RTL state machine.
+The model explicitly resynchronizes TIMER and CK levels while stopped so that
+recovery cannot manufacture an edge which occurred while peripheral clocks
+were disabled.
+
 `tools/build_mc6801_peripheral_vectors.py` records independent model results
 for 768 transactions in each expanded mode. A verification-only bus source
 then presents those exact transactions to the peripheral RTL without using the
 CPU execution engine as an oracle.
+`tools/build_hd63705_peripheral_vectors.py` does the same for 768 HD63705V0
+transactions, including a directed protocol prefix and seed `0x63705000`.

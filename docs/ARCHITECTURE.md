@@ -275,6 +275,42 @@ copyrighted Motorola bootstrap bytes outside the repository and lets the system
 choose its ROM initialization mechanism. Analog VPP/EPROM programming physics
 are excluded; the digital PCR control outputs are exposed for integration.
 
+## HD63705V0 integration
+
+`rtl/hd6305/hd63705v0_mcu.sv` configures the independent M6805-lineage core
+for Hitachi decoding, a 14-bit PC/address boundary, stack window
+`$00c0`-`$00ff`, and vectors at `$1ff4`-`$1fff`. The wrapper decodes registers
+at `$0000`-`$0012`, 192 bytes of retained RAM at `$0040`-`$00ff`, and the
+integration-owned 4-KiB EPROM image at `$1000`-`$1fff`. Sixteen-bit effective
+addresses produced inside the generic core are deliberately truncated to the
+fourteen physical address bits at this device boundary.
+
+Ports A-C have eight latch/direction bits and Port D has seven. D3/D4/D5 are
+overridden by synchronous Tx/Rx/CK when SCR enables them, while the separately
+named `int2_n_i` represents the interrupt function shared by the D6 package
+pin. The eight-bit down-counter implements internal, gated-internal, stopped,
+and rising-edge external clock modes plus all eight prescale ratios. INT is
+edge-latched or edge-and-level sensed; INT2 is falling-edge latched and
+software-cleared. The priority encoder selects INT, timer/INT2, the separate
+timer-from-WAIT vector, and SCI/Timer2 without conflating their status flags.
+
+The synchronous SCI changes LSB-first transmit data on CK falling edges and
+samples receive data on rising edges. A 15-bit interval counter plus clock
+phase generates all sixteen documented internal widths; Timer2 sets its request
+on each internal negative edge even when serial shifting selects external CK.
+SDR access implements request clearing, transmitter load, and initial receive
+arming. `model/hd63705v0_device.py` uses a separate transaction/event structure,
+and a generated 768-cycle corpus compares every visible state boundary.
+
+WAIT stops only CPU execution and preserves timer/SCI operation. On STOP entry,
+the wrapper resets only the documented TDR, timer request/mask, and SCI/Timer2
+request/mask state, then permits only INT or enabled INT2 to wake the core.
+`standby_n_i` provides the documented register-reset, RAM-retention, and GPIO
+high-impedance digital boundary. EPROM mode holds the MCU reset and exposes the
+twelve-bit programming address, verify data/output enable, input data, and the
+CE/OE/VPP-qualified program request. Voltage, pulse width, charge retention,
+and oscillator recovery remain analog exclusions.
+
 ## Generated synthesis views
 
 Verilator consumes the package-based source; Icarus and Yosys use a checked

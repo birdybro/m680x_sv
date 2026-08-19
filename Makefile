@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -35,6 +35,8 @@ help:
 	@echo "  test-hd6303r verify the ROMless HD6303R Mode-2 MCU profile"
 	@echo "  test-hd63701v0 verify the EPROM HD63701V0 Mode-7 MCU profile"
 	@echo "  test-hd6305-opcodes compare all documented HD6305 encodings to the model"
+	@echo "  test-hd63705v0 verify HD63705V0 memory, GPIO, timer, SCI, interrupts, and modes"
+	@echo "  test-hd63705-peripheral-diff compare 768 independent model/RTL E-cycles"
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
 	@echo "  test-cycle  verify documented instruction cycles and semantic bus accesses"
@@ -63,6 +65,7 @@ spec-build:
 	$(PYTHON) -m tools.build_m6805_rtl_vectors
 	$(PYTHON) -m tools.build_random_programs
 	$(PYTHON) -m tools.build_mc6801_peripheral_vectors
+	$(PYTHON) -m tools.build_hd63705_peripheral_vectors
 	$(PYTHON) -m tools.build_yosys_sources
 
 spec-check: refs-check
@@ -76,6 +79,7 @@ spec-check: refs-check
 	$(PYTHON) -m tools.build_m6805_rtl_vectors --check
 	$(PYTHON) -m tools.build_random_programs --check
 	$(PYTHON) -m tools.build_mc6801_peripheral_vectors --check
+	$(PYTHON) -m tools.build_hd63705_peripheral_vectors --check
 	$(PYTHON) -m tools.build_yosys_sources --check
 
 lint: spec-check lint-rtl
@@ -119,6 +123,9 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module mc68705p5_mcu \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6805/m6805_core.sv rtl/m6805/mc68705p5_mcu.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module hd63705v0_mcu \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6805/m6805_core.sv rtl/hd6305/hd63705v0_mcu.sv
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -126,7 +133,8 @@ test:
 test-model:
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model \
 		tests.test_mc6801_device_model tests.test_hd6301v1_device_model \
-		tests.test_hd6303r_device_model tests.test_hd63701v0_device_model -v
+		tests.test_hd6303r_device_model tests.test_hd63701v0_device_model \
+		tests.test_hd63705v0_device_model -v
 
 test-m6800: test-m6800-rtl
 	$(PYTHON) -m unittest tests.test_m6800_model -v
@@ -221,9 +229,10 @@ test-m6805-opcodes:
 		sim/tb_m6805_opcodes.sv
 	build/obj_m6805_opcodes/Vtb_m6805_opcodes
 
-test-hitachi: test-hd6301-opcodes test-hd6301v1 test-hd6303r test-hd63701v0 test-hd6305-opcodes
+test-hitachi: test-hd6301-opcodes test-hd6301v1 test-hd6303r test-hd63701v0 test-hd6305-opcodes test-hd63705v0
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model \
-		tests.test_hd6301v1_device_model tests.test_hd63701v0_device_model -v
+		tests.test_hd6301v1_device_model tests.test_hd63701v0_device_model \
+		tests.test_hd63705v0_device_model -v
 
 test-hd6301-opcodes:
 	mkdir -p build
@@ -278,6 +287,25 @@ test-hd6305-opcodes:
 		sim/tb_m6805_opcodes.sv
 	build/obj_hd6305_opcodes/Vtb_hd6305_opcodes
 
+test-hd63705v0:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_hd63705v0_mcu \
+		-Mdir build/obj_hd63705v0_mcu -o Vtb_hd63705v0_mcu \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6805/m6805_core.sv rtl/hd6305/hd63705v0_mcu.sv \
+		sim/tb_hd63705v0_mcu.sv
+	build/obj_hd63705v0_mcu/Vtb_hd63705v0_mcu
+
+test-hd63705-peripheral-diff:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall \
+		--top-module tb_hd63705_peripheral_diff \
+		-Mdir build/obj_hd63705_peripheral_diff -o Vtb_hd63705_peripheral_diff \
+		sim/generated/hd63705_peripheral_vectors_pkg.sv \
+		sim/hd63705_peripheral_bus_stub_pkg.sv sim/stub/m6805_core.sv \
+		rtl/hd6305/hd63705v0_mcu.sv sim/tb_hd63705_peripheral_diff.sv
+	build/obj_hd63705_peripheral_diff/Vtb_hd63705_peripheral_diff
+
 test-alu: test-alu-rtl
 	$(PYTHON) -m unittest tests.test_alu_exhaustive -v
 
@@ -290,7 +318,7 @@ test-alu-rtl:
 
 test-cycle: test-m6800-opcodes test-m6801-opcodes test-hd6301-opcodes test-m6805-opcodes test-hd6305-opcodes
 
-test-interrupts: test-m6800-rtl test-mc6800-wrapper test-m6805-rtl test-interrupt-delay test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0
+test-interrupts: test-m6800-rtl test-mc6800-wrapper test-m6805-rtl test-interrupt-delay test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-hd63705v0
 
 test-interrupt-delay:
 	mkdir -p build
@@ -310,7 +338,7 @@ test-interrupt-delay:
 		rtl/m6805/m6805_core.sv sim/tb_interrupt_delay.sv
 	build/obj_delay_hd6305/Vdelay_hd6305
 
-test-peripherals: test-mc6803 test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5
+test-peripherals: test-mc6803 test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5 test-hd63705v0 test-hd63705-peripheral-diff
 
 test-mc68705p5:
 	mkdir -p build
@@ -423,6 +451,16 @@ test-iverilog: spec-check
 		rtl/generated/yosys_m6800_core.sv rtl/m6801/mc6801_mcu.sv \
 		rtl/hd6301/hd63701v0_mcu.sv sim/tb_hd63701v0_mcu.sv
 	$(VVP) build/iverilog/tb_hd63701v0_mcu
+	$(IVERILOG) -g2012 -Wall -s tb_hd63705v0_mcu -o build/iverilog/tb_hd63705v0_mcu \
+		rtl/generated/yosys_m6805_core.sv rtl/hd6305/hd63705v0_mcu.sv \
+		sim/tb_hd63705v0_mcu.sv
+	$(VVP) build/iverilog/tb_hd63705v0_mcu
+	$(IVERILOG) -g2012 -Wall -s tb_hd63705_peripheral_diff \
+		-o build/iverilog/hd63705_peripheral_diff \
+		sim/generated/hd63705_peripheral_vectors_pkg.sv \
+		sim/hd63705_peripheral_bus_stub_pkg.sv sim/stub/m6805_core.sv \
+		rtl/hd6305/hd63705v0_mcu.sv sim/tb_hd63705_peripheral_diff.sv
+	$(VVP) build/iverilog/hd63705_peripheral_diff
 
 formal: spec-check
 	mkdir -p build
@@ -435,6 +473,7 @@ formal: spec-check
 	$(YOSYS) -ql build/formal_mc6801_mcu.log -s formal/prove_mc6801_mcu.ys
 	$(YOSYS) -ql build/formal_hd6301v1_mcu.log -s formal/prove_hd6301v1_mcu.ys
 	$(YOSYS) -ql build/formal_hd63701v0_mcu.log -s formal/prove_hd63701v0_mcu.ys
+	$(YOSYS) -ql build/formal_hd63705v0_mcu.log -s formal/prove_hd63705v0_mcu.ys
 
 synth: spec-check
 	mkdir -p build
@@ -449,6 +488,7 @@ synth: spec-check
 	$(YOSYS) -ql build/synth_hd6303r_mcu.log -s synth/hd6303r_mcu.ys
 	$(YOSYS) -ql build/synth_hd6301v1_mcu.log -s synth/hd6301v1_mcu.ys
 	$(YOSYS) -ql build/synth_hd63701v0_mcu.log -s synth/hd63701v0_mcu.ys
+	$(YOSYS) -ql build/synth_hd63705v0_mcu.log -s synth/hd63705v0_mcu.ys
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 

@@ -250,7 +250,7 @@
       "clocking": "On-chip oscillator; 1.0/1.5/2.0 MHz device grades, with E derived from the oscillator for CPU and timer use.",
       "documented_quirks": ["14-bit PC and SP; SP high bits are fixed and reset value is 00FF with documented nesting down to 00C1.", "HD63705V0 is documented as fully compatible with HD6305V0 apart from EPROM substitution/programming behavior.", "After CLI, a pending interrupt is serviced after the following instruction."],
       "undefined_by_documentation": ["Opcode-map cells marked undefined.", "EPROM analog programming margins are outside synthesizable digital equivalence."],
-      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "PARTIAL"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "PARTIAL", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "PARTIAL", "low_power": "PARTIAL"},
       "references": [{"id": "hitachi-hd6305-series-handbook-1988", "locators": ["quick reference printed pages 4-5; table 1-7; HD6305U0/V0/HD63705V0 user manual printed pages 101-168"]}]
     }
   ],

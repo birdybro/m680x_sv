@@ -1,0 +1,7 @@
+read_verilog -formal -sv rtl/generated/yosys_m6805_core.sv rtl/hd6305/hd63705v0_mcu.sv formal/hd63705v0_mcu_formal.sv
+prep -top hd63705v0_mcu_formal -flatten
+memory_map
+opt_clean
+async2sync
+dffunmap
+sat -verify -prove-asserts -seq 10 -set-def-inputs -set-def-formal
