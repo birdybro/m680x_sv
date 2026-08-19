@@ -108,6 +108,7 @@ module mc6801_mcu #(
   logic [15:0] core_irq_vector;
   logic irq_n;
   logic irq1_pending;
+  logic irq2_pending;
   logic internal_register_select;
   logic internal_ram_select;
   logic internal_read;
@@ -480,9 +481,15 @@ module mc6801_mcu #(
   always_ff @(posedge clk_i or negedge reset_n_i) begin
     if (!reset_n_i) begin
       irq1_pending <= 1'b0;
+      irq2_pending <= 1'b0;
     end else if (clock_enable_i) begin
-      if (debug_ccr_o[4]) irq1_pending <= 1'b0;
-      else if (!irq1_n_i) irq1_pending <= 1'b1;
+      if (debug_ccr_o[4]) begin
+        irq1_pending <= 1'b0;
+        irq2_pending <= 1'b0;
+      end else begin
+        if (!irq1_n_i) irq1_pending <= 1'b1;
+        if (timer_irq_o || sci_irq_o) irq2_pending <= 1'b1;
+      end
     end
   end
 
@@ -497,7 +504,7 @@ module mc6801_mcu #(
     else if (tcsr[6] && tcsr[3]) core_irq_vector = VECTOR_OUTPUT_COMPARE;
     else if (tcsr[5] && tcsr[2]) core_irq_vector = VECTOR_TIMER_OVERFLOW;
     else core_irq_vector = VECTOR_SCI;
-    irq_n = !(irq1_pending || !irq1_n_i || timer_irq_o || sci_irq_o);
+    irq_n = !(irq1_pending || !irq1_n_i || irq2_pending || timer_irq_o || sci_irq_o);
 
     sci_tx_o = (trcsr_control[1] && tx_active) ? tx_shift[0] : 1'b1;
     sci_clock_o = sci_clock_level;

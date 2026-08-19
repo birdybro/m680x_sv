@@ -38,7 +38,7 @@
     "output_compare": "match sets OCF and transfers OLVL to P21; high-byte write inhibits comparison for one E-cycle",
     "input_capture": "selected P20 edge transfers the synchronized counter and sets ICF on the second negative E half-cycle; high-byte read inhibits one transfer",
     "flag_clear": {"ICF": "read TCSR while set, then read ICR_MSB", "OCF": "read TCSR while set, then write either OCR byte", "TOF": "read TCSR while set, then read FRC_MSB"},
-    "interrupt": "enabled ICF, OCF, and TOF request IRQ2 with distinct priority vectors",
+    "interrupt": "enabled ICF, OCF, and TOF set the IRQ2 request flip-flop; I or reset clears the request while the unlatched enabled flags select distinct priority vectors late in entry",
     "reference": {"id": "motorola-mc6801-reference-1983", "locator": "chapter 7, sections 7.1.1-7.1.4, printed pages 7-1 to 7-6"}
   },
   "gpio": {
@@ -55,7 +55,7 @@
     "receiver": "valid stop transfers data and sets RDRF; missing stop sets ORFE without RDRF; full RDR causes overrun and inhibits transfer",
     "flag_clear": "TRCSR read followed by RDR read clears the RDRF/ORFE bits observed",
     "wake_up": "WU inhibits receive flags until ten consecutive marks",
-    "interrupt": "RIE enables RDRF/ORFE and TIE enables TDRE; all share FFF0:FFF1",
+    "interrupt": "RIE enables RDRF/ORFE and TIE enables TDRE into the retained IRQ2 request; all share the default FFF0:FFF1 priority-encoder vector",
     "reference": {"id": "motorola-mc6801-reference-1983", "locator": "chapter 6, sections 6.1-6.6, printed pages 6-1 to 6-12"}
   },
   "operating_modes": {

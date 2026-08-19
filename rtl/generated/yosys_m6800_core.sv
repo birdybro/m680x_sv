@@ -2661,7 +2661,14 @@ module m6800_core #(
             phase <= phase + 3'd1;
           end
         end
-        ST_INTERRUPT_POST: state <= ST_INTERRUPT_VECTOR_HIGH;
+        ST_INTERRUPT_POST: begin
+          // MC6801-family devices select the highest-priority maskable vector
+          // after stacking, not when entry is first recognized. Resampling here
+          // also preserves the documented default-SCI case if IRQ2 identity is
+          // removed after its request flip-flop has been set.
+          if (interrupt_vector_o == 2'b01) vector_address <= irq_vector_i;
+          state <= ST_INTERRUPT_VECTOR_HIGH;
+        end
         ST_INTERRUPT_VECTOR_HIGH: begin
           temporary_high <= data_i;
           state <= ST_INTERRUPT_VECTOR_LOW;

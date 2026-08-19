@@ -29,7 +29,7 @@ The committed tests cover:
 | Python unit tests | 63 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
-| MC6801 Mode 2/3 integration checks | 46 |
+| MC6801 Mode 2/3 integration checks | 49 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
@@ -71,7 +71,9 @@ GPIO reads, write-only DDR reads, RAME-controlled RAM, Mode 3 external RAM,
 synchronized input capture, ordered ICF clearing, output compare, IRQ1-over-
 timer priority, distinct vectors, NRZ transmit framing, center-sampled receive,
 SCI overrun retention and status-clearing protocols, sticky SCI pin direction,
-and one-cycle IRQ1 pulse retention through the post-CLI boundary.
+and a one-cycle IRQ1 pulse which arrives after IRQ2 entry has started and wins
+the documented late vector-priority selection. It also removes a timer source's
+identity after latching IRQ2 and verifies the documented default SCI vector.
 
 The HD6301 TRAP suite independently exercises an unassigned opcode and an
 instruction-address-error input. It compares the exact 13-cycle normalized bus
@@ -132,11 +134,11 @@ Representative generic Yosys 0.68 results from the current source are:
 
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
-| M6800 | 6,125 | 217 |
-| MC6800 bus wrapper | 6,243 | 223 |
-| MC6801 | 6,158 | 217 |
-| MC6801 Mode 2 integration | 10,730 | 1,421 |
-| HD6301 | 7,198 | 218 |
+| M6800 | 6,205 | 217 |
+| MC6800 bus wrapper | 6,250 | 223 |
+| MC6801 | 6,155 | 217 |
+| MC6801 Mode 2 integration | 10,674 | 1,422 |
+| HD6301 | 7,258 | 218 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,711 | 1,122 |

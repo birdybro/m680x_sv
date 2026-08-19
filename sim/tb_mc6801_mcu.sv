@@ -260,14 +260,40 @@ module tb_mc6801_mcu #(
     run_instruction(8'h01); run_instruction(8'h01);
     if (!timer_irq || !debug_tcsr[6]) $fatal(1, "MC6801 output compare request");
     run_instruction(8'h0e);
-    irq1_n = 1'b0;
-    tick();
-    irq1_n = 1'b1;
     run_instruction(8'h01);
+    tick(); // timer IRQ2 entry is now in progress
+    irq1_n = 1'b0;
+    tick(); // sampled IRQ1 must replace IRQ2 at the late priority encoder
+    irq1_n = 1'b1;
     wait_for_interrupt(16'h0310);
     run_instruction(8'h3b);
     wait_for_interrupt(16'h0320);
     checks = checks + 2;
+
+    // Latch IRQ2 during a TCSR-clearing instruction. The request survives,
+    // but its unlatched timer identity is gone at late vector selection, so
+    // the documented priority encoder must take the default SCI vector.
+    port2_in[0] = 1'b1;
+    memory[16'h0700] = 8'h86; memory[16'h0701] = 8'h10; // EICI
+    memory[16'h0702] = 8'h97; memory[16'h0703] = 8'h08;
+    memory[16'h0704] = 8'h0e; memory[16'h0705] = 8'h01;
+    memory[16'h0706] = 8'h7f; memory[16'h0707] = 8'h00;
+    memory[16'h0708] = 8'h08; // CLR $0008 removes IRQ2 identity
+    memory[16'h0330] = 8'h01;
+    memory[16'hfff0] = 8'h03; memory[16'hfff1] = 8'h30;
+    reset_to(16'h0700);
+    run_instruction(8'h86); run_instruction(8'h97);
+    run_instruction(8'h0e); run_instruction(8'h01);
+    tick(); // fetch CLR before presenting the capture edge
+    @(negedge clk);
+    port2_in[0] = 1'b0;
+    run_instruction(8'h7f);
+    if (!debug_tcsr[7] || debug_tcsr[4] || timer_irq) begin
+      $fatal(1, "MC6801 IRQ2 identity removal tcsr=%02x irq=%b", debug_tcsr,
+             timer_irq);
+    end
+    wait_for_interrupt(16'h0330);
+    checks = checks + 1;
 
     // Internally clocked NRZ transmitter: nine-mark enable preamble, then a
     // 10-bit LSB-first frame. TDRE identifies the exact transfer boundary.

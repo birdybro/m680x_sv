@@ -158,6 +158,10 @@ The 16-bit timer implements coherent counter reads, the FFF8 test preset,
 one-cycle compare inhibition, synchronized input capture, output-level
 transfer, all three ordered flag-clear protocols, and distinct timer vectors.
 IRQ1 remains above capture, compare, overflow, and SCI in device priority.
+Separate IRQ1 and IRQ2 request flip-flops retain sampled requests until I is
+set. The core resamples the wrapper's priority vector after stacking, matching
+the documented late encoder and its default-SCI result when software removes
+the identity of an already latched IRQ2 request.
 
 The SCI presently implements the two internally clocked NRZ modes, all four
 internal divisors, nine-mark transmitter preamble, LSB-first ten-bit frames,
