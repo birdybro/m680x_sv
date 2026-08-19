@@ -8,6 +8,7 @@ module m6800_core_formal #(
   (* anyseq *) logic clock_enable;
   (* anyseq *) logic bus_ready;
   (* anyseq *) logic irq_n;
+  (* anyseq *) logic [15:0] irq_vector_address;
   (* anyseq *) logic nmi_n;
   (* anyseq *) logic instruction_address_error;
   (* anyseq *) logic [7:0] data_in;
@@ -37,7 +38,8 @@ module m6800_core_formal #(
 
   m6800_core #(.ARCHITECTURE(ARCHITECTURE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(clock_enable),
-    .bus_ready_i(bus_ready), .irq_n_i(irq_n), .nmi_n_i(nmi_n),
+    .bus_ready_i(bus_ready), .irq_n_i(irq_n), .irq_vector_i(irq_vector_address),
+    .nmi_n_i(nmi_n),
     .instruction_address_error_i(instruction_address_error), .data_i(data_in),
     .address_o(address), .data_o(data_out), .write_o(write_enable),
     .bus_valid_o(bus_valid), .opcode_fetch_o(opcode_fetch), .retire_o(retire),

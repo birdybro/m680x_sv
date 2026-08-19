@@ -7,6 +7,7 @@ module m6800_core #(
   input  logic        clock_enable_i,
   input  logic        bus_ready_i,
   input  logic        irq_n_i,
+  input  logic [15:0] irq_vector_i,
   input  logic        nmi_n_i,
   input  logic        instruction_address_error_i,
   input  logic [7:0]  data_i,
@@ -929,7 +930,7 @@ module m6800_core #(
               interrupt_vector_o <= 2'b10;
               nmi_pending <= 1'b0;
             end else begin
-              vector_address <= 16'hfff8;
+              vector_address <= irq_vector_i;
               interrupt_vector_o <= 2'b01;
             end
             state <= ST_INTERRUPT_DELAY;
@@ -1168,7 +1169,7 @@ module m6800_core #(
               interrupt_vector_o <= 2'b10;
               nmi_pending <= 1'b0;
             end else begin
-              vector_address <= 16'hfff8;
+              vector_address <= irq_vector_i;
               interrupt_vector_o <= 2'b01;
             end
             state <= ST_INTERRUPT_POST;
@@ -1185,7 +1186,7 @@ module m6800_core #(
               interrupt_vector_o <= 2'b10;
               nmi_pending <= 1'b0;
             end else begin
-              vector_address <= 16'hfff8;
+              vector_address <= irq_vector_i;
               interrupt_vector_o <= 2'b01;
             end
             state <= ST_INTERRUPT_DELAY;

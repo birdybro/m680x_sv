@@ -43,6 +43,7 @@ module tb_m6800_core;
     .clock_enable_i(clock_enable),
     .bus_ready_i(bus_ready),
     .irq_n_i(irq_n),
+    .irq_vector_i(16'hfff8),
     .nmi_n_i(nmi_n),
     .instruction_address_error_i(1'b0),
     .data_i(data_in),

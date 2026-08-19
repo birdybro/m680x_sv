@@ -30,7 +30,7 @@ module tb_hd6301_trap;
   /* verilator lint_off PINCONNECTEMPTY */
   m6800_core #(.ARCHITECTURE(2'd2)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1), .bus_ready_i(1'b1),
-    .irq_n_i(1'b1), .nmi_n_i(1'b1),
+    .irq_n_i(1'b1), .irq_vector_i(16'hfff8), .nmi_n_i(1'b1),
     .instruction_address_error_i(instruction_address_error), .data_i(data_in),
     .address_o(address), .data_o(data_out), .write_o(write_enable),
     .bus_valid_o(bus_valid), .opcode_fetch_o(opcode_fetch), .retire_o(retire),

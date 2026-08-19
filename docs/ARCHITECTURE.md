@@ -67,6 +67,12 @@ IRQ is level-sensitive and masked by I. `interrupt_vector_o` identifies the
 selected reset/NMI/IRQ/TRAP class to a future device wrapper. The HD6301 profile
 uses vector identifier `3` for TRAP.
 
+`irq_vector_i` supplies the maskable vector address selected by a device
+wrapper. A discrete MC6800 wrapper fixes it at `$fff8`; MC6801/MC6803 and
+Hitachi integrations can select the documented external, timer, or serial
+source before entry. NMI, SWI, reset, and HD6301 TRAP retain their architecture-
+fixed vector addresses.
+
 `instruction_address_error_i` is meaningful only for the HD6301 profile. A
 device wrapper asserts it with an attempted opcode fetch from its documented
 non-memory address space. Either that input or one of the 26 unassigned HD6301

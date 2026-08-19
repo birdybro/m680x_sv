@@ -46,6 +46,7 @@ module tb_m6800_opcodes #(
     .clock_enable_i(1'b1),
     .bus_ready_i(1'b1),
     .irq_n_i(1'b1),
+    .irq_vector_i(16'hfff8),
     .nmi_n_i(1'b1),
     .instruction_address_error_i(1'b0),
     .data_i(data_in),

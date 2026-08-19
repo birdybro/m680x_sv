@@ -121,6 +121,7 @@ module mc6800_bus_wrapper (
     .clock_enable_i(core_clock_enable),
     .bus_ready_i(1'b1),
     .irq_n_i(core_irq_n),
+    .irq_vector_i(16'hfff8),
     .nmi_n_i(core_nmi_n),
     .instruction_address_error_i(1'b0),
     .data_i(data_i),
