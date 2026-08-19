@@ -25,3 +25,12 @@ marks every other input state undefined instead of inventing silicon behavior.
 The test oracles use signed-range properties, arithmetic identities, and a
 separate declarative DAA table rather than calling model helpers to predict
 their own results.
+
+`m6800.py` is the instruction-level path for M6800, MC6801/MC6803, and
+HD6301/HD6303/HD63701. It has its own register/stack organization and executes
+all 647 documented encodings in those three architecture maps. Each step emits
+an ordered memory-access trace, the documented total cycle count, effective
+address, pre/post architectural state, and any manufacturer-undefined flags.
+Directed regressions cover wraparound addressing, call and interrupt stack byte
+order, SWI/RTI, WAI interrupt entry without double stacking, masking, reset
+vectors, and the Hitachi immediate-memory and exchange extensions.
