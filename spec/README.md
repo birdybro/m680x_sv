@@ -23,9 +23,12 @@ Status values have evidentiary meaning:
 - `UNDEFINED_BY_DOCUMENTATION`: the permitted primary references do not define
   the behavior strongly enough to implement or verify it.
 
-Opcode and peripheral files cite reference IDs from `docs/references.yml` plus precise
-printed-page, table, figure, or section locators. Generated validators reject
-missing or duplicate opcode values and incomplete factual records.
+Opcode, peripheral, and interface files cite reference IDs from
+`docs/references.yml` plus precise printed-page, table, figure, or section
+locators. Generated validators reject missing or duplicate opcode values and
+incomplete factual records. Device-oriented bus contracts live in
+`spec/interfaces/`; their status separates normalized-cycle behavior from
+historical pin/electrical timing.
 
 Expanded opcode classifications live in `spec/opcodes/`. Run `make spec-build`
 after changing the compact primary-manual tables in

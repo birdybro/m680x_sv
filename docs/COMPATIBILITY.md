@@ -24,9 +24,9 @@ and low-power modes have separate specifications.
 
 ## v1 target matrix
 
-| Target | Scope | CPU | Cycle count | Bus trace | MCU integration |
+| Target | Scope | CPU | Cycle count | Bus trace | Device/MCU integration |
 |---|---|---:|---:|---:|---:|
-| Motorola MC6800 | physical CPU device | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
+| Motorola MC6800 | physical CPU device | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Motorola MC6801 | full MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 | Motorola MC6803 | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 | normalized M6805 CPU | FPGA core only | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
@@ -50,11 +50,17 @@ tested RAM/register decode, GPIO, base timer behavior, and interrupt priority;
 EPROM programming physics, every timer input/prescaler mode, and bootstrap-mode
 integration remain incomplete.
 
+The MC6800 device-wrapper claim covers normalized digital HALT/TSC/DBE/VMA/BA
+and three-state ownership behavior, including interrupt retention while halted.
+It does not claim pin-level phi1/phi2 generation, electrical timing, or complete
+external waveforms for cycles whose detailed bus activity is not established by
+the selected manufacturer documentation.
+
 ## Device differences relevant to implementation
 
-- MC6800 has no internal RAM or MCU peripherals. Its VMA, phase clocks, bus
-  arbitration/halt signals, and cycle-visible accesses belong in a physical
-  wrapper separate from the normalized integration bus.
+- MC6800 has no internal RAM or MCU peripherals. Its normalized device wrapper
+  implements VMA, BA, DBE, HALT, TSC, and bus ownership; phase-clock generation
+  and electrical timing remain outside the current claim.
 - MC6801 has 128 bytes of RAM, 2 KiB of mask ROM where enabled, four ports, a
   three-function 16-bit timer, SCI, and eight hardware-selected modes. Idle
   cycles in expanded modes appear as reads of `FFFF`; there is no MC6800 VMA.

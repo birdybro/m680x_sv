@@ -1,0 +1,2 @@
+# Reproducible Yosys frontend/SAT/synthesis distribution used by CI.
+yowasp-yosys==0.68.0.0.post1208

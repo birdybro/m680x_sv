@@ -82,7 +82,7 @@
       "clocking": "External phase-one and phase-two clocks; documented bus transfers are referenced to phase two.",
       "documented_quirks": ["VMA distinguishes valid external memory cycles from internal/idle cycles.", "HALT and bus three-state controls affect externally visible bus ownership."],
       "undefined_by_documentation": ["Unassigned opcode results."],
-      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_APPLICABLE", "gpio": "NOT_APPLICABLE", "timer": "NOT_APPLICABLE", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "NOT_APPLICABLE", "gpio": "NOT_APPLICABLE", "timer": "NOT_APPLICABLE", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
       "references": [{"id": "motorola-m6800-prm-1976", "locators": ["chapters 3-5"]}, {"id": "motorola-mc6800-system-design-data-1976", "locators": ["MC6800 MPU data, printed pages 21-38"]}]
     },
     {

@@ -23,17 +23,24 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
       - name: Install open-source HDL toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends iverilog verilator yosys
+          sudo apt-get install --no-install-recommends iverilog verilator
+          python -m pip install --requirement requirements-toolchain.txt
 
       - name: Report tool versions
         run: |
           python3 --version
           verilator --version
           iverilog -V
-          yosys -V
+          yowasp-yosys -V
 
       # The gate verifies reference metadata and digests, but deliberately does
       # not download or redistribute the copyrighted manufacturer manuals.

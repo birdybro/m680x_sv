@@ -35,6 +35,7 @@ class DeviceSpecificationTests(unittest.TestCase):
         p5 = devices["mc68705p5"]["status"]
         for dimension in ("device_wrapper", "internal_memory", "gpio", "timer"):
             self.assertEqual(p5[dimension], "PARTIAL")
+        self.assertEqual(devices["mc6800"]["status"]["device_wrapper"], "PARTIAL")
         for device_id, device in devices.items():
             if device_id != "mc68705p5" and device["implementation_scope"] == "FULL_MCU":
                 self.assertEqual(device["status"]["device_wrapper"], "NOT_IMPLEMENTED")

@@ -86,8 +86,34 @@ that its selected manual does not specify.
 The normalized core emits documented architectural reads and writes and uses
 padding states to preserve instruction totals. The directed MC6800 interrupt
 test also checks the primary manual's reset, IRQ, NMI, SWI, WAI, and RTI stack
-and vector sequences. Physical phase clocks, VMA, DBE, BA, HALT, and TSC belong
-in a separate MC6800 device wrapper and are not currently claimed.
+and vector sequences.
+
+## MC6800 device bus wrapper
+
+`rtl/m6800/mc6800_bus_wrapper.sv` surrounds the base profile with the
+device-oriented digital controls specified independently in
+`spec/interfaces/mc6800_bus.json`. It exposes separate values and output-enable
+signals for the historical address, data, and R/W buses so an FPGA top can
+instantiate real tri-state buffers only at the I/O boundary. Opcode-fetch,
+retirement, interrupt acknowledgement, wait/halt status, and passive register
+observations are passed through for FPGA integration and verification.
+
+HALT completes the current instruction before asserting BA, lowering VMA, and
+removing address, data, and R/W drive. A high pulse on HALT releases exactly one
+instruction; keeping it high resumes normal execution. IRQ levels and NMI
+falling edges observed while halted are retained through the first enabled
+boundary, including an NMI coincident with HALT entry. A retained IRQ remains
+pending if I is set and is cleared only after the matching acknowledge, so a
+halted pulse survives ordinary execution until software unmasks it. WAI uses
+the core's already-stacked wait state and presents the same documented
+BA/bus-release condition without stacking again on interrupt recognition.
+
+TSC stalls the normalized core, disables address and R/W drive, and forces VMA
+and BA low. DBE gates only write-data drive. During reset the wrapper presents
+the reset-vector-high address and read direction while VMA, BA, and data drive
+remain inactive. The `clk_i` edge is still one complete normalized processor
+cycle: the wrapper does not synthesize the historical non-overlapping phi1/phi2
+waveforms or claim their electrical setup, hold, width, or voltage behavior.
 
 ## M6805-lineage core
 
@@ -132,8 +158,9 @@ are excluded; the digital PCR control outputs are exposed for integration.
 
 ## Generated synthesis views
 
-Verilator and Icarus consume the package-based source. The standard Yosys
-frontend used by CI cannot parse all package constructs, so
+Verilator consumes the package-based source; Icarus and Yosys use a checked
+package-flattened view because their frontends do not accept all package
+constructs used by the maintained source. Therefore
 `tools/build_yosys_sources.py` creates checked, package-flattened views under
 `rtl/generated/`. These files preserve the maintained core source and package
 bodies; they are not alternative implementations. `make spec-check` fails when

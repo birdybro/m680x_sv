@@ -2,9 +2,9 @@ PYTHON ?= python3
 VERILATOR ?= verilator
 IVERILOG ?= iverilog
 VVP ?= vvp
-YOSYS ?= yosys
+YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -19,6 +19,7 @@ help:
 	@echo "  test-m6800  run M6800-lineage model regressions"
 	@echo "  test-m6800-rtl run the compiled M6800 core regression"
 	@echo "  test-m6800-opcodes compare all documented M6800 encodings to the model"
+	@echo "  test-mc6800-wrapper verify HALT, TSC, DBE, WAI, and bus ownership"
 	@echo "  test-m6801  run MC6801/MC6803 model regressions"
 	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
 	@echo "  test-m6805  run M6805-lineage model regressions"
@@ -60,6 +61,7 @@ spec-build:
 spec-check: refs-check
 	$(PYTHON) -m tools.validate_devices
 	$(PYTHON) -m tools.validate_peripherals
+	$(PYTHON) -m tools.validate_interfaces
 	$(PYTHON) -m tools.build_opcode_specs --check
 	$(PYTHON) -m tools.validate_opcodes
 	$(PYTHON) -m tools.build_rtl_decode --check
@@ -76,6 +78,9 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module mc6800_bus_wrapper \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv rtl/m6800/mc6800_bus_wrapper.sv
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core "-GARCHITECTURE=2'b01" \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
@@ -117,6 +122,15 @@ test-m6800-opcodes:
 		sim/generated/m6800_opcode_vectors_pkg.sv rtl/m6800/m6800_core.sv \
 		sim/tb_m6800_opcodes.sv
 	build/obj_m6800_opcodes/Vtb_m6800_opcodes
+
+test-mc6800-wrapper:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_mc6800_bus_wrapper \
+		-Mdir build/obj_mc6800_bus_wrapper -o Vtb_mc6800_bus_wrapper \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv rtl/m6800/mc6800_bus_wrapper.sv \
+		sim/tb_mc6800_bus_wrapper.sv
+	build/obj_mc6800_bus_wrapper/Vtb_mc6800_bus_wrapper
 
 test-m6801: test-m6801-opcodes
 	$(PYTHON) -m unittest tests.test_m6800_model -v
@@ -191,7 +205,7 @@ test-alu-rtl:
 
 test-cycle: test-m6800-opcodes test-m6801-opcodes test-hd6301-opcodes test-m6805-opcodes test-hd6305-opcodes
 
-test-interrupts: test-m6800-rtl test-m6805-rtl test-interrupt-delay test-hd6301-trap
+test-interrupts: test-m6800-rtl test-mc6800-wrapper test-m6805-rtl test-interrupt-delay test-hd6301-trap
 
 test-interrupt-delay:
 	mkdir -p build
@@ -268,6 +282,10 @@ test-iverilog: spec-check
 	$(IVERILOG) -g2012 -Wall -s tb_m6800_core -o build/iverilog/tb_m6800_core \
 		rtl/generated/yosys_m6800_core.sv sim/tb_m6800_core.sv
 	$(VVP) build/iverilog/tb_m6800_core
+	$(IVERILOG) -g2012 -Wall -s tb_mc6800_bus_wrapper -o build/iverilog/tb_mc6800_bus_wrapper \
+		rtl/generated/yosys_m6800_core.sv rtl/m6800/mc6800_bus_wrapper.sv \
+		sim/tb_mc6800_bus_wrapper.sv
+	$(VVP) build/iverilog/tb_mc6800_bus_wrapper
 	$(IVERILOG) -g2012 -Wall -s tb_m6805_core -o build/iverilog/tb_m6805_core \
 		rtl/generated/yosys_m6805_core.sv sim/tb_m6805_core.sv
 	$(VVP) build/iverilog/tb_m6805_core
@@ -296,6 +314,7 @@ formal: spec-check
 	$(YOSYS) -ql build/formal_hd6301.log -s formal/prove_hd6301.ys
 	$(YOSYS) -ql build/formal_m6805.log -s formal/prove_m6805.ys
 	$(YOSYS) -ql build/formal_hd6305.log -s formal/prove_hd6305.ys
+	$(YOSYS) -ql build/formal_mc6800_wrapper.log -s formal/prove_mc6800_wrapper.ys
 
 synth: spec-check
 	mkdir -p build
@@ -305,10 +324,11 @@ synth: spec-check
 	$(YOSYS) -ql build/synth_m6805.log -s synth/m6805.ys
 	$(YOSYS) -ql build/synth_hd6305.log -s synth/hd6305.ys
 	$(YOSYS) -ql build/synth_mc68705p5.log -s synth/mc68705p5.ys
+	$(YOSYS) -ql build/synth_mc6800_wrapper.log -s synth/mc6800_wrapper.ys
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 
-ci: lint test test-alu-rtl test-m6800-rtl test-m6801-opcodes test-hd6301-opcodes test-hd6301-trap test-m6805-rtl test-hd6305-opcodes test-interrupt-delay test-peripherals test-random test-iverilog formal synth
+ci: lint test test-alu-rtl test-m6800-rtl test-mc6800-wrapper test-m6801-opcodes test-hd6301-opcodes test-hd6301-trap test-m6805-rtl test-hd6305-opcodes test-interrupt-delay test-peripherals test-random test-iverilog formal synth
 
 clean:
 	rm -rf build obj_dir

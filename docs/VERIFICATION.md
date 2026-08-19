@@ -26,15 +26,16 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 58 |
+| Python unit tests | 62 |
 | M6800 directed core checks | 28 |
+| MC6800 bus-wrapper checks | 14 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 5 at depth 10 |
-| Synthesis tops | 6 |
+| Bounded formal profiles | 6 at depth 10 |
+| Synthesis tops | 7 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -70,6 +71,14 @@ two `$ffff` reads, seven stack writes, and `$ffee:$ffef` vector reads. It checks
 the complete stacked state, unmaskable I-bit update, RTI restoration of the
 faulting PC, and immediate retrap when the invalid opcode remains present.
 
+The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
+state stalling, HALT completion and stable bus release, single-instruction
+release, NMI retention on the exact HALT-entry boundary, RTI/re-halt behavior,
+masked IRQ retention through release and CLI, DBE-suppressed and enabled
+writes, WAI bus release, and IRQ wake-up. It checks the independently recorded
+digital contract; it does not infer phi1/phi2 electrical timing from normalized
+cycles.
+
 Directed M6805-lineage tests cover reset, stalls, arithmetic, direct writes,
 BSR/RTS, the five-byte interrupt frame, vector fetch, and RTI restoration. The
 HD6305 profile separately proves that a pending interrupt is accepted only
@@ -81,8 +90,8 @@ priority, distinct vectors, and firmware-memory decode.
 ## Formal checks
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
-HD6305 profiles. At depth 10 it proves the committed safety properties for all
-symbolic input sequences:
+HD6305 profiles plus the MC6800 bus wrapper. At depth 10 it proves the committed
+safety properties for all symbolic input sequences:
 
 - a write is always a valid bus cycle;
 - an opcode fetch is a valid read;
@@ -91,6 +100,8 @@ symbolic input sequences:
 - the M6805 stack remains inside `$0060`-`$007f`; and
 - architectural state, bus outputs, and status remain stable when clock enable
   is inactive or an active transfer is waiting for `bus_ready_i`.
+- TSC and BA never coexist with bus drive or VMA, DBE low prevents data drive,
+  and every wrapper data drive is a qualified write owned by the processor.
 
 These bounded safety proofs complement simulation; they are not a liveness or
 full instruction-correctness proof.
@@ -109,6 +120,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
 | M6800 | 6,099 | 203 |
+| MC6800 bus wrapper | 6,151 | 209 |
 | MC6801 | 6,123 | 203 |
 | HD6301 | 7,177 | 205 |
 | M6805 | 3,609 | 169 |
@@ -125,7 +137,7 @@ the manufacturer.
 ## Reproducing the gate
 
 `make ci` is the authoritative offline gate. It validates clean-room/reference
-metadata, device/peripheral/opcode specifications, generated-file freshness,
+metadata, device/peripheral/interface/opcode specifications, generated-file freshness,
 strict RTL lint, all Python tests, RTL ALU, every opcode profile, directed CPU
 and peripheral suites, the full deterministic random corpus, Icarus
 compatibility, bounded formal properties, and all synthesis tops.

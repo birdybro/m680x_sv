@@ -25,10 +25,13 @@ manifest without downloading or redistributing copyrighted documents.
 
 ## Implemented architecture
 
-Two independent CPU state machines currently cover five instruction profiles:
+Two independent CPU state machines currently cover five instruction profiles,
+with device wrappers kept at separate integration boundaries:
 
 - `m6800_core`: M6800, MC6801/MC6803, and HD6301-family instruction profiles;
-- `m6805_core`: Motorola M6805 and Hitachi HD6305 instruction profiles; and
+- `m6805_core`: Motorola M6805 and Hitachi HD6305 instruction profiles;
+- `mc6800_bus_wrapper`: MC6800 HALT, TSC, DBE, VMA, BA, and three-state bus
+  ownership around the normalized M6800 core; and
 - `mc68705p5_mcu`: an initial concrete 11-bit device integration with RAM and
   register decode, GPIO, programmable timer, interrupt priority/vectors, and a
   separate FPGA firmware-memory port for EPROM/bootstrap/vector bytes.
@@ -50,8 +53,19 @@ match their documented logical polarity without generating internal clocks.
 
 ## Build and verification
 
-The local toolchain is Python 3, GNU Make, Verilator, Icarus Verilog, and Yosys.
-No Python package installation is required. `make help` lists every target.
+The local toolchain is Python 3, GNU Make, Verilator, Icarus Verilog, and Yosys
+0.68. The exact Yosys distribution used in CI is pinned in
+`requirements-toolchain.txt`. A fresh clone can install it into the ignored
+tool directory without modifying the host Python installation:
+
+```text
+python3 -m venv .tools/yowasp
+.tools/yowasp/bin/pip install --requirement requirements-toolchain.txt
+PATH="$PWD/.tools/yowasp/bin:$PATH" make ci
+```
+
+Native Yosys 0.68 may instead be selected with `make YOSYS=yosys`. `make help`
+lists every target.
 
 ```text
 make quick             fast lint, model, and directed RTL gate
@@ -68,8 +82,8 @@ make ci                authoritative complete committed-source gate
 
 The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic model/RTL
-retirement comparisons, directed reset/stack/interrupt/device tests, five
-formal profiles, two simulators, and six synthesis tops. Detailed counts,
+retirement comparisons, directed reset/stack/interrupt/device tests, six
+formal profiles, two simulators, and seven synthesis tops. Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
 
@@ -81,9 +95,9 @@ cycle boundaries being checked.
 
 ## Known limitations
 
-The physical MC6800 signal wrapper, MC6801/MC6803 and Hitachi MCU peripherals,
-complete manufacturer bus waveforms outside the specifically verified traces,
-and several P5 timer/programming modes remain incomplete.
+Pin-level MC6800 phase generation/electrical timing, MC6801/MC6803 and Hitachi
+MCU peripherals, complete manufacturer bus waveforms outside the specifically
+verified traces, and several P5 timer/programming modes remain incomplete.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
 silicon behavior. These limitations are tracked as `PARTIAL`,
