@@ -1,0 +1,8 @@
+read_verilog -formal -sv rtl/generated/yosys_m6800_core.sv formal/m6800_core_formal.sv
+chparam -set ARCHITECTURE 2 m6800_core_formal
+prep -top m6800_core_formal -flatten
+memory_map
+opt_clean
+async2sync
+dffunmap
+sat -verify -prove-asserts -seq 10 -set-def-inputs -set-def-formal

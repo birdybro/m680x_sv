@@ -1,0 +1,5 @@
+read_verilog -sv rtl/generated/yosys_m6800_core.sv
+chparam -set ARCHITECTURE 2 m6800_core
+synth -top m6800_core
+check -assert
+tee -o build/synth_hd6301.json stat -json

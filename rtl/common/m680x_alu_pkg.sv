@@ -35,12 +35,14 @@ package m680x_alu_pkg;
     logic [8:0] total;
     begin
       total = {1'b0, left} + {1'b0, right} + carry_in;
-      add8.value = total[7:0];
-      add8.h = ({1'b0, left[3:0]} + {1'b0, right[3:0]} + carry_in) > 5'h0f;
-      add8.n = total[7];
-      add8.z = (total[7:0] == 8'h00);
-      add8.v = (~(left[7] ^ right[7])) & (left[7] ^ total[7]);
-      add8.c = total[8];
+      add8 = {
+        total[7:0],
+        ({1'b0, left[3:0]} + {1'b0, right[3:0]} + carry_in) > 5'h0f,
+        total[7],
+        total[7:0] == 8'h00,
+        (~(left[7] ^ right[7])) & (left[7] ^ total[7]),
+        total[8]
+      };
     end
   endfunction
 
@@ -54,12 +56,11 @@ package m680x_alu_pkg;
     begin
       subtrahend = {1'b0, right} + borrow_in;
       value = left - subtrahend[7:0];
-      sub8 = '0;
-      sub8.value = value;
-      sub8.n = value[7];
-      sub8.z = (value == 8'h00);
-      sub8.v = (left[7] ^ right[7]) & (left[7] ^ value[7]);
-      sub8.c = ({1'b0, left} < subtrahend);
+      sub8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        (left[7] ^ right[7]) & (left[7] ^ value[7]),
+        {1'b0, left} < subtrahend
+      };
     end
   endfunction
 
@@ -70,11 +71,10 @@ package m680x_alu_pkg;
     logic [16:0] total;
     begin
       total = {1'b0, left} + {1'b0, right};
-      add16.value = total[15:0];
-      add16.n = total[15];
-      add16.z = (total[15:0] == 16'h0000);
-      add16.v = (~(left[15] ^ right[15])) & (left[15] ^ total[15]);
-      add16.c = total[16];
+      add16 = {
+        total[15:0], total[15], total[15:0] == 16'h0000,
+        (~(left[15] ^ right[15])) & (left[15] ^ total[15]), total[16]
+      };
     end
   endfunction
 
@@ -85,11 +85,10 @@ package m680x_alu_pkg;
     logic [15:0] value;
     begin
       value = left - right;
-      sub16.value = value;
-      sub16.n = value[15];
-      sub16.z = (value == 16'h0000);
-      sub16.v = (left[15] ^ right[15]) & (left[15] ^ value[15]);
-      sub16.c = (left < right);
+      sub16 = {
+        value, value[15], value == 16'h0000,
+        (left[15] ^ right[15]) & (left[15] ^ value[15]), left < right
+      };
     end
   endfunction
 
@@ -105,10 +104,7 @@ package m680x_alu_pkg;
         2'd1: value = left | right;
         default: value = left ^ right;
       endcase
-      logic8 = '0;
-      logic8.value = value;
-      logic8.n = value[7];
-      logic8.z = (value == 8'h00);
+      logic8 = {value, 1'b0, value[7], value == 8'h00, 2'b00};
     end
   endfunction
 
@@ -116,12 +112,10 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = 8'h00 - operand;
-      neg8 = '0;
-      neg8.value = value;
-      neg8.n = value[7];
-      neg8.z = (value == 8'h00);
-      neg8.v = (operand == 8'h80);
-      neg8.c = (operand != 8'h00);
+      neg8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        operand == 8'h80, operand != 8'h00
+      };
     end
   endfunction
 
@@ -129,11 +123,7 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = ~operand;
-      com8 = '0;
-      com8.value = value;
-      com8.n = value[7];
-      com8.z = (value == 8'h00);
-      com8.c = 1'b1;
+      com8 = {value, 1'b0, value[7], value == 8'h00, 1'b0, 1'b1};
     end
   endfunction
 
@@ -141,11 +131,7 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = {1'b0, operand[7:1]};
-      lsr8 = '0;
-      lsr8.value = value;
-      lsr8.z = (value == 8'h00);
-      lsr8.v = operand[0];
-      lsr8.c = operand[0];
+      lsr8 = {value, 2'b00, value == 8'h00, operand[0], operand[0]};
     end
   endfunction
 
@@ -153,12 +139,10 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = {operand[7], operand[7:1]};
-      asr8 = '0;
-      asr8.value = value;
-      asr8.n = value[7];
-      asr8.z = (value == 8'h00);
-      asr8.v = value[7] ^ operand[0];
-      asr8.c = operand[0];
+      asr8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        value[7] ^ operand[0], operand[0]
+      };
     end
   endfunction
 
@@ -166,12 +150,10 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = {operand[6:0], 1'b0};
-      asl8 = '0;
-      asl8.value = value;
-      asl8.n = value[7];
-      asl8.z = (value == 8'h00);
-      asl8.v = value[7] ^ operand[7];
-      asl8.c = operand[7];
+      asl8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        value[7] ^ operand[7], operand[7]
+      };
     end
   endfunction
 
@@ -182,12 +164,10 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = {carry_in, operand[7:1]};
-      ror8 = '0;
-      ror8.value = value;
-      ror8.n = value[7];
-      ror8.z = (value == 8'h00);
-      ror8.v = value[7] ^ operand[0];
-      ror8.c = operand[0];
+      ror8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        value[7] ^ operand[0], operand[0]
+      };
     end
   endfunction
 
@@ -198,12 +178,10 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = {operand[6:0], carry_in};
-      rol8 = '0;
-      rol8.value = value;
-      rol8.n = value[7];
-      rol8.z = (value == 8'h00);
-      rol8.v = value[7] ^ operand[7];
-      rol8.c = operand[7];
+      rol8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        value[7] ^ operand[7], operand[7]
+      };
     end
   endfunction
 
@@ -211,11 +189,10 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = operand + 8'h01;
-      inc8 = '0;
-      inc8.value = value;
-      inc8.n = value[7];
-      inc8.z = (value == 8'h00);
-      inc8.v = (operand == 8'h7f);
+      inc8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        operand == 8'h7f, 1'b0
+      };
     end
   endfunction
 
@@ -223,27 +200,22 @@ package m680x_alu_pkg;
     logic [7:0] value;
     begin
       value = operand - 8'h01;
-      dec8 = '0;
-      dec8.value = value;
-      dec8.n = value[7];
-      dec8.z = (value == 8'h00);
-      dec8.v = (operand == 8'h80);
+      dec8 = {
+        value, 1'b0, value[7], value == 8'h00,
+        operand == 8'h80, 1'b0
+      };
     end
   endfunction
 
   function automatic alu8_result_t tst8(input logic [7:0] operand);
     begin
-      tst8 = '0;
-      tst8.value = operand;
-      tst8.n = operand[7];
-      tst8.z = (operand == 8'h00);
+      tst8 = {operand, 1'b0, operand[7], operand == 8'h00, 2'b00};
     end
   endfunction
 
   function automatic alu8_result_t clr8();
     begin
-      clr8 = '0;
-      clr8.z = 1'b1;
+      clr8 = {8'h00, 3'b001, 2'b00};
     end
   endfunction
 
@@ -304,12 +276,14 @@ package m680x_alu_pkg;
         defined_state = 1'b0;
       end
       value = accumulator + adjustment;
-      daa8.value = defined_state ? value : accumulator;
-      daa8.adjustment = adjustment;
-      daa8.defined_state = defined_state;
-      daa8.n = defined_state && value[7];
-      daa8.z = defined_state && (value == 8'h00);
-      daa8.c = defined_state && carry_out;
+      daa8 = {
+        defined_state ? value : accumulator,
+        adjustment,
+        defined_state,
+        defined_state && value[7],
+        defined_state && (value == 8'h00),
+        defined_state && carry_out
+      };
     end
   endfunction
 endpackage

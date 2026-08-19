@@ -1,0 +1,5 @@
+read_verilog -sv rtl/generated/yosys_m6805_core.sv
+chparam -set HITACHI_PROFILE 0 m6805_core
+synth -top m6805_core
+check -assert
+tee -o build/synth_m6805.json stat -json

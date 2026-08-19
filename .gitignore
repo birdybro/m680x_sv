@@ -1,4 +1,5 @@
 .reference/
+.tools/
 
 # Python
 __pycache__/

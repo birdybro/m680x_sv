@@ -112,8 +112,7 @@ def render() -> str:
         lines += [
             f"  function automatic opcode_decode_t {function_name}(input logic [7:0] opcode);",
             "    begin",
-            f"      {function_name} = '{{valid: 1'b0, mode: AM_NONE, operation: OP_INVALID, "
-            "target: TARGET_NONE, bit_index: 3'd0, length: 2'd0, cycles: 4'd0};",
+            f"      {function_name} = {{1'b0, AM_NONE, OP_INVALID, TARGET_NONE, 3'd0, 2'd0, 4'd0}};",
             "      case (opcode)",
         ]
         for record in spec["opcodes"]:
@@ -123,9 +122,8 @@ def render() -> str:
             operation, target, bit_index = _operation(record)
             lines.append(
                 f"        8'h{record['opcode_hex'].lower()}: {function_name} = "
-                f"'{{valid: 1'b1, mode: {mode}, operation: {operation}, target: {target}, "
-                f"bit_index: 3'd{bit_index}, length: 2'd{record['length']}, "
-                f"cycles: 4'd{record['cycles']}}};"
+                f"{{1'b1, {mode}, {operation}, {target}, 3'd{bit_index}, "
+                f"2'd{record['length']}, 4'd{record['cycles']}}};"
             )
         lines += [
             "        default: ;",

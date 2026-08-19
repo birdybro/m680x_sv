@@ -321,7 +321,11 @@ module m6805_core #(
   endtask
 
   task automatic execute_inherent();
+    // The shared DAA result exposes adjustment for exhaustive verification;
+    // architectural execution consumes only the adjusted value and flags.
+    /* verilator lint_off UNUSEDSIGNAL */
     daa_result_t decimal_value;
+    /* verilator lint_on UNUSEDSIGNAL */
     begin
       decimal_value = '0;
       case (decoded.operation)
@@ -349,10 +353,6 @@ module m6805_core #(
         OP_DAA: begin
           decimal_value = daa8(accumulator, condition_codes[CCR_H], condition_codes[CCR_C]);
           if (decimal_value.defined_state) begin
-            assert ((decimal_value.adjustment == 8'h00) ||
-                    (decimal_value.adjustment == 8'h06) ||
-                    (decimal_value.adjustment == 8'h60) ||
-                    (decimal_value.adjustment == 8'h66));
             accumulator <= decimal_value.value;
             condition_codes[CCR_N] <= decimal_value.n;
             condition_codes[CCR_Z] <= decimal_value.z;

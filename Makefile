@@ -1,7 +1,8 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
+YOSYS ?= yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -27,6 +28,8 @@ help:
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
 	@echo "  test-random run 5,120 deterministic model/RTL retirement comparisons"
+	@echo "  formal      prove bounded core safety and stall invariants with Yosys"
+	@echo "  synth       synthesize every CPU architecture and record generic statistics"
 	@echo "  quick       run the fast local gate"
 	@echo "  ci          run the authoritative committed-source gate"
 	@echo "  clean       remove generated local build products"
@@ -43,6 +46,7 @@ spec-build:
 	$(PYTHON) -m tools.build_m6800_rtl_vectors
 	$(PYTHON) -m tools.build_m6805_rtl_vectors
 	$(PYTHON) -m tools.build_random_programs
+	$(PYTHON) -m tools.build_yosys_sources
 
 spec-check: refs-check
 	$(PYTHON) -m tools.validate_devices
@@ -52,6 +56,7 @@ spec-check: refs-check
 	$(PYTHON) -m tools.build_m6800_rtl_vectors --check
 	$(PYTHON) -m tools.build_m6805_rtl_vectors --check
 	$(PYTHON) -m tools.build_random_programs --check
+	$(PYTHON) -m tools.build_yosys_sources --check
 
 lint: spec-check lint-rtl
 	$(PYTHON) -m compileall -q model tools tests
@@ -204,6 +209,22 @@ test-random-hd6305:
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		sim/generated/random_programs_pkg.sv rtl/m6805/m6805_core.sv sim/tb_random_m6805.sv
 	build/obj_random_hd6305/Vtb_random_hd6305
+
+formal: spec-check
+	mkdir -p build
+	$(YOSYS) -ql build/formal_m6800.log -s formal/prove_m6800.ys
+	$(YOSYS) -ql build/formal_m6801.log -s formal/prove_m6801.ys
+	$(YOSYS) -ql build/formal_hd6301.log -s formal/prove_hd6301.ys
+	$(YOSYS) -ql build/formal_m6805.log -s formal/prove_m6805.ys
+	$(YOSYS) -ql build/formal_hd6305.log -s formal/prove_hd6305.ys
+
+synth: spec-check
+	mkdir -p build
+	$(YOSYS) -ql build/synth_m6800.log -s synth/m6800.ys
+	$(YOSYS) -ql build/synth_m6801.log -s synth/m6801.ys
+	$(YOSYS) -ql build/synth_hd6301.log -s synth/hd6301.ys
+	$(YOSYS) -ql build/synth_m6805.log -s synth/m6805.ys
+	$(YOSYS) -ql build/synth_hd6305.log -s synth/hd6305.ys
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 
