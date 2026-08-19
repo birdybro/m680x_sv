@@ -45,3 +45,12 @@ IRQ-pin branches, five-byte interrupt frame, and Hitachi low-power instructions.
 The default five-bit stack window wraps within `$0060`–`$007f`, matching the
 concrete MC68705P5 behavior; other family members can select their documented
 stack width explicitly.
+
+`mc6801_device.py` is a cycle-stepped peripheral path for the normalized
+MC6801/MC6803 expanded modes. It is organized around register transactions and
+E-cycle events rather than either CPU execution state machine. It models Mode
+2/3 internal decode, RAME-controlled RAM, physical-pin GPIO reads and pin
+overrides, the capture/compare/overflow timer and ordered flag protocols,
+internally clocked NRZ SCI framing/status, and the retained IRQ1/IRQ2 request
+and late vector-priority behavior. Manufacturer-undefined modes are rejected
+instead of being assigned invented behavior.

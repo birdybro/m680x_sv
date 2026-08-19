@@ -106,7 +106,7 @@ test:
 	$(PYTHON) -m unittest discover -s tests -v
 
 test-model:
-	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model -v
+	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model tests.test_mc6801_device_model -v
 
 test-m6800: test-m6800-rtl
 	$(PYTHON) -m unittest tests.test_m6800_model -v
@@ -138,7 +138,7 @@ test-mc6800-wrapper:
 	build/obj_mc6800_bus_wrapper/Vtb_mc6800_bus_wrapper
 
 test-m6801: test-m6801-opcodes test-mc6801-mcu
-	$(PYTHON) -m unittest tests.test_m6800_model -v
+	$(PYTHON) -m unittest tests.test_m6800_model tests.test_mc6801_device_model -v
 
 test-m6801-opcodes:
 	mkdir -p build
@@ -163,7 +163,7 @@ test-mc6801-mcu:
 	build/obj_mc6801_mcu_mode3/Vtb_mc6801_mcu_mode3
 
 test-mc6803: test-mc6801-mcu
-	$(PYTHON) -m unittest tests.test_peripheral_spec -v
+	$(PYTHON) -m unittest tests.test_peripheral_spec tests.test_mc6801_device_model -v
 
 test-m6805: test-m6805-rtl
 	$(PYTHON) -m unittest tests.test_m6805_model -v

@@ -4,7 +4,8 @@
 the documented Motorola M6800, MC6801/MC6803, M6805/MC68705 and related Hitachi
 HD6301/HD6303/HD6305 processor families. It provides synthesizable FPGA RTL,
 machine-readable architecture facts, a structurally independent Python model,
-and deterministic verification.
+and deterministic verification. The model includes separate CPU-instruction
+and MC6801/MC6803 device-cycle paths.
 
 The project is under active development. Every current implementation claim is
 `PARTIAL`; no processor or MCU is represented as production-complete. The

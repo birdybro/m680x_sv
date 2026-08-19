@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 65 |
+| Python unit tests | 72 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 49 |
@@ -77,6 +77,13 @@ SCI overrun retention and status-clearing protocols, sticky SCI pin direction,
 and a one-cycle IRQ1 pulse which arrives after IRQ2 entry has started and wins
 the documented late vector-priority selection. It also removes a timer source's
 identity after latching IRQ2 and verifies the documented default SCI vector.
+
+The independent Python device model has seven focused regressions for Mode 2/3
+decode and RAM, physical-pin GPIO behavior and SCI direction overrides,
+coherent timer reads and ordered status clears, second-cycle input capture,
+overflow/compare events, retained IRQ priority, and internally clocked NRZ
+transmit/receive with unread-data overrun retention. Its cycle/event structure
+is separate from the RTL wrapper.
 
 The HD6301 TRAP suite independently exercises an unassigned opcode and an
 instruction-address-error input. It compares the exact 13-cycle normalized bus
