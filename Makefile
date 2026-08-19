@@ -1,7 +1,7 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -26,6 +26,7 @@ help:
 	@echo "  test-hd6305-opcodes compare all documented HD6305 encodings to the model"
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
+	@echo "  test-random run 5,120 deterministic model/RTL retirement comparisons"
 	@echo "  quick       run the fast local gate"
 	@echo "  ci          run the authoritative committed-source gate"
 	@echo "  clean       remove generated local build products"
@@ -41,6 +42,7 @@ spec-build:
 	$(PYTHON) -m tools.build_rtl_decode
 	$(PYTHON) -m tools.build_m6800_rtl_vectors
 	$(PYTHON) -m tools.build_m6805_rtl_vectors
+	$(PYTHON) -m tools.build_random_programs
 
 spec-check: refs-check
 	$(PYTHON) -m tools.validate_devices
@@ -49,6 +51,7 @@ spec-check: refs-check
 	$(PYTHON) -m tools.build_rtl_decode --check
 	$(PYTHON) -m tools.build_m6800_rtl_vectors --check
 	$(PYTHON) -m tools.build_m6805_rtl_vectors --check
+	$(PYTHON) -m tools.build_random_programs --check
 
 lint: spec-check lint-rtl
 	$(PYTHON) -m compileall -q model tools tests
@@ -159,6 +162,48 @@ test-alu-rtl:
 		-Mdir build/obj_alu -o Vtb_alu \
 		rtl/common/m680x_alu_pkg.sv sim/tb_alu.sv
 	build/obj_alu/Vtb_alu
+
+test-random: test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305
+
+test-random-m6800:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_random_m6800 \
+		-Mdir build/obj_random_m6800 -o Vtb_random_m6800 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/random_programs_pkg.sv rtl/m6800/m6800_core.sv sim/tb_random_m6800.sv
+	build/obj_random_m6800/Vtb_random_m6800
+
+test-random-m6801:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_random_m6800 \
+		-GTEST_ARCHITECTURE=1 -Mdir build/obj_random_m6801 -o Vtb_random_m6801 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/random_programs_pkg.sv rtl/m6800/m6800_core.sv sim/tb_random_m6800.sv
+	build/obj_random_m6801/Vtb_random_m6801
+
+test-random-hd6301:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_random_m6800 \
+		"-GTEST_ARCHITECTURE=2'b10" -Mdir build/obj_random_hd6301 -o Vtb_random_hd6301 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/random_programs_pkg.sv rtl/m6800/m6800_core.sv sim/tb_random_m6800.sv
+	build/obj_random_hd6301/Vtb_random_hd6301
+
+test-random-m6805:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_random_m6805 \
+		-Mdir build/obj_random_m6805 -o Vtb_random_m6805 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/random_programs_pkg.sv rtl/m6805/m6805_core.sv sim/tb_random_m6805.sv
+	build/obj_random_m6805/Vtb_random_m6805
+
+test-random-hd6305:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_random_m6805 \
+		-GTEST_HITACHI=1 -Mdir build/obj_random_hd6305 -o Vtb_random_hd6305 \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/random_programs_pkg.sv rtl/m6805/m6805_core.sv sim/tb_random_m6805.sv
+	build/obj_random_hd6305/Vtb_random_hd6305
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 
