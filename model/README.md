@@ -63,6 +63,12 @@ memory, Port 3/4, strobe, IS3, and address-error facts.
 The same profiles select Hitachi's two-byte FRC write and TOF-at-zero behavior;
 the base MC6801 profile retains its read-only low byte and TOF-at-`$ffff` rule.
 
+`hd63701v0_device.py` selects the EPROM device's 192-byte `$0040-$00ff` RAM
+window and its documented transfer of a misframed receive byte into RDR. For
+the manual's contradictory `$0040-$007f` address-error statements, the model
+permits execution from physical RAM and reports that policy separately from
+verified behavior.
+
 `tools/build_mc6801_peripheral_vectors.py` records independent model results
 for 768 transactions in each expanded mode. A verification-only bus source
 then presents those exact transactions to the peripheral RTL without using the

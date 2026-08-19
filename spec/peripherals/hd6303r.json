@@ -4,7 +4,7 @@
   "address_width": 16,
   "inherits": {
     "device": "mc6801",
-    "sections": ["gpio", "memory_control"],
+    "sections": ["memory_control"],
     "scope": "The HD6303R uses the documented HD6801-compatible timer, GPIO, register, and RAM-control functions on the same die as the HD6301V1, with mask ROM disabled; its SCI framing-error rule is specified here because it differs from MC6801.",
     "restrictions": [
       "The current RTL profile implements expanded multiplexed Mode 2 only.",
@@ -86,6 +86,13 @@
     "flag_clear": {"ICF": "read TCSR while set, then read ICR_MSB", "OCF": "read TCSR while set, then write either OCR byte", "TOF": "read TCSR while set, then read FRC_MSB"},
     "interrupt": "enabled ICF, OCF, and TOF generate IRQ2 and select distinct priority vectors",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD6301V1/HD6303R section 2.5, figures 2-5-1 and 2-5-2, printed pages 145-150"}
+  },
+  "gpio": {
+    "port1": "eight expanded-mode GPIO pins",
+    "port2": "five GPIO pins with timer and SCI overrides",
+    "port3_port4": "dedicated external bus in implemented Mode 2 rather than internal GPIO registers",
+    "reset": "port DDRs clear synchronously with E",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1 and 2.4 plus comparison table, printed pages 128-145 and 348"}
   },
   "sci": {
     "compatibility": "The asynchronous transmitter, receiver, clocks, controls, flags, and interrupt functions follow the documented HD6801-compatible SCI except for the explicitly listed framing-error transfer rule.",

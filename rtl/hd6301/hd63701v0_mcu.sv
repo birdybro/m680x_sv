@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
-// HD6301V1 normalized single-chip Mode-7 digital integration.
+// HD63701V0 normalized single-chip Mode-7 digital integration.
 //
-// The 4-KiB mask-ROM image is an FPGA integration input rather than part of
-// this clean-room core. program_read_o selects documented F000-FFFF accesses;
-// RAM, registers, GPIO, timer, SCI, strobes, and TRAP decode remain internal.
-module hd6301v1_mcu (
+// The 4-KiB EPROM image is supplied by the FPGA integration. Analog EPROM
+// programming voltages and algorithms are intentionally outside this digital
+// module. The manual contradicts itself about address-error behavior in the
+// executable 0040-007F RAM range; this wrapper permits execution throughout
+// RAM and confines the low address trap to 0000-003F.
+module hd63701v0_mcu (
   input  logic        clk_i,
   input  logic        reset_n_i,
   input  logic        clock_enable_i,
@@ -54,71 +56,42 @@ module hd6301v1_mcu (
   output logic [7:0]  debug_receive_data_o,
   output logic [7:0]  debug_opcode_o
 );
-  // Mode 7 has no external memory bus; these common integration outputs are
-  // intentionally left unconnected at this device-specific boundary.
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
     .OPERATING_MODE(3'd7),
     .HITACHI_CPU(1'b1),
     .HD6301_MODE7(1'b1),
-    .SCI_TRANSFER_FRAMING_ERROR(1'b0),
+    .SCI_TRANSFER_FRAMING_ERROR(1'b1),
     .TIMER_COUNTER_DOUBLE_WRITE(1'b1),
     .TIMER_OVERFLOW_AT_ZERO(1'b1),
-    .PORT_DDR_ASYNC_RESET(1'b0)
+    .PORT_DDR_ASYNC_RESET(1'b1),
+    .INTERNAL_RAM_START(16'h0040),
+    .INTERNAL_RAM_BYTES(16'd192),
+    .MODE7_ADDRESS_TRAP_LOW_END(16'h003f)
   ) device (
-    .clk_i(clk_i),
-    .reset_n_i(reset_n_i),
-    .clock_enable_i(clock_enable_i),
-    .nmi_n_i(nmi_n_i),
-    .irq1_n_i(irq1_n_i),
-    .standby_power_ok_i(standby_power_ok_i),
-    .port1_i(port1_i),
-    .port2_i(port2_i),
-    .port3_i(port3_i),
-    .port4_i(port4_i),
-    .is3_n_i(is3_n_i),
-    .program_data_i(program_data_i),
-    .external_data_i(8'hff),
-    .program_address_o(program_address_o),
-    .program_read_o(program_read_o),
-    .external_address_o(),
-    .external_data_o(),
-    .external_write_o(),
-    .external_bus_valid_o(),
-    .external_opcode_fetch_o(),
-    .port1_o(port1_o),
-    .port1_oe_o(port1_oe_o),
-    .port2_o(port2_o),
-    .port2_oe_o(port2_oe_o),
-    .port3_o(port3_o),
-    .port3_oe_o(port3_oe_o),
-    .port4_o(port4_o),
-    .port4_oe_o(port4_oe_o),
-    .os3_n_o(os3_n_o),
-    .sci_tx_o(sci_tx_o),
-    .sci_clock_o(sci_clock_o),
-    .timer_irq_o(timer_irq_o),
-    .sci_irq_o(sci_irq_o),
-    .opcode_fetch_o(opcode_fetch_o),
-    .retire_o(retire_o),
-    .illegal_o(illegal_o),
-    .undefined_o(undefined_o),
-    .waiting_o(waiting_o),
-    .sleeping_o(sleeping_o),
-    .interrupt_ack_o(interrupt_ack_o),
-    .debug_address_o(debug_address_o),
-    .debug_pc_o(debug_pc_o),
-    .debug_sp_o(debug_sp_o),
-    .debug_a_o(debug_a_o),
-    .debug_b_o(debug_b_o),
-    .debug_x_o(debug_x_o),
-    .debug_ccr_o(debug_ccr_o),
+    .clk_i(clk_i), .reset_n_i(reset_n_i), .clock_enable_i(clock_enable_i),
+    .nmi_n_i(nmi_n_i), .irq1_n_i(irq1_n_i),
+    .standby_power_ok_i(standby_power_ok_i), .port1_i(port1_i),
+    .port2_i(port2_i), .port3_i(port3_i), .port4_i(port4_i),
+    .is3_n_i(is3_n_i), .program_data_i(program_data_i),
+    .external_data_i(8'hff), .program_address_o(program_address_o),
+    .program_read_o(program_read_o), .external_address_o(),
+    .external_data_o(), .external_write_o(), .external_bus_valid_o(),
+    .external_opcode_fetch_o(), .port1_o(port1_o), .port1_oe_o(port1_oe_o),
+    .port2_o(port2_o), .port2_oe_o(port2_oe_o), .port3_o(port3_o),
+    .port3_oe_o(port3_oe_o), .port4_o(port4_o), .port4_oe_o(port4_oe_o),
+    .os3_n_o(os3_n_o), .sci_tx_o(sci_tx_o), .sci_clock_o(sci_clock_o),
+    .timer_irq_o(timer_irq_o), .sci_irq_o(sci_irq_o),
+    .opcode_fetch_o(opcode_fetch_o), .retire_o(retire_o),
+    .illegal_o(illegal_o), .undefined_o(undefined_o), .waiting_o(waiting_o),
+    .sleeping_o(sleeping_o), .interrupt_ack_o(interrupt_ack_o),
+    .debug_address_o(debug_address_o), .debug_pc_o(debug_pc_o),
+    .debug_sp_o(debug_sp_o), .debug_a_o(debug_a_o), .debug_b_o(debug_b_o),
+    .debug_x_o(debug_x_o), .debug_ccr_o(debug_ccr_o),
     .debug_timer_o(debug_timer_o),
     .debug_output_compare_o(debug_output_compare_o),
-    .debug_input_capture_o(debug_input_capture_o),
-    .debug_tcsr_o(debug_tcsr_o),
-    .debug_trcsr_o(debug_trcsr_o),
-    .debug_receive_data_o(debug_receive_data_o),
+    .debug_input_capture_o(debug_input_capture_o), .debug_tcsr_o(debug_tcsr_o),
+    .debug_trcsr_o(debug_trcsr_o), .debug_receive_data_o(debug_receive_data_o),
     .debug_opcode_o(debug_opcode_o)
   );
   /* verilator lint_on PINCONNECTEMPTY */

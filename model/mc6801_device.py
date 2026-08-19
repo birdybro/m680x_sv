@@ -168,12 +168,15 @@ class MC6801DeviceModel:
         transfer_framing_error: bool = True,
         timer_counter_double_write: bool = False,
         timer_overflow_at_zero: bool = False,
+        internal_ram_start: int = 0x0080,
+        internal_ram_size: int = 128,
     ) -> None:
         if operating_mode not in {2, 3}:
             raise ValueError("MC6801/MC6803 device model supports only Modes 2 and 3")
         self.operating_mode = operating_mode
         self.external_memory = external_memory if external_memory is not None else Memory()
-        self.ram = bytearray(128)
+        self.internal_ram_start = internal_ram_start & 0xFFFF
+        self.ram = bytearray(internal_ram_size)
         self.state = MC6801PeripheralState()
         self.transfer_framing_error = transfer_framing_error
         self.timer_counter_double_write = timer_counter_double_write
@@ -189,7 +192,18 @@ class MC6801DeviceModel:
 
     def ram_is_internal(self, address: int) -> bool:
         address &= 0xFFFF
-        return self.operating_mode == 2 and self.state.rame and 0x0080 <= address <= 0x00FF
+        return (
+            self.operating_mode == 2
+            and self.state.rame
+            and self.internal_ram_start
+            <= address
+            < self.internal_ram_start + len(self.ram)
+        )
+
+    def ram_index(self, address: int) -> int:
+        """Translate a selected internal address to its physical RAM index."""
+
+        return (address & 0xFFFF) - self.internal_ram_start
 
     def read_register(self, address: int, *, port1: int = 0xFF, port2: int = 0x1F) -> int:
         """Return the value driven by an internal register before an E edge."""
@@ -285,7 +299,7 @@ class MC6801DeviceModel:
         internal_write = register_select and inputs.write
         external_bus = bool(inputs.valid and not register_select and not ram_select)
         if ram_select:
-            read_data = self.ram[address & 0x7F]
+            read_data = self.ram[self.ram_index(address)]
         elif register_select:
             read_data = self.read_register(address, port1=inputs.port1, port2=inputs.port2)
         else:
@@ -327,7 +341,7 @@ class MC6801DeviceModel:
             s.standby_power = False
             s.rame = False
         if ram_select and inputs.write:
-            self.ram[address & 0x7F] = data
+            self.ram[self.ram_index(address)] = data
         elif external_bus and inputs.write:
             self.external_memory[address] = data
         if not internal_write:

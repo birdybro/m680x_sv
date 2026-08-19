@@ -227,9 +227,9 @@
       "vectors": {"RESET": "FFFE:FFFF", "TRAP": "FFEE:FFEF", "NMI": "FFFC:FFFD", "SWI": "FFFA:FFFB", "IRQ1": "FFF8:FFF9", "ICF": "FFF6:FFF7", "OCF": "FFF4:FFF5", "TOF": "FFF2:FFF3", "SCI": "FFF0:FFF1"},
       "external_interface": "Mode-dependent single-chip or up-to-64-KiB expanded bus with multiplexed and non-multiplexed configurations.",
       "clocking": "0.1-2.0 MHz documented range by speed grade; E defines bus timing.",
-      "documented_quirks": ["On-chip EPROM replaces mask ROM while retaining HD6301-family CPU extensions.", "TRAP detects address and opcode errors."],
-      "undefined_by_documentation": ["EPROM analog programming margins are outside synthesizable digital equivalence."],
-      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "PARTIAL"},
+      "documented_quirks": ["On-chip EPROM replaces mask ROM while retaining HD6301-family CPU extensions.", "TRAP detects address and opcode errors.", "A framing error transfers the receive shift-register byte into RDR, unlike HD6301V1 and HD6303R."],
+      "undefined_by_documentation": ["EPROM analog programming margins are outside synthesizable digital equivalence.", "The Mode-7 address-error table includes 0040-007F even though the memory map and address-error prose identify it as internal RAM; RTL permits execution there, but silicon trap equivalence for that range is unresolved."],
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "PARTIAL", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "PARTIAL", "low_power": "PARTIAL"},
       "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD63701V0 user manual printed pages 251-352"]}]
     },
     {

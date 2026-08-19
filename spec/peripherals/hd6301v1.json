@@ -47,6 +47,7 @@
     "port2": "five GPIO pins with timer and SCI overrides; P21 is input or timer output only",
     "port3": "eight GPIO pins with DDR, optional IS3 input latch, read- or write-selected active-low OS3 pulse, and IS3 interrupt flag",
     "port4": "eight independent Mode-7 GPIO pins",
+    "reset": "port DDRs clear synchronously with E; the current output-enable state persists between RES assertion and the next E edge",
     "p3csr_clear": "IS3 flag clears only after P3CSR is read while set followed by a read or write of PORT3; a new falling edge wins over a coincident clear",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4 and timing figures 5-3 to 5-6, printed pages 142-145 and 189-190"}
   },

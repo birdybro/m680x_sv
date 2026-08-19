@@ -26,20 +26,21 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 81 |
+| Python unit tests | 85 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
-| HD6301V1 Mode-7 integration checks | 22 |
+| HD6301V1 Mode-7 integration checks | 24 |
 | HD6303R Mode-2 integration checks | 12 |
+| HD63701V0 Mode-7 integration checks | 21 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 8 at depth 10 |
-| Synthesis tops | 10 |
+| Bounded formal profiles | 9 at depth 10 |
+| Synthesis tops | 11 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -127,7 +128,18 @@ partition, program-select/address-error distinction, GPIO, latch, flag, strobe,
 and interrupt state. A fourth model test and the RTL suite verify that a
 framing error sets ORFE without transferring the misframed byte into RDR. A
 fifth model test and the RTL suite verify the Hitachi FRC write and rollover
-semantics.
+semantics. The RTL suite also proves that V1 DDR reset takes effect at an E
+edge rather than at asynchronous RES assertion.
+
+The HD63701V0 Mode-7 suite fetches reset and TRAP vectors from the separate
+EPROM image, executes at both `$0040` and `$00ff`, checks OLVL reset, exercises
+the 13-cycle TRAP from unambiguous non-memory space, and verifies Port 3/4 GPIO,
+Hitachi FRC writes, and V0 framing-error transfer into RDR. Four independent
+device-model tests cover the RAM/program partitions, RAME, address-error
+classification, timer/GPIO behavior, and SCI difference. Tests deliberately
+identify execution at `$0040`-`$007f` as a normalized policy because the
+manufacturer manual contradicts itself there. It separately checks the
+V0-specific asynchronous DDR clear before another E edge occurs.
 
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction
@@ -149,7 +161,7 @@ priority, distinct vectors, and firmware-memory decode.
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
 HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration, and
-HD6301V1 Mode-7 integration. At
+HD6301V1 and HD63701V0 Mode-7 integrations. At
 depth 10 it proves the committed
 safety properties for all symbolic input sequences:
 
@@ -190,10 +202,11 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 10,783 | 1,422 |
+| MC6801 Mode 2 integration | 10,734 | 1,422 |
 | HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 7 integration | 11,936 | 1,471 |
-| HD6303R Mode 2 integration | 11,893 | 1,423 |
+| HD6301V1 Mode 7 integration | 12,183 | 1,480 |
+| HD6303R Mode 2 integration | 11,846 | 1,432 |
+| HD63701V0 Mode 7 integration | 13,833 | 1,992 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,711 | 1,122 |

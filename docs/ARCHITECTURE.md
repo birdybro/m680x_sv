@@ -170,16 +170,23 @@ internal divisors, nine-mark transmitter preamble, LSB-first ten-bit frames,
 ordered TDRE/RDRF/ORFE clearing, center-sampled receive, overrun/framing status,
 wake-mark counting, pin overrides, and shared interrupt. Bi-phase coding and
 external 8x clock mode are not approximated and remain outside the claim.
-The common block has an explicit framing-error transfer parameter: MC6801
-transfers a misframed receive byte into RDR while leaving RDRF clear, whereas
-HD6301V1 and HD6303R inhibit that transfer. Device wrappers select the
+The common block has an explicit framing-error transfer parameter: MC6801 and
+HD63701V0 transfer a misframed receive byte into RDR while leaving RDRF clear,
+whereas HD6301V1 and HD6303R inhibit that transfer. Device wrappers select the
 manufacturer-documented rule rather than deriving it from the CPU ISA profile.
 
 Timer counter writes and overflow boundaries are likewise explicit device
 parameters. MC6801 keeps FRC low-byte writes ineffective and raises TOF when
-the counter reaches `$ffff`. HD6301V1 and HD6303R save the high data byte while
-presetting `$fff8`, accept the following low-byte write as a full 16-bit FRC
-replacement, and raise TOF on the subsequent `$ffff`-to-`$0000` rollover.
+the counter reaches `$ffff`. HD6301V1, HD6303R, and HD63701V0 save the high
+data byte while presetting `$fff8`, accept the following low-byte write as a
+full 16-bit FRC replacement, and raise TOF on the subsequent
+`$ffff`-to-`$0000` rollover.
+
+Port-DDR reset timing is another explicit variant parameter. HD6301V1 and
+HD6303R clear DDR state on an E edge; HD63701V0 clears it asynchronously with
+E so asserting RES immediately returns every port driver to high impedance.
+The generated sequential blocks keep this timing distinction synthesizable
+without creating a gated clock.
 
 ## HD6301V1 single-chip Mode-7 integration
 
@@ -224,6 +231,27 @@ external. Its CPU profile adds AIM/OIM/EIM/TIM, XGDX, SLP, Hitachi timing, and
 opcode-error TRAP. During SLP the CPU state stops while the timer and SCI remain
 clocked. An enabled request vectors normally; a masked request releases sleep
 at the following instruction without stacking, as the manufacturer specifies.
+
+## HD63701V0 single-chip Mode-7 integration
+
+`rtl/hd6301/hd63701v0_mcu.sv` selects the documented Hitachi CPU/timer lineage
+while independently configuring the V0's `$0040`-`$00ff` 192-byte RAM, V0 SCI
+framing-error transfer, and 4-KiB EPROM interface. The common shell reserves
+one 256-byte FPGA RAM page; device decode exposes exactly 128 or 192 bytes as
+appropriate, and address subtraction maps the selected physical window without
+leaking one variant's address range into another wrapper.
+
+The program-image signals represent normal read-only MCU accesses to
+`$f000`-`$ffff`. They do not model the separate 27256-style analog programming
+mode, VPP, programming margins, or retention. Reset and interrupt vectors are
+included in this image as normal internal EPROM reads.
+
+The handbook's memory map and prose make `$0040`-`$007f` physical internal RAM,
+while its Mode-7 address-error table contradictorily lists the range as a TRAP
+source. The wrapper permits execution from the whole RAM window and traps
+`$0000`-`$003f` and `$0100`-`$efff`. This is an explicit normalized integration
+policy, not a silicon-equivalence claim for the disputed range; the structured
+device and peripheral specifications preserve the discrepancy.
 
 ## MC68705P5 integration
 

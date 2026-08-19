@@ -34,6 +34,7 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
             timer_overflow_at_zero=True,
         )
         self.operating_mode = 7
+        self.instruction_address_trap_low_end = 0x007F
         self.program_memory = program_memory if program_memory is not None else Memory()
 
     def register_is_internal(self, address: int) -> bool:
@@ -41,16 +42,23 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
 
     def ram_is_internal(self, address: int) -> bool:
         address &= 0xFFFF
-        return self.state.rame and 0x0080 <= address <= 0x00FF
+        return (
+            self.state.rame
+            and self.internal_ram_start
+            <= address
+            < self.internal_ram_start + len(self.ram)
+        )
 
     @staticmethod
     def program_is_internal(address: int) -> bool:
         return (address & 0xFFFF) >= 0xF000
 
-    @staticmethod
-    def instruction_address_error(address: int) -> bool:
+    def instruction_address_error(self, address: int) -> bool:
         address &= 0xFFFF
-        return address <= 0x007F or 0x0100 <= address <= 0xEFFF
+        return (
+            address <= self.instruction_address_trap_low_end
+            or 0x0100 <= address <= 0xEFFF
+        )
 
     def read_register(
         self,
@@ -115,7 +123,7 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
         if program_select:
             read_data = self.program_memory[address]
         elif ram_select:
-            read_data = self.ram[address & 0x7F]
+            read_data = self.ram[self.ram_index(address)]
         elif register_select:
             read_data = self.read_register(
                 address,

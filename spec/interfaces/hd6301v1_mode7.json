@@ -11,7 +11,7 @@
   "signals": [
     {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
     {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "active-high normalized-cycle enable; low preserves all synchronous digital state"},
-    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "asynchronous active-low reset"},
+    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active-low reset; CPU/peripheral state uses the FPGA asynchronous boundary while the documented HD6301V1 DDR clear occurs on an E edge"},
     {"name": "nmi_n_i", "historical": "NMI", "direction": "input", "fact": "active-low non-maskable interrupt whose falling edge is retained"},
     {"name": "irq1_n_i", "historical": "IRQ1", "direction": "input", "fact": "active-low maskable interrupt above internal timer and SCI sources"},
     {"name": "standby_power_ok_i", "historical": "standby RAM supply validity", "direction": "input", "fact": "digital integration indication only; it does not model an analog threshold"},

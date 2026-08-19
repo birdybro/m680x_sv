@@ -33,7 +33,7 @@ and low-power modes have separate specifications.
 | Motorola MC68705P5 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD6301V1 | full MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD6303R | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Hitachi HD63701V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Hitachi HD63701V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Hitachi HD63705V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 
 The normalized M6805 core is not a silicon-device compatibility claim. A device
@@ -91,7 +91,27 @@ accesses do not. Expanded modes, standby entry, bi-phase/external-clock SCI,
 physical timing, and actual mask-ROM contents remain outside this partial claim.
 Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
 The Mode-7 timer regression verifies full-counter double-byte writes and the
-documented Hitachi TOF boundary.
+documented Hitachi TOF boundary. It also verifies that V1 DDR clearing waits
+for the next E edge.
+
+The HD63701V0 claim covers its single-chip Mode 7 digital boundary: the
+`$0000`-`$0014` register block, RAME-controlled 192-byte RAM at
+`$0040`-`$00ff`, four GPIO ports with IS3/OS3, common Hitachi timer and
+interrupts, the V0-specific framing-error transfer, SLP, and a separately
+supplied `$f000`-`$ffff` EPROM image. The RTL and model execute from both RAM
+boundaries and trap representative fetches in the unambiguous non-memory
+range. Expanded modes, explicit asynchronous STBY entry, alternate SCI clock
+formats, physical timing, and EPROM programming mode remain outside the claim.
+The V0 regression verifies its distinct asynchronous DDR reset at the digital
+boundary.
+
+The manufacturer manual is internally inconsistent for Mode-7 instruction
+fetches at `$0040`-`$007f`: the memory map and address-error prose identify the
+range as internal RAM, but table 2-13-1 includes it in an address-error span.
+The normalized implementation permits execution throughout physical RAM,
+consistent with the memory map, and classifies silicon TRAP behavior for this
+range as `UNDEFINED_BY_DOCUMENTATION`. No verified bus-trace claim depends on
+that choice.
 
 ## Device differences relevant to implementation
 
@@ -108,8 +128,8 @@ documented Hitachi TOF boundary.
   It has no general external-memory bus.
 - HD6301V1 provides 4 KiB ROM and 128 bytes RAM; HD6303R is the ROMless 40-pin
   member. Both use the HD6301 ISA, timer, SCI, low-power modes, and TRAP.
-- HD63701V0 substitutes 4 KiB EPROM, has 192 bytes RAM, and retains HD6301 ISA
-  extensions and TRAP behavior.
+- HD63701V0 substitutes 4 KiB EPROM, has 192 bytes RAM, retains HD6301 ISA
+  extensions and TRAP behavior, and transfers a framing-error byte into RDR.
 - HD63705V0 has a 14-bit PC, stack top `00FF`, 192 bytes RAM, 4 KiB EPROM,
   31 GPIO lines, two timer functions, synchronous SCI, and wait/stop/standby
   modes. Its vector region is `1FF4`-`1FFF`.
@@ -120,6 +140,8 @@ stack, `$ffee:$ffef` vector, and retry PC. A full MCU claim still requires each
 device wrapper to decode its own non-memory space and generate that request.
 The HD6301V1 Mode-7 wrapper now performs this decode for `$0000`-`$007f` and
 `$0100`-`$efff` and keeps its vector reads on the internal program interface.
+The HD63701V0 wrapper uses `$0000`-`$003f` plus `$0100`-`$efff`, while the
+conflicting `$0040`-`$007f` range is explicitly unverified as described above.
 HD6303R Mode 2 spans external memory around the internal register/RAM windows,
 so the manufacturer's address-error table defines no non-memory fetch region
 for that implemented profile; opcode-error TRAP remains active.

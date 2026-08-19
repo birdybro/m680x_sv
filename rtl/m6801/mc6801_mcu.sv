@@ -5,15 +5,20 @@
 // MC6801 Reference Manual MC6801RM(AD2), chapters 2, 3, 5, 6, and 7. One
 // clk_i/clock_enable_i step represents one complete E-cycle. Physical Port 3
 // address/data multiplexing and the E/AS waveform belong in a pin wrapper.
-// HD6301_MODE7 enables the separately documented HD6301V1 single-chip decode,
-// Port 3/4 registers, handshake, and internal program-memory interface.
+// HD6301_MODE7 enables the separately documented Hitachi single-chip decode,
+// Port 3/4 registers, handshake, and internal program-memory interface. The
+// RAM and address-error parameters distinguish the V1 and 63701V0 maps.
 module mc6801_mcu #(
   parameter logic [2:0] OPERATING_MODE = 3'd2,
   parameter logic       HITACHI_CPU = 1'b0,
   parameter logic       HD6301_MODE7 = 1'b0,
   parameter logic       SCI_TRANSFER_FRAMING_ERROR = 1'b1,
   parameter logic       TIMER_COUNTER_DOUBLE_WRITE = 1'b0,
-  parameter logic       TIMER_OVERFLOW_AT_ZERO = 1'b0
+  parameter logic       TIMER_OVERFLOW_AT_ZERO = 1'b0,
+  parameter logic       PORT_DDR_ASYNC_RESET = 1'b1,
+  parameter logic [15:0] INTERNAL_RAM_START = 16'h0080,
+  parameter logic [15:0] INTERNAL_RAM_BYTES = 16'd128,
+  parameter logic [15:0] MODE7_ADDRESS_TRAP_LOW_END = 16'h007f
 ) (
   input  logic        clk_i,
   input  logic        reset_n_i,
@@ -77,8 +82,12 @@ module mc6801_mcu #(
   localparam logic [15:0] VECTOR_OUTPUT_COMPARE = 16'hfff4;
   localparam logic [15:0] VECTOR_TIMER_OVERFLOW = 16'hfff2;
   localparam logic [15:0] VECTOR_SCI = 16'hfff0;
+  localparam logic [15:0] INTERNAL_RAM_END =
+    INTERNAL_RAM_START + INTERNAL_RAM_BYTES - 1;
 
-  logic [7:0] ram [0:127];
+  // The shared shell reserves the largest supported page. Decode limits the
+  // physical window to 128 bytes on MC6801/HD6301V1 or 192 on HD63701V0.
+  logic [7:0] ram [0:255];
   logic [7:0] port1_latch;
   logic [4:0] port2_latch;
   logic [7:0] port3_latch;
@@ -87,6 +96,10 @@ module mc6801_mcu #(
   logic [4:0] port2_ddr;
   logic [7:0] port3_ddr;
   logic [7:0] port4_ddr;
+  logic [7:0] port1_ddr_next;
+  logic [4:0] port2_ddr_next;
+  logic [7:0] port3_ddr_next;
+  logic [7:0] port4_ddr_next;
   logic [7:0] port3_input_latch;
   logic port3_latch_valid;
   logic port3_latch_enable;
@@ -145,6 +158,7 @@ module mc6801_mcu #(
   logic irq2_pending;
   logic internal_register_select;
   logic internal_ram_select;
+  logic [7:0] internal_ram_index;
   logic internal_program_select;
   logic unusable_select;
   logic internal_read;
@@ -183,9 +197,75 @@ module mc6801_mcu #(
   endfunction
 
   always_comb begin
+    port1_ddr_next = port1_ddr;
+    port2_ddr_next = port2_ddr;
+    port3_ddr_next = port3_ddr;
+    port4_ddr_next = port4_ddr;
+    if (internal_write) begin
+      case (core_address)
+        16'h0000: port1_ddr_next = core_data_out;
+        16'h0001: begin
+          port2_ddr_next[1:0] = core_data_out[1:0];
+          if (!rmcr[3]) port2_ddr_next[2] = core_data_out[2];
+          if (!trcsr_control[3]) port2_ddr_next[3] = core_data_out[3];
+          if (!trcsr_control[1]) port2_ddr_next[4] = core_data_out[4];
+        end
+        16'h0004: if (MODE7) port3_ddr_next = core_data_out;
+        16'h0005: if (MODE7) port4_ddr_next = core_data_out;
+        16'h0010: if (core_data_out[3]) begin
+          port2_ddr_next[2] = !core_data_out[2];
+        end
+        16'h0011: begin
+          if (core_data_out[3]) port2_ddr_next[3] = 1'b0;
+          if (core_data_out[1]) port2_ddr_next[4] = 1'b1;
+        end
+        default: ;
+      endcase
+    end
+  end
+
+  // HD6301-family manuals deliberately mix E-synchronous DDR clearing with
+  // asynchronous reset of other device state. This local warning exception
+  // covers that manufacturer-defined reset topology only.
+  /* verilator lint_off SYNCASYNCNET */
+  generate
+    if (PORT_DDR_ASYNC_RESET) begin : generate_async_ddr_reset
+      always_ff @(posedge clk_i or negedge reset_n_i) begin
+        if (!reset_n_i) begin
+          port1_ddr <= 8'h00;
+          port2_ddr <= 5'h00;
+          port3_ddr <= 8'h00;
+          port4_ddr <= 8'h00;
+        end else if (clock_enable_i) begin
+          port1_ddr <= port1_ddr_next;
+          port2_ddr <= port2_ddr_next;
+          port3_ddr <= port3_ddr_next;
+          port4_ddr <= port4_ddr_next;
+        end
+      end
+    end else begin : generate_synchronous_ddr_reset
+      always_ff @(posedge clk_i) begin
+        if (!reset_n_i) begin
+          port1_ddr <= 8'h00;
+          port2_ddr <= 5'h00;
+          port3_ddr <= 8'h00;
+          port4_ddr <= 8'h00;
+        end else if (clock_enable_i) begin
+          port1_ddr <= port1_ddr_next;
+          port2_ddr <= port2_ddr_next;
+          port3_ddr <= port3_ddr_next;
+          port4_ddr <= port4_ddr_next;
+        end
+      end
+    end
+  endgenerate
+  /* verilator lint_on SYNCASYNCNET */
+
+  always_comb begin
     internal_register_select = core_bus_valid && register_is_internal(core_address);
+    internal_ram_index = core_address[7:0] - INTERNAL_RAM_START[7:0];
     internal_ram_select = core_bus_valid && rame && (OPERATING_MODE != 3'd3) &&
-      (core_address >= 16'h0080) && (core_address <= 16'h00ff);
+      (core_address >= INTERNAL_RAM_START) && (core_address <= INTERNAL_RAM_END);
     internal_program_select = core_bus_valid && MODE7 &&
       (core_address >= 16'hf000);
     unusable_select = core_bus_valid && MODE7 && !internal_register_select &&
@@ -200,7 +280,7 @@ module mc6801_mcu #(
     port3_access = clock_enable_i && internal_register_select &&
       (core_address == 16'h0006);
     instruction_address_error = MODE7 && core_opcode_fetch &&
-      ((core_address <= 16'h007f) ||
+      ((core_address <= MODE7_ADDRESS_TRAP_LOW_END) ||
        ((core_address >= 16'h0100) && (core_address <= 16'hefff)));
 
     core_data_in = external_data_i;
@@ -209,7 +289,7 @@ module mc6801_mcu #(
     end else if (unusable_select) begin
       core_data_in = 8'hff;
     end else if (internal_ram_select) begin
-      core_data_in = ram[core_address[6:0]];
+      core_data_in = ram[internal_ram_index];
     end else if (internal_register_select) begin
       case (core_address)
         16'h0000, 16'h0001: core_data_in = 8'hff;
@@ -278,10 +358,6 @@ module mc6801_mcu #(
       port2_latch <= 5'h00;
       port3_latch <= 8'h00;
       port4_latch <= 8'h00;
-      port1_ddr <= 8'h00;
-      port2_ddr <= 5'h00;
-      port3_ddr <= 8'h00;
-      port4_ddr <= 8'h00;
       port3_input_latch <= 8'h00;
       port3_latch_valid <= 1'b0;
       port3_latch_enable <= 1'b0;
@@ -304,13 +380,6 @@ module mc6801_mcu #(
       end
       if (internal_write) begin
         case (core_address)
-          16'h0000: port1_ddr <= core_data_out;
-          16'h0001: begin
-            port2_ddr[1:0] <= core_data_out[1:0];
-            if (!rmcr[3]) port2_ddr[2] <= core_data_out[2];
-            if (!trcsr_control[3]) port2_ddr[3] <= core_data_out[3];
-            if (!trcsr_control[1]) port2_ddr[4] <= core_data_out[4];
-          end
           16'h0002: port1_latch <= core_data_out;
           16'h0003: begin
             port2_latch[0] <= core_data_out[0];
@@ -318,21 +387,12 @@ module mc6801_mcu #(
             if (!trcsr_control[3]) port2_latch[3] <= core_data_out[3];
             if (!trcsr_control[1]) port2_latch[4] <= core_data_out[4];
           end
-          16'h0004: if (MODE7) port3_ddr <= core_data_out;
-          16'h0005: if (MODE7) port4_ddr <= core_data_out;
           16'h0006: if (MODE7) port3_latch <= core_data_out;
           16'h0007: if (MODE7) port4_latch <= core_data_out;
           16'h000f: if (MODE7) begin
             port3_is3_enable <= core_data_out[6];
             port3_output_strobe_select <= core_data_out[4];
             port3_latch_enable <= core_data_out[3];
-          end
-          16'h0010: begin
-            if (core_data_out[3]) port2_ddr[2] <= !core_data_out[2];
-          end
-          16'h0011: begin
-            if (core_data_out[3]) port2_ddr[3] <= 1'b0;
-            if (core_data_out[1]) port2_ddr[4] <= 1'b1;
           end
           16'h0014: begin
             standby_power <= core_data_out[7] && standby_power_ok_i;
@@ -364,10 +424,10 @@ module mc6801_mcu #(
   end
 
   // The reference manual does not define RAM contents after reset. Keeping
-  // reset out of the write process preserves an inference-friendly 128x8 RAM.
+  // reset out of the write process preserves inference-friendly device RAM.
   always_ff @(posedge clk_i) begin
     if (clock_enable_i && core_bus_valid && core_write && internal_ram_select) begin
-      ram[core_address[6:0]] <= core_data_out;
+      ram[internal_ram_index] <= core_data_out;
     end
   end
 

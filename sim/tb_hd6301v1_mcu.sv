@@ -218,7 +218,12 @@ module tb_hd6301v1_mcu;
     if (port3_out != 8'h3c || os3_pulses != 3) begin
       $fatal(1, "HD6301V1 write-selected OS3");
     end
-    checks = checks + 8;
+    #1; reset_n = 1'b0; #1;
+    if (port3_oe != 8'hf0) $fatal(1, "HD6301V1 DDR reset changed before E edge");
+    tick();
+    if (port3_oe != 8'h00) $fatal(1, "HD6301V1 DDR reset missed E edge");
+    reset_n = 1'b1;
+    checks = checks + 10;
 
     // The 128-byte RAM is executable; ordinary accesses to Mode-7 holes do
     // not become external bus cycles, while an instruction fetch does TRAP.
