@@ -39,14 +39,18 @@ class DeviceSpecificationTests(unittest.TestCase):
         mc6801 = devices["mc6801"]["status"]
         for dimension in ("device_wrapper", "internal_memory", "gpio", "timer", "serial"):
             self.assertEqual(mc6801[dimension], "PARTIAL")
+        mc6803 = devices["mc6803"]["status"]
+        for dimension in ("device_wrapper", "internal_memory", "gpio", "timer", "serial"):
+            self.assertEqual(mc6803[dimension], "PARTIAL")
         for evidence_path in (
             "rtl/m6801/mc6801_mcu.sv",
             "sim/tb_mc6801_mcu.sv",
             "spec/peripherals/mc6801.json",
+            "spec/peripherals/mc6803.json",
         ):
             self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)
         for device_id, device in devices.items():
-            if device_id not in {"mc6801", "mc68705p5"} and device["implementation_scope"] == "FULL_MCU":
+            if device_id not in {"mc6801", "mc6803", "mc68705p5"} and device["implementation_scope"] == "FULL_MCU":
                 self.assertEqual(device["status"]["device_wrapper"], "NOT_IMPLEMENTED")
 
     def test_unknown_architecture_is_rejected(self) -> None:

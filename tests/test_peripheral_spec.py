@@ -15,11 +15,29 @@ ROOT = Path(__file__).resolve().parents[1]
 class PeripheralSpecificationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.spec = json.loads((ROOT / "spec/peripherals/mc68705p5.json").read_text())
+        self.mc6801 = json.loads((ROOT / "spec/peripherals/mc6801.json").read_text())
+        self.mc6803 = json.loads((ROOT / "spec/peripherals/mc6803.json").read_text())
         self.devices = validate_devices._load_json(ROOT / "spec/devices.yml")
         self.references = load_manifest(ROOT / "docs/references.yml")
 
     def test_repository_peripheral_specification_is_valid(self) -> None:
         validate_peripherals.validate_peripheral(self.spec, self.devices, self.references)
+        validate_peripherals.validate_peripheral(self.mc6803, self.devices, self.references)
+        validate_peripherals.validate_inheritance_graph(
+            {"mc6801": self.mc6801, "mc6803": self.mc6803}
+        )
+
+    def test_unknown_inherited_profile_is_rejected(self) -> None:
+        with self.assertRaisesRegex(validate_peripherals.PeripheralSpecError, "unknown inherited"):
+            validate_peripherals.validate_inheritance_graph({"mc6803": self.mc6803})
+
+    def test_inherited_section_must_exist_in_base_profile(self) -> None:
+        broken = deepcopy(self.mc6801)
+        del broken["sci"]
+        with self.assertRaisesRegex(validate_peripherals.PeripheralSpecError, "lacks 'sci'"):
+            validate_peripherals.validate_inheritance_graph(
+                {"mc6801": broken, "mc6803": self.mc6803}
+            )
 
     def test_overlapping_memory_regions_are_rejected(self) -> None:
         broken = deepcopy(self.spec)

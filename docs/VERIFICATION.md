@@ -26,10 +26,10 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 63 |
+| Python unit tests | 65 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
-| MC6801 Mode 2/3 integration checks | 49 |
+| MC6801/MC6803 Mode 2/3 integration checks | 49 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
@@ -65,7 +65,10 @@ addresses. Focused model and RTL traces also prove that MC6801 retires the
 instruction following CLI or an I-clearing TAP before accepting IRQ, while
 HD6301 waits the documented two machine cycles.
 
-The MC6801 MCU suite runs normalized Mode 2 and Mode 3 separately. It verifies
+The MC6801/MC6803 MCU suite runs normalized Mode 2 and Mode 3 separately. The
+MC6803 applicability is grounded in the manufacturer's explicit functional-
+identity statement and the validated profile inheritance, not an inferred
+similarity. The suite verifies
 external reset-vector decode, expanded-mode register exclusions, physical-pin
 GPIO reads, write-only DDR reads, RAME-controlled RAM, Mode 3 external RAM,
 synchronized input capture, ordered ICF clearing, output compare, IRQ1-over-

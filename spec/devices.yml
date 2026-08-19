@@ -124,7 +124,7 @@
       "clocking": "On-chip oscillator and E output as for MC6801 expanded modes.",
       "documented_quirks": ["The reference manual defines MC6803 as an MC6801 limited to modes 2 or 3; modes other than 0, 2, and 3 are undefined.", "Mode 0 ROM contents are undefined."],
       "undefined_by_documentation": ["Modes other than 0, 2, and 3.", "Mode 0 internal ROM contents.", "Unassigned opcode results."],
-      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "PARTIAL", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "PARTIAL", "low_power": "NOT_IMPLEMENTED"},
       "references": [{"id": "motorola-mc6801-reference-1983", "locators": ["section 2.4.2"]}]
     },
     {

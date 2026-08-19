@@ -140,13 +140,15 @@ documented Hitachi additions. It does not share the M6800 execution state machin
 The Hitachi profile defers maskable interrupt recognition until the instruction
 following CLI retires, independently of the Motorola profile.
 
-## MC6801 expanded-mode integration
+## MC6801/MC6803 expanded-mode integration
 
 `rtl/m6801/mc6801_mcu.sv` surrounds the M6801 CPU profile with the normalized
-Mode 2/3 device state specified in
-`spec/peripherals/mc6801.json`. Its external memory port deliberately remains a
-normalized 16-bit FPGA bus; a later pin wrapper owns Port 3 multiplexing, AS,
-E, and electrical timing.
+Mode 2/3 device state specified in `spec/peripherals/mc6801.json`. The MC6803
+profile in `spec/peripherals/mc6803.json` inherits that common behavior and
+restricts the public configuration to Modes 2/3, exactly as section 2.4.2 of
+the manufacturer manual defines it. Its external memory port deliberately
+remains a normalized 16-bit FPGA bus; a later pin wrapper owns Port 3
+multiplexing, AS, E, and electrical timing.
 
 The current integration implements the mode-dependent exclusion of Port 3/4
 register addresses, RAME-controlled 128-byte RAM in Mode 2, the external RAM

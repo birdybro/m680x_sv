@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "device": "mc6803",
+  "address_width": 16,
+  "inherits": {
+    "device": "mc6801",
+    "sections": ["registers", "timer", "interrupts", "gpio", "sci", "memory_control"],
+    "scope": "The MC6803 has the MC6801 digital CPU and peripheral behavior when operated in manufacturer-defined Modes 2 or 3.",
+    "restrictions": [
+      "Only expanded multiplexed Modes 2 and 3 are implemented and claimed.",
+      "Mode 0 ROM contents are undefined and are not supplied.",
+      "Operation in modes other than 0, 2, and 3 is undefined by the manufacturer."
+    ],
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 2.4.2, printed page 2-21"}
+  },
+  "memory_regions": [
+    {"start": "0000", "end": "0014", "kind": "internal-register-window", "access": "0004-0007 and 000F are external in Modes 2 and 3; remaining implemented registers are internal"},
+    {"start": "0015", "end": "007F", "kind": "external-memory", "access": "read-write"},
+    {"start": "0080", "end": "00FF", "kind": "ram-window", "access": "internal in Mode 2 when RAME=1; external in Mode 3 or when RAME=0"},
+    {"start": "0100", "end": "FFFF", "kind": "external-memory", "access": "read-write; interrupt and reset vectors are externally fetched"}
+  ],
+  "operating_modes": {
+    "mode2": "expanded multiplexed ROMless operation with internal RAM controlled by RAME",
+    "mode3": "expanded multiplexed ROMless/RAMless operation with the RAM window external",
+    "mode0": "manufacturer test operation with undefined internal ROM contents; not implemented",
+    "other_modes": "undefined by manufacturer documentation and rejected by the public MC6803 profile",
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 2.4.2, printed page 2-21; figures 2-10 and 2-11, printed pages 2-12 to 2-13"}
+  },
+  "implementation_scope": {
+    "rtl": "rtl/m6801/mc6801_mcu.sv with OPERATING_MODE equal to 2 or 3",
+    "verification": "The same Mode 2/3 integration vectors are applicable because the manufacturer defines functional identity for these modes.",
+    "physical_interface": "The normalized external-memory interface does not claim the Port 3/Port 4 multiplexed pin waveform.",
+    "undefined_mode_behavior": "No deterministic behavior is assigned to manufacturer-undefined modes or Mode 0 ROM contents.",
+    "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
+  }
+}

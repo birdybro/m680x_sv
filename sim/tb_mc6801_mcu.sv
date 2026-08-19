@@ -214,7 +214,7 @@ module tb_mc6801_mcu #(
     checks = checks + 2;
 
     if (TEST_MODE == 3'd3) begin
-      $display("MC6801 MCU MODE 3 PASS: %0d register, GPIO, and external decode checks", checks);
+      $display("MC6801/MC6803 MCU MODE 3 PASS: %0d register, GPIO, and external decode checks", checks);
       $finish;
     end
 
@@ -390,7 +390,7 @@ module tb_mc6801_mcu #(
         ((sci_clock !== 1'b0) && (sci_clock !== 1'b1))) begin
       $fatal(1, "MC6801 deterministic outputs");
     end
-    $display("MC6801 MCU MODE 2 PASS: %0d memory, GPIO, timer, priority, and SCI checks",
+    $display("MC6801/MC6803 MCU MODE 2 PASS: %0d memory, GPIO, timer, priority, and SCI checks",
              checks);
     $finish;
   end

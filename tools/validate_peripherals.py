@@ -28,13 +28,24 @@ def _hex_address(value: object, owner: str) -> int:
         raise PeripheralSpecError(f"{owner}: invalid address {value!r}") from exc
 
 
+PERIPHERAL_SECTIONS = {
+    "registers", "timer", "interrupts", "gpio", "sci", "operating_modes",
+    "memory_control",
+}
+
+
 def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
-    required = {
+    full_required = {
         "schema_version", "device", "address_width", "memory_regions", "registers",
         "timer", "interrupts", "implementation_scope",
     }
-    optional = {"gpio", "sci", "operating_modes", "memory_control"}
-    if not required <= set(spec) or set(spec) - required - optional or spec["schema_version"] != 1:
+    inherited_required = {
+        "schema_version", "device", "address_width", "memory_regions", "inherits",
+        "implementation_scope",
+    }
+    required = inherited_required if "inherits" in spec else full_required
+    allowed = full_required | PERIPHERAL_SECTIONS | {"inherits"}
+    if not required <= set(spec) or set(spec) - allowed or spec["schema_version"] != 1:
         raise PeripheralSpecError("peripheral record has incomplete fields or schema")
     device_ids = {device["id"] for device in devices["devices"]}
     if spec["device"] not in device_ids:
@@ -53,8 +64,40 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
             raise PeripheralSpecError("memory regions overlap, are unsorted, or exceed address width")
         previous_end = end
     known_references = {reference["id"] for reference in references["references"]}
+    if "inherits" in spec:
+        inheritance = spec["inherits"]
+        required_inheritance = {"device", "sections", "scope", "restrictions", "reference"}
+        if not isinstance(inheritance, dict) or set(inheritance) != required_inheritance:
+            raise PeripheralSpecError("malformed peripheral-profile inheritance")
+        sections = inheritance["sections"]
+        if (
+            inheritance["device"] == spec["device"]
+            or not isinstance(sections, list)
+            or not sections
+            or len(set(sections)) != len(sections)
+            or not set(sections) <= PERIPHERAL_SECTIONS
+            or any(section in spec for section in sections)
+            or any(section not in spec and section not in sections for section in PERIPHERAL_SECTIONS)
+        ):
+            raise PeripheralSpecError("invalid inherited peripheral sections")
+        if not isinstance(inheritance["scope"], str) or not inheritance["scope"].strip():
+            raise PeripheralSpecError("inherited peripheral scope must be non-empty")
+        if (
+            not isinstance(inheritance["restrictions"], list)
+            or not inheritance["restrictions"]
+            or not all(isinstance(item, str) and item.strip() for item in inheritance["restrictions"])
+        ):
+            raise PeripheralSpecError("inherited peripheral restrictions must be non-empty")
+        citation = inheritance["reference"]
+        if (
+            not isinstance(citation, dict)
+            or set(citation) != {"id", "locator"}
+            or citation["id"] not in known_references
+            or not citation["locator"]
+        ):
+            raise PeripheralSpecError("invalid peripheral inheritance reference")
     seen_addresses: set[int] = set()
-    for register in spec["registers"]:
+    for register in spec.get("registers", []):
         required_register = {"address", "name", "read", "write", "reset", "reference"}
         if set(register) != required_register:
             raise PeripheralSpecError("malformed register record")
@@ -67,7 +110,7 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
             raise PeripheralSpecError(f"{register['name']}: invalid reference")
     vectors: set[str] = set()
     priorities: set[int] = set()
-    for interrupt in spec["interrupts"]:
+    for interrupt in spec.get("interrupts", []):
         if set(interrupt) != {"source", "vector", "priority"} or interrupt["vector"] in vectors:
             raise PeripheralSpecError("malformed or duplicate interrupt vector")
         vectors.add(interrupt["vector"])
@@ -96,6 +139,38 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
             validate_citations(spec[section], section)
 
 
+def validate_inheritance_graph(specs: dict[str, dict]) -> None:
+    """Require every inherited section to resolve to an acyclic device profile."""
+
+    for device, spec in specs.items():
+        if "inherits" not in spec:
+            continue
+        base = spec["inherits"]["device"]
+        if base not in specs:
+            raise PeripheralSpecError(f"{device}: unknown inherited profile {base!r}")
+        for section in spec["inherits"]["sections"]:
+            if section not in specs[base]:
+                raise PeripheralSpecError(f"{device}: base profile lacks {section!r}")
+
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(device: str) -> None:
+        if device in visiting:
+            raise PeripheralSpecError("cyclic peripheral-profile inheritance")
+        if device in visited:
+            return
+        visiting.add(device)
+        spec = specs[device]
+        if "inherits" in spec:
+            visit(spec["inherits"]["device"])
+        visiting.remove(device)
+        visited.add(device)
+
+    for device in specs:
+        visit(device)
+
+
 def main() -> int:
     devices = _load_json(ROOT / "spec" / "devices.yml")
     references = load_manifest(ROOT / "docs" / "references.yml")
@@ -104,8 +179,14 @@ def main() -> int:
         print("peripheral specification error: no specifications", file=sys.stderr)
         return 1
     try:
+        specs: dict[str, dict] = {}
         for path in paths:
-            validate_peripheral(json.loads(path.read_text(encoding="utf-8")), devices, references)
+            spec = json.loads(path.read_text(encoding="utf-8"))
+            validate_peripheral(spec, devices, references)
+            if spec["device"] in specs:
+                raise PeripheralSpecError("duplicate peripheral device profile")
+            specs[spec["device"]] = spec
+        validate_inheritance_graph(specs)
     except (OSError, json.JSONDecodeError, PeripheralSpecError) as exc:
         print(f"peripheral specification error: {exc}", file=sys.stderr)
         return 1
