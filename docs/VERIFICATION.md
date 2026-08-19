@@ -26,16 +26,17 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 62 |
+| Python unit tests | 63 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
+| MC6801 Mode 2/3 integration checks | 46 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 6 at depth 10 |
-| Synthesis tops | 7 |
+| Bounded formal profiles | 7 at depth 10 |
+| Synthesis tops | 8 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -64,6 +65,14 @@ addresses. Focused model and RTL traces also prove that MC6801 retires the
 instruction following CLI or an I-clearing TAP before accepting IRQ, while
 HD6301 waits the documented two machine cycles.
 
+The MC6801 MCU suite runs normalized Mode 2 and Mode 3 separately. It verifies
+external reset-vector decode, expanded-mode register exclusions, physical-pin
+GPIO reads, write-only DDR reads, RAME-controlled RAM, Mode 3 external RAM,
+synchronized input capture, ordered ICF clearing, output compare, IRQ1-over-
+timer priority, distinct vectors, NRZ transmit framing, center-sampled receive,
+SCI overrun retention and status-clearing protocols, sticky SCI pin direction,
+and one-cycle IRQ1 pulse retention through the post-CLI boundary.
+
 The HD6301 TRAP suite independently exercises an unassigned opcode and an
 instruction-address-error input. It compares the exact 13-cycle normalized bus
 trace documented by handbook figure III-8: faulting opcode, discarded PC+1,
@@ -90,7 +99,8 @@ priority, distinct vectors, and firmware-memory decode.
 ## Formal checks
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
-HD6305 profiles plus the MC6800 bus wrapper. At depth 10 it proves the committed
+HD6305 profiles plus the MC6800 bus wrapper and MC6801 Mode 3 integration. At
+depth 10 it proves the committed
 safety properties for all symbolic input sequences:
 
 - a write is always a valid bus cycle;
@@ -102,6 +112,9 @@ safety properties for all symbolic input sequences:
   is inactive or an active transfer is waiting for `bus_ready_i`.
 - TSC and BA never coexist with bus drive or VMA, DBE low prevents data drive,
   and every wrapper data drive is a qualified write owned by the processor.
+- MC6801 external fetches are qualified reads, internal register addresses do
+  not escape onto the expanded bus, SCI overrides force documented Port 2
+  directions, and MCU state is stable while clock enable is inactive.
 
 These bounded safety proofs complement simulation; they are not a liveness or
 full instruction-correctness proof.
@@ -119,10 +132,11 @@ Representative generic Yosys 0.68 results from the current source are:
 
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
-| M6800 | 6,099 | 203 |
-| MC6800 bus wrapper | 6,151 | 209 |
-| MC6801 | 6,123 | 203 |
-| HD6301 | 7,177 | 205 |
+| M6800 | 6,125 | 217 |
+| MC6800 bus wrapper | 6,243 | 223 |
+| MC6801 | 6,158 | 217 |
+| MC6801 Mode 2 integration | 10,730 | 1,421 |
+| HD6301 | 7,198 | 218 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,711 | 1,122 |
@@ -132,7 +146,9 @@ not optimization guarantees. Each synthesis script runs structural `check
 -assert`; the recorded run reports no latches, combinational-loop errors, or
 structural problems. The P5 RAM has no invented reset and is written in a
 separate inference-friendly process because its reset contents are undefined by
-the manufacturer.
+the manufacturer. The MC6801 RAM follows the same rule; the technology-neutral
+post-map total shows flip-flops because generic `synth` maps the asynchronous-
+read array before reporting statistics.
 
 ## Reproducing the gate
 

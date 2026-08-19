@@ -27,7 +27,7 @@ and low-power modes have separate specifications.
 | Target | Scope | CPU | Cycle count | Bus trace | Device/MCU integration |
 |---|---|---:|---:|---:|---:|
 | Motorola MC6800 | physical CPU device | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Motorola MC6801 | full MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
+| Motorola MC6801 | full MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
 | Motorola MC6803 | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | NOT_IMPLEMENTED |
 | normalized M6805 CPU | FPGA core only | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
 | Motorola MC68705P5 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
@@ -55,6 +55,14 @@ and three-state ownership behavior, including interrupt retention while halted.
 It does not claim pin-level phi1/phi2 generation, electrical timing, or complete
 external waveforms for cycles whose detailed bus activity is not established by
 the selected manufacturer documentation.
+
+The MC6801 device claim currently covers the normalized expanded-bus Mode 2 and
+Mode 3 boundary. Mode 2 has tested RAME-controlled 128-byte RAM; Mode 3 keeps
+that window external. Both profiles implement the common register subset,
+Port 1/2 GPIO and pin overrides, the capture/compare/overflow timer, documented
+interrupt priority/vectors, and internally clocked NRZ SCI. Modes 0/1/4/5/6/7,
+mask ROM, Port 3 handshakes, physical multiplexed-bus waveforms, bi-phase SCI,
+and external-clock SCI remain outside this partial claim.
 
 ## Device differences relevant to implementation
 

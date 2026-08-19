@@ -140,6 +140,31 @@ documented Hitachi additions. It does not share the M6800 execution state machin
 The Hitachi profile defers maskable interrupt recognition until the instruction
 following CLI retires, independently of the Motorola profile.
 
+## MC6801 expanded-mode integration
+
+`rtl/m6801/mc6801_mcu.sv` surrounds the M6801 CPU profile with the normalized
+Mode 2/3 device state specified in
+`spec/peripherals/mc6801.json`. Its external memory port deliberately remains a
+normalized 16-bit FPGA bus; a later pin wrapper owns Port 3 multiplexing, AS,
+E, and electrical timing.
+
+The current integration implements the mode-dependent exclusion of Port 3/4
+register addresses, RAME-controlled 128-byte RAM in Mode 2, the external RAM
+window in Mode 3, physical-pin reads and DDR/output state for Ports 1/2, and
+the documented P20/P21/P22:P24 timer/SCI overrides. Undefined output-latch
+reset state is assigned deterministic zero only as an FPGA integration choice.
+
+The 16-bit timer implements coherent counter reads, the FFF8 test preset,
+one-cycle compare inhibition, synchronized input capture, output-level
+transfer, all three ordered flag-clear protocols, and distinct timer vectors.
+IRQ1 remains above capture, compare, overflow, and SCI in device priority.
+
+The SCI presently implements the two internally clocked NRZ modes, all four
+internal divisors, nine-mark transmitter preamble, LSB-first ten-bit frames,
+ordered TDRE/RDRF/ORFE clearing, center-sampled receive, overrun/framing status,
+wake-mark counting, pin overrides, and shared interrupt. Bi-phase coding and
+external 8x clock mode are not approximated and remain outside the claim.
+
 ## MC68705P5 integration
 
 `rtl/m6805/mc68705p5_mcu.sv` configures the M6805 core for an 11-bit PC, stack

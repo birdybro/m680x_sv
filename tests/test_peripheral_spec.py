@@ -33,6 +33,12 @@ class PeripheralSpecificationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_peripherals.PeripheralSpecError, "invalid reference"):
             validate_peripherals.validate_peripheral(broken, self.devices, self.references)
 
+    def test_unknown_nested_peripheral_reference_is_rejected(self) -> None:
+        broken = deepcopy(self.spec)
+        broken["timer"]["reference"]["id"] = "unknown"
+        with self.assertRaisesRegex(validate_peripherals.PeripheralSpecError, "invalid reference"):
+            validate_peripherals.validate_peripheral(broken, self.devices, self.references)
+
 
 if __name__ == "__main__":
     unittest.main()

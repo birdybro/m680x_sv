@@ -103,7 +103,7 @@
       "clocking": "On-chip oscillator produces E; idle E-cycles drive a read of FFFF in expanded modes instead of providing MC6800 VMA.",
       "documented_quirks": ["Mode 0 obtains only the reset vector externally, then exposes internal vectors.", "Clearing I is delayed by one E-cycle; setting I is not.", "Several internal flag clear sequences require ordered register reads."],
       "undefined_by_documentation": ["Unassigned opcode results.", "Operation in test modes outside their documented purpose is not generalized."],
-      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "NOT_IMPLEMENTED", "internal_memory": "NOT_IMPLEMENTED", "gpio": "NOT_IMPLEMENTED", "timer": "NOT_IMPLEMENTED", "serial": "NOT_IMPLEMENTED", "low_power": "NOT_IMPLEMENTED"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "PARTIAL", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "PARTIAL", "low_power": "NOT_IMPLEMENTED"},
       "references": [{"id": "motorola-mc6801-reference-1983", "locators": ["chapters 1-7; figure 5-14"]}]
     },
     {

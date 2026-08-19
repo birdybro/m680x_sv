@@ -33,7 +33,8 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
         "schema_version", "device", "address_width", "memory_regions", "registers",
         "timer", "interrupts", "implementation_scope",
     }
-    if set(spec) != required or spec["schema_version"] != 1:
+    optional = {"gpio", "sci", "operating_modes", "memory_control"}
+    if not required <= set(spec) or set(spec) - required - optional or spec["schema_version"] != 1:
         raise PeripheralSpecError("peripheral record has incomplete fields or schema")
     device_ids = {device["id"] for device in devices["devices"]}
     if spec["device"] not in device_ids:
@@ -74,6 +75,25 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
             if interrupt["priority"] in priorities:
                 raise PeripheralSpecError("duplicate numeric interrupt priority")
             priorities.add(interrupt["priority"])
+
+    def validate_citations(value: object, owner: str) -> None:
+        if isinstance(value, dict):
+            if "reference" in value:
+                citation = value["reference"]
+                if not isinstance(citation, dict) or set(citation) != {"id", "locator"}:
+                    raise PeripheralSpecError(f"{owner}: malformed reference")
+                if citation["id"] not in known_references or not citation["locator"]:
+                    raise PeripheralSpecError(f"{owner}: invalid reference")
+            for key, nested in value.items():
+                if key != "reference":
+                    validate_citations(nested, f"{owner}.{key}")
+        elif isinstance(value, list):
+            for index, nested in enumerate(value):
+                validate_citations(nested, f"{owner}[{index}]")
+
+    for section in ("timer", "gpio", "sci", "operating_modes", "memory_control"):
+        if section in spec:
+            validate_citations(spec[section], section)
 
 
 def main() -> int:

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "device": "mc6801",
+  "address_width": 16,
+  "memory_regions": [
+    {"start": "0000", "end": "0014", "kind": "internal-register-window", "access": "mode-dependent; 0004-0007 and 000F are external in modes 0-3"},
+    {"start": "0015", "end": "007F", "kind": "external-memory", "access": "read-write"},
+    {"start": "0080", "end": "00FF", "kind": "ram-window", "access": "internal except mode 3 when RAME=1; otherwise external"},
+    {"start": "0100", "end": "F7FF", "kind": "mode-dependent-memory", "access": "external or relocated ROM according to operating mode and mask option"},
+    {"start": "F800", "end": "FFFF", "kind": "mode-dependent-rom-vector-window", "access": "internal or external according to operating mode; reset-vector exception in mode 0"}
+  ],
+  "registers": [
+    {"address": "0000", "name": "P1DDR", "read": "FF", "write": "one selects output", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and section 3.1.8, printed pages 2-18 to 2-19 and 3-14 to 3-18"}},
+    {"address": "0001", "name": "P2DDR", "read": "FF", "write": "one selects output subject to timer and SCI overrides", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 3.1.8-3.1.9, printed pages 3-14 to 3-22"}},
+    {"address": "0002", "name": "PORT1", "read": "physical pin levels", "write": "output latch", "reset": "output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 3.1.8, printed pages 3-14 to 3-18"}},
+    {"address": "0003", "name": "PORT2", "read": "PC2:PC0 in bits 7:5 and physical P24:P20 in bits 4:0", "write": "output latch except P21; timer and SCI override selected pins", "reset": "DDR=00; output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 3.1.9.1-3.1.9.4 and figure 3-11, printed pages 3-18 to 3-22"}},
+    {"address": "0004", "name": "P3DDR", "read": "PORT3 data in modes 4 and 7", "write": "one selects output in modes 4 and 7", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and section 2.2.1, printed pages 2-18 to 2-19"}},
+    {"address": "0005", "name": "P4DDR", "read": "FF", "write": "one selects output/address function in modes that expose Port 4", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and sections 2.1.2-2.2.1, printed pages 2-5 to 2-19"}},
+    {"address": "0006", "name": "PORT3", "read": "mode-dependent pin or latched-bus data", "write": "mode-dependent output data", "reset": "output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and sections 2.2.1 and 3.2, printed pages 2-18 to 2-19 and 3-23 onward"}},
+    {"address": "0007", "name": "PORT4", "read": "physical pin levels when configured as port", "write": "output latch", "reset": "output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and sections 2.1.2-2.2.1, printed pages 2-5 to 2-19"}},
+    {"address": "0008", "name": "TCSR", "read": "ICF OCF TOF EICI EOCI ETOI IEDG OLVL", "write": "control bits 4:0; status bits read-only", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 7.1.4 and figure 7-5, printed pages 7-5 to 7-6"}},
+    {"address": "0009", "name": "FRC_MSB", "read": "counter high and latch low", "write": "preset complete counter to FFF8 regardless of data", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 7.1.1, printed pages 7-2 to 7-3"}},
+    {"address": "000A", "name": "FRC_LSB", "read": "latched low byte", "write": "no documented effect", "reset": "read buffer 00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 7.1.1, printed pages 7-2 to 7-3"}},
+    {"address": "000B", "name": "OCR_MSB", "read": "output compare high", "write": "output compare high and inhibit compare one E-cycle", "reset": "FF", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 7.1.2 and figure 7-3, printed pages 7-3 to 7-4"}},
+    {"address": "000C", "name": "OCR_LSB", "read": "output compare low", "write": "output compare low", "reset": "FF", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 7.1.2, printed pages 7-3 to 7-4"}},
+    {"address": "000D", "name": "ICR_MSB", "read": "input capture high and inhibit transfer for following negative E half-cycle", "write": "no documented effect", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 7.1.3 and figure 7-4, printed pages 7-4 to 7-5"}},
+    {"address": "000E", "name": "ICR_LSB", "read": "input capture low", "write": "no documented effect", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 7.1.3, printed pages 7-4 to 7-5"}},
+    {"address": "000F", "name": "P3CSR", "read": "Port 3 handshake status/control in modes 4 and 7", "write": "Port 3 handshake control in modes 4 and 7", "reset": "documented control reset state", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and section 3.2, printed pages 2-18 and 3-23 onward"}},
+    {"address": "0010", "name": "RMCR", "read": "write-only", "write": "CC1 CCO SS1 SS0 in low nibble", "reset": "0", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 6.1.1 and figures 6-3 to 6-5, printed pages 6-2 to 6-4"}},
+    {"address": "0011", "name": "TRCSR", "read": "RDRF ORFE TDRE RIE RE TIE TE WU", "write": "control bits 4:0; status bits read-only", "reset": "20", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 6.1.2 and figure 6-6, printed pages 6-5 to 6-6"}},
+    {"address": "0012", "name": "RDR", "read": "last received byte", "write": "no documented effect", "reset": "data undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 6.1.3, printed page 6-6"}},
+    {"address": "0013", "name": "TDR", "read": "write-only", "write": "next transmit byte; clears armed TDRE", "reset": "data undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 6.1.2-6.1.3 and 6.4.1, printed pages 6-5 to 6-6 and 6-9"}},
+    {"address": "0014", "name": "RAMCR", "read": "STBY_PWR RAME xxxxxx", "write": "STBY_PWR and RAME", "reset": "RAME set only with valid standby supply; STBY_PWR unaffected", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 3.1.5.1.3, printed pages 3-12 to 3-13"}}
+  ],
+  "timer": {
+    "counter": "16-bit wrapping up-counter clocked once per E-cycle; reset 0000; a high-address write presets FFF8",
+    "coherent_read": "reading high latches low; low reads return that latch",
+    "output_compare": "match sets OCF and transfers OLVL to P21; high-byte write inhibits comparison for one E-cycle",
+    "input_capture": "selected P20 edge transfers the synchronized counter and sets ICF on the second negative E half-cycle; high-byte read inhibits one transfer",
+    "flag_clear": {"ICF": "read TCSR while set, then read ICR_MSB", "OCF": "read TCSR while set, then write either OCR byte", "TOF": "read TCSR while set, then read FRC_MSB"},
+    "interrupt": "enabled ICF, OCF, and TOF request IRQ2 with distinct priority vectors",
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "chapter 7, sections 7.1.1-7.1.4, printed pages 7-1 to 7-6"}
+  },
+  "gpio": {
+    "port1": "eight independent DDR pins; reads sample physical pins even for outputs",
+    "port2": "five DDR pins plus mode bits in read bits 7:5; P20/P21 timer and P22:P24 SCI functions override GPIO when enabled",
+    "port3_port4": "register addresses are external in expanded multiplexed modes 0-3",
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 2.2.1 and 3.1.8-3.2, printed pages 2-18 to 2-19 and 3-14 onward"}
+  },
+  "sci": {
+    "clock_modes": {"00": "internal bi-phase", "01": "internal NRZ", "10": "internal NRZ with bit clock on P22", "11": "external 8x NRZ clock on P22"},
+    "internal_divisors": {"00": 16, "01": 128, "10": 1024, "11": 4096},
+    "frame": "one start, eight data bits least-significant first, one stop, no hardware parity",
+    "transmitter": "TE rising sends nine marks; TDR transfers at a bit boundary and sets TDRE; status-read-before-TDR-write is required to clear TDRE",
+    "receiver": "valid stop transfers data and sets RDRF; missing stop sets ORFE without RDRF; full RDR causes overrun and inhibits transfer",
+    "flag_clear": "TRCSR read followed by RDR read clears the RDRF/ORFE bits observed",
+    "wake_up": "WU inhibits receive flags until ten consecutive marks",
+    "interrupt": "RIE enables RDRF/ORFE and TIE enables TDRE; all share FFF0:FFF1",
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "chapter 6, sections 6.1-6.6, printed pages 6-1 to 6-12"}
+  },
+  "operating_modes": {
+    "mode2": "expanded multiplexed ROMless with internal registers and RAM when RAME=1; Port 3/4 register addresses external",
+    "mode3": "expanded multiplexed ROMless/RAMless; RAM and Port 3/4 register addresses external",
+    "other_modes": "documented but outside the first normalized expanded-bus RTL profile",
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 2.1-2.4 and figure 2-17, printed pages 2-1 to 2-23"}
+  },
+  "memory_control": {
+    "RAME": "read/write bit 6; internal RAM decode enabled except mode 3; reset depends on standby supply",
+    "STBY_PWR": "read/write retained bit 7, not affected by silicon reset, cleared below the standby threshold",
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 3.1.5.1, printed pages 3-11 to 3-13"}
+  },
+  "interrupts": [
+    {"source": "reset", "vector": "FFFE:FFFF", "priority": 0},
+    {"source": "nmi", "vector": "FFFC:FFFD", "priority": 1},
+    {"source": "swi", "vector": "FFFA:FFFB", "priority": "synchronous"},
+    {"source": "irq1-or-is3", "vector": "FFF8:FFF9", "priority": 2},
+    {"source": "timer-input-capture", "vector": "FFF6:FFF7", "priority": 3},
+    {"source": "timer-output-compare", "vector": "FFF4:FFF5", "priority": 4},
+    {"source": "timer-overflow", "vector": "FFF2:FFF3", "priority": 5},
+    {"source": "sci", "vector": "FFF0:FFF1", "priority": 6}
+  ],
+  "implementation_scope": {
+    "current_profile": "Normalized mode-2/mode-3 expanded-bus integration. Other modes, physical bus multiplexing, Port 3 handshake, bi-phase SCI, and external-clock SCI remain separate profiles.",
+    "undefined_output_latches": "RTL selects deterministic zero after reset without claiming that manufacturer-undefined silicon latch value.",
+    "standby_retention": "RTL exposes standby validity without claiming analog threshold or power-domain retention equivalence.",
+    "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
+  }
+}
