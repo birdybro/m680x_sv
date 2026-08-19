@@ -74,7 +74,7 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
-	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core -GARCHITECTURE=1 \
+	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core "-GARCHITECTURE=2'b01" \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core "-GARCHITECTURE=2'b10" \
@@ -83,7 +83,7 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6805_core \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6805/m6805_core.sv
-	$(VERILATOR) --lint-only --assert -Wall --top-module m6805_core -GHITACHI_PROFILE=1 \
+	$(VERILATOR) --lint-only --assert -Wall --top-module m6805_core "-GHITACHI_PROFILE=1'b1" \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6805/m6805_core.sv
 	$(VERILATOR) --lint-only --assert -Wall --top-module mc68705p5_mcu \
@@ -122,7 +122,7 @@ test-m6801: test-m6801-opcodes
 test-m6801-opcodes:
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_opcodes \
-		-GTEST_ARCHITECTURE=1 -Mdir build/obj_m6801_opcodes -o Vtb_m6801_opcodes \
+		"-GTEST_ARCHITECTURE=2'b01" -Mdir build/obj_m6801_opcodes -o Vtb_m6801_opcodes \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		sim/generated/m6800_opcode_vectors_pkg.sv rtl/m6800/m6800_core.sv \
 		sim/tb_m6800_opcodes.sv
@@ -163,7 +163,7 @@ test-hd6301-opcodes:
 test-hd6305-opcodes:
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6805_opcodes \
-		-GTEST_HITACHI=1 -Mdir build/obj_hd6305_opcodes -o Vtb_hd6305_opcodes \
+		"-GTEST_HITACHI=1'b1" -Mdir build/obj_hd6305_opcodes -o Vtb_hd6305_opcodes \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		sim/generated/m6805_opcode_vectors_pkg.sv rtl/m6805/m6805_core.sv \
 		sim/tb_m6805_opcodes.sv
@@ -206,7 +206,7 @@ test-random-m6800:
 test-random-m6801:
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_random_m6800 \
-		-GTEST_ARCHITECTURE=1 -Mdir build/obj_random_m6801 -o Vtb_random_m6801 \
+		"-GTEST_ARCHITECTURE=2'b01" -Mdir build/obj_random_m6801 -o Vtb_random_m6801 \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		sim/generated/random_programs_pkg.sv rtl/m6800/m6800_core.sv sim/tb_random_m6800.sv
 	build/obj_random_m6801/Vtb_random_m6801
@@ -230,7 +230,7 @@ test-random-m6805:
 test-random-hd6305:
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_random_m6805 \
-		-GTEST_HITACHI=1 -Mdir build/obj_random_hd6305 -o Vtb_random_hd6305 \
+		"-GTEST_HITACHI=1'b1" -Mdir build/obj_random_hd6305 -o Vtb_random_hd6305 \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		sim/generated/random_programs_pkg.sv rtl/m6805/m6805_core.sv sim/tb_random_m6805.sv
 	build/obj_random_hd6305/Vtb_random_hd6305
