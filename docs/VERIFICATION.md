@@ -25,7 +25,7 @@ The committed tests cover:
 | Documented encodings executed in Python and RTL | 1,064 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 54 |
+| Python unit tests | 56 |
 | M6800 directed core checks | 28 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
@@ -57,11 +57,15 @@ directed suites rather than being silently excluded from all testing.
 Directed M6800-lineage tests cover reset vectors, clock-enable and bus-ready
 stalls, arithmetic, stores, branches, calls/returns, SWI/RTI, IRQ, NMI, and WAI
 entry without a second stack frame. They check stack byte order and vector bus
-addresses.
+addresses. Focused model and RTL traces also prove that MC6801 retires the
+instruction following CLI or an I-clearing TAP before accepting IRQ, while
+HD6301 waits the documented two machine cycles.
 
 Directed M6805-lineage tests cover reset, stalls, arithmetic, direct writes,
 BSR/RTS, the five-byte interrupt frame, vector fetch, and RTI restoration. The
-MC68705P5 suite adds register/RAM decode, DDR behavior, mixed-direction GPIO
+HD6305 profile separately proves that a pending interrupt is accepted only
+after the instruction following CLI. The MC68705P5 suite adds register/RAM
+decode, DDR behavior, mixed-direction GPIO
 reads, timer underflow/mask/request clearing, simultaneous external/timer
 priority, distinct vectors, and firmware-memory decode.
 
@@ -94,12 +98,12 @@ Representative generic Yosys 0.68 results from the current source are:
 
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
-| M6800 | 6,047 | 201 |
-| MC6801 | 6,035 | 201 |
-| HD6301 | 7,041 | 201 |
-| M6805 | 3,577 | 169 |
-| HD6305 | 3,628 | 169 |
-| MC68705P5 integration | 3,310 | 963 |
+| M6800 | 6,012 | 203 |
+| MC6801 | 6,018 | 203 |
+| HD6301 | 7,057 | 203 |
+| M6805 | 3,609 | 169 |
+| HD6305 | 3,611 | 170 |
+| MC68705P5 integration | 3,312 | 963 |
 
 Cell counts are tool/version/technology dependent and are smoke-test evidence,
 not optimization guarantees. Each synthesis script runs structural `check

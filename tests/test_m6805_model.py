@@ -172,6 +172,18 @@ class M6805ModelTests(unittest.TestCase):
         self.assertEqual(model.memory[0x7F], 0x10)
         self.assertEqual(model.state.sp, 0x7E)
 
+    def test_hd6305_executes_instruction_after_cli_before_irq(self) -> None:
+        model = _fixture("hd6305", 0x9A)
+        model.memory[0x1001] = 0x9D
+        model.memory.load(0xFFFA, [0x25, 0x00])
+        model.set_flag("I", True)
+        model.step()
+        self.assertFalse(model.service_irq())
+        model.step()
+        self.assertEqual(model.state.pc, 0x1002)
+        self.assertTrue(model.service_irq())
+        self.assertEqual(model.state.pc, 0x2500)
+
     def test_reset_rsp_and_hd6305_daa(self) -> None:
         reset = _fixture("m6805", 0x9C)
         reset.memory.load(0xFFFE, [0xAB, 0xCD])

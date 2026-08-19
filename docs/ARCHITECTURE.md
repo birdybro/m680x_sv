@@ -66,6 +66,12 @@ the HD6301 immediate-mask, exchange, and sleep instructions. NMI is edge-latched
 IRQ is level-sensitive and masked by I. `interrupt_vector_o` identifies the
 selected reset/NMI/IRQ class to a future device wrapper.
 
+The profile also controls the documented I-mask clearing boundary. MC6801
+defers a pending maskable interrupt through the following instruction after
+CLI or an I-clearing TAP. HD6301 uses its documented two-machine-cycle window.
+Setting I remains immediate, and the base M6800 profile does not invent a delay
+that its selected manual does not specify.
+
 The normalized core emits documented architectural reads and writes and uses
 padding states to preserve instruction totals. The directed MC6800 interrupt
 test also checks the primary manual's reset, IRQ, NMI, SWI, WAI, and RTI stack
@@ -88,6 +94,8 @@ The M6805 path contains A, eight-bit X, device-shaped SP/PC, and H/I/N/Z/C
 state. It implements the distinct M6805 opcode map, bit operations, three indexed
 forms, fixed-window stack arithmetic, five-byte interrupt frame, and the
 documented Hitachi additions. It does not share the M6800 execution state machine.
+The Hitachi profile defers maskable interrupt recognition until the instruction
+following CLI retires, independently of the Motorola profile.
 
 ## MC68705P5 integration
 

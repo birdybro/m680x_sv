@@ -107,6 +107,7 @@ module m6800_core #(
   logic nmi_pending;
   logic [15:0] vector_address;
   logic [7:0] immediate_mask;
+  logic [1:0] interrupt_enable_delay;
 
   opcode_decode_t fetched_decode;
   logic decoded_sane;
@@ -152,6 +153,14 @@ module m6800_core #(
 
   function automatic logic nmi_requested();
     nmi_requested = nmi_pending || (nmi_previous && !nmi_n_i);
+  endfunction
+
+  function automatic logic [1:0] mask_clear_delay();
+    case (ARCHITECTURE)
+      2'd1: mask_clear_delay = 2'd1;
+      2'd2: mask_clear_delay = 2'd2;
+      default: mask_clear_delay = 2'd0;
+    endcase
   endfunction
 
   function automatic logic is_word_read(input operation_t operation);
@@ -467,6 +476,7 @@ module m6800_core #(
         OP_NOP: finish_to(ST_FETCH);
         OP_TAP: begin
           condition_codes <= accumulator_a[5:0];
+          interrupt_enable_delay <= accumulator_a[CCR_I] ? 2'd0 : mask_clear_delay();
           finish_to(ST_FETCH);
         end
         OP_TPA: begin
@@ -489,6 +499,8 @@ module m6800_core #(
         end
         OP_CLI, OP_SEI: begin
           condition_codes[CCR_I] <= (decoded.operation == OP_SEI);
+          interrupt_enable_delay <=
+            (decoded.operation == OP_SEI) ? 2'd0 : mask_clear_delay();
           finish_to(ST_FETCH);
         end
         OP_SBA, OP_CBA: begin
@@ -620,7 +632,10 @@ module m6800_core #(
       double_value = {accumulator_a, accumulator_b};
       case (single_operation)
         OP_NOP: ;
-        OP_TAP: condition_codes <= accumulator_a[5:0];
+        OP_TAP: begin
+          condition_codes <= accumulator_a[5:0];
+          interrupt_enable_delay <= accumulator_a[CCR_I] ? 2'd0 : mask_clear_delay();
+        end
         OP_TPA: accumulator_a <= {2'b11, condition_codes};
         OP_INX, OP_DEX: begin
           index_register <= index_register +
@@ -630,7 +645,11 @@ module m6800_core #(
         end
         OP_CLV, OP_SEV: condition_codes[CCR_V] <= (single_operation == OP_SEV);
         OP_CLC, OP_SEC: condition_codes[CCR_C] <= (single_operation == OP_SEC);
-        OP_CLI, OP_SEI: condition_codes[CCR_I] <= (single_operation == OP_SEI);
+        OP_CLI, OP_SEI: begin
+          condition_codes[CCR_I] <= (single_operation == OP_SEI);
+          interrupt_enable_delay <=
+            (single_operation == OP_SEI) ? 2'd0 : mask_clear_delay();
+        end
         OP_SBA, OP_CBA: begin
           byte_result = sub8(accumulator_a, accumulator_b, 1'b0);
           if (single_operation == OP_SBA) accumulator_a <= byte_result.value;
@@ -851,6 +870,7 @@ module m6800_core #(
       nmi_pending <= 1'b0;
       vector_address <= 16'hfffa;
       immediate_mask <= 8'h00;
+      interrupt_enable_delay <= 2'd0;
       retire_o <= 1'b0;
       illegal_o <= 1'b0;
       undefined_o <= 1'b0;
@@ -862,6 +882,9 @@ module m6800_core #(
       interrupt_ack_o <= 1'b0;
       nmi_previous <= nmi_n_i;
       if (nmi_previous && !nmi_n_i) nmi_pending <= 1'b1;
+      if (interrupt_enable_delay != 2'd0) begin
+        interrupt_enable_delay <= interrupt_enable_delay - 2'd1;
+      end
       if (state != ST_FETCH && state != ST_RESET_HIGH && state != ST_RESET_LOW &&
           state != ST_WAITING && state != ST_SLEEPING && state != ST_ILLEGAL) begin
         cycles_left <= cycles_left - 4'd1;
@@ -876,7 +899,8 @@ module m6800_core #(
           state <= ST_FETCH;
         end
         ST_FETCH: begin
-          if (nmi_requested() || (!irq_n_i && !condition_codes[CCR_I])) begin
+          if (nmi_requested() ||
+              (!irq_n_i && !condition_codes[CCR_I] && (interrupt_enable_delay == 2'd0))) begin
             phase <= 3'd0;
             interrupt_is_wait <= 1'b0;
             external_interrupt <= 1'b1;

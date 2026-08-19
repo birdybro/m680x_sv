@@ -45,7 +45,7 @@
       "addressing_modes": ["accumulator", "inherent", "immediate", "relative", "indexed-unsigned-8", "direct", "extended", "immediate-mask-direct", "immediate-mask-indexed"],
       "stack_behavior": "M6801-compatible 16-bit descending stack; interrupt entry stacks seven bytes and SP identifies the next free byte.",
       "base_reset_behavior": "M6801-compatible reset plus device register initialization and reset-vector fetch from FFFE:FFFF.",
-      "base_interrupt_behavior": "M6801-compatible priorities plus an unmaskable documented TRAP at FFEE:FFEF for address or opcode error.",
+      "base_interrupt_behavior": "M6801-compatible priorities plus an unmaskable documented TRAP at FFEE:FFEF for address or opcode error. After CLI or an I-clearing TAP, maskable recognition waits the documented two machine cycles.",
       "opcode_lineage": "M6801 instruction set plus AIM, OIM, EIM, TIM, XGDX, and SLP, with Hitachi-specific cycle counts.",
       "undefined_behavior": ["Only opcode and address errors described by the handbook are claimed to trap; electrical or revision-dependent behavior beyond those conditions remains unclaimed."],
       "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD6301V1 section 3.2, printed pages 170-178; interrupt table 2-7-1"]}]
@@ -57,7 +57,7 @@
       "addressing_modes": ["inherent", "accumulator", "index-register", "immediate", "direct", "extended", "relative", "indexed-no-offset", "indexed-8-offset", "indexed-16-offset", "bit-set-clear", "bit-test-branch"],
       "stack_behavior": "M6805-compatible descending device-window stack with fixed high SP bits; SP identifies the next free location.",
       "base_reset_behavior": "Initialize SP to the device top, initialize documented peripheral registers, set I, and fetch the device reset vector.",
-      "base_interrupt_behavior": "M6805-compatible entry and stacking with separate device vectors for external, timer, wait-timer, SCI, and secondary sources.",
+      "base_interrupt_behavior": "M6805-compatible entry and stacking with separate device vectors for external, timer, wait-timer, SCI, and secondary sources. A pending maskable interrupt is recognized after the instruction following CLI.",
       "opcode_lineage": "M6805 instruction set with documented DAA, WAIT, and STOP behavior and Hitachi-specific cycles; unassigned cells remain undefined.",
       "undefined_behavior": ["Operation-code-map cells marked '-' are undefined."],
       "references": [{"id": "hitachi-hd6305-series-handbook-1988", "locators": ["table 1-7, printed pages 25-26; HD6305U0/V0 section 2"]}]

@@ -66,6 +66,7 @@ class M6800Model:
         self.memory = memory if memory is not None else Memory()
         self.state = state if state is not None else M6800State()
         self.instruction_count = 0
+        self._irq_defer_cycles = 0
         self.last_trace: InstructionTrace | None = None
         self._accesses: list[BusAccess] = []
 
@@ -92,6 +93,7 @@ class M6800Model:
         self.set_flag("I", True)
         self.state.waiting = False
         self.state.sleeping = False
+        self._irq_defer_cycles = 0
         self._accesses = []
         self.state.pc = self._read16(0xFFFE, "reset vector")
         self.last_trace = None
@@ -101,7 +103,7 @@ class M6800Model:
 
         if source not in {"nmi", "irq"}:
             raise ValueError("source must be 'nmi' or 'irq'")
-        if source == "irq" and self.flag("I"):
+        if source == "irq" and (self.flag("I") or self._irq_defer_cycles):
             return False
         self._accesses = []
         if not self.state.waiting:
@@ -118,6 +120,7 @@ class M6800Model:
         if self.state.waiting or self.state.sleeping:
             raise RuntimeError("processor is in a low-power state; service an interrupt or reset")
         before = self.state.snapshot()
+        defer_before = self._irq_defer_cycles
         start_pc = self.state.pc
         self._accesses = []
         opcode = self._fetch8("opcode")
@@ -139,6 +142,16 @@ class M6800Model:
         operand, effective_address = self._decode_operand(record)
         trace.effective_address = effective_address
         self._execute(record, operand, effective_address)
+        if defer_before:
+            self._irq_defer_cycles = max(0, defer_before - record["cycles"])
+        if record["mnemonic"] == "CLI" and self.architecture != "m6800":
+            self._irq_defer_cycles = 1 if self.architecture == "m6801" else 2
+        elif record["mnemonic"] == "SEI":
+            self._irq_defer_cycles = 0
+        elif record["mnemonic"] == "TAP" and self.architecture != "m6800":
+            self._irq_defer_cycles = 0 if self.flag("I") else (
+                1 if self.architecture == "m6801" else 2
+            )
         self._validate_state()
         trace.state_after = self.state.snapshot()
         trace.accesses = list(self._accesses)

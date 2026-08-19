@@ -198,6 +198,22 @@ class M6800ModelTests(unittest.TestCase):
         self.assertEqual(model.state.pc, 0x1000)
         self.assertEqual(model.state.sp, 0x4000)
 
+    def test_m6801_and_hd6301_defer_maskable_irq_after_cli(self) -> None:
+        for architecture, following_nops in (("m6801", 1), ("hd6301", 2)):
+            model = _fixture(architecture, 0x0E)
+            model.memory.load(0x1001, [0x01, 0x01, 0x01])
+            model.memory.load(0xFFF8, [0x24, 0x00])
+            model.set_flag("I", True)
+            model.step()
+            self.assertFalse(model.flag("I"), architecture)
+            self.assertFalse(model.service_interrupt("irq"), architecture)
+            for index in range(following_nops):
+                model.step()
+                if index + 1 < following_nops:
+                    self.assertFalse(model.service_interrupt("irq"), architecture)
+            self.assertTrue(model.service_interrupt("irq"), architecture)
+            self.assertEqual(model.state.pc, 0x2400)
+
 
 if __name__ == "__main__":
     unittest.main()

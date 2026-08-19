@@ -1636,6 +1636,7 @@ module m6805_core #(
   logic [2:0] phase;
   logic external_interrupt;
   logic decoded_sane;
+  logic interrupt_enable_delay;
 
   function automatic logic [15:0] pc_value(input logic [15:0] value);
     pc_value = value & PC_MASK;
@@ -1887,6 +1888,8 @@ module m6805_core #(
         end
         OP_CLI, OP_SEI: begin
           condition_codes[CCR_I] <= (decoded.operation == OP_SEI);
+          interrupt_enable_delay <=
+            (decoded.operation == OP_CLI) && HITACHI_PROFILE;
           finish_to(ST_FETCH);
         end
         OP_DAA: begin
@@ -1903,6 +1906,7 @@ module m6805_core #(
         end
         OP_STOP, OP_WAIT: begin
           condition_codes[CCR_I] <= 1'b0;
+          interrupt_enable_delay <= 1'b0;
           if (decoded.operation == OP_STOP) begin
             finish_to(ST_STOPPED);
           end else begin
@@ -2036,6 +2040,7 @@ module m6805_core #(
       branch_displacement <= 8'h00;
       phase <= 3'd0;
       external_interrupt <= 1'b0;
+      interrupt_enable_delay <= 1'b0;
       retire_o <= 1'b0;
       illegal_o <= 1'b0;
       undefined_o <= 1'b0;
@@ -2044,6 +2049,7 @@ module m6805_core #(
       retire_o <= 1'b0;
       undefined_o <= 1'b0;
       interrupt_ack_o <= 1'b0;
+      if (interrupt_enable_delay) interrupt_enable_delay <= 1'b0;
       if (state != ST_FETCH && state != ST_RESET_HIGH && state != ST_RESET_LOW &&
           state != ST_WAITING && state != ST_STOPPED && state != ST_ILLEGAL) begin
         cycles_left <= cycles_left - 4'd1;
@@ -2058,7 +2064,7 @@ module m6805_core #(
           state <= ST_FETCH;
         end
         ST_FETCH: begin
-          if (!irq_n_i && !condition_codes[CCR_I]) begin
+          if (!irq_n_i && !condition_codes[CCR_I] && !interrupt_enable_delay) begin
             vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
             phase <= 3'd0;

@@ -60,6 +60,7 @@ class M6805Model:
         self.state = state if state is not None else M6805State()
         self.irq_n = True
         self.instruction_count = 0
+        self._irq_defer_instructions = 0
         self.last_trace: InstructionTrace | None = None
         self._accesses: list[BusAccess] = []
 
@@ -80,6 +81,7 @@ class M6805Model:
     def reset(self) -> None:
         self.state = M6805State()
         self.set_flag("I", True)
+        self._irq_defer_instructions = 0
         self._accesses = []
         self.state.pc = self._read16(0xFFFE, "reset vector")
         self.last_trace = None
@@ -87,7 +89,7 @@ class M6805Model:
     def service_irq(self) -> bool:
         """Accept the external maskable interrupt at an instruction boundary."""
 
-        if self.flag("I"):
+        if self.flag("I") or self._irq_defer_instructions:
             return False
         self._accesses = []
         self.state.waiting = False
@@ -102,6 +104,7 @@ class M6805Model:
         if self.state.waiting or self.state.stopped:
             raise RuntimeError("processor is in a low-power state; service an interrupt or reset")
         before = self.state.snapshot()
+        defer_before = self._irq_defer_instructions
         start_pc = self.state.pc
         self._accesses = []
         opcode = self._fetch8("opcode")
@@ -123,6 +126,12 @@ class M6805Model:
         operand, address, displacement = self._decode_operand(record)
         trace.effective_address = address
         self._execute(record, operand, address, displacement)
+        if defer_before:
+            self._irq_defer_instructions = defer_before - 1
+        if record["mnemonic"] == "CLI" and self.architecture == "hd6305":
+            self._irq_defer_instructions = 1
+        elif record["mnemonic"] in {"SEI", "STOP", "WAIT"}:
+            self._irq_defer_instructions = 0
         self._validate_state()
         trace.state_after = self.state.snapshot()
         trace.accesses = list(self._accesses)

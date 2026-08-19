@@ -81,8 +81,7 @@ cycle boundaries being checked.
 ## Known limitations
 
 The physical MC6800 signal wrapper, MC6801/MC6803 and Hitachi MCU peripherals,
-HD6301 TRAP entry, documented delayed-CLI interrupt recognition on applicable
-MC6801/Hitachi devices, complete manufacturer bus waveforms, and several P5
+HD6301 TRAP entry, complete manufacturer bus waveforms, and several P5
 timer/programming modes remain incomplete. Manufacturer-undefined reset values,
 reserved opcodes, analog oscillators, EPROM voltage physics, pad strength, and
 metastability are not assigned invented silicon behavior. These limitations are
