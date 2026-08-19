@@ -1,0 +1,17 @@
+.reference/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# HDL tools and generated traces
+build/
+obj_dir/
+*.fst
+*.vcd
+*.wlf
+
+# Editors and operating systems
+*~
+.DS_Store
