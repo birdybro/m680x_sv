@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  complete-gate:
+    name: Complete committed-source gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install open-source HDL toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends iverilog verilator yosys
+
+      - name: Report tool versions
+        run: |
+          python3 --version
+          verilator --version
+          iverilog -V
+          yosys -V
+
+      # The gate verifies reference metadata and digests, but deliberately does
+      # not download or redistribute the copyrighted manufacturer manuals.
+      - name: Run authoritative gate
+        run: make ci

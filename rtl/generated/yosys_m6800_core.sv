@@ -2504,7 +2504,11 @@ module m6800_core #(
         ST_MASK_IMMEDIATE: begin
           immediate_mask <= data_i;
           program_counter <= program_counter + 16'h0001;
-          state <= (decoded.mode == AM_DIRECT) ? ST_MASK_DIRECT : ST_MASK_INDEXED;
+          if (decoded.mode == AM_DIRECT) begin
+            state <= ST_MASK_DIRECT;
+          end else begin
+            state <= ST_MASK_INDEXED;
+          end
         end
         ST_MASK_DIRECT: begin
           program_counter <= program_counter + 16'h0001;
@@ -2587,7 +2591,11 @@ module m6800_core #(
               finish_to(ST_WAITING);
             end else begin
               condition_codes[CCR_I] <= 1'b1;
-              state <= external_interrupt ? ST_INTERRUPT_POST : ST_INTERRUPT_VECTOR_HIGH;
+              if (external_interrupt) begin
+                state <= ST_INTERRUPT_POST;
+              end else begin
+                state <= ST_INTERRUPT_VECTOR_HIGH;
+              end
             end
           end else begin
             phase <= phase + 3'd1;

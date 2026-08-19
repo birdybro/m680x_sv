@@ -1,8 +1,10 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
+IVERILOG ?= iverilog
+VVP ?= vvp
 YOSYS ?= yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6801-opcodes test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6305-opcodes test-alu test-alu-rtl test-cycle test-interrupts test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -27,7 +29,10 @@ help:
 	@echo "  test-hd6305-opcodes compare all documented HD6305 encodings to the model"
 	@echo "  test-alu    run Python and RTL exhaustive practical ALU spaces"
 	@echo "  test-alu-rtl run the compiled SystemVerilog ALU regression"
+	@echo "  test-cycle  verify documented instruction cycles and semantic bus accesses"
+	@echo "  test-interrupts run reset, IRQ, NMI, SWI, WAI, and RTI regressions"
 	@echo "  test-random run 5,120 deterministic model/RTL retirement comparisons"
+	@echo "  test-iverilog run both directed core suites with the secondary simulator"
 	@echo "  formal      prove bounded core safety and stall invariants with Yosys"
 	@echo "  synth       synthesize every CPU architecture and record generic statistics"
 	@echo "  quick       run the fast local gate"
@@ -168,6 +173,10 @@ test-alu-rtl:
 		rtl/common/m680x_alu_pkg.sv sim/tb_alu.sv
 	build/obj_alu/Vtb_alu
 
+test-cycle: test-m6800-opcodes test-m6801-opcodes test-hd6301-opcodes test-m6805-opcodes test-hd6305-opcodes
+
+test-interrupts: test-m6800-rtl test-m6805-rtl
+
 test-random: test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305
 
 test-random-m6800:
@@ -210,6 +219,15 @@ test-random-hd6305:
 		sim/generated/random_programs_pkg.sv rtl/m6805/m6805_core.sv sim/tb_random_m6805.sv
 	build/obj_random_hd6305/Vtb_random_hd6305
 
+test-iverilog: spec-check
+	mkdir -p build/iverilog
+	$(IVERILOG) -g2012 -Wall -s tb_m6800_core -o build/iverilog/tb_m6800_core \
+		rtl/generated/yosys_m6800_core.sv sim/tb_m6800_core.sv
+	$(VVP) build/iverilog/tb_m6800_core
+	$(IVERILOG) -g2012 -Wall -s tb_m6805_core -o build/iverilog/tb_m6805_core \
+		rtl/generated/yosys_m6805_core.sv sim/tb_m6805_core.sv
+	$(VVP) build/iverilog/tb_m6805_core
+
 formal: spec-check
 	mkdir -p build
 	$(YOSYS) -ql build/formal_m6800.log -s formal/prove_m6800.ys
@@ -228,7 +246,7 @@ synth: spec-check
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 
-ci: quick
+ci: lint test test-alu-rtl test-m6800-rtl test-m6801-opcodes test-hd6301-opcodes test-m6805-rtl test-hd6305-opcodes test-random test-iverilog formal synth
 
 clean:
 	rm -rf build obj_dir

@@ -1902,7 +1902,11 @@ module m6805_core #(
         end
         OP_STOP, OP_WAIT: begin
           condition_codes[CCR_I] <= 1'b0;
-          finish_to((decoded.operation == OP_STOP) ? ST_STOPPED : ST_WAITING);
+          if (decoded.operation == OP_STOP) begin
+            finish_to(ST_STOPPED);
+          end else begin
+            finish_to(ST_WAITING);
+          end
         end
         OP_RTS: state <= ST_PULL_PC_HIGH;
         OP_RTI: begin
@@ -2136,7 +2140,11 @@ module m6805_core #(
         ST_BIT_ADDRESS: begin
           effective_address <= {8'h00, data_i};
           program_counter <= pc_value(program_counter + 16'h0001);
-          state <= (decoded.mode == AM_BIT_TEST_BRANCH) ? ST_BIT_DISPLACEMENT : ST_BIT_READ;
+          if (decoded.mode == AM_BIT_TEST_BRANCH) begin
+            state <= ST_BIT_DISPLACEMENT;
+          end else begin
+            state <= ST_BIT_READ;
+          end
         end
         ST_BIT_DISPLACEMENT: begin
           branch_displacement <= data_i;
