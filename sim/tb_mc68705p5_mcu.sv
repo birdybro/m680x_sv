@@ -77,6 +77,7 @@ module tb_mc68705p5_mcu;
     begin
       firmware[11'h7fe] = {5'h00, address_value[10:8]};
       firmware[11'h7ff] = address_value[7:0];
+      #1;
       reset_n = 1'b0;
       #1;
       if (!program_read || program_address != 11'h7fe) $fatal(1, "P5 reset vector high");

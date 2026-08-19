@@ -49,6 +49,7 @@ module tb_m6800_interrupt_delay #(
     begin
       memory[16'hfffe] = target[15:8];
       memory[16'hffff] = target[7:0];
+      #1;
       reset_n = 1'b0;
       #1;
       reset_n = 1'b1;

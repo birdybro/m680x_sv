@@ -76,6 +76,7 @@ module tb_random_m6805 #(
 
   task automatic initialize_program(input logic [7:0] selected_program);
     begin
+      #1;
       reset_n = 1'b0;
       #1;
       for (memory_index = 0; memory_index < 65536; memory_index = memory_index + 1) begin

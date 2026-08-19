@@ -69,6 +69,7 @@ module tb_m6805_opcodes #(
 
   task automatic initialize_fixture(input logic [7:0] opcode);
     begin
+      #1;
       reset_n = 1'b0;
       #1;
       for (memory_index = 0; memory_index < 65536; memory_index = memory_index + 1) begin
