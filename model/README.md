@@ -34,3 +34,11 @@ address, pre/post architectural state, and any manufacturer-undefined flags.
 Directed regressions cover wraparound addressing, call and interrupt stack byte
 order, SWI/RTI, WAI interrupt entry without double stacking, masking, reset
 vectors, and the Hitachi immediate-memory and exchange extensions.
+
+`m6805.py` is a separate instruction path for M6805 and HD6305. It executes all
+417 documented encodings while modeling the eight-bit X register, parameterized
+stack-pointer width, bit set/clear and bit-test branches, three indexed forms,
+IRQ-pin branches, five-byte interrupt frame, and Hitachi low-power instructions.
+The default five-bit stack window wraps within `$0060`–`$007f`, matching the
+concrete MC68705P5 behavior; other family members can select their documented
+stack width explicitly.
