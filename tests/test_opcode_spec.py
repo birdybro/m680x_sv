@@ -18,13 +18,15 @@ class OpcodeSpecificationTests(unittest.TestCase):
         cls.known_references = {item["id"] for item in cls.references["references"]}
         cls.m6800 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "m6800.json")
         cls.m6801 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "m6801.json")
+        cls.m6805 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "m6805.json")
+        cls.hd6305 = validate_opcodes.load_opcode_spec(ROOT / "spec" / "opcodes" / "hd6305.json")
 
     def test_repository_opcode_directory_is_valid(self) -> None:
         files, documented = validate_opcodes.validate_directory(
             ROOT / "spec" / "opcodes", self.references
         )
-        self.assertEqual(files, 2)
-        self.assertEqual(documented, 417)
+        self.assertEqual(files, 4)
+        self.assertEqual(documented, 834)
         self.assertEqual(
             sum(record["classification"] == "documented_instruction" for record in self.m6800["opcodes"]),
             197,
@@ -33,9 +35,17 @@ class OpcodeSpecificationTests(unittest.TestCase):
             sum(record["classification"] == "documented_instruction" for record in self.m6801["opcodes"]),
             220,
         )
+        self.assertEqual(
+            sum(record["classification"] == "documented_instruction" for record in self.m6805["opcodes"]),
+            207,
+        )
+        self.assertEqual(
+            sum(record["classification"] == "documented_instruction" for record in self.hd6305["opcodes"]),
+            210,
+        )
 
     def test_all_values_are_explicitly_classified(self) -> None:
-        for spec in (self.m6800, self.m6801):
+        for spec in (self.m6800, self.m6801, self.m6805, self.hd6305):
             self.assertEqual([record["opcode"] for record in spec["opcodes"]], list(range(256)))
             self.assertTrue(all(record["classification"] for record in spec["opcodes"]))
 
@@ -48,6 +58,49 @@ class OpcodeSpecificationTests(unittest.TestCase):
         self.assertEqual(self.m6801["opcodes"][0x20]["cycles"], 3)
         self.assertNotIn("C", self.m6800["opcodes"][0x8C]["flags_affected"])
         self.assertIn("C", self.m6801["opcodes"][0x8C]["flags_affected"])
+        self.assertEqual(self.m6805["opcodes"][0x8D]["classification"], "undefined_behavior")
+        self.assertEqual(self.hd6305["opcodes"][0x8D]["mnemonic"], "DAA")
+        self.assertEqual(self.m6805["opcodes"][0x8E]["classification"], "undefined_behavior")
+        self.assertEqual(self.hd6305["opcodes"][0x8E]["mnemonic"], "STOP")
+        self.assertEqual(self.m6805["opcodes"][0x20]["cycles"], 4)
+        self.assertEqual(self.hd6305["opcodes"][0x20]["cycles"], 3)
+
+    def test_m6805_bit_test_and_clear_flag_facts(self) -> None:
+        for opcode in range(0x10):
+            self.assertEqual(self.m6805["opcodes"][opcode]["flags_affected"], ["C"])
+            self.assertEqual(
+                self.m6805["opcodes"][opcode]["flag_semantics"]["C"],
+                "copy of the tested memory bit",
+            )
+        for spec in (self.m6805, self.hd6305):
+            for opcode in (0x3F, 0x4F, 0x5F, 0x6F, 0x7F):
+                self.assertEqual(spec["opcodes"][opcode]["flags_affected"], ["N", "Z"])
+                self.assertNotIn("C", spec["opcodes"][opcode]["flags_affected"])
+
+    def test_hd6305_cycle_adjustments_match_operation_map(self) -> None:
+        expected = {
+            0x3D: 4,
+            0x6D: 5,
+            0x7D: 4,
+            0x80: 8,
+            0x81: 5,
+            0x83: 10,
+            0x8D: 2,
+            0x8E: 4,
+            0x8F: 4,
+            0xAD: 5,
+            0xB7: 4,
+            0xBC: 2,
+            0xBD: 5,
+            0xDC: 4,
+            0xDD: 6,
+            0xFC: 2,
+            0xFD: 5,
+        }
+        self.assertEqual(
+            {opcode: self.hd6305["opcodes"][opcode]["cycles"] for opcode in expected},
+            expected,
+        )
 
     def test_daa_records_manufacturer_undefined_overflow(self) -> None:
         for spec in (self.m6800, self.m6801):

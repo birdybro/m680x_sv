@@ -719,7 +719,424 @@ def build_m6801() -> dict:
     }
 
 
-BUILDERS = {"m6800": build_m6800, "m6801": build_m6801}
+M6805_BRANCHES = {
+    0x20: ("BRA", "always"),
+    0x21: ("BRN", "never"),
+    0x22: ("BHI", "C=0 and Z=0"),
+    0x23: ("BLS", "C=1 or Z=1"),
+    0x24: ("BCC", "C=0"),
+    0x25: ("BCS", "C=1"),
+    0x26: ("BNE", "Z=0"),
+    0x27: ("BEQ", "Z=1"),
+    0x28: ("BHCC", "H=0"),
+    0x29: ("BHCS", "H=1"),
+    0x2A: ("BPL", "N=0"),
+    0x2B: ("BMI", "N=1"),
+    0x2C: ("BMC", "I=0"),
+    0x2D: ("BMS", "I=1"),
+    0x2E: ("BIL", "the external interrupt input is low"),
+    0x2F: ("BIH", "the external interrupt input is high"),
+}
+
+
+M6805_DATA_ROWS = {
+    0x0: "SUB",
+    0x1: "CMP",
+    0x2: "SBC",
+    0x3: "CPX",
+    0x4: "AND",
+    0x5: "BIT",
+    0x6: "LDA",
+    0x7: "STA",
+    0x8: "EOR",
+    0x9: "ADC",
+    0xA: "ORA",
+    0xB: "ADD",
+    0xC: "JMP",
+    0xD: "JSR",
+    0xE: "LDX",
+    0xF: "STX",
+}
+
+
+def _m6805_flag_facts(mnemonic: str) -> tuple[list[str], list[str], list[str], dict[str, str]]:
+    root = _operation_root(mnemonic)
+    read: list[str] = []
+    affected: list[str] = []
+    undefined: list[str] = []
+    semantics: dict[str, str] = {}
+
+    if root in {"ADD", "ADC"}:
+        affected = ["H", "N", "Z", "C"]
+        semantics = {
+            "H": "carry from result bit 3 into bit 4",
+            "N": "result bit 7",
+            "Z": "1 exactly when the result is zero",
+            "C": "carry out of result bit 7",
+        }
+        if root == "ADC":
+            read = ["C"]
+    elif root in {"SUB", "CMP", "SBC"} or mnemonic == "CPX":
+        affected = ["N", "Z", "C"]
+        semantics = {
+            "N": "result bit 7",
+            "Z": "1 exactly when the subtraction result is zero",
+            "C": "borrow from result bit 7",
+        }
+        if root == "SBC":
+            read = ["C"]
+    elif root in {"AND", "BIT", "LDA", "STA", "EOR", "ORA"} or mnemonic in {"LDX", "STX"}:
+        affected = ["N", "Z"]
+        semantics = {"N": "result bit 7", "Z": "1 exactly when the result is zero"}
+    elif root == "NEG":
+        affected = ["N", "Z", "C"]
+        semantics = {
+            "N": "result bit 7",
+            "Z": "1 exactly when the result is zero",
+            "C": "1 exactly when the original operand is nonzero",
+        }
+    elif root == "COM":
+        affected = ["N", "Z", "C"]
+        semantics = {"N": "result bit 7", "Z": "1 exactly when the result is zero", "C": "set"}
+    elif root in {"ASL", "ROL", "ROR", "ASR", "LSR"}:
+        affected = ["N", "Z", "C"]
+        semantics = {
+            "N": "result bit 7",
+            "Z": "1 exactly when the result is zero",
+            "C": "bit shifted out of the operand",
+        }
+        if root in {"ROL", "ROR"}:
+            read = ["C"]
+        if root == "LSR":
+            semantics["N"] = "cleared"
+    elif root in {"INC", "DEC"}:
+        affected = ["N", "Z"]
+        semantics = {"N": "result bit 7", "Z": "1 exactly when the result is zero"}
+    elif root == "TST":
+        affected = ["N", "Z"]
+        semantics = {"N": "operand bit 7", "Z": "1 exactly when the operand is zero"}
+    elif root == "CLR":
+        affected = ["N", "Z"]
+        semantics = {"N": "cleared", "Z": "set"}
+    elif mnemonic.startswith("BRSET") or mnemonic.startswith("BRCLR"):
+        affected = ["C"]
+        semantics = {"C": "copy of the tested memory bit"}
+    elif mnemonic == "DAA":
+        read = ["H", "C"]
+        affected = ["N", "Z", "C"]
+        semantics = {
+            "N": "adjusted result bit 7",
+            "Z": "1 exactly when the adjusted result is zero",
+            "C": "decimal carry selected by the manufacturer adjustment table",
+        }
+    elif mnemonic in {"CLC", "SEC", "CLI", "SEI"}:
+        flag = {"CLC": "C", "SEC": "C", "CLI": "I", "SEI": "I"}[mnemonic]
+        affected = [flag]
+        semantics = {flag: "set" if mnemonic in {"SEC", "SEI"} else "cleared"}
+    elif mnemonic in {"STOP", "WAIT"}:
+        affected = ["I"]
+        semantics = {"I": "cleared when entering the low-power mode"}
+    elif mnemonic == "RTI":
+        affected = ["H", "I", "N", "Z", "C"]
+        semantics = {flag: "restored from the stacked CCR" for flag in affected}
+    elif mnemonic == "SWI":
+        affected = ["I"]
+        semantics = {"I": "set after CCR is stacked"}
+    elif mnemonic in {"BCC", "BCS"}:
+        read = ["C"]
+    elif mnemonic in {"BNE", "BEQ"}:
+        read = ["Z"]
+    elif mnemonic in {"BHI", "BLS"}:
+        read = ["C", "Z"]
+    elif mnemonic in {"BHCC", "BHCS"}:
+        read = ["H"]
+    elif mnemonic in {"BPL", "BMI"}:
+        read = ["N"]
+    elif mnemonic in {"BMC", "BMS"}:
+        read = ["I"]
+    return read, affected, undefined, semantics
+
+
+def _m6805_register_facts(mnemonic: str, mode: str) -> tuple[list[str], list[str]]:
+    read = ["PC"]
+    written = ["PC"]
+    if mode in {"indexed-no-offset", "indexed-unsigned-8", "indexed-unsigned-16"}:
+        read.append("X")
+
+    root = _operation_root(mnemonic)
+    if mode == "accumulator-a":
+        if root != "CLR":
+            read.append("A")
+        if root != "TST":
+            written.append("A")
+    elif mode == "index-register-x":
+        if root != "CLR":
+            read.append("X")
+        if root != "TST":
+            written.append("X")
+    elif root in {"ADD", "ADC", "SUB", "CMP", "SBC", "AND", "BIT", "EOR", "ORA"}:
+        read.append("A")
+        if root not in {"CMP", "BIT"}:
+            written.append("A")
+    elif mnemonic == "LDA":
+        written.append("A")
+    elif mnemonic == "STA":
+        read.append("A")
+    elif mnemonic == "CPX":
+        read.append("X")
+    elif mnemonic == "LDX":
+        written.append("X")
+    elif mnemonic == "STX":
+        read.append("X")
+    elif mnemonic == "TAX":
+        read.append("A")
+        written.append("X")
+    elif mnemonic == "TXA":
+        read.append("X")
+        written.append("A")
+    elif mnemonic == "DAA":
+        read.append("A")
+        written.append("A")
+    elif mnemonic == "RSP":
+        written.append("SP")
+    elif mnemonic in {"BSR", "JSR", "RTS"}:
+        read.append("SP")
+        written.append("SP")
+    elif mnemonic == "RTI":
+        read.append("SP")
+        written += ["SP", "CCR", "A", "X"]
+    elif mnemonic == "SWI":
+        read += ["SP", "CCR", "A", "X"]
+        written += ["SP", "CCR"]
+    elif mnemonic in {"STOP", "WAIT"}:
+        written.append("CCR")
+    return _dedupe(read), _dedupe(written)
+
+
+def _m6805_memory_facts(mnemonic: str, mode: str, length: int) -> list[str]:
+    operations = ["read opcode at PC"]
+    if length > 1:
+        operations.append(f"read {length - 1} instruction operand byte(s)")
+    root = _operation_root(mnemonic)
+    memory_mode = mode in {"direct", "extended", "indexed-no-offset", "indexed-unsigned-8", "indexed-unsigned-16"}
+    if mode == "bit-test-branch-direct":
+        operations.append("read direct-address byte to test selected bit")
+    elif mode == "bit-set-clear-direct":
+        operations += ["read direct-address byte", "write modified direct-address byte"]
+    elif memory_mode and mnemonic not in {"JMP", "JSR"}:
+        if mnemonic in {"STA", "STX"}:
+            operations.append("write effective-address byte")
+        elif root in RMW_ROWS.values():
+            if root != "CLR":
+                operations.append("read effective-address byte")
+            if root == "CLR":
+                operations.append("write zero to effective-address byte")
+            elif root != "TST":
+                operations.append("write modified effective-address byte")
+        else:
+            operations.append("read effective-address byte")
+    if mnemonic in {"BSR", "JSR"}:
+        operations += ["write return-PC low byte to stack", "write return-PC high byte to stack"]
+    elif mnemonic == "RTS":
+        operations.append("read two return-PC bytes from stack")
+    elif mnemonic == "RTI":
+        operations.append("read CCR, A, X, and PC bytes from stack")
+    elif mnemonic == "SWI":
+        operations += ["write PC, X, A, and CCR bytes to stack", "read SWI vector at FFFC:FFFD"]
+    return operations
+
+
+def _m6805_control_facts(mnemonic: str, condition: str | None) -> tuple[list[str], str | None, str | None]:
+    stack: list[str] = []
+    branch: str | None = None
+    vector: str | None = None
+    if condition == "never":
+        branch = "never changes PC beyond normal two-byte instruction advance"
+    elif condition is not None:
+        instruction_length = 3 if mnemonic.startswith(("BRSET", "BRCLR")) else 2
+        branch = f"add signed 8-bit displacement to post-{instruction_length}-byte-instruction PC when {condition}"
+    elif mnemonic == "BSR":
+        branch = "push post-instruction PC and add signed 8-bit displacement"
+        stack = ["push PCL, then PCH; SP decrements after each byte"]
+    elif mnemonic == "JMP":
+        branch = "load PC with the effective address"
+    elif mnemonic == "JSR":
+        branch = "push post-instruction PC and load PC with the effective address"
+        stack = ["push PCL, then PCH; SP decrements after each byte"]
+    elif mnemonic == "RTS":
+        branch = "pull the saved PC and resume at it"
+        stack = ["increment SP and pull PCH, then increment SP and pull PCL"]
+    elif mnemonic == "RTI":
+        branch = "restore saved PC after restoring the complete machine state"
+        stack = ["pull CCR, A, X, PC high, and PC low in documented order"]
+    elif mnemonic == "SWI":
+        stack = ["push PCL, PCH, X, A, and CCR; decrement SP after each byte"]
+        vector = "load PC from the software-interrupt vector at FFFC:FFFD"
+    return stack, branch, vector
+
+
+def _m6805_instruction(
+    opcode: int,
+    architecture: str,
+    mnemonic: str,
+    mode: str,
+    length: int,
+    cycles: int,
+    reference_id: str,
+    locator: str,
+    *,
+    condition: str | None = None,
+    notes: str = "",
+) -> dict:
+    flags_read, flags_affected, flags_undefined, flag_semantics = _m6805_flag_facts(mnemonic)
+    registers_read, registers_written = _m6805_register_facts(mnemonic, mode)
+    stack_effects, branch_behavior, vector_behavior = _m6805_control_facts(mnemonic, condition)
+    aliases: list[str] = []
+    if mnemonic == "ASL":
+        aliases = ["LSL"]
+    elif mnemonic == "ASLA":
+        aliases = ["LSLA"]
+    elif mnemonic == "ASLX":
+        aliases = ["LSLX"]
+    return {
+        "opcode": opcode,
+        "opcode_hex": f"{opcode:02X}",
+        "classification": "documented_instruction",
+        "mnemonic": mnemonic,
+        "aliases": aliases,
+        "architectural_applicability": [architecture],
+        "addressing_mode": mode,
+        "length": length,
+        "cycles": cycles,
+        "conditional_cycles": [],
+        "registers_read": registers_read,
+        "registers_written": registers_written,
+        "flags_read": flags_read,
+        "flags_affected": flags_affected,
+        "flags_undefined": flags_undefined,
+        "flag_semantics": flag_semantics,
+        "memory_operations": _m6805_memory_facts(mnemonic, mode, length),
+        "stack_effects": stack_effects,
+        "branch_behavior": branch_behavior,
+        "vector_behavior": vector_behavior,
+        "primary_reference": {"id": reference_id, "locator": locator},
+        "notes": notes,
+    }
+
+
+def _build_6805_family(architecture: str, *, hitachi: bool) -> dict:
+    if hitachi:
+        reference_id = "hitachi-hd6305-series-handbook-1988"
+        title = "Hitachi HD6305/HD63705 opcode classification"
+        map_locator = "section 1.2, table 1-7 operation code map, printed page 26"
+    else:
+        reference_id = "motorola-m6805-family-users-manual-1983"
+        title = "Motorola M6805 HMOS opcode classification"
+        map_locator = "appendix D operation code map and appendix C instruction entries"
+    records = _empty_architecture(architecture, reference_id, f"{map_locator}; cell is unassigned")
+
+    bit_branch_cycles = 5 if hitachi else 10
+    bit_modify_cycles = 5 if hitachi else 7
+    for bit in range(8):
+        for is_clear in (False, True):
+            opcode = bit * 2 + int(is_clear)
+            mnemonic = f"BR{'CLR' if is_clear else 'SET'}{bit}"
+            condition = f"direct-address bit {bit} is {'clear' if is_clear else 'set'}"
+            _put(records, _m6805_instruction(opcode, architecture, mnemonic, "bit-test-branch-direct", 3, bit_branch_cycles, reference_id, map_locator, condition=condition))
+            modify_opcode = 0x10 + opcode
+            modify_mnemonic = f"B{'CLR' if is_clear else 'SET'}{bit}"
+            _put(records, _m6805_instruction(modify_opcode, architecture, modify_mnemonic, "bit-set-clear-direct", 2, bit_modify_cycles, reference_id, map_locator))
+
+    branch_cycles = 3 if hitachi else 4
+    for opcode, (mnemonic, condition) in M6805_BRANCHES.items():
+        _put(records, _m6805_instruction(opcode, architecture, mnemonic, "relative", 2, branch_cycles, reference_id, map_locator, condition=condition))
+
+    for low, root in RMW_ROWS.items():
+        modes = (
+            (0x3, "", "direct", 2, 5 if hitachi else 6),
+            (0x4, "A", "accumulator-a", 1, 2 if hitachi else 4),
+            (0x5, "X", "index-register-x", 1, 2 if hitachi else 4),
+            (0x6, "", "indexed-unsigned-8", 2, 6 if hitachi else 7),
+            (0x7, "", "indexed-no-offset", 1, 5 if hitachi else 6),
+        )
+        for high, suffix, mode, length, cycles in modes:
+            if hitachi and root == "TST" and mode in {"direct", "indexed-unsigned-8", "indexed-no-offset"}:
+                cycles -= 1
+            _put(records, _m6805_instruction((high << 4) | low, architecture, root + suffix, mode, length, cycles, reference_id, map_locator))
+
+    if hitachi:
+        controls = {
+            0x80: ("RTI", 8), 0x81: ("RTS", 5), 0x83: ("SWI", 10),
+            0x8D: ("DAA", 2), 0x8E: ("STOP", 4), 0x8F: ("WAIT", 4),
+            0x97: ("TAX", 2), 0x98: ("CLC", 1), 0x99: ("SEC", 1),
+            0x9A: ("CLI", 2), 0x9B: ("SEI", 2), 0x9C: ("RSP", 2),
+            0x9D: ("NOP", 1), 0x9F: ("TXA", 2), 0xAD: ("BSR", 5),
+        }
+    else:
+        controls = {
+            0x80: ("RTI", 9), 0x81: ("RTS", 6), 0x83: ("SWI", 11),
+            0x97: ("TAX", 2), 0x98: ("CLC", 2), 0x99: ("SEC", 2),
+            0x9A: ("CLI", 2), 0x9B: ("SEI", 2), 0x9C: ("RSP", 2),
+            0x9D: ("NOP", 2), 0x9F: ("TXA", 2), 0xAD: ("BSR", 8),
+        }
+    for opcode, (mnemonic, cycles) in controls.items():
+        mode = "relative" if mnemonic == "BSR" else "inherent"
+        length = 2 if mnemonic == "BSR" else 1
+        notes = ""
+        if not hitachi and opcode in {0x8E, 0x8F}:
+            raise AssertionError("HMOS specification must not include CMOS-only low-power instructions")
+        _put(records, _m6805_instruction(opcode, architecture, mnemonic, mode, length, cycles, reference_id, map_locator, notes=notes))
+    if not hitachi:
+        for opcode, mnemonic in ((0x8E, "STOP"), (0x8F, "WAIT")):
+            records[opcode]["notes"] = f"{mnemonic} is documented for the M146805 CMOS family only, not the M6805 HMOS architecture classified here."
+
+    modes = {
+        0xA: ("immediate-8", 2, 2),
+        0xB: ("direct", 2, 3 if hitachi else 4),
+        0xC: ("extended", 3, 4 if hitachi else 5),
+        0xD: ("indexed-unsigned-16", 3, 5 if hitachi else 6),
+        0xE: ("indexed-unsigned-8", 2, 4 if hitachi else 5),
+        0xF: ("indexed-no-offset", 1, 3 if hitachi else 4),
+    }
+    for high, (mode, length, base_cycles) in modes.items():
+        for low, mnemonic in M6805_DATA_ROWS.items():
+            if high == 0xA and mnemonic in {"STA", "JMP", "JSR", "STX"}:
+                continue
+            cycles = base_cycles
+            if mnemonic in {"STA", "STX"}:
+                cycles += 1
+            elif mnemonic == "JMP":
+                cycles -= 1
+            elif mnemonic == "JSR":
+                if hitachi:
+                    cycles += 1 if mode == "indexed-unsigned-16" else 2
+                else:
+                    cycles += {"direct": 3, "extended": 3, "indexed-unsigned-16": 3, "indexed-unsigned-8": 3, "indexed-no-offset": 3}[mode]
+            _put(records, _m6805_instruction((high << 4) | low, architecture, mnemonic, mode, length, cycles, reference_id, map_locator))
+
+    return {
+        "schema_version": 1,
+        "architecture": architecture,
+        "title": title,
+        "primary_references": [{"id": reference_id, "locators": [map_locator]}],
+        "opcodes": records,
+    }
+
+
+def build_m6805() -> dict:
+    return _build_6805_family("m6805", hitachi=False)
+
+
+def build_hd6305() -> dict:
+    return _build_6805_family("hd6305", hitachi=True)
+
+
+BUILDERS = {
+    "m6800": build_m6800,
+    "m6801": build_m6801,
+    "m6805": build_m6805,
+    "hd6305": build_hd6305,
+}
 
 
 def rendered_specs() -> dict[Path, str]:
