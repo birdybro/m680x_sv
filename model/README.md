@@ -60,6 +60,8 @@ differences. In particular, both select Hitachi's rule that a framing-error
 byte is not transferred into RDR, while the MC6801 model selects Motorola's
 documented transfer behavior. The Mode-7 model additionally owns the HD6301V1
 memory, Port 3/4, strobe, IS3, and address-error facts.
+The same profiles select Hitachi's two-byte FRC write and TOF-at-zero behavior;
+the base MC6801 profile retains its read-only low byte and TOF-at-`$ffff` rule.
 
 `tools/build_mc6801_peripheral_vectors.py` records independent model results
 for 768 transactions in each expanded mode. A verification-only bus source

@@ -235,6 +235,32 @@ module tb_hd6303r_mcu;
     end
     checks = checks + 1;
 
+    // Hitachi permits a double-byte store to replace the full FRC and sets
+    // TOF only when the counter subsequently rolls from FFFF to 0000.
+    memory[16'hfffe] = 8'h05; memory[16'hffff] = 8'h00;
+    memory[16'h0500] = 8'hcc; memory[16'h0501] = 8'ha5;
+    memory[16'h0502] = 8'h5a;
+    memory[16'h0503] = 8'hdd; memory[16'h0504] = 8'h09;
+    memory[16'h0505] = 8'hcc; memory[16'h0506] = 8'hff;
+    memory[16'h0507] = 8'hfe;
+    memory[16'h0508] = 8'hdd; memory[16'h0509] = 8'h09;
+    memory[16'h050a] = 8'h20; memory[16'h050b] = 8'hfe;
+    #1; reset_n = 1'b0; #1; reset_n = 1'b1;
+    tick(); tick();
+    run_instruction(8'hcc); run_instruction(8'hdd);
+    if (debug_timer != 16'ha55a) $fatal(1, "HD6303R FRC double write");
+    run_instruction(8'hcc); run_instruction(8'hdd);
+    if (debug_timer != 16'hfffe) $fatal(1, "HD6303R FRC rollover preset");
+    tick();
+    if (debug_timer != 16'hffff || debug_tcsr[5]) begin
+      $fatal(1, "HD6303R early TOF timer=%04x tcsr=%02x", debug_timer, debug_tcsr);
+    end
+    tick();
+    if (debug_timer != 16'h0000 || !debug_tcsr[5]) begin
+      $fatal(1, "HD6303R rollover TOF timer=%04x tcsr=%02x", debug_timer, debug_tcsr);
+    end
+    checks = checks + 2;
+
     if (waiting_state || undefined_value || port1_oe != 8'h00 ||
         port2_oe != 5'h00 || debug_address != external_address ||
         ((external_fetch !== 1'b0) && (external_fetch !== 1'b1)) ||

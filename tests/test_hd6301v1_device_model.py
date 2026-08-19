@@ -97,6 +97,22 @@ class HD6301V1Mode7ModelTests(unittest.TestCase):
         self.assertFalse(model.state.rdrf)
         self.assertEqual(model.state.receive_data, 0x3C)
 
+    def test_hitachi_counter_double_write_and_rollover_flag(self) -> None:
+        model = HD6301V1Mode7Model()
+        self.write(model, 0x0009, 0xA5)
+        self.assertEqual(model.state.timer, 0xFFF8)
+        self.write(model, 0x000A, 0x5A)
+        self.assertEqual(model.state.timer, 0xA55A)
+
+        model.state.tcsr = 0
+        model.state.timer = 0xFFFE
+        self.cycle(model)
+        self.assertEqual(model.state.timer, 0xFFFF)
+        self.assertFalse(model.state.tcsr & 0x20)
+        self.cycle(model)
+        self.assertEqual(model.state.timer, 0x0000)
+        self.assertTrue(model.state.tcsr & 0x20)
+
 
 if __name__ == "__main__":
     unittest.main()

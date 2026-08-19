@@ -26,13 +26,13 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 79 |
+| Python unit tests | 81 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
-| HD6301V1 Mode-7 integration checks | 19 |
-| HD6303R Mode-2 integration checks | 10 |
+| HD6301V1 Mode-7 integration checks | 22 |
+| HD6303R Mode-2 integration checks | 12 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 11 |
 | HD6301 exact TRAP trace checks | 3 |
@@ -112,7 +112,9 @@ AIM and XGDX, timer continuity while sleeping, masked IRQ release from SLP
 without stacking or vectoring, simultaneous NMI/IRQ priority, and opcode-error
 TRAP through the external `$ffee:$ffef` vector. It also verifies that a framing
 error leaves RDR unchanged, with a separate HD6303R peripheral-model regression.
-The instruction model has a matching regression for the masked-request SLP rule.
+RTL and model tests cover the Hitachi full-counter write sequence and TOF at
+rollover to `$0000`. The instruction model has a matching regression for the
+masked-request SLP rule.
 
 The HD6301V1 Mode-7 suite fetches reset and interrupt vectors through the
 internal program-image interface, executes from both the 4-KiB program window
@@ -123,7 +125,9 @@ pulses, masked IS3 release from SLP, and enabled IS3 vectoring through the IRQ1
 priority slot. Three independent Python model tests cover the Mode-7 address
 partition, program-select/address-error distinction, GPIO, latch, flag, strobe,
 and interrupt state. A fourth model test and the RTL suite verify that a
-framing error sets ORFE without transferring the misframed byte into RDR.
+framing error sets ORFE without transferring the misframed byte into RDR. A
+fifth model test and the RTL suite verify the Hitachi FRC write and rollover
+semantics.
 
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction

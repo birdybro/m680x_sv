@@ -175,6 +175,12 @@ transfers a misframed receive byte into RDR while leaving RDRF clear, whereas
 HD6301V1 and HD6303R inhibit that transfer. Device wrappers select the
 manufacturer-documented rule rather than deriving it from the CPU ISA profile.
 
+Timer counter writes and overflow boundaries are likewise explicit device
+parameters. MC6801 keeps FRC low-byte writes ineffective and raises TOF when
+the counter reaches `$ffff`. HD6301V1 and HD6303R save the high data byte while
+presetting `$fff8`, accept the following low-byte write as a full 16-bit FRC
+replacement, and raise TOF on the subsequent `$ffff`-to-`$0000` rollover.
+
 ## HD6301V1 single-chip Mode-7 integration
 
 `rtl/hd6301/hd6301v1_mcu.sv` selects the Hitachi CPU profile and the guarded

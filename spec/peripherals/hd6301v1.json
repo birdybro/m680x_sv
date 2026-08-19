@@ -2,21 +2,6 @@
   "schema_version": 1,
   "device": "hd6301v1",
   "address_width": 16,
-  "inherits": {
-    "device": "mc6801",
-    "sections": ["timer"],
-    "scope": "Hitachi documents HD6801-compatible CPU and timer functions for HD6301V1; this profile supplies the distinct Hitachi Mode-7 map, GPIO, SCI framing-error rule, handshake, low-power, and TRAP facts separately.",
-    "restrictions": [
-      "The current device wrapper implements single-chip Mode 7 only.",
-      "The mask-ROM image is supplied through the FPGA program-memory interface and is not distributed with the core.",
-      "Standby clock shutdown and analog RAM-retention thresholds remain outside the current digital profile.",
-      "Bi-phase and external-clock SCI modes remain outside the current serial implementation claim."
-    ],
-    "reference": {
-      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-      "locator": "HD6301V1 sections 1.1 and 2.5-2.8, printed pages 126-127 and 145-160"
-    }
-  },
   "memory_regions": [
     {"start": "0000", "end": "001F", "kind": "internal-register-window", "access": "0000-0014 contain registers and 0015-001F are reserved; instruction fetches from the entire range cause address TRAP"},
     {"start": "0020", "end": "007F", "kind": "unusable", "access": "ordinary reads return the normalized undriven value FF and writes have no effect; instruction fetch causes address TRAP"},
@@ -34,8 +19,8 @@
     {"address": "0006", "name": "PORT3", "read": "physical pins or IS3-latched input", "write": "output latch and selected OS3 strobe", "reset": "output latch undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4 and figures 5-5 to 5-6, printed pages 143-145 and 190"}},
     {"address": "0007", "name": "PORT4", "read": "physical pin levels", "write": "output latch", "reset": "output latch undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4, printed page 145"}},
     {"address": "0008", "name": "TCSR", "read": "ICF OCF TOF EICI EOCI ETOI IEDG OLVL", "write": "control bits 4:0", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.5 and 2.7, printed pages 145-153 and 156-160"}},
-    {"address": "0009", "name": "FRC_MSB", "read": "counter high and latch low", "write": "preset counter to FFF8", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
-    {"address": "000A", "name": "FRC_LSB", "read": "latched counter low", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
+    {"address": "0009", "name": "FRC_MSB", "read": "counter high and latch low", "write": "preset counter to FFF8 and save the written byte for a following low-byte write", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5 and figure 2-5-2, printed pages 146-147"}},
+    {"address": "000A", "name": "FRC_LSB", "read": "latched counter low", "write": "after an FRC_MSB write, completes a 16-bit counter write using the saved high-byte data", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5 and figure 2-5-2, printed pages 146-147"}},
     {"address": "000B", "name": "OCR_MSB", "read": "output compare high", "write": "output compare high and inhibit compare one cycle", "reset": "FF", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
     {"address": "000C", "name": "OCR_LSB", "read": "output compare low", "write": "output compare low", "reset": "FF", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
     {"address": "000D", "name": "ICR_MSB", "read": "input capture high", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-151"}},
@@ -47,6 +32,16 @@
     {"address": "0013", "name": "TDR", "read": "FF", "write": "next transmit byte", "reset": "data undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 152-156"}},
     {"address": "0014", "name": "RAMCR", "read": "STBY_PWR RAME and normalized zero unused bits", "write": "standby validity and RAM enable", "reset": "RAME 1; standby reflects retained supply", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.11, printed pages 161-162"}}
   ],
+  "timer": {
+    "counter": "16-bit wrapping up-counter clocked once per E-cycle and reset to 0000; an FRC_MSB write presets FFF8 while saving the bus byte, and a following FRC_LSB write replaces the full counter with the saved high byte and current low byte",
+    "coherent_read": "reading high latches low; low reads return that latch",
+    "output_compare": "match sets OCF and transfers OLVL to P21; comparison is inhibited for the upper-byte write cycle and the following cycle",
+    "input_capture": "selected P20 edge transfers the synchronized counter and sets ICF; P20 must be configured as input",
+    "overflow": "TOF is set when the counter increments from FFFF to 0000",
+    "flag_clear": {"ICF": "read TCSR while set, then read ICR_MSB", "OCF": "read TCSR while set, then write either OCR byte", "TOF": "read TCSR while set, then read FRC_MSB"},
+    "interrupt": "enabled ICF, OCF, and TOF generate IRQ2 and select distinct priority vectors",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD6301V1 section 2.5, figures 2-5-1 and 2-5-2, printed pages 145-150"}
+  },
   "gpio": {
     "port1": "eight independent Mode-7 GPIO pins",
     "port2": "five GPIO pins with timer and SCI overrides; P21 is input or timer output only",

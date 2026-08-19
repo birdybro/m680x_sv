@@ -20,4 +20,6 @@ class HD6303RMode2Model(MC6801DeviceModel):
             2,
             external_memory=external_memory,
             transfer_framing_error=False,
+            timer_counter_double_write=True,
+            timer_overflow_at_zero=True,
         )

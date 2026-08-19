@@ -278,6 +278,30 @@ module tb_hd6301v1_mcu;
     end
     checks = checks + 1;
 
+    // Hitachi permits a double-byte store to replace the full FRC. Its TOF
+    // flag is asserted on FFFF-to-0000 rollover, one cycle later than MC6801.
+    firmware[12'h340] = 8'hcc; firmware[12'h341] = 8'ha5;
+    firmware[12'h342] = 8'h5a;
+    firmware[12'h343] = 8'hdd; firmware[12'h344] = 8'h09;
+    firmware[12'h345] = 8'hcc; firmware[12'h346] = 8'hff;
+    firmware[12'h347] = 8'hfe;
+    firmware[12'h348] = 8'hdd; firmware[12'h349] = 8'h09;
+    firmware[12'h34a] = 8'h20; firmware[12'h34b] = 8'hfe;
+    reset_to(16'hf340);
+    run_instruction(8'hcc); run_instruction(8'hdd);
+    if (debug_timer != 16'ha55a) $fatal(1, "HD6301V1 FRC double write");
+    run_instruction(8'hcc); run_instruction(8'hdd);
+    if (debug_timer != 16'hfffe) $fatal(1, "HD6301V1 FRC rollover preset");
+    tick();
+    if (debug_timer != 16'hffff || debug_tcsr[5]) begin
+      $fatal(1, "HD6301V1 early TOF timer=%04x tcsr=%02x", debug_timer, debug_tcsr);
+    end
+    tick();
+    if (debug_timer != 16'h0000 || !debug_tcsr[5]) begin
+      $fatal(1, "HD6301V1 rollover TOF timer=%04x tcsr=%02x", debug_timer, debug_tcsr);
+    end
+    checks = checks + 2;
+
     // With I clear, the same IS3 flag is the documented IRQ1-priority source.
     firmware[12'h200] = 8'h8e; firmware[12'h201] = 8'h00;
     firmware[12'h202] = 8'hff;

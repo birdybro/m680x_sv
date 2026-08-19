@@ -4,7 +4,7 @@
   "address_width": 16,
   "inherits": {
     "device": "mc6801",
-    "sections": ["registers", "timer", "gpio", "memory_control"],
+    "sections": ["gpio", "memory_control"],
     "scope": "The HD6303R uses the documented HD6801-compatible timer, GPIO, register, and RAM-control functions on the same die as the HD6301V1, with mask ROM disabled; its SCI framing-error rule is specified here because it differs from MC6801.",
     "restrictions": [
       "The current RTL profile implements expanded multiplexed Mode 2 only.",
@@ -43,6 +43,29 @@
       "access": "read-write; all interrupt and reset vectors are external in Mode 2"
     }
   ],
+  "registers": [
+    {"address": "0000", "name": "P1DDR", "read": "FF", "write": "one selects output", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 142"}},
+    {"address": "0001", "name": "P2DDR", "read": "FF", "write": "one selects output subject to timer and SCI overrides", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 143"}},
+    {"address": "0002", "name": "PORT1", "read": "physical pin levels", "write": "output latch", "reset": "output latch undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 142"}},
+    {"address": "0003", "name": "PORT2_MODE", "read": "latched PC2:PC0 in bits 7:5 and physical P24:P20 in bits 4:0", "write": "output latch subject to timer and SCI overrides", "reset": "DDR 00; output latch undefined", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1 and 2.4, printed pages 128-134 and 143"}},
+    {"address": "0004", "name": "P3DDR", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
+    {"address": "0005", "name": "P4DDR", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
+    {"address": "0006", "name": "PORT3", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
+    {"address": "0007", "name": "PORT4", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
+    {"address": "0008", "name": "TCSR", "read": "ICF OCF TOF EICI EOCI ETOI IEDG OLVL", "write": "control bits 4:0", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-150"}},
+    {"address": "0009", "name": "FRC_MSB", "read": "counter high and latch low", "write": "preset counter to FFF8 and save the written byte for a following low-byte write", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5 and figure 2-5-2, printed pages 146-147"}},
+    {"address": "000A", "name": "FRC_LSB", "read": "latched counter low", "write": "after an FRC_MSB write, completes a 16-bit counter write using the saved high-byte data", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5 and figure 2-5-2, printed pages 146-147"}},
+    {"address": "000B", "name": "OCR_MSB", "read": "output compare high", "write": "output compare high and inhibit comparison through the following cycle", "reset": "FF", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 147-150"}},
+    {"address": "000C", "name": "OCR_LSB", "read": "output compare low", "write": "output compare low", "reset": "FF", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 147-150"}},
+    {"address": "000D", "name": "ICR_MSB", "read": "input capture high", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 147-150"}},
+    {"address": "000E", "name": "ICR_LSB", "read": "input capture low", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 147-150"}},
+    {"address": "000F", "name": "P3CSR", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
+    {"address": "0010", "name": "RMCR", "read": "FF", "write": "SCI clock/mode low nibble", "reset": "0", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 150-156"}},
+    {"address": "0011", "name": "TRCSR", "read": "RDRF ORFE TDRE RIE RE TIE TE WU", "write": "control bits 4:0", "reset": "20", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 150-156"}},
+    {"address": "0012", "name": "RDR", "read": "received byte", "write": "no documented effect", "reset": "data undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 150-156"}},
+    {"address": "0013", "name": "TDR", "read": "FF", "write": "next transmit byte", "reset": "data undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 150-156"}},
+    {"address": "0014", "name": "RAMCR", "read": "STBY_PWR RAME and normalized zero unused bits", "write": "standby validity and RAM enable", "reset": "RAME 1; standby reflects retained supply", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.11, printed pages 161-162"}}
+  ],
   "interrupts": [
     {"source": "reset", "vector": "FFFE:FFFF", "priority": 0},
     {"source": "trap", "vector": "FFEE:FFEF", "priority": 1},
@@ -54,6 +77,16 @@
     {"source": "timer-overflow", "vector": "FFF2:FFF3", "priority": 6},
     {"source": "sci", "vector": "FFF0:FFF1", "priority": 7}
   ],
+  "timer": {
+    "counter": "16-bit wrapping up-counter clocked once per E-cycle and reset to 0000; an FRC_MSB write presets FFF8 while saving the bus byte, and a following FRC_LSB write replaces the full counter with the saved high byte and current low byte",
+    "coherent_read": "reading high latches low; low reads return that latch",
+    "output_compare": "match sets OCF and transfers OLVL to P21; comparison is inhibited for the upper-byte write cycle and the following cycle",
+    "input_capture": "selected P20 edge transfers the synchronized counter and sets ICF; P20 must be configured as input",
+    "overflow": "TOF is set when the counter increments from FFFF to 0000",
+    "flag_clear": {"ICF": "read TCSR while set, then read ICR_MSB", "OCF": "read TCSR while set, then write either OCR byte", "TOF": "read TCSR while set, then read FRC_MSB"},
+    "interrupt": "enabled ICF, OCF, and TOF generate IRQ2 and select distinct priority vectors",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD6301V1/HD6303R section 2.5, figures 2-5-1 and 2-5-2, printed pages 145-150"}
+  },
   "sci": {
     "compatibility": "The asynchronous transmitter, receiver, clocks, controls, flags, and interrupt functions follow the documented HD6801-compatible SCI except for the explicitly listed framing-error transfer rule.",
     "framing_error": "A missing stop bit sets ORFE without RDRF and does not transfer the receive shift-register byte into RDR.",

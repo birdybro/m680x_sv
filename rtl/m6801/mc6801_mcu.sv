@@ -11,7 +11,9 @@ module mc6801_mcu #(
   parameter logic [2:0] OPERATING_MODE = 3'd2,
   parameter logic       HITACHI_CPU = 1'b0,
   parameter logic       HD6301_MODE7 = 1'b0,
-  parameter logic       SCI_TRANSFER_FRAMING_ERROR = 1'b1
+  parameter logic       SCI_TRANSFER_FRAMING_ERROR = 1'b1,
+  parameter logic       TIMER_COUNTER_DOUBLE_WRITE = 1'b0,
+  parameter logic       TIMER_OVERFLOW_AT_ZERO = 1'b0
 ) (
   input  logic        clk_i,
   input  logic        reset_n_i,
@@ -158,6 +160,8 @@ module mc6801_mcu #(
   logic sci_clock_level;
   logic timer_counter_write;
   logic capture_high_read;
+  logic [7:0] timer_counter_write_high;
+  logic timer_counter_write_armed;
   logic is3_falling_edge;
   logic port3_access;
   logic instruction_address_error;
@@ -188,7 +192,10 @@ module mc6801_mcu #(
       !internal_ram_select && !internal_program_select;
     internal_read = clock_enable_i && internal_register_select && !core_write;
     internal_write = clock_enable_i && internal_register_select && core_write;
-    timer_counter_write = internal_write && (core_address == 16'h0009);
+    timer_counter_write = internal_write &&
+      ((core_address == 16'h0009) ||
+       (TIMER_COUNTER_DOUBLE_WRITE && timer_counter_write_armed &&
+        (core_address == 16'h000a)));
     capture_high_read = internal_read && (core_address == 16'h000d);
     port3_access = clock_enable_i && internal_register_select &&
       (core_address == 16'h0006);
@@ -235,7 +242,9 @@ module mc6801_mcu #(
       (!capture_sync1 && capture_sync2);
     timer_compare_event = !timer_counter_write && !compare_inhibit &&
       (timer_next == output_compare);
-    timer_overflow_event = !timer_counter_write && (timer_next == 16'hffff);
+    timer_overflow_event = !timer_counter_write &&
+      (TIMER_OVERFLOW_AT_ZERO ? (timer_next == 16'h0000) :
+       (timer_next == 16'hffff));
     is3_falling_edge = is3_sync2 && !is3_sync1;
 
     case (rmcr[1:0])
@@ -374,6 +383,8 @@ module mc6801_mcu #(
       capture_inhibit <= 1'b0;
       capture_sync1 <= 1'b0;
       capture_sync2 <= 1'b0;
+      timer_counter_write_high <= 8'h00;
+      timer_counter_write_armed <= 1'b0;
       icf_clear_armed <= 1'b0;
       ocf_clear_armed <= 1'b0;
       tof_clear_armed <= 1'b0;
@@ -407,7 +418,17 @@ module mc6801_mcu #(
       if (internal_write) begin
         case (core_address)
           16'h0008: tcsr[4:0] <= core_data_out[4:0];
-          16'h0009: timer_counter <= 16'hfff8;
+          16'h0009: begin
+            timer_counter <= 16'hfff8;
+            if (TIMER_COUNTER_DOUBLE_WRITE) begin
+              timer_counter_write_high <= core_data_out;
+              timer_counter_write_armed <= 1'b1;
+            end
+          end
+          16'h000a: if (TIMER_COUNTER_DOUBLE_WRITE && timer_counter_write_armed) begin
+            timer_counter <= {timer_counter_write_high, core_data_out};
+            timer_counter_write_armed <= 1'b0;
+          end
           16'h000b: begin
             output_compare[15:8] <= core_data_out;
             compare_inhibit <= 1'b1;

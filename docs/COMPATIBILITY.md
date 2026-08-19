@@ -78,6 +78,8 @@ Modes 1/5, standby entry, Port 3 handshakes, the physical multiplexed waveform,
 bi-phase SCI, and external-clock SCI remain outside this partial claim.
 HD6303R follows the HD6301V1-specific framing-error rule: the shift-register
 byte is not transferred to RDR when the stop bit is missing.
+Both parts also implement Hitachi's writable 16-bit FRC sequence and assert
+TOF on rollover to `$0000`, rather than using the MC6801 write/overflow rules.
 
 The HD6301V1 claim covers single-chip Mode 7: its internal register window,
 RAME-controlled executable 128-byte RAM, four GPIO ports, IS3 input latch and
@@ -88,6 +90,8 @@ documented non-memory ranges enter the 13-cycle address TRAP while normal data
 accesses do not. Expanded modes, standby entry, bi-phase/external-clock SCI,
 physical timing, and actual mask-ROM contents remain outside this partial claim.
 Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
+The Mode-7 timer regression verifies full-counter double-byte writes and the
+documented Hitachi TOF boundary.
 
 ## Device differences relevant to implementation
 

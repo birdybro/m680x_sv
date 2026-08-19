@@ -86,6 +86,8 @@ class MC6801DeviceModelTests(unittest.TestCase):
         self.assertEqual(self.read(model, 0x000A).read_data, 0x12)
         self.write(model, 0x0009, 0x00)
         self.assertEqual(model.state.timer, 0xFFF8)
+        self.write(model, 0x000A, 0x5A)
+        self.assertEqual(model.state.timer, 0xFFF9)
 
         model.state.tcsr |= 0xE0
         self.read(model, 0x0008)

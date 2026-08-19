@@ -89,6 +89,8 @@ class MC6801PeripheralState:
     capture_inhibit: bool = False
     capture_sync: list[bool] = field(default_factory=lambda: [False, False])
     clear_armed: int = 0
+    counter_write_high: int = 0
+    counter_write_armed: bool = False
     rmcr: int = 0
     trcsr_control: int = 0
     rdrf: bool = False
@@ -164,6 +166,8 @@ class MC6801DeviceModel:
         *,
         external_memory: Memory | None = None,
         transfer_framing_error: bool = True,
+        timer_counter_double_write: bool = False,
+        timer_overflow_at_zero: bool = False,
     ) -> None:
         if operating_mode not in {2, 3}:
             raise ValueError("MC6801/MC6803 device model supports only Modes 2 and 3")
@@ -172,6 +176,8 @@ class MC6801DeviceModel:
         self.ram = bytearray(128)
         self.state = MC6801PeripheralState()
         self.transfer_framing_error = transfer_framing_error
+        self.timer_counter_double_write = timer_counter_double_write
+        self.timer_overflow_at_zero = timer_overflow_at_zero
 
     def reset(self) -> None:
         """Reset documented digital state without inventing RAM contents."""
@@ -370,7 +376,14 @@ class MC6801DeviceModel:
         old_timer = s.timer
         was_capture_inhibited = s.capture_inhibit
         next_timer = (old_timer + 1) & 0xFFFF
-        counter_write = internal_write and address == 0x0009
+        counter_high_write = internal_write and address == 0x0009
+        counter_low_write = bool(
+            internal_write
+            and address == 0x000A
+            and self.timer_counter_double_write
+            and s.counter_write_armed
+        )
+        counter_write = counter_high_write or counter_low_write
         capture_high_read = internal_read and address == 0x000D
         selected_edge = (
             s.capture_sync == [True, False]
@@ -380,12 +393,22 @@ class MC6801DeviceModel:
         compare_event = (
             not counter_write and not s.compare_inhibit and next_timer == s.output_compare
         )
-        overflow_event = not counter_write and next_timer == 0xFFFF
+        overflow_value = 0x0000 if self.timer_overflow_at_zero else 0xFFFF
+        overflow_event = not counter_write and next_timer == overflow_value
 
         s.capture_sync = [capture_pin, s.capture_sync[0]]
         s.compare_inhibit = False
         s.capture_inhibit = False
-        s.timer = 0xFFF8 if counter_write else next_timer
+        if counter_low_write:
+            s.timer = (s.counter_write_high << 8) | inputs.data
+            s.counter_write_armed = False
+        elif counter_high_write:
+            s.timer = 0xFFF8
+            if self.timer_counter_double_write:
+                s.counter_write_high = inputs.data
+                s.counter_write_armed = True
+        else:
+            s.timer = next_timer
 
         if internal_read and address == 0x0008:
             s.clear_armed = old_tcsr & 0xE0

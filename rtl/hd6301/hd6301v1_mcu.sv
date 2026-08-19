@@ -61,7 +61,9 @@ module hd6301v1_mcu (
     .OPERATING_MODE(3'd7),
     .HITACHI_CPU(1'b1),
     .HD6301_MODE7(1'b1),
-    .SCI_TRANSFER_FRAMING_ERROR(1'b0)
+    .SCI_TRANSFER_FRAMING_ERROR(1'b0),
+    .TIMER_COUNTER_DOUBLE_WRITE(1'b1),
+    .TIMER_OVERFLOW_AT_ZERO(1'b1)
   ) device (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),
