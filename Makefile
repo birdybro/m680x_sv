@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: help refs refs-check spec-build spec-check lint test quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint test test-alu quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -10,6 +10,7 @@ help:
 	@echo "  spec-build  regenerate expanded opcode specification artifacts"
 	@echo "  lint        run source and policy consistency checks"
 	@echo "  test        run current automated tests"
+	@echo "  test-alu    run exhaustive practical ALU state spaces"
 	@echo "  quick       run the fast local gate"
 	@echo "  ci          run the authoritative committed-source gate"
 	@echo "  clean       remove generated local build products"
@@ -29,11 +30,14 @@ spec-check: refs-check
 	$(PYTHON) -m tools.validate_opcodes
 
 lint: spec-check
-	$(PYTHON) -m compileall -q tools tests
+	$(PYTHON) -m compileall -q model tools tests
 	git diff --check
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
+
+test-alu:
+	$(PYTHON) -m unittest tests.test_alu_exhaustive -v
 
 quick: lint test
 
@@ -41,4 +45,4 @@ ci: quick
 
 clean:
 	rm -rf build obj_dir
-	find tools tests -type d -name __pycache__ -prune -exec rm -rf {} +
+	find model tools tests -type d -name __pycache__ -prune -exec rm -rf {} +
