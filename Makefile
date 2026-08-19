@@ -1,7 +1,7 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6801 test-m6805 test-hitachi test-alu test-alu-rtl quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-m6801 test-m6805 test-hitachi test-alu test-alu-rtl quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -15,6 +15,7 @@ help:
 	@echo "  test-model  run both independent architectural model paths"
 	@echo "  test-m6800  run M6800-lineage model regressions"
 	@echo "  test-m6800-rtl run the compiled M6800 core regression"
+	@echo "  test-m6800-opcodes compare all documented M6800 encodings to the model"
 	@echo "  test-m6801  run MC6801/MC6803 model regressions"
 	@echo "  test-m6805  run M6805-lineage model regressions"
 	@echo "  test-hitachi run HD6301/HD6305 model regressions"
@@ -33,12 +34,14 @@ refs-check:
 spec-build:
 	$(PYTHON) -m tools.build_opcode_specs
 	$(PYTHON) -m tools.build_rtl_decode
+	$(PYTHON) -m tools.build_m6800_rtl_vectors
 
 spec-check: refs-check
 	$(PYTHON) -m tools.validate_devices
 	$(PYTHON) -m tools.build_opcode_specs --check
 	$(PYTHON) -m tools.validate_opcodes
 	$(PYTHON) -m tools.build_rtl_decode --check
+	$(PYTHON) -m tools.build_m6800_rtl_vectors --check
 
 lint: spec-check lint-rtl
 	$(PYTHON) -m compileall -q model tools tests
@@ -58,13 +61,22 @@ test-model:
 test-m6800: test-m6800-rtl
 	$(PYTHON) -m unittest tests.test_m6800_model -v
 
-test-m6800-rtl:
+test-m6800-rtl: test-m6800-opcodes
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_core \
 		-Mdir build/obj_m6800_core -o Vtb_m6800_core \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv sim/tb_m6800_core.sv
 	build/obj_m6800_core/Vtb_m6800_core
+
+test-m6800-opcodes:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_opcodes \
+		-Mdir build/obj_m6800_opcodes -o Vtb_m6800_opcodes \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		sim/generated/m6800_opcode_vectors_pkg.sv rtl/m6800/m6800_core.sv \
+		sim/tb_m6800_opcodes.sv
+	build/obj_m6800_opcodes/Vtb_m6800_opcodes
 
 test-m6801:
 	$(PYTHON) -m unittest tests.test_m6800_model -v
