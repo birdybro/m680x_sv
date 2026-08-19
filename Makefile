@@ -1,7 +1,7 @@
 PYTHON ?= python3
 VERILATOR ?= verilator
 
-.PHONY: help refs refs-check spec-build spec-check lint test test-model test-m6800 test-m6801 test-m6805 test-hitachi test-alu test-alu-rtl quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6801 test-m6805 test-hitachi test-alu test-alu-rtl quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -10,9 +10,11 @@ help:
 	@echo "  spec-check  validate architecture and device specifications"
 	@echo "  spec-build  regenerate expanded opcode specification artifacts"
 	@echo "  lint        run source and policy consistency checks"
+	@echo "  lint-rtl    run strict warning-free RTL lint"
 	@echo "  test        run current automated tests"
 	@echo "  test-model  run both independent architectural model paths"
 	@echo "  test-m6800  run M6800-lineage model regressions"
+	@echo "  test-m6800-rtl run the compiled M6800 core regression"
 	@echo "  test-m6801  run MC6801/MC6803 model regressions"
 	@echo "  test-m6805  run M6805-lineage model regressions"
 	@echo "  test-hitachi run HD6301/HD6305 model regressions"
@@ -38,9 +40,14 @@ spec-check: refs-check
 	$(PYTHON) -m tools.validate_opcodes
 	$(PYTHON) -m tools.build_rtl_decode --check
 
-lint: spec-check
+lint: spec-check lint-rtl
 	$(PYTHON) -m compileall -q model tools tests
 	git diff --check
+
+lint-rtl:
+	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -48,7 +55,18 @@ test:
 test-model:
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model -v
 
-test-m6800 test-m6801:
+test-m6800: test-m6800-rtl
+	$(PYTHON) -m unittest tests.test_m6800_model -v
+
+test-m6800-rtl:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_core \
+		-Mdir build/obj_m6800_core -o Vtb_m6800_core \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv sim/tb_m6800_core.sv
+	build/obj_m6800_core/Vtb_m6800_core
+
+test-m6801:
 	$(PYTHON) -m unittest tests.test_m6800_model -v
 
 test-m6805:
@@ -67,7 +85,7 @@ test-alu-rtl:
 		rtl/common/m680x_alu_pkg.sv sim/tb_alu.sv
 	build/obj_alu/Vtb_alu
 
-quick: lint test
+quick: lint test test-m6800-rtl
 
 ci: quick
 
