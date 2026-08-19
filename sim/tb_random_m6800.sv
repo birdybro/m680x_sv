@@ -95,6 +95,7 @@ module tb_random_m6800 #(
         memory[16'h1000 + byte_index[15:0]] =
           selected_program_byte(selected_program, byte_index[7:0]);
       end
+      tick();
       reset_n = 1'b1;
       tick();
       tick();

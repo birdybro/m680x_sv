@@ -81,6 +81,7 @@ module tb_mc68705p5_mcu;
       reset_n = 1'b0;
       #1;
       if (!program_read || program_address != 11'h7fe) $fatal(1, "P5 reset vector high");
+      tick();
       reset_n = 1'b1;
       tick();
       if (!program_read || program_address != 11'h7ff) $fatal(1, "P5 reset vector low");

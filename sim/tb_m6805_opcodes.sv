@@ -101,6 +101,7 @@ module tb_m6805_opcodes #(
       memory[16'h1006] = 8'h10;
       memory[16'h1007] = 8'h20;
       memory[16'h1008] = 8'h30;
+      tick();
       reset_n = 1'b1;
       tick();
       tick();

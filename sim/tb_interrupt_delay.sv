@@ -51,7 +51,7 @@ module tb_m6800_interrupt_delay #(
       memory[16'hffff] = target[7:0];
       #1;
       reset_n = 1'b0;
-      #1;
+      tick();
       reset_n = 1'b1;
       tick();
       tick();
@@ -174,7 +174,7 @@ module tb_m6805_interrupt_delay;
     memory[16'h1000] = 8'h9a; // CLI
     #1;
     reset_n = 1'b0;
-    #1;
+    tick();
     reset_n = 1'b1;
     tick();
     tick();

@@ -146,6 +146,7 @@ module tb_m6800_opcodes #(
       memory[16'h100f] = 8'h20;
       memory[16'h1010] = 8'h30;
 
+      tick();
       reset_n = 1'b1;
       tick();
       tick();
