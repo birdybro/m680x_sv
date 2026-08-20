@@ -60,6 +60,8 @@ The committed tests cover:
 | HD63705V0 timer counter/divider checks | 2,048 |
 | HD63705V0 timer source/divider checks | 32 |
 | HD63705V0 timer request/mask/TDR-access checks | 8 |
+| HD63705V0 GPIO truth/fixed-readback/retention checks | 265 |
+| HD63705V0 SCI-DDR selection/override checks | 515 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 16 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
@@ -347,9 +349,9 @@ The HD63705V0 directed suite executes real CPU transactions through both RAM
 boundaries and the complete register map. Its 34 checks cover reset/vector
 fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
-eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field changes and
-external wake, STBY high impedance with RAM retention, and all five normalized
-EPROM control states. Twelve independent model tests exercise the same factual
+eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field
+changes and external wake, STBY high impedance with RAM retention, and all five normalized
+EPROM control states. Fourteen independent model tests exercise the same factual
 areas and exhaustively project the EPROM address space without sharing RTL
 control structure. A direct extension classifies all 16,384 physical addresses
 and performs 576 checks over every RAM byte after fill, reset, and standby. It
@@ -366,6 +368,17 @@ Q&A-defined nondestructive read/restart-on-write TDR behavior. Formal assertions
 tie the interrupt output to TCR7/TCR6 and prove reset values for TDR and TCR.
 This establishes normalized E-cycle digital behavior, not oscillator or TIMER
 pin electrical timing.
+
+The GPIO extension crosses latch, direction, and physical input values for all
+31 port bits (248 combinations), then checks Port D's fixed-one readback bit.
+WAIT and STOP each preserve four latches and four direction vectors, adding 16
+retention checks; the existing standby suite proves high-impedance entry.
+Every one of 256 SCR values is applied from both all-input and all-output DDRD
+states, followed by SCI disable to prove retained direction; active internal and
+external clock overrides are checked separately. This found and regresses a
+real implementation defect: SCI had overridden output enables without writing
+the D3-D5 DDRD bits mandated by QA635-302A. Formal checks independently require
+the active Tx/Rx/CK output-enable relationships and reset/standby high impedance.
 
 Seed `0x63705000` adds 768 normalized E-cycle comparisons. A directed prefix
 precedes deterministic register, pin, memory, interrupt, and low-power traffic;

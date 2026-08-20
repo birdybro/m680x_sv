@@ -118,6 +118,10 @@ module hd63705v0_mcu_formal;
       assert ({port_a_oe, port_b_oe, port_c_oe, port_d_oe} == '0);
       assert (debug_timer == 8'hf0);
       assert (debug_tcr == 8'h50);
+    end else if (!eprom_mode) begin
+      if (debug_scr[7]) assert (port_d_oe[3]);
+      if (debug_scr[6]) assert (!port_d_oe[4]);
+      if (debug_scr[5]) assert (port_d_oe[5] == !debug_scr[4]);
     end
     if (eprom_program) begin
       assert (eprom_program_data == eprom_data_in);

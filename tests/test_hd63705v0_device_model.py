@@ -185,6 +185,79 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
         for address in range(0x0040, 0x0100):
             self.assertEqual(self.read(model, address).read_data, (address ^ 0x5A) & 0xFF)
 
+    def test_every_gpio_bit_truth_table(self) -> None:
+        ports = (
+            (0x00, 0x04, "port_a", 8, 0),
+            (0x01, 0x05, "port_b", 8, 2),
+            (0x02, 0x06, "port_c", 8, 4),
+            (0x03, 0x07, "port_d", 7, 6),
+        )
+        model = HD63705V0DeviceModel()
+        for data_address, ddr_address, input_name, width, output_index in ports:
+            for bit in range(width):
+                for latch in range(2):
+                    for direction in range(2):
+                        for pin in range(2):
+                            self.write(model, data_address, latch << bit)
+                            self.write(model, ddr_address, direction << bit)
+                            result = self.read(model, data_address, **{input_name: pin << bit})
+                            self.assertEqual(
+                                (result.read_data >> bit) & 1,
+                                latch if direction else pin,
+                            )
+                            outputs = model.port_outputs()
+                            self.assertEqual((outputs[output_index] >> bit) & 1, latch)
+                            self.assertEqual(
+                                (outputs[output_index + 1] >> bit) & 1, direction
+                            )
+        self.assertEqual(self.read(model, 0x03, port_d=0).read_data & 0x80, 0x80)
+
+        for address, value in (
+            (0x00, 0xA5), (0x01, 0x5A), (0x02, 0xC3), (0x03, 0x69),
+            (0x04, 0xF0), (0x05, 0x0F), (0x06, 0xAA), (0x07, 0x55),
+        ):
+            self.write(model, address, value)
+        expected_outputs = model.port_outputs()
+        self.cycle(model, waiting=True)
+        self.assertEqual(model.port_outputs(), expected_outputs)
+        self.cycle(model, stopped=True)
+        self.assertEqual(model.port_outputs(), expected_outputs)
+
+    def test_every_sci_selection_updates_and_retains_ddrd(self) -> None:
+        for scr in range(0x100):
+            for initial_ddr in (0x00, 0x7F):
+                model = HD63705V0DeviceModel()
+                self.write(model, 0x07, initial_ddr)
+                self.write(model, 0x10, scr)
+                expected = initial_ddr
+                if scr & 0x80:
+                    expected |= 0x08
+                if scr & 0x40:
+                    expected &= ~0x10
+                if scr & 0x20:
+                    if scr & 0x10:
+                        expected &= ~0x20
+                    else:
+                        expected |= 0x20
+                self.assertEqual(model.state.port_d_ddr, expected)
+                self.assertEqual(model.port_outputs()[7] & 0x47, expected & 0x47)
+                self.write(model, 0x10, 0x00)
+                self.assertEqual(model.state.port_d_ddr, expected)
+
+        model = HD63705V0DeviceModel()
+        self.write(model, 0x10, 0xE0)
+        self.write(model, 0x07, 0x50)  # contradict all enabled SCI directions
+        model.state.transmit_output = True
+        model.state.sci_clock = True
+        port_d_value, port_d_oe = model.port_outputs()[6:]
+        self.assertEqual(port_d_oe & 0x38, 0x28)
+        self.assertEqual(port_d_value & 0x28, 0x28)
+
+        self.write(model, 0x10, 0xF0)
+        self.write(model, 0x07, 0x70)
+        _, port_d_oe = model.port_outputs()[6:]
+        self.assertEqual(port_d_oe & 0x38, 0x08)
+
     def test_all_timer_control_writes_and_prescaler_initialization(self) -> None:
         model = HD63705V0DeviceModel()
         for value in range(0x100):

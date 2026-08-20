@@ -492,12 +492,16 @@ an FPGA normalization.
 Ports A-C have eight latch/direction bits and Port D has seven. D3/D4/D5 are
 overridden by synchronous Tx/Rx/CK when SCR enables them, while the separately
 named `int2_n_i` represents the interrupt function shared by the D6 package
-pin. The eight-bit down-counter implements internal, gated-internal, stopped,
-and rising-edge external clock modes plus all eight prescale ratios. Its
+pin. SCI selection also writes the corresponding stored DDRD direction and
+later deselection retains it, as clarified by QA635-302A; D0-D2 and D6 remain
+ordinary GPIO. Exhaustive checks cover all 31 common-port truth tables and all
+SCR/initial-DDR combinations. The eight-bit down-counter implements internal,
+gated-internal, stopped, and rising-edge external clock modes plus all eight
+prescale ratios. Its
 exhaustive regression covers every TCR encoding and counter/divider pair, every
 source/divider combination, software request clearing/masking, and TDR access
-during active countdown. INT is
-edge-latched or edge-and-level sensed; INT2 is falling-edge latched and
+during active countdown. INT is edge-latched or edge-and-level sensed; INT2 is
+falling-edge latched and
 software-cleared. The priority encoder selects INT, timer/INT2, the separate
 timer-from-WAIT vector, and SCI/Timer2 without conflating their status flags.
 

@@ -56,9 +56,19 @@ module tb_hd63705_peripheral_diff;
   integer timer_counter_checks;
   integer timer_source_checks;
   integer timer_access_checks;
+  integer gpio_port;
+  integer gpio_bit;
+  integer gpio_latch;
+  integer gpio_direction;
+  integer gpio_pin;
+  integer gpio_checks;
+  integer sci_value;
+  integer sci_initial;
+  integer sci_ddr_checks;
   logic expected_program_read;
   logic [7:0] expected_timer;
   logic [7:0] expected_tcr;
+  logic [7:0] expected_ddr;
 
   /* verilator lint_off PINCONNECTEMPTY */
   hd63705v0_mcu dut (
@@ -163,6 +173,8 @@ module tb_hd63705_peripheral_diff;
     timer_counter_checks = 0;
     timer_source_checks = 0;
     timer_access_checks = 0;
+    gpio_checks = 0;
+    sci_ddr_checks = 0;
     #1;
     reset_n = 1'b0;
     #1;
@@ -448,12 +460,147 @@ module tb_hd63705_peripheral_diff;
     end
     timer_access_checks = 8;
 
+    // Figure 2-16(a) defines the complete 31-pin common-port truth table.
+    // Exercise each bit independently for both latch, direction, and pin
+    // values; Port D bit seven is the fixed-one non-pin readback bit.
+    bus_write(14'h0010, 8'h00);
+    for (gpio_port = 0; gpio_port < 4; gpio_port = gpio_port + 1) begin
+      for (gpio_bit = 0; gpio_bit < ((gpio_port == 3) ? 7 : 8);
+           gpio_bit = gpio_bit + 1) begin
+        for (gpio_latch = 0; gpio_latch < 2; gpio_latch = gpio_latch + 1) begin
+          for (gpio_direction = 0; gpio_direction < 2;
+               gpio_direction = gpio_direction + 1) begin
+            for (gpio_pin = 0; gpio_pin < 2; gpio_pin = gpio_pin + 1) begin
+              port_a_in = 8'h00;
+              port_b_in = 8'h00;
+              port_c_in = 8'h00;
+              port_d_in = 7'h00;
+              case (gpio_port)
+                0: port_a_in[gpio_bit] = gpio_pin[0];
+                1: port_b_in[gpio_bit] = gpio_pin[0];
+                2: port_c_in[gpio_bit] = gpio_pin[0];
+                default: port_d_in[gpio_bit] = gpio_pin[0];
+              endcase
+              bus_write(gpio_port[13:0],
+                        gpio_latch[0] ? (8'h01 << gpio_bit) : 8'h00);
+              bus_write(gpio_port[13:0] + 14'd4,
+                        gpio_direction[0] ? (8'h01 << gpio_bit) : 8'h00);
+              stub_address = gpio_port[15:0];
+              stub_valid = 1'b1;
+              stub_write = 1'b0;
+              #1;
+              if (dut.core_data_in[gpio_bit] !==
+                  (gpio_direction[0] ? gpio_latch[0] : gpio_pin[0])) begin
+                $fatal(1, "HD63705 GPIO read port=%0d bit=%0d latch=%0d dir=%0d pin=%0d data=%02x",
+                       gpio_port, gpio_bit, gpio_latch, gpio_direction,
+                       gpio_pin, dut.core_data_in);
+              end
+              case (gpio_port)
+                0: if (port_a_out[gpio_bit] !== gpio_latch[0] ||
+                          port_a_oe[gpio_bit] !== gpio_direction[0])
+                     $fatal(1, "HD63705 GPIO A output bit=%0d", gpio_bit);
+                1: if (port_b_out[gpio_bit] !== gpio_latch[0] ||
+                          port_b_oe[gpio_bit] !== gpio_direction[0])
+                     $fatal(1, "HD63705 GPIO B output bit=%0d", gpio_bit);
+                2: if (port_c_out[gpio_bit] !== gpio_latch[0] ||
+                          port_c_oe[gpio_bit] !== gpio_direction[0])
+                     $fatal(1, "HD63705 GPIO C output bit=%0d", gpio_bit);
+                default: if (port_d_out[gpio_bit] !== gpio_latch[0] ||
+                                port_d_oe[gpio_bit] !== gpio_direction[0])
+                           $fatal(1, "HD63705 GPIO D output bit=%0d", gpio_bit);
+              endcase
+              gpio_checks = gpio_checks + 1;
+            end
+          end
+        end
+      end
+    end
+    stub_address = 16'h0003;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    #1;
+    if (dut.core_data_in[7] !== 1'b1) begin
+      $fatal(1, "HD63705 Port D fixed-one readback data=%02x", dut.core_data_in);
+    end
+    gpio_checks = gpio_checks + 1;
+
+    // QA635-302A says SCI selection writes D3/D4/D5's stored DDR value and
+    // later deselection retains it; QA635-303A leaves D0-D2/D6 untouched.
+    for (sci_value = 0; sci_value < 256; sci_value = sci_value + 1) begin
+      for (sci_initial = 0; sci_initial < 2; sci_initial = sci_initial + 1) begin
+        expected_ddr = sci_initial[0] ? 8'h7f : 8'h00;
+        bus_write(14'h0007, expected_ddr);
+        bus_write(14'h0010, sci_value[7:0]);
+        if (sci_value[7]) expected_ddr[3] = 1'b1;
+        if (sci_value[6]) expected_ddr[4] = 1'b0;
+        if (sci_value[5]) expected_ddr[5] = !sci_value[4];
+        if (dut.port_d_ddr !== expected_ddr[6:0] ||
+            (port_d_oe & 7'h47) !== (expected_ddr[6:0] & 7'h47)) begin
+          $fatal(1, "HD63705 SCI DDR write SCR=%02x initial=%02x DDR=%02x/%02x OE=%02x",
+                 sci_value[7:0], sci_initial[0] ? 8'h7f : 8'h00,
+                 dut.port_d_ddr, expected_ddr, port_d_oe);
+        end
+        bus_write(14'h0010, 8'h00);
+        if (dut.port_d_ddr !== expected_ddr[6:0]) begin
+          $fatal(1, "HD63705 SCI DDR retention SCR=%02x DDR=%02x/%02x",
+                 sci_value[7:0], dut.port_d_ddr, expected_ddr);
+        end
+        sci_ddr_checks = sci_ddr_checks + 1;
+      end
+    end
+    bus_write(14'h0010, 8'he0);
+    bus_write(14'h0007, 8'h50);
+    if ((port_d_oe & 7'h38) !== 7'h28 ||
+        (port_d_oe & 7'h47) !== 7'h40) begin
+      $fatal(1, "HD63705 SCI internal direction override OE=%02x", port_d_oe);
+    end
+    bus_write(14'h0010, 8'hf0);
+    bus_write(14'h0007, 8'h70);
+    if ((port_d_oe & 7'h38) !== 7'h08 ||
+        (port_d_oe & 7'h47) !== 7'h40) begin
+      $fatal(1, "HD63705 SCI external direction override OE=%02x", port_d_oe);
+    end
+    bus_write(14'h0010, 8'h00);
+    if (port_d_oe !== 7'h70) begin
+      $fatal(1, "HD63705 SCI disable direction retention OE=%02x", port_d_oe);
+    end
+    sci_ddr_checks = sci_ddr_checks + 3;
+
+    bus_write(14'h0000, 8'ha5);
+    bus_write(14'h0001, 8'h5a);
+    bus_write(14'h0002, 8'hc3);
+    bus_write(14'h0003, 8'h69);
+    bus_write(14'h0004, 8'hf0);
+    bus_write(14'h0005, 8'h0f);
+    bus_write(14'h0006, 8'haa);
+    bus_write(14'h0007, 8'h55);
+    stub_valid = 1'b0;
+    stub_write = 1'b0;
+    stub_waiting = 1'b1;
+    tick();
+    if (port_a_out !== 8'ha5 || port_b_out !== 8'h5a ||
+        port_c_out !== 8'hc3 || port_d_out !== 7'h69 ||
+        port_a_oe !== 8'hf0 || port_b_oe !== 8'h0f ||
+        port_c_oe !== 8'haa || port_d_oe !== 7'h55) begin
+      $fatal(1, "HD63705 WAIT GPIO retention");
+    end
+    gpio_checks = gpio_checks + 8;
+    stub_waiting = 1'b0;
+    stub_stopped = 1'b1;
+    tick();
+    if (port_a_out !== 8'ha5 || port_b_out !== 8'h5a ||
+        port_c_out !== 8'hc3 || port_d_out !== 7'h69 ||
+        port_a_oe !== 8'hf0 || port_b_oe !== 8'h0f ||
+        port_c_oe !== 8'haa || port_d_oe !== 7'h55) begin
+      $fatal(1, "HD63705 STOP GPIO retention");
+    end
+    gpio_checks = gpio_checks + 8;
+    stub_stopped = 1'b0;
+    tick();
+
     for (map_address = 'h0004; map_address <= 'h0007;
          map_address = map_address + 1) begin
-      stub_address = map_address[15:0];
-      stub_data = 8'hff;
-      stub_write = 1'b1;
-      tick();
+      bus_write(map_address[13:0], 8'hff);
     end
     if (port_a_oe !== 8'hff || port_b_oe !== 8'hff ||
         port_c_oe !== 8'hff || port_d_oe !== 7'h7f) begin
@@ -486,10 +633,11 @@ module tb_hd63705_peripheral_diff;
       ram_checks = ram_checks + 1;
     end
 
-    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d TCR checks=%0d timer counter checks=%0d source/divider checks=%0d timer access checks=%0d",
+    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d TCR checks=%0d timer counter checks=%0d source/divider checks=%0d timer access checks=%0d GPIO checks=%0d SCI DDR checks=%0d",
              32'h63705000, HD63705_PERIPHERAL_VECTOR_COUNT,
              map_checks, ram_checks, timer_tcr_checks, timer_counter_checks,
-             timer_source_checks, timer_access_checks);
+             timer_source_checks, timer_access_checks, gpio_checks,
+             sci_ddr_checks);
     $finish;
   end
 endmodule

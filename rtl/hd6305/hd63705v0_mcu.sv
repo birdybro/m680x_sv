@@ -379,7 +379,14 @@ module hd63705v0_mcu (
             if (!core_data_out[7]) miscellaneous[7] <= 1'b0;
             miscellaneous[6:5] <= core_data_out[6:5];
           end
-          14'h0010: sci_control <= core_data_out;
+          14'h0010: begin
+            sci_control <= core_data_out;
+            // QA635-302A: selecting Tx/Rx/CK writes their documented DDRD
+            // direction and disabling SCI later retains that stored value.
+            if (core_data_out[7]) port_d_ddr[3] <= 1'b1;
+            if (core_data_out[6]) port_d_ddr[4] <= 1'b0;
+            if (core_data_out[5]) port_d_ddr[5] <= !core_data_out[4];
+          end
           14'h0011: begin
             if (!core_data_out[7]) sci_status[7] <= 1'b0;
             if (!core_data_out[6]) sci_status[6] <= 1'b0;

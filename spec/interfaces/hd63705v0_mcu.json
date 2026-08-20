@@ -46,11 +46,12 @@
     {"name": "sci_clock_o", "historical": "D5/CK", "direction": "output", "fact": "internal transfer-clock level"}
   ],
   "halt_interrupt_behavior": "WAIT leaves peripherals running and uses the dedicated timer vector when timer wakes it. STOP halts peripherals and accepts only INT or enabled INT2; normalized timer/SCI field changes follow figure 2-18, while conflicting section 2.9 prose and table 2-5 leave exact silicon register retention UNDEFINED_BY_DOCUMENTATION.",
-  "references": [{"id": "hitachi-hd6305-series-handbook-1988", "locators": ["HD63705V0 user manual sections 2.1-2.10 and table 2-9, printed pages 101-136", "HD63705V0 section 2.9 prose and table 2-5, printed page 126; figure 2-18, printed page 129", "Q&A QA635-314A through QA635-316A, handbook printed pages 902-904", "Q&A QA635-338A, handbook printed page 926"]}],
+  "references": [{"id": "hitachi-hd6305-series-handbook-1988", "locators": ["HD63705V0 user manual sections 2.1-2.10 and table 2-9, printed pages 101-136", "HD63705V0 section 2.9 prose and table 2-5, printed page 126; figure 2-18, printed page 129", "Q&A QA635-302A through QA635-304A, handbook printed pages 890-892", "Q&A QA635-314A through QA635-316A, handbook printed pages 902-904", "Q&A QA635-328A, handbook printed page 916", "Q&A QA635-338A, handbook printed page 926"]}],
   "implementation_status": {
     "normalized_digital_interface": "PARTIAL",
     "single_chip_memory": "COMPLETE",
     "primary_timer": "COMPLETE",
+    "gpio": "COMPLETE",
     "gpio_and_interrupt_pins": "PARTIAL",
     "eprom_programming_digital_controls": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",

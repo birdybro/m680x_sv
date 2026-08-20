@@ -46,9 +46,9 @@
   ],
   "gpio": {
     "ports": "Ports A, B, and C have eight bits; Port D has seven bits. Every bit has a direction bit and reset selects input.",
-    "multiplexing": "D3 is synchronous Tx, D4 is Rx, D5 is CK, and D6 shares the INT2 package pin. Enabled SCI functions override GPIO direction for D3-D5.",
+    "multiplexing": "D3 is synchronous Tx, D4 is Rx, D5 is CK, and D6 shares the INT2 package pin. Selecting Tx/Rx/CK both overrides the active pin direction and writes the corresponding DDRD direction; QA635-302A says that stored direction remains after SCI is disabled. D0-D2 and D6 remain ordinary GPIO during SCI.",
     "readback": "The common-port diagram documents latch readback for outputs and pin readback for inputs.",
-    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 terminal description and section 2.8, printed pages 105-106 and 124-125"}
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 terminal description and section 2.8, printed pages 105-106 and 124-125; Q&A QA635-302A through QA635-304A, handbook printed pages 890-892; Q&A QA635-328A, handbook printed page 916"}
   },
   "sci": {
     "format": "Eight-bit synchronous transfer, least-significant bit first; transmit changes on negative CK edges and receive samples positive CK edges.",
@@ -74,7 +74,7 @@
   "implementation_scope": {
     "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, a stated figure-2-18 STOP normalization, and normalized EPROM programming pins.",
     "model": "model/hd63705v0_device.py independently classifies every physical address and models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, normalized STOP state changes per E cycle, and the combinational EPROM table.",
-    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes; all 256 TCR writes, 2048 counter/divider pairs, all 32 source/divider combinations, request/mask/TDR access, reset and wait-vector behavior; and cover GPIO, external interrupt priority, eight-bit serial transfer, normalized STOP/STBY, and all five table-2-9 EPROM states.",
+    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes; all 256 TCR writes, 2048 counter/divider pairs, all 32 source/divider combinations, request/mask/TDR access, reset and wait-vector behavior; all 248 GPIO bit truth-table combinations plus fixed Port-D readback, WAIT/STOP retention, and all 512 SCR/initial-DDR combinations; and cover external interrupt priority, eight-bit serial transfer, normalized STOP/STBY, and all five table-2-9 EPROM states.",
     "undefined_policy": "IC-test-area and unused read values, SDR reset data, and the STOP register state disputed by section 2.9/table 2-5 versus figure 2-18 are deterministic FPGA normalizations, not silicon-equivalence claims.",
     "analog_exclusions": ["oscillator startup and duty cycle", "EPROM charge programming, voltage margins, and retention", "pad drive strength", "metastability"]
   }

@@ -182,6 +182,13 @@ TCR encodings, 2,048 counter/divider pairs, all 32 source/divider combinations,
 request/mask behavior, active TDR reads/writes, reset, rising external edges,
 and the WAIT-specific vector are directly checked. This does not extend to
 oscillator, TIMER-pad, or analog minimum-pulse-width behavior.
+Its normalized GPIO dimension is `COMPLETE`: every latch/direction/pin
+combination for all 31 GPIO bits, Port D's fixed readback bit, all 512
+SCR/initial-DDR combinations, SCI direction overrides and retained DDR values,
+reset, WAIT/STOP retention, and standby high impedance are directly checked.
+This regression exposed and fixed a prior bug where SCI changed the output
+enable but did not update the stored DDRD bits required by Hitachi QA635-302A.
+Pad drive and electrical timing remain outside the digital claim.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
 silicon behavior. These limitations are tracked as `PARTIAL`,

@@ -243,7 +243,14 @@ model tests cover all 256 TCR encodings, all 2,048 counter/divider pairs, all
 32 source/divider combinations, request/mask control, TDR access during active
 countdown, reset, the Q&A-confirmed rising external edge, and the dedicated
 WAIT vector. Oscillator and TIMER-pin electrical timing remain excluded. The
-manual's `$0000`-`$00ff` programming-range sentence conflicts with its 4-KiB,
+normalized GPIO dimension is also `COMPLETE`: 265 direct RTL checks cover every
+one of the 248 per-pin latch/direction/input combinations and Port D's fixed
+readback bit plus WAIT/STOP retention, while 515 SCI-DDR checks cover every SCR
+value from both all-input and all-output initial directions plus active override
+cases. The independent model repeats the same factual state space. QA635-302A's requirement that SCI
+selection writes and later retains D3-D5's DDR values is implemented; D0-D2/D6
+remain independent as QA635-303A requires. Analog pad behavior remains excluded.
+The manual's `$0000`-`$00ff` programming-range sentence conflicts with its 4-KiB,
 twelve-address-input, and `$1000`-`$1fff` memory-map facts; the interface uses
 the mutually consistent `$0000`-`$0fff` programmer range and preserves the
 discrepancy in `spec/devices.yml`.

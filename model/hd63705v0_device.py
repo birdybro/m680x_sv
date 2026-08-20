@@ -536,6 +536,18 @@ class HD63705V0DeviceModel:
             s.int_level_sensitive = bool(data & 0x20)
         elif address == 0x10:
             s.scr = data
+            # QA635-302A states that selecting SCI functions updates the
+            # corresponding DDR bits and that those values remain when SCI is
+            # later disabled. Unselected functions leave their DDR bit alone.
+            if data & 0x80:
+                s.port_d_ddr |= 0x08
+            if data & 0x40:
+                s.port_d_ddr &= ~0x10
+            if data & 0x20:
+                if data & 0x10:
+                    s.port_d_ddr &= ~0x20
+                else:
+                    s.port_d_ddr |= 0x20
         elif address == 0x11:
             if not data & 0x80:
                 s.sci_request = False
