@@ -55,9 +55,14 @@ factory bootstrap-ROM image remain outside the distributable implementation.
 
 The MC6800 device-wrapper claim covers normalized digital HALT/TSC/DBE/VMA/BA
 and three-state ownership behavior, including interrupt retention while halted.
-It does not claim pin-level phi1/phi2 generation, electrical timing, or complete
-external waveforms for cycles whose detailed bus activity is not established by
-the selected manufacturer documentation.
+A separate four-subphase integration wrapper implements the documented digital
+phi1/non-overlap/phi2/non-overlap order, trailing-phi1 control sampling,
+post-phi2 CPU advancement, DBE qualification, and compliant TSC phase hold.
+Because the historical device receives phi1/phi2 as inputs, its projected
+phase outputs are an FPGA integration convention. Nanosecond pulse widths,
+electrical clock-pad behavior, and cycles whose detailed bus activity is not
+established by the selected manufacturer documentation remain outside the
+claim.
 
 The MC6801 device claim covers normalized decode for Modes 0-7 and the 1R/6R
 mask-ROM relocation options. Directed model and RTL tests cover register
@@ -196,8 +201,9 @@ that choice.
 ## Device differences relevant to implementation
 
 - MC6800 has no internal RAM or MCU peripherals. Its normalized device wrapper
-  implements VMA, BA, DBE, HALT, TSC, and bus ownership; phase-clock generation
-  and electrical timing remain outside the current claim.
+  implements VMA, BA, DBE, HALT, TSC, and bus ownership. A separate digital
+  four-subphase wrapper projects non-overlapping phi1/phi2 integration timing;
+  nanosecond and electrical clock-pad behavior remain outside the claim.
 - MC6801 has 128 bytes of RAM, 2 KiB of mask ROM where enabled, four ports, a
   three-function 16-bit timer, SCI, and eight hardware-selected modes. Idle
   cycles in expanded modes appear as reads of `FFFF`; there is no MC6800 VMA.

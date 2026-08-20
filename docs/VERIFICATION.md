@@ -26,9 +26,10 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 130 |
+| Python unit tests | 135 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
+| MC6800 four-subphase bus-wrapper checks | 321 |
 | M6800/MC6801/HD6301 real-core WAI-bus checks | 18 |
 | MC6801 exact WAI-response trace checks | 47 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
@@ -55,8 +56,8 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 17 (12 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
-| Synthesis tops | 27 |
+| Bounded formal profiles | 18 (13 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
+| Synthesis tops | 28 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -234,8 +235,13 @@ state stalling, HALT completion and stable bus release, single-instruction
 release, NMI retention on the exact HALT-entry boundary, RTI/re-halt behavior,
 masked IRQ retention through release and CLI, DBE-suppressed and enabled
 writes, WAI bus release, and IRQ wake-up. It checks the independently recorded
-digital contract; it does not infer phi1/phi2 electrical timing from normalized
-cycles.
+digital contract. A separate 321-check real-core bench verifies the exact
+phi1/non-overlap/phi2/non-overlap projection, stable address/direction/state
+through phi2, post-phi2 CPU advancement, write data only in a DBE-qualified
+phi2 window, TSC phase hold and bus release, and trailing-phi1 HALT sampling.
+An independent Python phase model checks the same four boundaries and control
+sampling without sharing RTL control structure. Neither path claims nanosecond
+or electrical clock-pad behavior.
 
 Directed M6805-lineage tests cover reset, stalls, arithmetic, direct writes,
 BSR/RTS, the five-byte interrupt frame, vector fetch, and RTI restoration. The
@@ -269,15 +275,16 @@ edge on resume.
 ## Formal checks
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
-HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration and
+HD6305 profiles plus the MC6800 normalized and four-subphase bus wrappers,
+MC6801 Mode 3 integration and
 Mode-0/Mode-4 decode, the MC6801 four-subphase bus wrapper, HD6303R and its
 physical bus wrapper, HD6301V1,
 HD63701V0 legal-mode decode, MC68705P5, HD6301V1 and HD63701V0 Mode-7
 integrations, and the HD63705V0 MCU.
-The core/device profiles run at depth 10, the four mode-decode profiles at
-depth 5, and the physical bus wrapper at depth 8; together they prove the
-committed safety properties for all symbolic input sequences within those
-bounds:
+The core/device and MC6800 phase profiles run at depth 10, the four mode-decode
+profiles at depth 5, and the HD6303R physical bus wrapper at depth 8; together
+they prove the committed safety properties for all symbolic input sequences
+within those bounds:
 
 - a write is always a valid bus cycle;
 - an opcode fetch is a valid read;
@@ -329,7 +336,8 @@ full instruction-correctness proof.
 ## Simulation and synthesis tool diversity
 
 Verilator is the primary strict-warning simulator. Icarus Verilog independently
-compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
+compiles and runs both directed CPU suites, the MC6800 four-subphase bus suite,
+the HD6301 TRAP trace, the interrupt
 delay traces, the MC68705P5, HD6301V1, HD6303R, all-mode HD63701V0, and
 HD63705V0 device suites, both MC6801/MC6803 peripheral differential profiles,
 and the MC6801 all-mode/direct-boot and four-subphase bus suites, the HD6303R
@@ -345,6 +353,7 @@ Representative generic Yosys 0.68 results from the current source are:
 |---|---:|---:|
 | M6800 | 6,254 | 217 |
 | MC6800 bus wrapper | 6,222 | 223 |
+| MC6800 four-subphase integration wrapper | 6,251 | 228 |
 | MC6801 | 6,243 | 218 |
 | MC6801 Mode 2 integration | 11,494 | 1,455 |
 | MC6801 Mode 4/5 integration | 11,419 | 1,494 |

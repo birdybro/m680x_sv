@@ -79,6 +79,7 @@ class DeviceSpecificationTests(unittest.TestCase):
             "model/hd63701v0_device.py",
             "model/hd63705v0_device.py",
             "model/mc6801_bus.py",
+            "model/mc6800_phase.py",
             "model/hd6303r_bus.py",
             "spec/peripherals/mc6801.json",
             "spec/peripherals/mc6803.json",
@@ -90,6 +91,7 @@ class DeviceSpecificationTests(unittest.TestCase):
             "spec/interfaces/hd63701v0_modes.json",
             "spec/interfaces/hd63705v0_mcu.json",
             "spec/interfaces/mc6801_phased_bus.json",
+            "spec/interfaces/mc6800_phased_bus.json",
             "spec/interfaces/hd6303r_phased_bus.json",
         ):
             self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)

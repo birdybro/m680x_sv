@@ -21,6 +21,13 @@ REQUIRED_SIGNALS = {
         "address_oe_o", "data_o", "data_oe_o", "read_not_write_o",
         "read_not_write_oe_o", "vma_o", "ba_o",
     },
+    "mc6800-four-subphase-integration-bus": {
+        "phase_clk_i", "phase_reset_n_i", "clock_enable_i", "reset_n_i",
+        "irq_n_i", "nmi_n_i", "halt_n_i", "tsc_i", "dbe_i", "data_i",
+        "phi1_o", "phi2_o", "bus_phase_o", "address_o", "address_oe_o",
+        "data_o", "data_oe_o", "read_not_write_o", "read_not_write_oe_o",
+        "vma_o", "ba_o",
+    },
     "mc6801-four-subphase-device-bus": {
         "phase_clk_i", "phase_reset_n_i", "clock_enable_i", "reset_n_i",
         "e_o", "bus_phase_o", "sc1_i", "sc1_o", "sc1_oe_o", "sc2_o",

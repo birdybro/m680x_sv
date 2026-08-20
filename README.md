@@ -34,6 +34,9 @@ with device wrappers kept at separate integration boundaries:
 - `m6805_core`: Motorola M6805 and Hitachi HD6305 instruction profiles;
 - `mc6800_bus_wrapper`: MC6800 HALT, TSC, DBE, VMA, BA, and three-state bus
   ownership around the normalized M6800 core;
+- `mc6800_phased_bus_wrapper`: four non-overlapping FPGA subphases projecting
+  digital phi1/phi2 timing, trailing-phi1 control sampling, and post-phi2 CPU
+  advancement around the normalized MC6800 device wrapper;
 - `mc6801_mcu`: normalized MC6801 Mode 0-7/1R/6R register, RAM, mask-ROM,
   GPIO/address, timer, SCI, interrupt-priority, and memory-selection integration;
   MC6803 uses the same block only in its documented Modes 2/3;
@@ -117,7 +120,7 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
-across two simulators, seventeen bounded formal profiles, and twenty-seven
+across two simulators, eighteen bounded formal profiles, and twenty-eight
 synthesis tops. Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
@@ -130,8 +133,9 @@ cycle boundaries being checked.
 
 ## Known limitations
 
-Pin-level MC6800 phase generation/electrical timing, MC6801/MC6803 nanosecond
-setup/hold and oscillator/pad behavior, HD6303R nanosecond/oscillator/pad timing,
+MC6800 nanosecond phi1/phi2 and electrical clock-pad timing, MC6801/MC6803
+nanosecond setup/hold and oscillator/pad behavior, HD6303R
+nanosecond/oscillator/pad timing,
 physical HD6301V1/HD63701V0 bus waveforms, complete Port 3 handshake timing, analog EPROM
 programming physics, SCI clock-skew/electrical
 tolerance, and complete manufacturer bus waveforms outside the specifically

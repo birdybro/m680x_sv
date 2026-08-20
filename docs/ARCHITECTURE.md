@@ -117,9 +117,22 @@ BA/bus-release condition without stacking again on interrupt recognition.
 TSC stalls the normalized core, disables address and R/W drive, and forces VMA
 and BA low. DBE gates only write-data drive. During reset the wrapper presents
 the reset-vector-high address and read direction while VMA, BA, and data drive
-remain inactive. The `clk_i` edge is still one complete normalized processor
-cycle: the wrapper does not synthesize the historical non-overlapping phi1/phi2
-waveforms or claim their electrical setup, hold, width, or voltage behavior.
+remain inactive. The `clk_i` edge is one complete normalized processor cycle.
+
+`rtl/m6800/mc6800_phased_bus_wrapper.sv` is the optional digital timing layer
+described by `spec/interfaces/mc6800_phased_bus.json`. A four-times integration
+clock advances explicit phi1-high, non-overlap, phi2-high, and non-overlap
+subphases, and enables the normalized wrapper only after the final separation.
+Address, direction, data, and architectural state consequently remain stable
+through projected phi2. IRQ, NMI, and HALT are sampled at trailing phi1 and
+held to that boundary. TSC asserted in the documented phi1-high/phi2-low state
+holds the phase and releases bus ownership; DBE remains independently gateable
+and may be tied to projected phi2 for the manufacturer's normal connection.
+
+The historical MC6800 receives phi1 and phi2 as inputs. The wrapper's `phi1_o`
+and `phi2_o` are therefore FPGA digital projections, not claims about original
+output pins. It does not model nanosecond pulse widths, non-overlap separation,
+setup/hold limits, voltage behavior, dynamic-storage limits, or clock pads.
 
 ## M6805-lineage core
 

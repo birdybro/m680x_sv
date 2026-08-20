@@ -17,6 +17,13 @@ bit-width errors before the package is used by a CPU state machine.
 The maintained CPU and device interfaces, lineages, timing contract, and
 generated Yosys views are documented in `docs/ARCHITECTURE.md`.
 
+`m6800/mc6800_phased_bus_wrapper.sv` projects each normalized MC6800 cycle as
+phi1 high, non-overlap, phi2 high, and non-overlap. It samples processor
+controls at trailing phi1 and advances the underlying wrapper only after phi2,
+without using either projected phase as a generated clock. Its outputs are a
+digital FPGA integration aid; historical input-pad and nanosecond timing remain
+outside the implementation.
+
 `m6801/mc6801_bus_wrapper.sv` is the Motorola device-oriented integration top.
 It derives four digital subphases per E cycle without generating an internal
 clock, presents multiplexed address/data and AS or Mode-5 IOS, and keeps the

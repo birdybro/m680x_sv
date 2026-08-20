@@ -1,0 +1,5 @@
+read_verilog -formal -sv formal/m6800_bus_anyseq_stub.sv rtl/m6800/mc6800_bus_wrapper.sv rtl/m6800/mc6800_phased_bus_wrapper.sv formal/mc6800_phased_bus_wrapper_formal.sv
+prep -top mc6800_phased_bus_wrapper_formal -flatten
+async2sync
+dffunmap
+sat -verify -prove-asserts -seq 10 -set-def-inputs -set-def-formal

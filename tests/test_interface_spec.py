@@ -18,6 +18,9 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.mc6801_bus_spec = json.loads(
             (ROOT / "spec/interfaces/mc6801_phased_bus.json").read_text()
         )
+        self.mc6800_phased_bus_spec = json.loads(
+            (ROOT / "spec/interfaces/mc6800_phased_bus.json").read_text()
+        )
         self.hd6303r_bus_spec = json.loads(
             (ROOT / "spec/interfaces/hd6303r_phased_bus.json").read_text()
         )
@@ -48,6 +51,14 @@ class InterfaceSpecificationTests(unittest.TestCase):
         broken = deepcopy(self.mc6801_bus_spec)
         broken["signals"] = [
             signal for signal in broken["signals"] if signal["name"] != "e_o"
+        ]
+        with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
+            validate_interfaces.validate_interface(broken, self.devices, self.references)
+
+    def test_mc6800_phased_bus_requires_both_projected_clocks(self) -> None:
+        broken = deepcopy(self.mc6800_phased_bus_spec)
+        broken["signals"] = [
+            signal for signal in broken["signals"] if signal["name"] != "phi2_o"
         ]
         with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
             validate_interfaces.validate_interface(broken, self.devices, self.references)

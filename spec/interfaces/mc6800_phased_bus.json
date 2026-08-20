@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "interface": "mc6800-four-subphase-integration-bus",
+  "device": "mc6800",
+  "clock_model": {
+    "rtl_boundary": "phase_clk_i advances phi1-high, non-overlap, phi2-high, and non-overlap digital subphases; the normalized CPU advances after the final subphase",
+    "historical_boundary": "MC6800 receives two non-overlapping phi1 and phi2 clock inputs and transfers bus data during phi2; phi1_o and phi2_o are FPGA integration projections rather than historical output pins",
+    "status": "PARTIAL",
+    "limitation": "Digital phase ordering and trailing-phi1 processor-control sampling are implemented; nanosecond pulse widths, separation, setup/hold, clock pads, and dynamic-storage limits are not"
+  },
+  "signals": [
+    {"name": "phase_clk_i", "historical": "FPGA integration clock", "direction": "input", "fact": "four enabled rising edges represent one complete MC6800 bus cycle without using either projected phase as an internal clock"},
+    {"name": "phase_reset_n_i", "historical": "FPGA integration only", "direction": "input", "fact": "asynchronously initializes the subphase and sampled-control state; distinct from historical RESET"},
+    {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low holds subphase and normalized CPU state"},
+    {"name": "reset_n_i", "historical": "RESET", "direction": "input", "fact": "asynchronous active-low device reset passed to the normalized MC6800 wrapper"},
+    {"name": "irq_n_i", "historical": "IRQ", "direction": "input", "fact": "sampled at the trailing phi1 boundary and held through the normalized cycle"},
+    {"name": "nmi_n_i", "historical": "NMI", "direction": "input", "fact": "sampled at the trailing phi1 boundary; the underlying wrapper retains observed falling edges"},
+    {"name": "halt_n_i", "historical": "HALT", "direction": "input", "fact": "sampled at the trailing phi1 boundary before instruction-completion handling"},
+    {"name": "tsc_i", "historical": "TSC", "direction": "input", "fact": "high releases address/RW ownership and holds subphase advancement; documented use asserts it while phi1 is high and phi2 low"},
+    {"name": "dbe_i", "historical": "DBE", "direction": "input", "fact": "direct data-output qualifier; tie to phi2_o for the manufacturer's normal bus connection or gate independently for documented DMA timing"},
+    {"name": "data_i", "historical": "D0-D7 read", "direction": "input", "fact": "read byte remains available through projected phi2 and is consumed at the normalized cycle boundary"},
+    {"name": "phi1_o", "historical": "phi1 digital projection", "direction": "output", "fact": "high only in subphase zero and never overlaps phi2_o"},
+    {"name": "phi2_o", "historical": "phi2 digital projection", "direction": "output", "fact": "high only in subphase two and never overlaps phi1_o"},
+    {"name": "bus_phase_o", "historical": "verification/integration only", "direction": "output", "fact": "zero phi1, one separation, two phi2, and three separation"},
+    {"name": "address_o", "historical": "A0-A15", "direction": "output", "fact": "normalized cycle address stable throughout the four projected subphases"},
+    {"name": "address_oe_o", "historical": "A0-A15 drive", "direction": "output", "fact": "disabled by BA or TSC through the underlying device wrapper"},
+    {"name": "data_o", "historical": "D0-D7 write", "direction": "output", "fact": "normalized write byte"},
+    {"name": "data_oe_o", "historical": "D0-D7 drive", "direction": "output", "fact": "enabled only when DBE, VMA, and write direction are simultaneously active"},
+    {"name": "read_not_write_o", "historical": "R/W", "direction": "output", "fact": "one for read and zero for write"},
+    {"name": "read_not_write_oe_o", "historical": "R/W drive", "direction": "output", "fact": "disabled by BA or TSC"},
+    {"name": "vma_o", "historical": "VMA", "direction": "output", "fact": "qualifies documented valid memory cycles and is forced low during reset, BA, or TSC"},
+    {"name": "ba_o", "historical": "BA", "direction": "output", "fact": "reports HALT or WAI bus release and is forced low by reset or TSC"}
+  ],
+  "halt_interrupt_behavior": "HALT, IRQ, and NMI are sampled at trailing phi1; HALT completes the current instruction, while requests seen during HALT remain pending until release and acknowledgement in the normalized wrapper",
+  "references": [
+    {
+      "id": "motorola-mc6800-system-design-data-1976",
+      "locators": [
+        "Microprocessor Clock Inputs and Data Bus Enable, printed pages 4 and 20",
+        "MC6800 clock/read/write figures 1-3, printed pages 22-24",
+        "Processor Controls and figures 12-16, printed pages 16-20"
+      ]
+    }
+  ],
+  "implementation_status": {
+    "digital_nonoverlap_phase_order": "COMPLETE",
+    "trailing_phi1_control_sampling": "COMPLETE",
+    "post_phi2_normalized_advance": "COMPLETE",
+    "tsc_phi1_hold_for_documented_use": "COMPLETE",
+    "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
+    "historical_clock_input_pads": "NOT_APPLICABLE"
+  }
+}
