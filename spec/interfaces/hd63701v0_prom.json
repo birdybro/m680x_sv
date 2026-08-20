@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "interface": "hd63701v0-27256-prom-digital",
+  "device": "hd63701v0",
+  "clock_model": {
+    "rtl_boundary": "PROM-mode address and control projection is combinational; the integration-owned storage decides how to realize a qualified program request",
+    "historical_boundary": "the manufacturer high-performance algorithm applies timed CE and VPP pulses and verifies after each pulse",
+    "status": "NOT_APPLICABLE",
+    "limitation": "The five documented Table 3-1 digital states are implemented; voltage magnitude, pulse width, overshoot, erasure, charge injection, and retention are not. Three control combinations absent from Table 3-1 are safe inactive and remain UNDEFINED_BY_DOCUMENTATION as silicon behavior"
+  },
+  "signals": [
+    {"name": "prom_mode_i", "historical": "P20 high, P21/P22/XTAL/STBY/NMI low, EXTAL high strap", "direction": "input", "fact": "digital integration indication that PROM mode is selected; active mode stops all MCU functions"},
+    {"name": "prom_program_voltage_i", "historical": "RES/VPP", "direction": "input", "fact": "digital indication that programming voltage is present; voltage magnitude is not modeled"},
+    {"name": "port1_i", "historical": "PROM A7:A0", "direction": "input", "fact": "low eight 27256-compatible PROM address bits"},
+    {"name": "irq1_n_i", "historical": "IRQ/A9", "direction": "input", "fact": "PROM address bit A9 in PROM mode; the active-low IRQ meaning applies only to MCU modes"},
+    {"name": "port4_i", "historical": "P41=A14, P45:P42=A13:A10, P40=A8, P46=OE, P47=CE", "direction": "input", "fact": "remaining PROM address bits and active-low output/chip enables"},
+    {"name": "port3_i", "historical": "PROM D7:D0 input", "direction": "input", "fact": "byte forwarded to the integration-owned storage during the documented program state"},
+    {"name": "port3_o", "historical": "PROM D7:D0 output", "direction": "output", "fact": "stored byte for read/verify or FF for PROM addresses 1000-7FFF"},
+    {"name": "port3_oe_o", "historical": "PROM data direction", "direction": "output", "fact": "all ones only for documented read and verify states; otherwise high impedance"},
+    {"name": "prom_address_o", "historical": "PROM A14:A0", "direction": "output", "fact": "explicit fifteen-bit projection of the repurposed address pins"},
+    {"name": "prom_data_o", "historical": "PROM D7:D0 output", "direction": "output", "fact": "read/verify value before Port-3 output qualification"},
+    {"name": "prom_data_oe_o", "historical": "PROM data output enable", "direction": "output", "fact": "active in Table 3-1 Read and Verify states"},
+    {"name": "prom_program_data_o", "historical": "PROM D7:D0 input", "direction": "output", "fact": "byte presented to the FPGA storage owner for programming"},
+    {"name": "prom_program_o", "historical": "VPP present, CE low, OE high", "direction": "output", "fact": "qualified digital program request only for PROM addresses 0000-0FFF"},
+    {"name": "program_address_o", "historical": "internal F000-FFFF EPROM storage", "direction": "output", "fact": "maps PROM address 0000-0FFF to the FPGA image address F000-FFFF"},
+    {"name": "program_read_o", "historical": "PROM read/verify storage select", "direction": "output", "fact": "active for read/verify only within the physical 4-KiB array"},
+    {"name": "program_data_i", "historical": "internal EPROM stored byte", "direction": "input", "fact": "byte supplied by integration-owned storage; copyrighted program contents are not distributed"}
+  ],
+  "halt_interrupt_behavior": "PROM mode stops CPU and peripheral operation, suppresses the normalized external bus and execution status, makes address/control pins inputs, and uses only the documented programming interface",
+  "references": [
+    {
+      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
+      "locators": [
+        "HD63701V0 section 3.1 and figures 3-1 through 3-3, printed pages 293-294",
+        "section 3.2, figure 3-4, and table 3-1, printed page 295"
+      ]
+    }
+  ],
+  "implementation_status": {
+    "prom_mode_mcu_shutdown": "COMPLETE",
+    "fifteen_bit_pin_mapping": "COMPLETE",
+    "four_kib_array_decode": "COMPLETE",
+    "erased_extension_reads": "COMPLETE",
+    "table_3_1_digital_states": "COMPLETE",
+    "integration_storage_program_request": "COMPLETE",
+    "programming_voltage_and_pulse_physics": "NOT_APPLICABLE",
+    "ultraviolet_erasure_and_retention": "NOT_APPLICABLE"
+  }
+}

@@ -8,11 +8,12 @@
     "scope": "The HD63701V0 manual documents the same Hitachi timer and interrupt architecture; this profile states its distinct EPROM/RAM map, register reset facts, GPIO reset behavior, SCI framing rule, and operating modes locally.",
     "restrictions": [
       "The wrapper implements every documented MCU operating mode: 0, 1, 2, 5, 6, and 7; Modes 3 and 4 are marked not used by the manufacturer.",
-      "The EPROM image is supplied through a read-only FPGA program interface; analog programming mode is not represented.",
+      "The EPROM image and digital PROM program request use integration-owned storage; programming voltage, pulse, erasure, and retention physics are not represented.",
+      "Section 3.1 prose prints PROM addresses 0000 through 00FF, while the same sentence specifies 4 KiB and figure 3-3 maps 0000 through 0FFF; the implementation follows the internally consistent 4-KiB/0FFF boundary and records the prose range as a documentation discrepancy.",
       "The contradictory Mode-5/7 address-error statements for 0040-007F remain undefined by documentation.",
       "Nanosecond oscillator restart and electrical behavior remain outside the digital standby claim; CC1:CC0=00 is documented as an unavailable SCI selection."
     ],
-    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD63701V0 sections 2.5, 2.7, and 2.9, printed pages 269-279 and 281-285"}
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD63701V0 sections 2.5, 2.7, 2.9, and 3.1-3.2, printed pages 269-279, 281-285, and 293-295"}
   },
   "memory_regions": [
     {"start": "0000", "end": "001F", "kind": "mode-dependent-register-window", "access": "implemented registers through 0014 with the documented exclusions: Mode 1 externalizes 0000/0002; Modes 0/1/2/6 externalize 0004/0006/000F; Modes 0/1/2 externalize 0005/0007; Mode 5 cannot externally access its excluded Port-3 locations; opcode fetches invoke address TRAP in every legal mode"},
@@ -67,7 +68,7 @@
     "mode5": "non-multiplexed partial decode with internal EPROM and external 0100-01FF; implemented at the normalized boundary",
     "mode6": "multiplexed partial decode with internal EPROM; implemented at the normalized boundary",
     "mode7": "single-chip operation with 192-byte RAM and internal F000-FFFF EPROM; implemented",
-    "prom_programming": "external 27256-style EPROM programming mode with MCU functions stopped; analog programming interface is not implemented",
+    "prom_programming": "digital 27256-compatible PROM mode with MCU functions stopped: Port 1 and Port 4/IRQ form A14:A0, Port 3 carries D7:D0, P46 is active-low OE, P47 is active-low CE, PROM 0000-0FFF maps to MCU F000-FFFF, 1000-7FFF reads erased FF, and table 3-1 read/output-disable/program/verify/inhibit states are implemented; analog voltage, pulse, erase, and retention behavior is excluded",
     "unavailable": "Modes 3 and 4 are marked not used",
     "sleep": "SLP stops CPU execution while peripherals continue; implemented by the shared HD6301 CPU profile",
     "standby": "standby_n_i asynchronously enters reset state, suppresses program/GPIO activity, preserves RAM and supplied STBY_PWR, and restarts through the reset vector on release",
@@ -82,9 +83,9 @@
   },
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd63701v0_mcu.sv implements every legal Mode-0/1/2/5/6/7 memory and peripheral selection; hd63701v0_bus_wrapper.sv adds four-subphase Port-1/2/3/4, AS/IOS, R/W/OS3, reset, low-power, and standby pins",
-    "model": "model/hd63701v0_device.py independently selects every legal device mode and model/hd63701v0_bus.py independently projects the physical digital pin phases",
-    "verification": "A 95-check decode suite, 30-check six-core execution bench, Mode-7 directed/model suites, and 468-check all-mode physical wrapper bench cover memory, TRAP, peripheral, reset, standby, WAI/SLP, address/data, AS/IOS, R/W/OS3, and GPIO behavior; the pin model exhaustively projects 65,536 addresses in every address-bus mode",
-    "excluded_modes": "Modes 3 and 4 are not used; analog EPROM programming, nanosecond timing, pads, and oscillator recovery delay remain unclaimed",
-    "analog_exclusions": ["EPROM programming voltage and charge retention", "oscillator behavior", "standby voltage threshold", "pad drive strength", "metastability"]
+    "model": "model/hd63701v0_device.py independently selects every legal device mode, model/hd63701v0_bus.py independently projects physical digital pin phases, and model/hd63701v0_prom.py independently classifies the 27256-compatible PROM interface",
+    "verification": "A 95-check decode suite, 30-check six-core execution bench, Mode-7 directed/model suites, 468-check all-mode physical wrapper bench, and 28-check PROM bench cover memory, TRAP, peripheral, reset, standby, WAI/SLP, address/data, AS/IOS, R/W/OS3, GPIO, and every documented table-3-1 PROM state; the pin model exhaustively projects 65,536 active addresses and the PROM model exhaustively checks all 32,768 PROM addresses",
+    "excluded_modes": "Modes 3 and 4 are not used; PROM voltage magnitude, programming-pulse timing, erasure, charge retention, nanosecond timing, pads, and oscillator recovery delay remain unclaimed",
+    "analog_exclusions": ["PROM programming voltage magnitude and pulse timing", "EPROM erasure and charge retention", "oscillator behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

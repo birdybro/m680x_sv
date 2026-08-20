@@ -185,7 +185,12 @@ high-impedance ports and buses, and reset-vector recovery are tested. Physical
 pin tests cover Mode-1 dedicated and Modes 0/2/6 multiplexed address/data,
 Mode-5 partial address/IOS, Mode-7 IS3/OS3, R/W, E, internal-write mirroring,
 WAI/SLP, asynchronous reset entry, synchronous reset recovery, and standby.
-Analog EPROM programming and nanosecond/oscillator/pad behavior remain outside the claim. The
+The separate digital PROM interface covers the exact 27256-compatible pin
+mapping, stopped-MCU state, all five table-3-1 operations, 4-KiB
+`$0000`-`$0fff` array boundary, erased `$ff` extension, read/verify data, and
+integration-owned program request. Programming voltage magnitude and pulse
+timing, erasure, retention, and nanosecond/oscillator/pad behavior remain
+outside the claim. The
 reserved `CC1:CC0=00` selection does not enable Motorola bi-phase. The V0
 regression also verifies its distinct asynchronous DDR reset.
 
@@ -225,7 +230,8 @@ that choice.
 - HD6301V1 provides 4 KiB ROM and 128 bytes RAM; HD6303R is the ROMless 40-pin
   member. Both use the HD6301 ISA, timer, SCI, low-power modes, and TRAP.
 - HD63701V0 substitutes 4 KiB EPROM, has 192 bytes RAM, retains HD6301 ISA
-  extensions and TRAP behavior, and transfers a framing-error byte into RDR.
+  extensions and TRAP behavior, transfers a framing-error byte into RDR, and
+  provides a stopped-MCU 27256-compatible digital PROM mode.
 - HD63705V0 has a 14-bit PC, stack top `00FF`, 192 bytes RAM, 4 KiB EPROM,
   31 GPIO lines, two timer functions, synchronous SCI, and wait/stop/standby
   modes. Its vector region is `1FF4`-`1FFF`.

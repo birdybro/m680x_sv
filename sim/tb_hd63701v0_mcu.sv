@@ -3,6 +3,7 @@ module tb_hd63701v0_mcu;
   logic clk;
   logic reset_n;
   logic standby_n;
+  logic prom_mode;
   logic nmi_n;
   logic irq1_n;
   logic is3_n;
@@ -57,6 +58,7 @@ module tb_hd63701v0_mcu;
   integer checks;
   integer trap_program_reads;
 
+  /* verilator lint_off PINCONNECTEMPTY */
   hd63701v0_mcu dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
     .standby_n_i(standby_n),
@@ -64,7 +66,10 @@ module tb_hd63701v0_mcu;
     .port1_i(8'h3c), .port2_i(port2_in), .port3_i(port3_in),
     .port4_i(port4_in), .is3_n_i(is3_n),
     .program_address_o(program_address), .program_read_o(program_read),
-    .program_data_i(program_data), .external_address_o(external_address),
+    .program_data_i(program_data), .prom_mode_i(prom_mode),
+    .prom_program_voltage_i(1'b0), .prom_address_o(), .prom_data_o(),
+    .prom_data_oe_o(), .prom_program_data_o(), .prom_program_o(),
+    .external_address_o(external_address),
     .external_data_o(external_data_out), .external_write_o(external_write),
     .external_bus_valid_o(external_valid),
     .external_opcode_fetch_o(external_fetch), .external_data_i(8'hff),
@@ -83,6 +88,7 @@ module tb_hd63701v0_mcu;
     .debug_trcsr_o(debug_trcsr), .debug_receive_data_o(debug_receive),
     .debug_opcode_o(debug_opcode)
   );
+  /* verilator lint_on PINCONNECTEMPTY */
 
   assign program_data = firmware[program_address[11:0]];
   always #5 clk <= ~clk;
@@ -158,6 +164,7 @@ module tb_hd63701v0_mcu;
     clk = 1'b0;
     reset_n = 1'b1;
     standby_n = 1'b1;
+    prom_mode = 1'b0;
     nmi_n = 1'b1;
     irq1_n = 1'b1;
     is3_n = 1'b1;
@@ -318,6 +325,32 @@ module tb_hd63701v0_mcu;
     if (debug_a != 8'ha5) $fatal(1, "HD63701V0 standby RAM retention %02x", debug_a);
     checks = checks + 6;
 
+    // Entering PROM mode asynchronously holds the real CPU/peripheral shell
+    // in reset. Leaving it performs a fresh Mode-7 reset-vector sequence.
+    firmware[12'hffe] = 8'hf3; firmware[12'hfff] = 8'h40;
+    firmware[12'h340] = 8'h01;
+    prom_mode = 1'b1;
+    #1;
+    if (program_read || external_valid || external_fetch || opcode_fetch ||
+        retire || interrupt_ack || port1_oe != 8'h00 || port2_oe != 5'h00 ||
+        port3_oe != 8'h00 || port4_oe != 8'h00) begin
+      $fatal(1, "HD63701V0 PROM mode did not stop the real MCU");
+    end
+    prom_mode = 1'b0;
+    #1;
+    if (!program_read || program_address != 16'hfffe) begin
+      $fatal(1, "HD63701V0 PROM release reset vector high");
+    end
+    tick();
+    if (!program_read || program_address != 16'hffff) begin
+      $fatal(1, "HD63701V0 PROM release reset vector low");
+    end
+    tick();
+    if (debug_pc != 16'hf340 || program_address != 16'hf340) begin
+      $fatal(1, "HD63701V0 PROM release restart pc=%04x", debug_pc);
+    end
+    checks = checks + 3;
+
     if (waiting_state || sleeping_state || undefined_value || timer_irq || sci_irq ||
         external_address != debug_address || external_valid ||
         ((external_fetch !== 1'b0) && (external_fetch !== 1'b1)) ||
@@ -335,7 +368,7 @@ module tb_hd63701v0_mcu;
         debug_b === 8'hxx || debug_x === 16'hxxxx) begin
       $fatal(1, "HD63701V0 deterministic device outputs");
     end
-    $display("HD63701V0 MODE 7 PASS: %0d EPROM, RAM, GPIO, low-power, SCI, and TRAP checks",
+    $display("HD63701V0 MODE 7 PASS: %0d EPROM, PROM, RAM, GPIO, low-power, SCI, and TRAP checks",
              checks);
     $finish;
   end

@@ -58,6 +58,13 @@ REQUIRED_SIGNALS = {
         "standby_active_o", "program_address_o", "program_read_o",
         "program_data_i",
     },
+    "hd63701v0-27256-prom-digital": {
+        "prom_mode_i", "prom_program_voltage_i", "port1_i", "irq1_n_i",
+        "port4_i", "port3_i", "port3_o", "port3_oe_o", "prom_address_o",
+        "prom_data_o", "prom_data_oe_o", "prom_program_data_o",
+        "prom_program_o", "program_address_o", "program_read_o",
+        "program_data_i",
+    },
 }
 
 

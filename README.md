@@ -60,7 +60,8 @@ with device wrappers kept at separate integration boundaries:
 - `hd63701v0_mcu`: every legal HD63701V0 Mode 0/1/2/5/6/7 integration with
   192-byte RAM, mode-selected ports and normalized external bus, timer/SCI,
   asynchronous STBY retention, per-mode address TRAP, and a separate 4-KiB
-  EPROM-image port;
+  EPROM-image port, plus the documented digital 27256-compatible PROM-mode
+  address/data/control boundary;
 - `hd63701v0_bus_wrapper`: all-six-mode four-subphase Port-1/2/3/4,
   AS/IOS, R/W/OS3, asynchronous reset entry, E-boundary reset recovery,
   WAI/SLP, and standby digital pin behavior;
@@ -141,8 +142,8 @@ cycle boundaries being checked.
 
 MC6800 nanosecond phi1/phi2 and electrical clock-pad timing, MC6801/MC6803
 nanosecond setup/hold and oscillator/pad behavior, HD6301V1/HD6303R
-nanosecond/oscillator/pad timing, HD63701V0 nanosecond Port 3 handshake timing, analog EPROM
-programming physics, SCI clock-skew/electrical
+nanosecond/oscillator/pad timing, HD63701V0 nanosecond Port 3 handshake timing,
+EPROM programming-voltage/pulse/erasure/retention physics, SCI clock-skew/electrical
 tolerance, and complete manufacturer bus waveforms outside the specifically
 verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by

@@ -59,7 +59,7 @@
     "wai_and_sleep_pin_states": "COMPLETE",
     "standby_bus_and_e_behavior": "COMPLETE",
     "asynchronous_reset_entry_and_e_boundary_recovery": "COMPLETE",
-    "prom_programming_interface": "NOT_IMPLEMENTED",
+    "prom_programming_interface": "NOT_APPLICABLE",
     "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
     "oscillator_and_pad_behavior": "NOT_APPLICABLE"
   }

@@ -374,8 +374,24 @@ same addresses. Mode 5 limits external memory to `$0100`-`$01ff`; Modes 0/1/2/6
 provide their documented expanded selections. The `external_*` interface is a
 normalized full-address transaction; the separate
 `rtl/hd6301/hd63701v0_bus_wrapper.sv` projects historical digital pin phases.
-The program port does not model the separate 27256-style analog programming
-mode, VPP, programming margins, or retention.
+
+The same MCU boundary also implements the separately selected digital
+27256-compatible PROM mode. `prom_mode_i` stops CPU/peripheral execution and
+repurposes Port 1 as A7:A0, P40 as A8, IRQ as A9, P45:P42 as A13:A10, P41 as
+A14, P46 as active-low OE, P47 as active-low CE, and Port 3 as D7:D0. PROM
+addresses `$0000`-`$0fff` map to the integration-owned `$f000`-`$ffff` image;
+the unused `$1000`-`$7fff` extension reads as erased `$ff` and cannot issue a
+program request. Read, output-disable, high-performance-program, verify, and
+program-inhibit implement table 3-1 exactly at the digital boundary. Voltage
+magnitude, programming-pulse timing, erasure, and retention physics are not
+modeled. Three VPP/CE/OE combinations absent from table 3-1 are safe-inactive
+and remain `UNDEFINED_BY_DOCUMENTATION` for silicon behavior.
+
+Section 3.1 prints a `$0000`-`$00ff` PROM range in prose but calls the array
+4 KiB in the same sentence, and figure 3-3 explicitly maps `$0000`-`$0fff`.
+The implementation follows the mutually consistent 4-KiB/`$0fff` facts and
+preserves the conflicting prose in the structured specification. The complete
+PROM contract is `../spec/interfaces/hd63701v0_prom.json`.
 
 The handbook's memory map and prose make `$0040`-`$007f` physical internal RAM,
 while its Mode-5 and Mode-7 address-error rows contradictorily list the range

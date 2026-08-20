@@ -1,0 +1,7 @@
+read_verilog -formal -sv formal/m6800_bus_anyseq_stub.sv rtl/m6801/mc6801_mcu.sv rtl/hd6301/hd63701v0_mcu.sv formal/hd63701v0_prom_formal.sv
+prep -top hd63701v0_prom_formal -flatten
+memory_map
+opt_clean
+async2sync
+dffunmap
+sat -verify -prove-asserts -seq 2 -set-def-inputs -set-def-formal

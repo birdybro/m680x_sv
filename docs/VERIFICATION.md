@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 149 |
+| Python unit tests | 154 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -46,10 +46,11 @@ The committed tests cover:
 | HD6303R Mode-1/2/4 integration checks | 57 |
 | HD6303R legal-mode decode checks | 47 |
 | HD6303R four-subphase bus-wrapper checks | 180 |
-| HD63701V0 Mode-7 integration checks | 30 |
+| HD63701V0 Mode-7 integration checks | 33 |
 | HD63701V0 legal-mode decode checks | 95 |
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
 | HD63701V0 four-subphase bus-wrapper checks | 468 |
+| HD63701V0 digital PROM checks | 28 |
 | HD63705V0 integration checks | 27 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | M6805 directed core checks | 13 |
@@ -58,7 +59,7 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 20 (15 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
+| Bounded formal profiles | 21 (15 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8; 1 PROM profile at depth 2) |
 | Synthesis tops | 30 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
@@ -242,6 +243,9 @@ the manufacturer manual contradicts itself there. It separately checks the
 V0-specific asynchronous DDR clear before another E edge occurs. Model and RTL
 tests also verify asynchronous STBY entry, immediate program/GPIO suppression,
 retained RAM/STBY_PWR, active-state reset, and reset-vector restart.
+The real-core bench enters PROM mode during execution, verifies immediate
+MCU/peripheral suppression, and checks a fresh Mode-7 reset-vector restart on
+release.
 The wrapper suite separately checks that the reserved bi-phase selection is
 disabled.
 
@@ -254,6 +258,16 @@ entry, E-boundary recovery, and STBY bus/E suppression. Its independent Python
 model exhaustively projects all 65,536 addresses through every address-bus
 mode and separately checks reset-table, phase, GPIO, standby, and low-power
 behavior. Nanosecond, oscillator, pad, and electrical behavior is not claimed.
+
+The 28-check HD63701V0 PROM suite verifies the exact 27256-compatible address
+pin permutation, stopped-MCU and high-impedance non-PROM activity, all five
+documented table-3-1 states, `$0fff`/`$1000` physical-array boundary,
+read/verify storage mapping, erased `$ff` extension, qualified program data,
+and safe suppression for the three undocumented control combinations. An
+independently organized Python model exhaustively checks all 32,768 PROM
+addresses. A symbolic proof covers every address, data byte, voltage
+qualification, CE, and OE combination. The tests deliberately do not claim
+programming voltage magnitude, pulse duration, erasure, or retention physics.
 
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction
@@ -304,12 +318,13 @@ HD6305 profiles plus the MC6800 normalized and four-subphase bus wrappers,
 MC6801 Mode 3 integration and
 Mode-0/Mode-4 decode, the MC6801 four-subphase bus wrapper, HD6303R and its
 physical bus wrapper, HD6301V1 and its four-subphase physical bus wrapper,
-HD63701V0 legal-mode decode and four-subphase physical bus, MC68705P5,
+HD63701V0 legal-mode decode, four-subphase physical bus, and digital PROM
+boundary, MC68705P5,
 HD6301V1 and HD63701V0 Mode-7 integrations, and the HD63705V0 MCU.
 The core/device, MC6800 phase, HD6301V1 physical-wrapper, and HD63701V0
-physical-wrapper profiles run at
-depth 10, the four mode-decode profiles at depth 5, and the HD6303R physical
-bus wrapper at depth 8; together
+physical-wrapper profiles run at depth 10, the four mode-decode profiles at
+depth 5, the MC6801 physical bus wrapper at depth 8, and the purely
+combinational HD63701V0 PROM profile at depth 2; together
 they prove the committed safety properties for all symbolic input sequences
 within those bounds:
 
@@ -361,6 +376,11 @@ within those bounds:
   releases every port for RES/STBY, recovers only at a completing E boundary,
   confines multiplexed address and write drive to their documented phases,
   and projects the `$ffff` WAI/SLP state without stopping E.
+- HD63701V0 PROM mode suppresses MCU/external activity, maps all fifteen
+  address bits to the documented pins, selects storage only for the physical
+  4-KiB array, drives data only for read/verify, returns erased `$ff` outside
+  the array, and issues a program request only for the documented qualified
+  state within the array.
 - HD63705V0 PC/SP and physical-address geometry remain legal, interrupt vectors
   stay in the documented set, EPROM verify/program qualification is coherent,
   standby/EPROM mode disables GPIO drive, and disabled-cycle state stalls.
@@ -373,7 +393,7 @@ full instruction-correctness proof.
 Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the MC6800 four-subphase bus suite,
 the HD6301 TRAP trace, the interrupt
-delay traces, the MC68705P5, HD6301V1, HD6303R, all-mode HD63701V0, and
+delay traces, the MC68705P5, HD6301V1, HD6303R, all-mode and PROM HD63701V0, and
 HD63705V0 device suites, both MC6801/MC6803 peripheral differential profiles,
 and the MC6801 all-mode/direct-boot and four-subphase bus suites, the HD6301V1
 all-mode, HD6303R Mode-1/2/4, and HD63701V0 all-mode phased-bus suites, plus the
@@ -405,13 +425,13 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD6303R Mode 2 integration | 12,229 | 1,447 |
 | HD6303R Mode 4 integration | 12,156 | 1,437 |
 | HD6303R four-subphase bus wrapper | 12,365 | 1,451 |
-| HD63701V0 Mode 0 integration | 13,917 | 1,949 |
-| HD63701V0 Mode 1 integration | 13,863 | 1,932 |
-| HD63701V0 Mode 2 integration | 14,045 | 1,958 |
-| HD63701V0 Mode 5 integration | 13,951 | 1,956 |
-| HD63701V0 Mode 6 integration | 14,043 | 1,965 |
-| HD63701V0 Mode 7 integration | 13,920 | 1,996 |
-| HD63701V0 four-subphase bus wrapper | 14,220 | 1,968 |
+| HD63701V0 Mode 0 integration | 13,904 | 1,949 |
+| HD63701V0 Mode 1 integration | 13,889 | 1,932 |
+| HD63701V0 Mode 2 integration | 14,060 | 1,958 |
+| HD63701V0 Mode 5 integration | 13,981 | 1,956 |
+| HD63701V0 Mode 6 integration | 14,074 | 1,965 |
+| HD63701V0 Mode 7 integration | 14,077 | 1,996 |
+| HD63701V0 four-subphase bus wrapper | 14,237 | 1,968 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

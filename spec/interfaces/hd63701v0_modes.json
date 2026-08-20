@@ -6,7 +6,7 @@
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "HD63701V0 derives E from its oscillator; E is the documented peripheral and processor cycle reference",
     "status": "PARTIAL",
-    "limitation": "This normalized transaction boundary intentionally omits pin subphases; the separate hd63701v0-four-subphase-device-bus interface implements digital multiplexed/non-multiplexed waveforms, while EPROM programming, pad delays, setup/hold, and electrical timing remain outside both boundaries"
+    "limitation": "This normalized transaction boundary intentionally omits pin subphases; the separate hd63701v0-four-subphase-device-bus interface implements digital multiplexed/non-multiplexed waveforms and hd63701v0-27256-prom-digital implements PROM-mode logic, while programming-voltage/pulse physics, pad delays, setup/hold, and electrical timing remain outside the digital claims"
   },
   "signals": [
     {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
@@ -33,6 +33,13 @@
     {"name": "program_address_o", "historical": "internal EPROM address", "direction": "output", "fact": "full CPU address for the separately supplied F000-FFFF EPROM image"},
     {"name": "program_read_o", "historical": "internal EPROM select", "direction": "output", "fact": "active for read cycles in F000-FFFF in Modes 0/5/6/7, except the initial external Mode-0 reset-vector reads"},
     {"name": "program_data_i", "historical": "internal EPROM data", "direction": "input", "fact": "FPGA firmware byte sampled for selected internal EPROM reads"},
+    {"name": "prom_mode_i", "historical": "PROM-mode pin straps", "direction": "input", "fact": "selects the separately specified 27256-compatible digital PROM interface and stops MCU execution"},
+    {"name": "prom_program_voltage_i", "historical": "RES/VPP", "direction": "input", "fact": "digital programming-voltage-present indication only"},
+    {"name": "prom_address_o", "historical": "PROM A14:A0", "direction": "output", "fact": "fifteen-bit address reconstructed from Port 1, Port 4, and IRQ/A9"},
+    {"name": "prom_data_o", "historical": "PROM D7:D0 output", "direction": "output", "fact": "read/verify byte or erased FF outside the 4-KiB physical array"},
+    {"name": "prom_data_oe_o", "historical": "PROM data output enable", "direction": "output", "fact": "active for documented read and verify states"},
+    {"name": "prom_program_data_o", "historical": "PROM D7:D0 input", "direction": "output", "fact": "Port-3 byte forwarded to the FPGA storage owner"},
+    {"name": "prom_program_o", "historical": "qualified program control", "direction": "output", "fact": "active for VPP-present, CE-low, OE-high addresses 0000-0FFF"},
     {"name": "external_address_o", "historical": "mode-selected external address pins", "direction": "output", "fact": "normalized full 16-bit address for every external-memory transaction"},
     {"name": "external_data_o", "historical": "external data pins", "direction": "output", "fact": "normalized write data; qualified by external_bus_valid_o and external_write_o"},
     {"name": "external_write_o", "historical": "R/W", "direction": "output", "fact": "one denotes a normalized external write"},
@@ -45,14 +52,14 @@
     {"name": "sci_irq_o", "historical": "internal IRQ2 SCI request", "direction": "output", "fact": "diagnostic enabled SCI request"}
   ],
   "halt_interrupt_behavior": "HD63701V0 has no HALT input; SLP retains CPU state while peripherals run, an enabled request vectors, and a masked request resumes at the following instruction; asynchronous STBY instead enters reset-state operation and requires a mode-selected reset-vector restart on release",
-  "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD63701V0 sections 2.1-2.4, 2.7, and 2.9-2.13, printed pages 252-269 and 281-292"]}],
+  "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD63701V0 sections 2.1-2.4, 2.7, 2.9-2.13, and 3.1-3.2, printed pages 252-269, 281-292, and 293-295"]}],
   "implementation_status": {
     "normalized_digital_interface": "COMPLETE",
     "legal_mode_decode": "COMPLETE",
     "internal_eprom_selection": "COMPLETE",
     "gpio_and_strobes": "COMPLETE",
     "sleep_and_standby_digital": "COMPLETE",
-    "prom_programming_interface": "NOT_IMPLEMENTED",
+    "prom_programming_interface": "COMPLETE",
     "physical_bus_waveforms": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"
