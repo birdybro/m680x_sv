@@ -29,7 +29,7 @@ class M6800ModelTests(unittest.TestCase):
             trace = model.step()
             self.assertEqual(len(trace.accesses), trace.documented_cycles)
             complete += 1
-        self.assertEqual(complete, 115)
+        self.assertEqual(complete, 165)
 
     def test_m6800_direct_store_has_documented_vma_low_cycle(self) -> None:
         model = _fixture("m6800", 0x97)
@@ -38,6 +38,27 @@ class M6800ModelTests(unittest.TestCase):
         self.assertEqual([access.bus_valid for access in trace.accesses], [True, True, False, True])
         self.assertFalse(trace.accesses[2].data_defined)
         self.assertEqual(trace.accesses[2].address, trace.accesses[3].address)
+
+    def test_m6800_indexed_carry_and_tst_vma_cycles(self) -> None:
+        load = _fixture("m6800", 0xA6)
+        load.state.x = 0x20F8
+        load.memory[0x2108] = 0xA5
+        load_trace = load.step()
+        self.assertEqual(
+            [access.address for access in load_trace.accesses],
+            [0x1000, 0x1001, 0x20F8, 0x2008, 0x2108],
+        )
+        self.assertEqual(
+            [access.bus_valid for access in load_trace.accesses],
+            [True, True, False, False, True],
+        )
+        self.assertEqual(load.state.a, 0xA5)
+
+        test = _fixture("m6800", 0x6D)
+        test_trace = test.step()
+        self.assertEqual([access.kind for access in test_trace.accesses[-2:]], ["read", "write"])
+        self.assertEqual([access.bus_valid for access in test_trace.accesses[-2:]], [False, False])
+        self.assertEqual(test_trace.accesses[-1].data, test_trace.accesses[-3].data)
 
     def test_every_documented_encoding_executes(self) -> None:
         counts: dict[str, int] = {}

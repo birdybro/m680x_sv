@@ -52,7 +52,11 @@ module m6800_core_formal #(
   );
 
   always @* begin
-    assert (!write_enable || bus_valid);
+    // Table 8 keeps R/W low on the final indexed/extended TST cycle while
+    // suppressing VMA so that the operand is not written externally.
+    assert (!write_enable || bus_valid ||
+      ((ARCHITECTURE == 2'd0) &&
+       ((debug_opcode == 8'h6d) || (debug_opcode == 8'h7d))));
     assert (!opcode_fetch || (bus_valid && !write_enable));
     assert (!(waiting_state && sleeping_state));
     assert ((interrupt_vector != 2'b11) || (ARCHITECTURE == 2'd2));

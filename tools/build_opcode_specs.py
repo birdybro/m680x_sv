@@ -561,6 +561,15 @@ def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
             "bus_valid": False,
         }
 
+    def invalid_write(cycle: int, address: str, data: str) -> dict:
+        return {
+            "cycle": cycle,
+            "address": address,
+            "direction": "write",
+            "data": data,
+            "bus_valid": False,
+        }
+
     def write(cycle: int, address: str, data: str) -> dict:
         return {
             "cycle": cycle,
@@ -644,6 +653,55 @@ def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
                 write(5, "extended_effective_address", "register_high"),
                 write(6, "extended_effective_address+1", "register_low"),
             ]
+        if mnemonic in {"NEG", "COM", "LSR", "ROR", "ASR", "ASL", "ROL", "DEC", "INC", "TST", "CLR"}:
+            final_cycle = (
+                invalid_write(6, "extended_effective_address", "unchanged_operand")
+                if mnemonic == "TST"
+                else write(6, "extended_effective_address", "modified_operand")
+            )
+            return [
+                opcode,
+                address_high,
+                address_low,
+                read(4, "extended_effective_address", "current_operand"),
+                invalid_read(5, "extended_effective_address"),
+                final_cycle,
+            ]
+    if mode == "indexed-unsigned-8" and mnemonic != "JSR":
+        offset = read(2, "opcode_address+1", "indexed_offset")
+        base = invalid_read(3, "index_register")
+        partial = invalid_read(4, "index_register_plus_offset_without_carry")
+        prefix = [opcode, offset, base, partial]
+        if mnemonic == "JMP":
+            return prefix
+        if mnemonic in {"CPX", "LDS", "LDX"}:
+            return prefix + [
+                read(5, "indexed_effective_address", "operand_high"),
+                read(6, "indexed_effective_address+1", "operand_low"),
+            ]
+        if mnemonic.startswith("STA"):
+            return prefix + [
+                invalid_read(5, "indexed_effective_address"),
+                write(6, "indexed_effective_address", "accumulator_data"),
+            ]
+        if mnemonic in {"STS", "STX"}:
+            return prefix + [
+                invalid_read(5, "indexed_effective_address"),
+                write(6, "indexed_effective_address", "register_high"),
+                write(7, "indexed_effective_address+1", "register_low"),
+            ]
+        if mnemonic in {"NEG", "COM", "LSR", "ROR", "ASR", "ASL", "ROL", "DEC", "INC", "TST", "CLR"}:
+            final_cycle = (
+                invalid_write(7, "indexed_effective_address", "unchanged_operand")
+                if mnemonic == "TST"
+                else write(7, "indexed_effective_address", "modified_operand")
+            )
+            return prefix + [
+                read(5, "indexed_effective_address", "current_operand"),
+                invalid_read(6, "indexed_effective_address"),
+                final_cycle,
+            ]
+        return prefix + [read(5, "indexed_effective_address", "operand")]
     return []
 
 

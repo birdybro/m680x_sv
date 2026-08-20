@@ -1591,12 +1591,16 @@ module m6800_core #(
     ST_IMMEDIATE_16_LOW,
     ST_DIRECT,
     ST_INDEXED,
+    ST_INDEXED_BASE,
+    ST_INDEXED_PARTIAL,
     ST_EXTENDED_HIGH,
     ST_EXTENDED_LOW,
     ST_MEMORY_READ,
     ST_MEMORY_READ_16_HIGH,
     ST_MEMORY_READ_16_LOW,
     ST_MEMORY_PREWRITE,
+    ST_MEMORY_RMW_IDLE,
+    ST_MEMORY_TEST_WRITE,
     ST_MEMORY_WRITE,
     ST_MEMORY_WRITE_16_HIGH,
     ST_MEMORY_WRITE_16_LOW,
@@ -1641,6 +1645,7 @@ module m6800_core #(
   logic [15:0] control_target;
   logic [15:0] word_value;
   logic [7:0] temporary_high;
+  logic [7:0] indexed_offset;
   logic [7:0] write_data;
   logic [2:0] phase;
   logic interrupt_is_wait;
@@ -1821,7 +1826,8 @@ module m6800_core #(
         write_data <= selected_byte(decoded.target);
         set_nzv8(selected_byte(decoded.target));
         state <= ((ARCHITECTURE == 2'd0) &&
-          (decoded.mode == AM_DIRECT || decoded.mode == AM_EXTENDED)) ?
+          (decoded.mode == AM_DIRECT || decoded.mode == AM_INDEXED_8 ||
+           decoded.mode == AM_EXTENDED)) ?
           ST_MEMORY_PREWRITE : ST_MEMORY_WRITE;
       end else if (is_word_store(decoded.operation)) begin
         case (decoded.operation)
@@ -1834,15 +1840,21 @@ module m6800_core #(
         condition_codes[CCR_Z] <= (store_value == 16'h0000);
         condition_codes[CCR_V] <= 1'b0;
         state <= ((ARCHITECTURE == 2'd0) &&
-          (decoded.mode == AM_DIRECT || decoded.mode == AM_EXTENDED)) ?
+          (decoded.mode == AM_DIRECT || decoded.mode == AM_INDEXED_8 ||
+           decoded.mode == AM_EXTENDED)) ?
           ST_MEMORY_PREWRITE : ST_MEMORY_WRITE_16_HIGH;
       end else if (decoded.operation == OP_CLR) begin
-        write_data <= 8'h00;
         condition_codes[CCR_N] <= 1'b0;
         condition_codes[CCR_Z] <= 1'b1;
         condition_codes[CCR_V] <= 1'b0;
         condition_codes[CCR_C] <= 1'b0;
-        state <= ST_MEMORY_WRITE;
+        if ((ARCHITECTURE == 2'd0) &&
+            (decoded.mode == AM_INDEXED_8 || decoded.mode == AM_EXTENDED)) begin
+          state <= ST_MEMORY_READ;
+        end else begin
+          write_data <= 8'h00;
+          state <= ST_MEMORY_WRITE;
+        end
       end else if (is_word_read(decoded.operation)) begin
         state <= ST_MEMORY_READ_16_HIGH;
       end else begin
@@ -1939,7 +1951,11 @@ module m6800_core #(
         end else begin
           apply_nzvc8(result_value.n, result_value.z, result_value.v, result_value.c);
         end
-        if (decoded.operation == OP_TST) begin
+        if (memory_destination && (ARCHITECTURE == 2'd0) &&
+            (decoded.mode == AM_INDEXED_8 || decoded.mode == AM_EXTENDED)) begin
+          write_data <= (decoded.operation == OP_TST) ? operand : result_value.value;
+          state <= ST_MEMORY_RMW_IDLE;
+        end else if (decoded.operation == OP_TST) begin
           finish_to(ST_FETCH);
         end else if (memory_destination) begin
           write_data <= result_value.value;
@@ -2305,6 +2321,12 @@ module m6800_core #(
         address_o = program_counter;
         bus_valid_o = 1'b1;
       end
+      ST_INDEXED_BASE: begin
+        address_o = index_register;
+      end
+      ST_INDEXED_PARTIAL: begin
+        address_o = {index_register[15:8], index_register[7:0] + indexed_offset};
+      end
       ST_MEMORY_READ, ST_MEMORY_READ_16_HIGH: begin
         address_o = effective_address;
         bus_valid_o = 1'b1;
@@ -2317,6 +2339,14 @@ module m6800_core #(
         // MC6800 Table 8 exposes the destination address with VMA low before
         // direct and extended stores drive their first write cycle.
         address_o = effective_address;
+      end
+      ST_MEMORY_RMW_IDLE: begin
+        address_o = effective_address;
+      end
+      ST_MEMORY_TEST_WRITE: begin
+        address_o = effective_address;
+        data_o = write_data;
+        write_o = 1'b1;
       end
       ST_MEMORY_WRITE: begin
         address_o = effective_address;
@@ -2446,6 +2476,7 @@ module m6800_core #(
       control_target <= 16'h0000;
       word_value <= 16'h0000;
       temporary_high <= 8'h00;
+      indexed_offset <= 8'h00;
       write_data <= 8'h00;
       phase <= 3'd0;
       interrupt_is_wait <= 1'b0;
@@ -2584,8 +2615,16 @@ module m6800_core #(
         end
         ST_INDEXED: begin
           program_counter <= program_counter + 16'h0001;
-          route_effective_address(index_register + {8'h00, data_i});
+          if (ARCHITECTURE == 2'd0) begin
+            indexed_offset <= data_i;
+            effective_address <= index_register + {8'h00, data_i};
+            state <= ST_INDEXED_BASE;
+          end else begin
+            route_effective_address(index_register + {8'h00, data_i});
+          end
         end
+        ST_INDEXED_BASE: state <= ST_INDEXED_PARTIAL;
+        ST_INDEXED_PARTIAL: route_effective_address(effective_address);
         ST_EXTENDED_HIGH: begin
           temporary_high <= data_i;
           program_counter <= program_counter + 16'h0001;
@@ -2624,6 +2663,11 @@ module m6800_core #(
           if (decoded.operation == OP_STA) state <= ST_MEMORY_WRITE;
           else state <= ST_MEMORY_WRITE_16_HIGH;
         end
+        ST_MEMORY_RMW_IDLE: begin
+          if (decoded.operation == OP_TST) state <= ST_MEMORY_TEST_WRITE;
+          else state <= ST_MEMORY_WRITE;
+        end
+        ST_MEMORY_TEST_WRITE: finish_to(ST_FETCH);
         ST_MEMORY_WRITE: finish_to(ST_FETCH);
         ST_MEMORY_WRITE_16_HIGH: state <= ST_MEMORY_WRITE_16_LOW;
         ST_MEMORY_WRITE_16_LOW: finish_to(ST_FETCH);

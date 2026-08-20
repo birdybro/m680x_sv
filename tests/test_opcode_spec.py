@@ -251,7 +251,7 @@ class OpcodeSpecificationTests(unittest.TestCase):
             for record in self.m6800["opcodes"]
             if record["bus_trace_status"] == "COMPLETE"
         ]
-        self.assertEqual(len(complete), 115)
+        self.assertEqual(len(complete), 165)
         for record in complete:
             self.assertEqual(len(record["documented_bus_cycles"]), record["cycles"])
             self.assertEqual(
@@ -301,6 +301,16 @@ class OpcodeSpecificationTests(unittest.TestCase):
         self.assertEqual(
             [cycle["bus_valid"] for cycle in self.m6800["opcodes"][0x97]["documented_bus_cycles"]],
             [True, True, False, True],
+        )
+        self.assertEqual(
+            [
+                (cycle["bus_valid"], cycle["direction"], cycle["address"])
+                for cycle in self.m6800["opcodes"][0x6D]["documented_bus_cycles"][-2:]
+            ],
+            [
+                (False, "read", "indexed_effective_address"),
+                (False, "write", "indexed_effective_address"),
+            ],
         )
 
     def test_complete_bus_trace_length_mismatch_is_rejected(self) -> None:

@@ -248,6 +248,19 @@ class M6800Model:
             )
         )
 
+    def _invalid_write_cycle(self, address: int, value: int, purpose: str) -> None:
+        """Record a Table-8 R/W-low cycle for which MC6800 VMA is low."""
+
+        self._accesses.append(
+            BusAccess(
+                "write",
+                address & 0xFFFF,
+                value & 0xFF,
+                purpose,
+                bus_valid=False,
+            )
+        )
+
     def _read16(self, address: int, purpose: str) -> int:
         high = self._read8(address, f"{purpose} high")
         low = self._read8(address + 1, f"{purpose} low")
@@ -307,7 +320,12 @@ class M6800Model:
         if mode == "direct":
             address = self._fetch8("direct address")
         elif mode == "indexed-unsigned-8":
-            address = (self.state.x + self._fetch8("indexed offset")) & 0xFFFF
+            offset = self._fetch8("indexed offset")
+            address = (self.state.x + offset) & 0xFFFF
+            if self.architecture == "m6800":
+                partial_address = (self.state.x & 0xFF00) | ((self.state.x + offset) & 0x00FF)
+                self._invalid_read_cycle(self.state.x, "indexed base VMA-low cycle")
+                self._invalid_read_cycle(partial_address, "indexed low-byte sum VMA-low cycle")
         elif mode == "extended":
             address = self._fetch16("extended address")
         else:
@@ -315,13 +333,15 @@ class M6800Model:
         if mnemonic in {"JMP", "JSR"} or mnemonic in WORD_STORES or mnemonic.startswith("STA"):
             if (
                 self.architecture == "m6800"
-                and mode in {"direct", "extended"}
+                and mode in {"direct", "indexed-unsigned-8", "extended"}
                 and (mnemonic in WORD_STORES or mnemonic.startswith("STA"))
             ):
                 self._invalid_read_cycle(address, "pre-write VMA-low cycle")
             return None, address
         root, _ = self._data_operation(mnemonic)
-        if root == "CLR":
+        if root == "CLR" and not (
+            self.architecture == "m6800" and mode in {"indexed-unsigned-8", "extended"}
+        ):
             return None, address
         if mnemonic in WORD_READS:
             return self._read16(address, "effective operand"), address
@@ -408,11 +428,21 @@ class M6800Model:
             else:
                 assert operation is not None
                 result = operation(value)
-            if root != "TST":
-                if accumulator is not None:
+            if accumulator is not None:
+                if root != "TST":
                     self._set_accumulator_value(accumulator, result.value)
-                else:
-                    assert address is not None
+            else:
+                assert address is not None
+                if self.architecture == "m6800" and record["addressing_mode"] in {
+                    "indexed-unsigned-8",
+                    "extended",
+                }:
+                    self._invalid_read_cycle(address, "read-modify-write VMA-low cycle")
+                    if root == "TST":
+                        self._invalid_write_cycle(address, value, "TST non-writing R/W-low cycle")
+                    else:
+                        self._write8(address, result.value, "read-modify-write result")
+                elif root != "TST":
                     self._write8(address, result.value, "read-modify-write result")
             self._merge_flags(result, record)
             return

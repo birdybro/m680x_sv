@@ -94,13 +94,14 @@ padding states to preserve instruction totals. The directed MC6800 interrupt
 test also checks the primary manual's reset, IRQ, NMI, SWI, WAI, and RTI stack
 and vector sequences.
 For the base profile, MC6800 System Design Data Table 8 additionally drives
-explicit bus-valid reads for every two-cycle inherent/accumulator form, all
-8- and 16-bit immediate forms, direct byte/word reads, and extended byte/word
-reads and stores plus JMP. The 115 opcode records carry the complete
+explicit cycle traces for every two-cycle inherent/accumulator form, all
+immediate and direct forms, all indexed forms except JSR, and all extended
+forms except JSR. The 165 opcode records carry the complete
 cycle-address/direction/data-role/VMA sequence; MC6801 and HD6301 retain their
-own manufacturer timing profiles. Direct and extended stores expose their
-destination address with VMA low before the first write, exactly as Table 8
-specifies.
+own manufacturer timing profiles. Indexed execution exposes the base register
+and low-byte sum before the carry is applied. Stores and read-modify-write
+operations expose their documented VMA-low destination cycles, including
+TST's R/W-low cycle with VMA suppressed.
 
 ## MC6800 device bus wrapper
 

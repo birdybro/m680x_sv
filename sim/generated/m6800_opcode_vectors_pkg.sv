@@ -1033,8 +1033,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         67: begin // 63 COM
           m6800_vector.opcode = 8'h63;
@@ -1048,8 +1048,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         68: begin // 64 LSR
           m6800_vector.opcode = 8'h64;
@@ -1063,8 +1063,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         69: begin // 66 ROR
           m6800_vector.opcode = 8'h66;
@@ -1078,8 +1078,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         70: begin // 67 ASR
           m6800_vector.opcode = 8'h67;
@@ -1093,8 +1093,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         71: begin // 68 ASL
           m6800_vector.opcode = 8'h68;
@@ -1108,8 +1108,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         72: begin // 69 ROL
           m6800_vector.opcode = 8'h69;
@@ -1123,8 +1123,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         73: begin // 6A DEC
           m6800_vector.opcode = 8'h6a;
@@ -1138,8 +1138,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         74: begin // 6C INC
           m6800_vector.opcode = 8'h6c;
@@ -1153,8 +1153,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         75: begin // 6D TST
           m6800_vector.opcode = 8'h6d;
@@ -1168,8 +1168,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         76: begin // 6E JMP
           m6800_vector.opcode = 8'h6e;
@@ -1183,8 +1183,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd2;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd4;
         end
         77: begin // 6F CLR
           m6800_vector.opcode = 8'h6f;
@@ -1198,8 +1198,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         78: begin // 70 NEG
           m6800_vector.opcode = 8'h70;
@@ -1213,8 +1213,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         79: begin // 73 COM
           m6800_vector.opcode = 8'h73;
@@ -1228,8 +1228,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         80: begin // 74 LSR
           m6800_vector.opcode = 8'h74;
@@ -1243,8 +1243,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         81: begin // 76 ROR
           m6800_vector.opcode = 8'h76;
@@ -1258,8 +1258,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         82: begin // 77 ASR
           m6800_vector.opcode = 8'h77;
@@ -1273,8 +1273,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         83: begin // 78 ASL
           m6800_vector.opcode = 8'h78;
@@ -1288,8 +1288,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         84: begin // 79 ROL
           m6800_vector.opcode = 8'h79;
@@ -1303,8 +1303,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         85: begin // 7A DEC
           m6800_vector.opcode = 8'h7a;
@@ -1318,8 +1318,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         86: begin // 7C INC
           m6800_vector.opcode = 8'h7c;
@@ -1333,8 +1333,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd5;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         87: begin // 7D TST
           m6800_vector.opcode = 8'h7d;
@@ -1348,8 +1348,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         88: begin // 7E JMP
           m6800_vector.opcode = 8'h7e;
@@ -1378,8 +1378,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         90: begin // 80 SUBA
           m6800_vector.opcode = 8'h80;
@@ -1798,8 +1798,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         118: begin // A1 CMPA
           m6800_vector.opcode = 8'ha1;
@@ -1813,8 +1813,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         119: begin // A2 SBCA
           m6800_vector.opcode = 8'ha2;
@@ -1828,8 +1828,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         120: begin // A4 ANDA
           m6800_vector.opcode = 8'ha4;
@@ -1843,8 +1843,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         121: begin // A5 BITA
           m6800_vector.opcode = 8'ha5;
@@ -1858,8 +1858,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         122: begin // A6 LDAA
           m6800_vector.opcode = 8'ha6;
@@ -1873,8 +1873,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         123: begin // A7 STAA
           m6800_vector.opcode = 8'ha7;
@@ -1888,8 +1888,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         124: begin // A8 EORA
           m6800_vector.opcode = 8'ha8;
@@ -1903,8 +1903,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         125: begin // A9 ADCA
           m6800_vector.opcode = 8'ha9;
@@ -1918,8 +1918,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         126: begin // AA ORAA
           m6800_vector.opcode = 8'haa;
@@ -1933,8 +1933,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         127: begin // AB ADDA
           m6800_vector.opcode = 8'hab;
@@ -1948,8 +1948,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         128: begin // AC CPX
           m6800_vector.opcode = 8'hac;
@@ -1963,8 +1963,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         129: begin // AD JSR
           m6800_vector.opcode = 8'had;
@@ -1993,8 +1993,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         131: begin // AF STS
           m6800_vector.opcode = 8'haf;
@@ -2008,8 +2008,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         132: begin // B0 SUBA
           m6800_vector.opcode = 8'hb0;
@@ -2608,8 +2608,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         172: begin // E1 CMPB
           m6800_vector.opcode = 8'he1;
@@ -2623,8 +2623,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         173: begin // E2 SBCB
           m6800_vector.opcode = 8'he2;
@@ -2638,8 +2638,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         174: begin // E4 ANDB
           m6800_vector.opcode = 8'he4;
@@ -2653,8 +2653,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         175: begin // E5 BITB
           m6800_vector.opcode = 8'he5;
@@ -2668,8 +2668,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         176: begin // E6 LDAB
           m6800_vector.opcode = 8'he6;
@@ -2683,8 +2683,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         177: begin // E7 STAB
           m6800_vector.opcode = 8'he7;
@@ -2698,8 +2698,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         178: begin // E8 EORB
           m6800_vector.opcode = 8'he8;
@@ -2713,8 +2713,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         179: begin // E9 ADCB
           m6800_vector.opcode = 8'he9;
@@ -2728,8 +2728,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         180: begin // EA ORAB
           m6800_vector.opcode = 8'hea;
@@ -2743,8 +2743,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         181: begin // EB ADDB
           m6800_vector.opcode = 8'heb;
@@ -2758,8 +2758,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd3;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd5;
         end
         182: begin // EE LDX
           m6800_vector.opcode = 8'hee;
@@ -2773,8 +2773,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd6;
         end
         183: begin // EF STX
           m6800_vector.opcode = 8'hef;
@@ -2788,8 +2788,8 @@ package m6800_opcode_vectors_pkg;
           m6800_vector.ccr_mask = 6'h3f;
           m6800_vector.waiting_state = 1'b0;
           m6800_vector.sleeping_state = 1'b0;
-          m6800_vector.exact_bus_trace = 1'b0;
-          m6800_vector.access_count = 4'd4;
+          m6800_vector.exact_bus_trace = 1'b1;
+          m6800_vector.access_count = 4'd7;
         end
         184: begin // F0 SUBB
           m6800_vector.opcode = 8'hf0;
@@ -4141,12 +4141,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4202: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4203: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4204: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4203: begin
+        16'h4205: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4206: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4169,12 +4190,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4302: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4303: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4304: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4303: begin
+        16'h4305: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4306: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4197,12 +4239,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4402: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4403: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4404: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4403: begin
+        16'h4405: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4406: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4225,12 +4288,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4502: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4503: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4504: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4503: begin
+        16'h4505: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4506: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4253,12 +4337,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4602: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4603: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4604: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4603: begin
+        16'h4605: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4606: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4281,12 +4386,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4702: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4703: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4704: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4703: begin
+        16'h4705: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4706: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4309,12 +4435,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4802: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4803: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4804: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4803: begin
+        16'h4805: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4806: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4337,12 +4484,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4902: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4903: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4904: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4903: begin
+        16'h4905: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4906: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4365,12 +4533,33 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4a02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4a03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4a04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h4a03: begin
+        16'h4a05: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4a06: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4393,7 +4582,35 @@ package m6800_opcode_vectors_pkg;
         end
         16'h4b02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4b03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4b04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
+          m6800_access.data_ignored = 1'b0;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h43;
+        end
+        16'h4b05: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4b06: begin
+          m6800_access.write_enable = 1'b1;
+          m6800_access.bus_valid = 1'b0;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
@@ -4412,6 +4629,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.address = 16'h100e;
           m6800_access.data = 8'h10;
         end
+        16'h4c02: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4c03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
         16'h4d00: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
@@ -4427,6 +4658,34 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'h4d02: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h4d03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4d04: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b1;
+          m6800_access.data_ignored = 1'b0;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h43;
+        end
+        16'h4d05: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h4d06: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4462,6 +4721,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h4e04: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h4e05: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4497,6 +4763,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h4f04: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h4f05: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4532,6 +4805,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h5004: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5005: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4567,6 +4847,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h5104: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5105: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4602,6 +4889,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h5204: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5205: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4637,6 +4931,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h5304: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5305: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4672,6 +4973,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h5404: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5405: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4707,6 +5015,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h5504: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5505: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4742,6 +5057,13 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h73;
         end
         16'h5604: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5605: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -4772,6 +5094,20 @@ package m6800_opcode_vectors_pkg;
         16'h5703: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
+          m6800_access.data_ignored = 1'b0;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h73;
+        end
+        16'h5704: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5705: begin
+          m6800_access.write_enable = 1'b1;
+          m6800_access.bus_valid = 1'b0;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h1020;
           m6800_access.data = 8'h73;
@@ -4819,6 +5155,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h20;
         end
         16'h5903: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b1;
+          m6800_access.data_ignored = 1'b0;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h73;
+        end
+        16'h5904: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h1020;
+          m6800_access.data = 8'h00;
+        end
+        16'h5905: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5380,6 +5730,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'h7502: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7503: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7504: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -5400,6 +5764,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'h7602: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7603: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7604: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5422,6 +5800,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'h7702: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7703: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7704: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -5442,6 +5834,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'h7802: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7803: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7804: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5464,6 +5870,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'h7902: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7903: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7904: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -5485,6 +5905,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'h7a02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7a03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7a04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -5505,6 +5939,27 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'h7b02: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7b03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7b04: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7b05: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5527,6 +5982,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'h7c02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7c03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7c04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -5547,6 +6016,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'h7d02: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7d03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7d04: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5569,6 +6052,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'h7e02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7e03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7e04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -5589,6 +6086,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'h7f02: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h7f03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h7f04: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5611,12 +6122,26 @@ package m6800_opcode_vectors_pkg;
         end
         16'h8002: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h8003: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h8004: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h8003: begin
+        16'h8005: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5667,12 +6192,26 @@ package m6800_opcode_vectors_pkg;
         end
         16'h8202: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h8203: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h8204: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'h8203: begin
+        16'h8205: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -5694,13 +6233,34 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'h8302: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'h8303: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h8304: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'h8305: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h40;
         end
-        16'h8303: begin
+        16'h8306: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -6647,6 +7207,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'hab02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hab03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hab04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -6667,6 +7241,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'hac02: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hac03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hac04: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -6689,6 +7277,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'had02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'had03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'had04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -6709,6 +7311,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'hae02: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hae03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hae04: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -6731,6 +7347,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'haf02: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'haf03: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'haf04: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -6752,6 +7382,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'hb002: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb003: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb004: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -6772,6 +7416,27 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'hb102: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb103: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb104: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb105: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -6794,6 +7459,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'hb202: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb203: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb204: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -6814,6 +7493,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'hb302: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb303: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb304: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -6836,6 +7529,20 @@ package m6800_opcode_vectors_pkg;
         end
         16'hb402: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb403: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb404: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
@@ -6856,6 +7563,20 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'hb502: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb503: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb504: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -6878,12 +7599,26 @@ package m6800_opcode_vectors_pkg;
         end
         16'hb602: begin
           m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb603: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb604: begin
+          m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h43;
         end
-        16'hb603: begin
+        16'hb605: begin
           m6800_access.write_enable = 1'b0;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
@@ -6905,13 +7640,34 @@ package m6800_opcode_vectors_pkg;
           m6800_access.data = 8'h10;
         end
         16'hb702: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2000;
+          m6800_access.data = 8'h00;
+        end
+        16'hb703: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb704: begin
+          m6800_access.write_enable = 1'b0;
+          m6800_access.bus_valid = 1'b0;
+          m6800_access.data_ignored = 1'b1;
+          m6800_access.address = 16'h2010;
+          m6800_access.data = 8'h00;
+        end
+        16'hb705: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;
           m6800_access.address = 16'h2010;
           m6800_access.data = 8'h20;
         end
-        16'hb703: begin
+        16'hb706: begin
           m6800_access.write_enable = 1'b1;
           m6800_access.bus_valid = 1'b1;
           m6800_access.data_ignored = 1'b0;

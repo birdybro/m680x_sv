@@ -16,6 +16,14 @@ TARGET_PC = 0x100D
 ARCHITECTURES = ("m6800", "m6801", "hd6301")
 
 
+def compared_accesses(record: dict, trace: object) -> list:
+    """Return full cycles for exact traces and valid transfers for partial traces."""
+
+    if record["bus_trace_status"] == "COMPLETE":
+        return list(trace.accesses)
+    return [access for access in trace.accesses if access.bus_valid]
+
+
 def fixture(architecture: str, opcode: int) -> M6800Model:
     memory = Memory()
     memory.load(TARGET_PC, [opcode, 0x10, 0x20, 0x30])
@@ -52,6 +60,7 @@ def render_vector_function(
         ]
     )
     for index, (record, model, trace) in enumerate(vectors):
+        accesses = compared_accesses(record, trace)
         undefined_mask = sum(1 << FLAG_BITS[flag] for flag in record["flags_undefined"])
         ccr_mask = 0x3F & ~undefined_mask
         state = model.state
@@ -71,7 +80,7 @@ def render_vector_function(
                 f"{prefix}.waiting_state = 1'b{int(state.waiting)};",
                 f"{prefix}.sleeping_state = 1'b{int(state.sleeping)};",
                 f"{prefix}.exact_bus_trace = 1'b{int(record['bus_trace_status'] == 'COMPLETE')};",
-                f"{prefix}.access_count = 4'd{len(trace.accesses)};",
+                f"{prefix}.access_count = 4'd{len(accesses)};",
                 "        end",
             ]
         )
@@ -93,7 +102,8 @@ def render_access_function(
         ]
     )
     for vector_index, (_record, _model, trace) in enumerate(vectors):
-        for access_index, access in enumerate(trace.accesses):
+        accesses = compared_accesses(_record, trace)
+        for access_index, access in enumerate(accesses):
             lines.extend(
                 [
                     f"        16'h{vector_index:02x}{access_index:02x}: begin",
