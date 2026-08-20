@@ -154,7 +154,7 @@ The MC6803 profile inherits only the manufacturer-stated Modes 2/3 facts and
 rejects other public configurations. Its shared Motorola digital multiplexed
 bus waveform is implemented. Single-chip Port 3 handshake behavior is not
 applicable to the claimed MC6803 Modes 2/3 profile; nanosecond electrical
-timing remains outside the partial pin-level claim.
+timing remains outside the synthesizable digital pin-level claim.
 For a framing error, MC6801 transfers the misframed byte into RDR while setting
 ORFE without RDRF. This behavior is independently selected and tested rather
 than generalized to Hitachi parts.
