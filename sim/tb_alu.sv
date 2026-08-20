@@ -15,6 +15,12 @@ module tb_alu;
   integer signed_result;
   integer boundary_index;
   integer boundary;
+  integer half_carry;
+  integer high_nibble;
+  integer low_nibble;
+  integer expected_adjustment;
+  logic expected_carry;
+  logic expected_defined;
   integer cases;
 
   function automatic integer boundary_value(input integer index);
@@ -138,8 +144,9 @@ module tb_alu;
       cases = cases + 8;
     end
 
-    if (clr8().value != 8'h00 || clr8().n != 1'b0 || clr8().z != 1'b1 ||
-        clr8().v != 1'b0 || clr8().c != 1'b0) $fatal(1, "CLR mismatch");
+    result8 = clr8();
+    if (result8.value != 8'h00 || result8.n != 1'b0 || result8.z != 1'b1 ||
+        result8.v != 1'b0 || result8.c != 1'b0) $fatal(1, "CLR mismatch");
     cases = cases + 1;
 
     for (left = 0; left < 65536; left = left + 1) begin
@@ -167,14 +174,74 @@ module tb_alu;
       end
     end
 
-    daa_result = daa8(8'h9a, 1'b0, 1'b0);
-    if (!daa_result.defined_state || daa_result.value != 8'h00 || daa_result.adjustment != 8'h66 ||
-        daa_result.n || !daa_result.z || !daa_result.c) begin
-      $fatal(1, "DAA documented state mismatch");
+    // Independently encode all nine rows of the manufacturer DAA table and
+    // classify the complete finite A/H/C input space, including undefined rows.
+    for (carry = 0; carry < 2; carry = carry + 1) begin
+      for (half_carry = 0; half_carry < 2; half_carry = half_carry + 1) begin
+        for (left = 0; left < 256; left = left + 1) begin
+          high_nibble = left >> 4;
+          low_nibble = left & 15;
+          expected_defined = 1'b1;
+          expected_adjustment = 0;
+          expected_carry = carry[0];
+          if ((carry == 0) && (half_carry == 0) &&
+              (high_nibble <= 9) && (low_nibble <= 9)) begin
+            expected_adjustment = 0;
+            expected_carry = 1'b0;
+          end else if ((carry == 0) && (half_carry == 0) &&
+                       (high_nibble <= 8) && (low_nibble >= 10)) begin
+            expected_adjustment = 6;
+            expected_carry = 1'b0;
+          end else if ((carry == 0) && (half_carry == 1) &&
+                       (high_nibble <= 9) && (low_nibble <= 3)) begin
+            expected_adjustment = 6;
+            expected_carry = 1'b0;
+          end else if ((carry == 0) && (half_carry == 0) &&
+                       (high_nibble >= 10) && (low_nibble <= 9)) begin
+            expected_adjustment = 96;
+            expected_carry = 1'b1;
+          end else if ((carry == 0) && (half_carry == 0) &&
+                       (high_nibble >= 9) && (low_nibble >= 10)) begin
+            expected_adjustment = 102;
+            expected_carry = 1'b1;
+          end else if ((carry == 0) && (half_carry == 1) &&
+                       (high_nibble >= 10) && (low_nibble <= 3)) begin
+            expected_adjustment = 102;
+            expected_carry = 1'b1;
+          end else if ((carry == 1) && (half_carry == 0) &&
+                       (high_nibble <= 2) && (low_nibble <= 9)) begin
+            expected_adjustment = 96;
+            expected_carry = 1'b1;
+          end else if ((carry == 1) && (half_carry == 0) &&
+                       (high_nibble <= 2) && (low_nibble >= 10)) begin
+            expected_adjustment = 102;
+            expected_carry = 1'b1;
+          end else if ((carry == 1) && (half_carry == 1) &&
+                       (high_nibble <= 3) && (low_nibble <= 3)) begin
+            expected_adjustment = 102;
+            expected_carry = 1'b1;
+          end else begin
+            expected_defined = 1'b0;
+          end
+
+          daa_result = daa8(left[7:0], half_carry[0], carry[0]);
+          value = (left + expected_adjustment) & 255;
+          if (daa_result.defined_state != expected_defined ||
+              (expected_defined &&
+               (daa_result.value != value[7:0] ||
+                daa_result.adjustment != expected_adjustment[7:0] ||
+                daa_result.n != (value >= 128) || daa_result.z != (value == 0) ||
+                daa_result.c != expected_carry))) begin
+            $fatal(1, "DAA mismatch A=%02x H=%0d C=%0d actual=%02x/%02x/%0d/%0d/%0d/%0d expected=%02x/%02x/%0d/%0d/%0d/%0d",
+                   left, half_carry, carry, daa_result.value, daa_result.adjustment,
+                   daa_result.defined_state, daa_result.n, daa_result.z, daa_result.c,
+                   value, expected_adjustment, expected_defined, value >= 128,
+                   value == 0, expected_carry);
+          end
+          cases = cases + 1;
+        end
+      end
     end
-    daa_result = daa8(8'hff, 1'b1, 1'b1);
-    if (daa_result.defined_state) $fatal(1, "DAA undefined state was classified as defined");
-    cases = cases + 2;
 
     $display("RTL ALU PASS: %0d finite cases", cases);
     $finish;

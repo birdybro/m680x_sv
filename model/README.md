@@ -40,11 +40,13 @@ the exact 13-cycle entry trace, and preserves the faulting PC for RTI retry.
 
 `m6805.py` is a separate instruction path for M6805 and HD6305. It executes all
 417 documented encodings while modeling the eight-bit X register, parameterized
-stack-pointer width, bit set/clear and bit-test branches, three indexed forms,
-IRQ-pin branches, five-byte interrupt frame, and Hitachi low-power instructions.
-The default five-bit stack window wraps within `$0060`–`$007f`, matching the
-concrete MC68705P5 behavior; other family members can select their documented
-stack width explicitly.
+PC mask and stack window, bit set/clear and bit-test branches, three indexed
+forms, IRQ-pin branches, five-byte interrupt frame, and Hitachi low-power
+instructions. The default five-bit stack window wraps within `$0060`–`$007f`;
+an MC68705P5 selects `pc_mask=0x07ff`, while an HD63705V0 selects
+`pc_mask=0x3fff`, `stack_bits=6`, and `stack_base=0x00c0`. Reset, sequential and
+relative PC wrap, control transfers, RSP, vector loads, and the one-filled
+unused stacked-PCH bits all follow those parameters.
 
 `mc6801_device.py` is a cycle-stepped path for MC6801 Modes 0-7 and the normal
 or relocated 2-KiB mask-ROM options. It is organized around register

@@ -542,6 +542,17 @@ module tb_hd63705v0_mcu;
     checks = checks + 2;
     eprom_mode = 1'b0;
 
+    // The documented fourteen-bit PC wraps at 3FFF even though this address
+    // is outside the internal EPROM selection and therefore reads as FF.
+    reset_to(14'h3fff);
+    run_instruction(8'hff); // STX ,X
+    if (cycles != 4 || debug_pc != 16'h0000 || debug_address != 16'h0000 ||
+        illegal || undefined_value) begin
+      $fatal(1, "HD63705V0 PC wrap cycles=%0d pc=%04x address=%04x", cycles,
+             debug_pc, debug_address);
+    end
+    checks = checks + 1;
+
     if (debug_address[15:14] != 2'b00 || debug_pc[15:14] != 2'b00 ||
         ((opcode_fetch !== 1'b0) && (opcode_fetch !== 1'b1)) ||
         ((sci_clock !== 1'b0) && (sci_clock !== 1'b1)) ||

@@ -652,6 +652,9 @@ test-random-hd6305:
 
 test-iverilog: spec-check
 	mkdir -p build/iverilog
+	$(IVERILOG) -g2012 -Wall -s tb_alu -o build/iverilog/tb_alu \
+		rtl/common/m680x_alu_pkg.sv sim/tb_alu.sv
+	$(VVP) build/iverilog/tb_alu
 	$(IVERILOG) -g2012 -Wall -s tb_mc6800_phased_bus_wrapper \
 		-o build/iverilog/mc6800_phased_bus_wrapper \
 		rtl/generated/yosys_m6800_core.sv rtl/m6800/mc6800_bus_wrapper.sv \

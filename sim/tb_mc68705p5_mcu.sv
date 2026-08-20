@@ -362,6 +362,17 @@ module tb_mc68705p5_mcu;
     vpp_present = 1'b0;
     #1;
 
+    // The concrete eleven-bit PC wraps from the final vector-region byte to
+    // zero.  FF is both the reset-vector low byte and the STX ,X opcode.
+    reset_to(11'h7ff);
+    run_instruction(8'hff);
+    if (cycles != 5 || debug_pc != 16'h0000 || debug_address != 16'h0000 ||
+        illegal || undefined_value) begin
+      $fatal(1, "P5 PC wrap cycles=%0d pc=%04x address=%04x", cycles,
+             debug_pc, debug_address);
+    end
+    checks = checks + 1;
+
     if (eprom_latch_enable || eprom_program_enable || waiting_state || stopped_state ||
         port_b_out != 8'h00 || port_c_out != 4'h0 || debug_address >= 16'h0800 ||
         debug_pc[15:11] != 5'h00 || debug_x != 8'h00 ||

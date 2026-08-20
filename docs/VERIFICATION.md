@@ -26,8 +26,8 @@ The committed tests cover:
 | Documented encodings executed in Python and RTL | 1,064 |
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
-| SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 204 |
+| SystemVerilog exhaustive practical ALU cases | 1,970,177 |
+| Python unit tests | 207 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -53,7 +53,7 @@ The committed tests cover:
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
 | HD63701V0 four-subphase bus-wrapper checks | 496 |
 | HD63701V0 digital PROM checks | 28 |
-| HD63705V0 integration checks | 47 |
+| HD63705V0 integration checks | 49 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | HD63705V0 exhaustive memory-map checks | 16,384 |
 | HD63705V0 RAM fill/reset/standby checks | 576 |
@@ -68,8 +68,8 @@ The committed tests cover:
 | HD63705V0 MR/interrupt priority/protocol checks | 611 |
 | MC6800 Table-8 opcode encodings with complete structured bus traces | 196 |
 | M6805 table-G2 opcode encodings with complete structured bus traces | 191 |
-| M6805 directed core checks | 36 |
-| MC68705P5 integration checks | 19 |
+| M6805 directed core checks | 37 |
+| MC68705P5 integration checks | 21 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
 | MC68705P5 PCR/VPP table checks | 8 |
 | MC68705P5 exhaustive memory-map/RAM checks | 2,272 |
@@ -87,7 +87,9 @@ The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
 cases, all 1,024 DAA input states plus 20,000 valid packed-BCD additions, and
 1,310,720 16-bit arithmetic boundary sweeps. The RTL bench uses its own loops
-and equations and reaches 1,969,155 cases.
+and equations, including its own nine-row oracle over all 1,024 A/H/C DAA
+states, and reaches 1,970,177 cases. The same SystemVerilog ALU bench runs under
+both Verilator and Icarus Verilog.
 
 Every documented encoding is executed from a generated initial state and
 compared after retirement for architectural state, defined condition codes,
@@ -312,7 +314,7 @@ addresses. A symbolic proof covers every address, data byte, voltage
 qualification, CE, and OE combination. The tests deliberately do not claim
 programming voltage magnitude, pulse duration, erasure, or retention physics.
 
-The 47-check HD63705V0 integration suite includes every digital row of table
+The 49-check HD63705V0 integration suite includes every digital row of table
 2-9: ordinary +5-V read, output disable, VPP programming, VPP verification
 with both CE values, and program/verify disable. It also checks the exact
 `$1000`/`$1fff` storage endpoints and safe inactivity without a qualified
@@ -342,7 +344,12 @@ read direction, bus-valid qualifier, and non-opcode-fetch qualifier is exact;
 only the manufacturer-labelled unusable input byte on cycle eight is excluded
 from data comparison. The MC68705P5 integration repeats the trace for normal and
 bootstrap vector selection, including all six remapped high-byte reads. The
-Motorola profile also checks the MC68705P5 manual's exact 11-cycle hardware-
+normalized core additionally fetches at `$ffff` and proves sequential wrap to
+`$0000`; concrete MC68705P5 and HD63705V0 integrations repeat that boundary
+test at `$07ff` and `$3fff`, respectively. The independent model checks those
+same PC masks, both relative-displacement extremes, 16-bit indexed-address
+wrap, device stack tops, vector masking, and one-filled unused PCH bits.
+The Motorola profile also checks the MC68705P5 manual's exact 11-cycle hardware-
 interrupt response and the M6805 Family User's Manual table-G2 bus trace: two
 next-opcode-address reads, five ordered stack writes, one unused stack read, two
 vector reads, and the trailing read at vector low plus one. It also checks that
@@ -398,7 +405,7 @@ TIE bit that TOPT makes irrelevant. The independent model separately checks all
 behavior, not the manual's electrical or nanosecond pulse-width limits.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
-boundaries and the complete register map. Its 47 checks cover reset/vector
+boundaries and the complete register map. Its 49 checks cover reset/vector
 fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
 eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field

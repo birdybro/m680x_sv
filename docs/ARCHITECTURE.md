@@ -173,6 +173,11 @@ forms, fixed-window stack arithmetic, five-byte interrupt frame, and the
 documented Hitachi additions. It does not share the M6800 execution state machine.
 The Hitachi profile defers maskable interrupt recognition until the instruction
 following CLI retires, independently of the Motorola profile.
+Every sequential, relative, vector, return, jump, and call PC update passes
+through the configured low-bit mask. Subroutine and interrupt frames fill
+unused high PCH bits with ones before writing the stack, and RSP selects the
+configured device stack top. The executable model independently parameterizes
+and tests the same documented device geometry.
 
 The Motorola profile implements the eight-cycle reset response in the M6805
 Family User's Manual table G2: six reads at the high reset-vector address, one

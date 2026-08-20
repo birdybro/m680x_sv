@@ -66,6 +66,103 @@ class M6805ModelTests(unittest.TestCase):
         wrapped.step()
         self.assertEqual(wrapped.state.a, 0x44)
 
+        wrapped16 = _fixture("m6805", 0xD6)  # LDA 16-bit offset,X
+        wrapped16.state.x = 0x20
+        wrapped16.memory.load(0x1001, [0xFF, 0xF0])
+        wrapped16.memory[0x0010] = 0x55
+        wrapped16.step()
+        self.assertEqual(wrapped16.state.a, 0x55)
+
+    def test_pc_masks_wrap_fetches_branches_and_control_transfers(self) -> None:
+        full_memory = Memory()
+        full_memory[0xFFFF] = 0xFF  # STX ,X
+        full = M6805Model(
+            "m6805",
+            memory=full_memory,
+            state=M6805State(x=0x20, pc=0xFFFF),
+        )
+        full_trace = full.step()
+        self.assertEqual(full.state.pc, 0x0000)
+        self.assertEqual([access.address for access in full_trace.accesses],
+                         [0xFFFF, 0x0000, 0x007F, 0x0020, 0x0020])
+
+        p5_memory = Memory()
+        p5_memory[0x07FF] = 0xFF  # STX ,X
+        p5 = M6805Model(
+            "m6805",
+            memory=p5_memory,
+            state=M6805State(x=0x20, pc=0x07FF),
+            pc_mask=0x07FF,
+        )
+        p5_trace = p5.step()
+        self.assertEqual(p5.state.pc, 0x0000)
+        self.assertEqual([access.address for access in p5_trace.accesses],
+                         [0x07FF, 0x0000, 0x007F, 0x0020, 0x0020])
+
+        positive = M6805Model(
+            "m6805", memory=Memory(), state=M6805State(pc=0x07FE), pc_mask=0x07FF
+        )
+        positive.memory.load(0x07FE, [0x20, 0x7F])  # BRA +127
+        positive.step()
+        self.assertEqual(positive.state.pc, 0x007F)
+
+        negative = M6805Model(
+            "m6805", memory=Memory(), state=M6805State(pc=0x0000), pc_mask=0x07FF
+        )
+        negative.memory.load(0x0000, [0x20, 0x80])  # BRA -128
+        negative.step()
+        self.assertEqual(negative.state.pc, 0x0782)
+
+        call = M6805Model(
+            "m6805", memory=Memory(), state=M6805State(sp=0x7F, pc=0x0320),
+            pc_mask=0x07FF,
+        )
+        call.memory.load(0x0320, [0xAD, 0x01])  # BSR $0323
+        call.step()
+        self.assertEqual(call.state.pc, 0x0323)
+        self.assertEqual(call.memory[0x007F], 0x22)
+        self.assertEqual(call.memory[0x007E], 0xFB)
+
+    def test_device_geometry_reset_stack_and_vector_masking(self) -> None:
+        p5 = M6805Model("m6805", memory=Memory(), pc_mask=0x07FF)
+        p5.memory.load(0xFFFE, [0xAB, 0xCD])
+        p5.reset()
+        self.assertEqual(p5.state.pc, 0x03CD)
+        self.assertEqual(p5.state.sp, 0x007F)
+
+        hd = M6805Model(
+            "hd6305",
+            memory=Memory(),
+            state=M6805State(sp=0x7F, pc=0x3FFF),
+            stack_bits=6,
+            stack_base=0x00C0,
+            pc_mask=0x3FFF,
+        )
+        self.assertEqual(hd.state.sp, 0x00FF)
+        hd.memory[0x3FFF] = 0x9C  # RSP
+        hd.step()
+        self.assertEqual(hd.state.pc, 0x0000)
+        self.assertEqual(hd.state.sp, 0x00FF)
+
+        hd.state.pc = 0x1529
+        hd.state.ccr = 0
+        hd.memory.load(0xFFFA, [0x7A, 0xBC])
+        self.assertTrue(hd.service_irq())
+        self.assertEqual(hd.state.pc, 0x3ABC)
+        self.assertEqual(hd.state.sp, 0x00FA)
+        self.assertEqual(hd.memory[0x00FF], 0x29)
+        self.assertEqual(hd.memory[0x00FE], 0xD5)
+
+    def test_device_geometry_rejects_invalid_masks_and_windows(self) -> None:
+        for pc_mask in (0x0000, 0x0FFE, 0x10000):
+            with self.subTest(pc_mask=pc_mask):
+                with self.assertRaises(ValueError):
+                    M6805Model(pc_mask=pc_mask)
+        for stack_bits, stack_base in ((5, 0x0061), (6, 0xFFE0)):
+            with self.subTest(stack_bits=stack_bits, stack_base=stack_base):
+                with self.assertRaises(ValueError):
+                    M6805Model(stack_bits=stack_bits, stack_base=stack_base)
+
     def test_bit_modify_and_test_branch_copy_tested_bit_to_c(self) -> None:
         set_bit = _fixture("m6805", 0x16)  # BSET3
         set_bit.memory[0x10] = 0x01

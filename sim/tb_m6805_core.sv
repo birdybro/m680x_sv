@@ -556,6 +556,26 @@ module tb_m6805_core;
       $fatal(1, "M6805 indexed-16 JMP table-G2 trace");
     end
 
+    // A fetch at the top of the normalized 16-bit PC space wraps the next
+    // sequential PC and table-G2 look-ahead read to zero.
+    memory[16'hfffe] = 8'hff;
+    memory[16'hffff] = 8'hff; // reset-vector low byte and STX ,X opcode
+    refresh_memory();
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    for (reset_cycle = 0; reset_cycle < 8; reset_cycle = reset_cycle + 1) tick();
+    if (debug_pc != 16'hffff || address != 16'hffff || !opcode_fetch) begin
+      $fatal(1, "M6805 top-of-PC reset/fetch pc=%04x address=%04x fetch=%b",
+             debug_pc, address, opcode_fetch);
+    end
+    run_instruction(5, 8'hff);
+    if (trace_address[0] != 16'hffff || trace_address[1] != 16'h0000 ||
+        debug_pc != 16'h0000 || address != 16'h0000 || illegal || undefined_value) begin
+      $fatal(1, "M6805 PC wrap trace first=%04x second=%04x pc=%04x address=%04x",
+             trace_address[0], trace_address[1], debug_pc, address);
+    end
+
     $display("M6805 CORE PASS: %0d directed reset, bus, stack, and interrupt checks", cases);
     $finish;
   end

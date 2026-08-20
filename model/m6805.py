@@ -50,6 +50,8 @@ class M6805Model:
         memory: Memory | None = None,
         state: M6805State | None = None,
         stack_bits: int = 5,
+        stack_base: int | None = None,
+        pc_mask: int = 0xFFFF,
     ) -> None:
         if architecture not in ARCHITECTURES:
             raise ValueError(f"unsupported M6805-lineage architecture: {architecture}")
@@ -59,7 +61,24 @@ class M6805Model:
             raise ValueError("stack_bits must be between 1 and 7")
         self.stack_bits = stack_bits
         self.stack_mask = (1 << stack_bits) - 1
-        self.stack_base = 0x80 - (1 << stack_bits)
+        if stack_base is None:
+            stack_base = 0x80 - (1 << stack_bits)
+        if (
+            not isinstance(stack_base, int)
+            or not 0 <= stack_base <= 0xFFFF
+            or stack_base & self.stack_mask
+            or stack_base + self.stack_mask > 0xFFFF
+        ):
+            raise ValueError("stack_base must align to the selected stack window")
+        if (
+            not isinstance(pc_mask, int)
+            or not 1 <= pc_mask <= 0xFFFF
+            or pc_mask & (pc_mask + 1)
+        ):
+            raise ValueError("pc_mask must be a contiguous low-bit mask")
+        self.stack_base = stack_base
+        self.stack_top = stack_base | self.stack_mask
+        self.pc_mask = pc_mask
         self.memory = memory if memory is not None else Memory()
         self.state = state if state is not None else M6805State()
         self.irq_n = True
@@ -67,6 +86,7 @@ class M6805Model:
         self._irq_defer_instructions = 0
         self.last_trace: InstructionTrace | None = None
         self._accesses: list[BusAccess] = []
+        self._validate_state()
 
     def flag(self, name: str) -> bool:
         return bool(self.state.ccr & (1 << FLAG_BITS[name]))
@@ -89,7 +109,7 @@ class M6805Model:
         return tuple(self._accesses)
 
     def reset(self) -> None:
-        self.state = M6805State()
+        self.state = M6805State(sp=self.stack_top)
         self.set_flag("I", True)
         self._irq_defer_instructions = 0
         self._accesses = []
@@ -98,10 +118,10 @@ class M6805Model:
             for cycle in range(6):
                 vector_high = self._read8(0xFFFE, f"reset vector high {cycle + 1}")
             vector_low = self._read8(0xFFFF, "reset vector low")
-            self.state.pc = (vector_high << 8) | vector_low
+            self.state.pc = self._pc_value((vector_high << 8) | vector_low)
             self._read8(0x0000, "reset trailing read", data_defined=False)
         else:
-            self.state.pc = self._read16(0xFFFE, "reset vector")
+            self.state.pc = self._pc_value(self._read16(0xFFFE, "reset vector"))
         self.last_trace = None
 
     def service_irq(self) -> bool:
@@ -119,7 +139,7 @@ class M6805Model:
         self.set_flag("I", True)
         if self.architecture == "m6805":
             self._read8(self.state.sp, "IRQ unused stack read")
-        self.state.pc = self._read16(0xFFFA, "IRQ vector")
+        self.state.pc = self._pc_value(self._read16(0xFFFA, "IRQ vector"))
         if self.architecture == "m6805":
             self._read8(0xFFFC, "IRQ trailing vector read", data_defined=False)
         self._validate_state()
@@ -168,7 +188,7 @@ class M6805Model:
         self.state.a &= 0xFF
         self.state.x &= 0xFF
         self.state.sp = self.stack_base | (self.state.sp & self.stack_mask)
-        self.state.pc &= 0xFFFF
+        self.state.pc = self._pc_value(self.state.pc)
         self.state.ccr &= 0x1F
 
     def _read8(
@@ -204,9 +224,15 @@ class M6805Model:
         low = self._read8(address + 1, f"{purpose} low")
         return (high << 8) | low
 
+    def _pc_value(self, value: int) -> int:
+        return value & self.pc_mask
+
+    def _stacked_pc_high(self) -> int:
+        return ((self.state.pc >> 8) | ((~self.pc_mask >> 8) & 0xFF)) & 0xFF
+
     def _fetch8(self, purpose: str) -> int:
         value = self._read8(self.state.pc, purpose)
-        self.state.pc = (self.state.pc + 1) & 0xFFFF
+        self.state.pc = self._pc_value(self.state.pc + 1)
         return value
 
     def _fetch16(self, purpose: str) -> int:
@@ -224,12 +250,12 @@ class M6805Model:
 
     def _push_return_pc(self) -> None:
         self._push8(self.state.pc & 0xFF, "return PC low")
-        self._push8(self.state.pc >> 8, "return PC high")
+        self._push8(self._stacked_pc_high(), "return PC high")
 
     def _pull_pc(self) -> None:
         high = self._pull8("return PC high")
         low = self._pull8("return PC low")
-        self.state.pc = (high << 8) | low
+        self.state.pc = self._pc_value((high << 8) | low)
 
     @staticmethod
     def _signed(byte: int) -> int:
@@ -245,7 +271,7 @@ class M6805Model:
         dummy_address_defined_mask: int = 0xFFFF,
     ) -> int | None:
         if dummy_address is None:
-            dummy_address = self.stack_base | self.stack_mask
+            dummy_address = self.stack_top
         for cycle in range(dummy_reads):
             self._read8(
                 dummy_address,
@@ -275,7 +301,7 @@ class M6805Model:
         if mode == "bit-test-branch-direct":
             address = self._fetch8("direct bit address")
             if self.architecture == "m6805":
-                stack_top = self.stack_base | self.stack_mask
+                stack_top = self.stack_top
                 self._read8(stack_top, "bit-branch unused stack-top read")
                 operand = 0
                 for cycle in range(4, 8):
@@ -289,7 +315,7 @@ class M6805Model:
         if mode == "bit-set-clear-direct":
             address = self._fetch8("direct bit address")
             if self.architecture == "m6805":
-                stack_top = self.stack_base | self.stack_mask
+                stack_top = self.stack_top
                 self._read8(stack_top, "bit-modify unused stack-top read")
                 operand = 0
                 for cycle in range(4, 7):
@@ -369,15 +395,16 @@ class M6805Model:
         }:
             self._read8(self.state.pc, "next opcode")
             if rmw in RMW_OPS and record["addressing_mode"] != "inherent":
-                self._read8(self.state.pc + 1, "byte following next opcode")
-                self._read8(self.state.pc + 1, "repeated byte following next opcode")
+                following_address = self._pc_value(self.state.pc + 1)
+                self._read8(following_address, "byte following next opcode")
+                self._read8(following_address, "repeated byte following next opcode")
         if mnemonic.startswith(("BRSET", "BRCLR")):
             assert operand is not None and displacement is not None
             bit = int(mnemonic[-1])
             bit_set = bool(operand & (1 << bit))
             self.set_flag("C", bit_set)
             if bit_set == mnemonic.startswith("BRSET"):
-                self.state.pc = (self.state.pc + displacement) & 0xFFFF
+                self.state.pc = self._pc_value(self.state.pc + displacement)
             return
         if mnemonic.startswith(("BSET", "BCLR")):
             assert operand is not None and address is not None
@@ -407,7 +434,7 @@ class M6805Model:
                         "indexed-unsigned-8",
                     }:
                         self._read8(self.state.sp, "JSR trailing stack read")
-                self.state.pc = address
+                self.state.pc = self._pc_value(address)
                 return
             else:
                 assert operand is not None
@@ -477,13 +504,13 @@ class M6805Model:
             assert displacement is not None
             sequential_pc = self.state.pc
             if self._branch_taken(mnemonic):
-                self.state.pc = (self.state.pc + displacement) & 0xFFFF
+                self.state.pc = self._pc_value(self.state.pc + displacement)
             if self.architecture == "m6805":
                 self._read8(sequential_pc, "next opcode after relative branch")
                 self._read8(sequential_pc, "repeated next opcode after relative branch")
         elif mnemonic == "BSR":
             assert displacement is not None
-            target = (self.state.pc + displacement) & 0xFFFF
+            target = self._pc_value(self.state.pc + displacement)
             if self.architecture == "m6805":
                 self._read8(self.state.pc, "next opcode after BSR")
                 self._read8(self.state.pc, "repeated next opcode after BSR")
@@ -514,7 +541,7 @@ class M6805Model:
             self.set_flag("I", True)
             if self.architecture == "m6805":
                 self._read8(self.state.sp, "SWI unused stack read")
-            self.state.pc = self._read16(0xFFFC, "SWI vector")
+            self.state.pc = self._pc_value(self._read16(0xFFFC, "SWI vector"))
             if self.architecture == "m6805":
                 self._read8(self.state.pc, "SWI handler first opcode")
         elif mnemonic == "TAX":
@@ -522,7 +549,7 @@ class M6805Model:
         elif mnemonic == "TXA":
             self.state.a = self.state.x
         elif mnemonic == "RSP":
-            self.state.sp = 0x7F
+            self.state.sp = self.stack_top
         elif mnemonic in {"CLC", "SEC", "CLI", "SEI"}:
             self.set_flag(mnemonic[-1], mnemonic.startswith("SE"))
         elif mnemonic == "DAA":
@@ -548,7 +575,7 @@ class M6805Model:
 
     def _stack_complete_state(self) -> None:
         self._push8(self.state.pc & 0xFF, "stacked PC low")
-        self._push8(self.state.pc >> 8, "stacked PC high")
+        self._push8(self._stacked_pc_high(), "stacked PC high")
         self._push8(self.state.x, "stacked X")
         self._push8(self.state.a, "stacked A")
         self._push8(self.packed_ccr(), "stacked CCR")

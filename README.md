@@ -165,7 +165,7 @@ make synth             all generic synthesis smoke tests
 make ci                authoritative complete committed-source gate
 ```
 
-The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
+The current regressions include 1,839,105 Python ALU cases, 1,970,177 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
