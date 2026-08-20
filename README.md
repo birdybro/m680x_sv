@@ -91,13 +91,13 @@ read and ends after the low byte.
 The separate 11-cycle SWI trace ends with a defined read of the first handler
 opcode at the address resolved from `$07fc:$07fd`; hardware IRQ instead ends
 with the documented unusable-data read after its low vector byte.
-For the base MC6800 profile, 165 encodings carry complete structured Table-8
-bus traces. This includes two-cycle, immediate, direct, indexed except JSR, and
-extended except JSR forms. The model and RTL compare every cycle, including
+For the base MC6800 profile, 183 encodings carry complete structured Table-8
+bus traces. This includes all two-cycle, immediate, direct, indexed, extended,
+and relative forms. The model and RTL compare every cycle, including
 the otherwise non-architectural next-opcode read, indexed partial-address
-cycles, VMA-low pre-write cycles, and TST's non-writing R/W-low cycle. These
-facts are not projected onto the separately documented MC6801 or HD6301
-profiles.
+cycles, VMA-low pre-write cycles, TST's non-writing R/W-low cycle, and the
+unusual target-prefetch/repeated-operand cycles of JSR. These facts are not
+projected onto the separately documented MC6801 or HD6301 profiles.
 For 191 Motorola encodings, the opcode specification records every published table-G2
 cycle as structured address/direction/data-role facts. RTL and the independently
 organized Python model match the complete inherent, accumulator, immediate,

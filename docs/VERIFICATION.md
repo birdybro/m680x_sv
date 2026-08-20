@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 199 |
+| Python unit tests | 200 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -65,7 +65,7 @@ The committed tests cover:
 | HD63705V0 SCI Tx/Rx byte checks | 4,096 |
 | HD63705V0 SCI status/rate/protocol checks | 549 |
 | HD63705V0 MR/interrupt priority/protocol checks | 611 |
-| MC6800 Table-8 opcode encodings with complete structured bus traces | 165 |
+| MC6800 Table-8 opcode encodings with complete structured bus traces | 183 |
 | M6805 table-G2 opcode encodings with complete structured bus traces | 191 |
 | M6805 directed core checks | 36 |
 | MC68705P5 integration checks | 19 |
@@ -92,12 +92,13 @@ Every documented encoding is executed from a generated initial state and
 compared after retirement for architectural state, defined condition codes,
 documented cycle total, and ordered semantic memory accesses. Undefined flag
 bits are masked only where the primary manufacturer table marks them undefined.
-For 165 base-MC6800 encodings, the generated opcode regression compares every
+For 183 base-MC6800 encodings, the generated opcode regression compares every
 documented Table-8 cycle for VMA, address, direction, and defined data. The
 closed groups cover every two-cycle inherent/accumulator operation, every
-immediate and direct form, every indexed form except JSR, and every extended
-form except JSR. Checks include the no-carry indexed address cycle, VMA-low
-read-modify-write and store phases, and TST's VMA-low R/W-low final cycle.
+immediate, direct, indexed, extended, and relative form. Checks include the
+no-carry indexed address cycle, VMA-low read-modify-write and store phases,
+TST's VMA-low R/W-low final cycle, every BSR stack/internal phase, and both JSR
+sequences including the extended target prefetch and low-byte reread.
 MC6801/HD6301 traces remain separate rather than inheriting MC6800 bus timing.
 
 The random corpus uses recorded seeds `0x68000000` through `0x6804000f`, grouped
@@ -571,14 +572,14 @@ Representative generic Yosys 0.68 results from the current source are:
 
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
-| M6800 | 6,406 | 225 |
-| MC6800 bus wrapper | 6,402 | 231 |
-| MC6800 four-subphase integration wrapper | 6,407 | 236 |
-| MC6801 | 6,344 | 218 |
+| M6800 | 6,434 | 225 |
+| MC6800 bus wrapper | 6,527 | 231 |
+| MC6800 four-subphase integration wrapper | 6,571 | 236 |
+| MC6801 | 6,518 | 218 |
 | MC6801 Mode 2 integration | 11,434 | 1,447 |
 | MC6801 Mode 4/5 integration | 11,438 | 1,494 |
 | MC6801 four-subphase bus wrapper | 11,579 | 1,450 |
-| HD6301 | 7,453 | 218 |
+| HD6301 | 7,524 | 218 |
 | HD6301V1 Mode 0 integration | 12,134 | 1,438 |
 | HD6301V1 Mode 1 integration | 12,113 | 1,421 |
 | HD6301V1 Mode 4 integration | 12,155 | 1,437 |

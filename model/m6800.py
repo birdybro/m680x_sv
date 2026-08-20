@@ -325,7 +325,8 @@ class M6800Model:
             if self.architecture == "m6800":
                 partial_address = (self.state.x & 0xFF00) | ((self.state.x + offset) & 0x00FF)
                 self._invalid_read_cycle(self.state.x, "indexed base VMA-low cycle")
-                self._invalid_read_cycle(partial_address, "indexed low-byte sum VMA-low cycle")
+                if mnemonic != "JSR":
+                    self._invalid_read_cycle(partial_address, "indexed low-byte sum VMA-low cycle")
         elif mode == "extended":
             address = self._fetch16("extended address")
         else:
@@ -485,18 +486,46 @@ class M6800Model:
             self._merge_flags(result, record)
         elif mnemonic in {"BRA", "BRN", "BHI", "BLS", "BCC", "BCS", "BNE", "BEQ", "BVC", "BVS", "BPL", "BMI", "BGE", "BLT", "BGT", "BLE"}:
             assert operand is not None
+            target = (self.state.pc + operand) & 0xFFFF
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.pc, "post-branch return-address cycle")
+                self._invalid_read_cycle(target, "computed branch-address cycle")
             if self._branch_taken(mnemonic):
-                self.state.pc = (self.state.pc + operand) & 0xFFFF
+                self.state.pc = target
         elif mnemonic == "BSR":
             assert operand is not None
+            return_address = self.state.pc
+            target = (return_address + operand) & 0xFFFF
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(return_address, "BSR return-address cycle")
             self._push_return_pc()
-            self.state.pc = (self.state.pc + operand) & 0xFFFF
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.sp, "BSR post-stack cycle")
+                self._invalid_read_cycle(return_address, "BSR repeated return-address cycle")
+                self._invalid_read_cycle(target, "BSR subroutine-address cycle")
+            self.state.pc = target
         elif mnemonic == "JMP":
             assert address is not None
             self.state.pc = address
         elif mnemonic == "JSR":
             assert address is not None
+            return_address = self.state.pc
+            if self.architecture == "m6800" and record["addressing_mode"] == "extended":
+                self._read8(address, "subroutine target opcode prefetch")
             self._push_return_pc()
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.sp, "JSR post-stack cycle")
+                if record["addressing_mode"] == "indexed-unsigned-8":
+                    offset = self.memory[(return_address - 1) & 0xFFFF]
+                    partial_address = (self.state.x & 0xFF00) | (
+                        (self.state.x + offset) & 0x00FF
+                    )
+                    self._invalid_read_cycle(self.state.x, "JSR indexed-base cycle")
+                    self._invalid_read_cycle(partial_address, "JSR indexed low-byte sum cycle")
+                else:
+                    low_address = (return_address - 1) & 0xFFFF
+                    self._invalid_read_cycle(low_address, "JSR low-address-byte idle cycle")
+                    self._read8(low_address, "JSR repeated low address byte")
             self.state.pc = address
         elif mnemonic == "RTS":
             self._pull_pc()

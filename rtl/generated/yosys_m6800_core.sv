@@ -1586,6 +1586,8 @@ module m6800_core #(
     ST_FETCH,
     ST_EXECUTE,
     ST_RELATIVE,
+    ST_BRANCH_SEQUENTIAL,
+    ST_BRANCH_TARGET,
     ST_IMMEDIATE_8,
     ST_IMMEDIATE_16_HIGH,
     ST_IMMEDIATE_16_LOW,
@@ -1606,6 +1608,14 @@ module m6800_core #(
     ST_MEMORY_WRITE_16_LOW,
     ST_PUSH_RETURN_LOW,
     ST_PUSH_RETURN_HIGH,
+    ST_JSR_TARGET_PREFETCH,
+    ST_CONTROL_STACK_IDLE,
+    ST_CONTROL_RETURN_IDLE,
+    ST_CONTROL_TARGET_IDLE,
+    ST_CONTROL_INDEX_BASE_IDLE,
+    ST_CONTROL_INDEX_PARTIAL_IDLE,
+    ST_JSR_EXTENDED_LOW_IDLE,
+    ST_JSR_EXTENDED_LOW_REREAD,
     ST_PULL_PC_HIGH,
     ST_PULL_PC_LOW,
     ST_PUSH_BYTE,
@@ -1821,7 +1831,11 @@ module m6800_core #(
         finish_to(ST_FETCH);
       end else if (decoded.operation == OP_JSR) begin
         control_target <= address_value;
-        state <= ST_PUSH_RETURN_LOW;
+        if ((ARCHITECTURE == 2'd0) && (decoded.mode == AM_EXTENDED)) begin
+          state <= ST_JSR_TARGET_PREFETCH;
+        end else begin
+          state <= ST_PUSH_RETURN_LOW;
+        end
       end else if (decoded.operation == OP_STA) begin
         write_data <= selected_byte(decoded.target);
         set_nzv8(selected_byte(decoded.target));
@@ -2321,6 +2335,12 @@ module m6800_core #(
         address_o = program_counter;
         bus_valid_o = 1'b1;
       end
+      ST_BRANCH_SEQUENTIAL: begin
+        address_o = program_counter;
+      end
+      ST_BRANCH_TARGET: begin
+        address_o = control_target;
+      end
       ST_INDEXED_BASE: begin
         address_o = index_register;
       end
@@ -2377,6 +2397,29 @@ module m6800_core #(
         data_o = program_counter[15:8];
         write_o = 1'b1;
         bus_valid_o = 1'b1;
+      end
+      ST_JSR_TARGET_PREFETCH: begin
+        address_o = control_target;
+        bus_valid_o = 1'b1;
+      end
+      ST_CONTROL_STACK_IDLE: begin
+        address_o = stack_pointer;
+      end
+      ST_CONTROL_RETURN_IDLE: begin
+        address_o = program_counter;
+      end
+      ST_CONTROL_TARGET_IDLE: begin
+        address_o = control_target;
+      end
+      ST_CONTROL_INDEX_BASE_IDLE: begin
+        address_o = index_register;
+      end
+      ST_CONTROL_INDEX_PARTIAL_IDLE: begin
+        address_o = {index_register[15:8], index_register[7:0] + indexed_offset};
+      end
+      ST_JSR_EXTENDED_LOW_IDLE, ST_JSR_EXTENDED_LOW_REREAD: begin
+        address_o = program_counter - 16'h0001;
+        if (state == ST_JSR_EXTENDED_LOW_REREAD) bus_valid_o = 1'b1;
       end
       ST_PULL_PC_HIGH, ST_PULL_PC_LOW, ST_PULL_BYTE, ST_RTI_PULL: begin
         address_o = stack_pointer + 16'h0001;
@@ -2586,7 +2629,10 @@ module m6800_core #(
         ST_EXECUTE: execute_inherent();
         ST_RELATIVE: begin
           program_counter <= program_counter + 16'h0001;
-          if (decoded.operation == OP_BSR) begin
+          if (ARCHITECTURE == 2'd0) begin
+            control_target <= program_counter + 16'h0001 + {{8{data_i[7]}}, data_i};
+            state <= ST_BRANCH_SEQUENTIAL;
+          end else if (decoded.operation == OP_BSR) begin
             control_target <= program_counter + 16'h0001 + {{8{data_i[7]}}, data_i};
             state <= ST_PUSH_RETURN_LOW;
           end else begin
@@ -2595,6 +2641,14 @@ module m6800_core #(
             end
             finish_to(ST_FETCH);
           end
+        end
+        ST_BRANCH_SEQUENTIAL: begin
+          if (decoded.operation == OP_BSR) state <= ST_PUSH_RETURN_LOW;
+          else state <= ST_BRANCH_TARGET;
+        end
+        ST_BRANCH_TARGET: begin
+          if (branch_condition(decoded.operation)) program_counter <= control_target;
+          finish_to(ST_FETCH);
         end
         ST_IMMEDIATE_8: begin
           program_counter <= program_counter + 16'h0001;
@@ -2618,12 +2672,16 @@ module m6800_core #(
           if (ARCHITECTURE == 2'd0) begin
             indexed_offset <= data_i;
             effective_address <= index_register + {8'h00, data_i};
+            control_target <= index_register + {8'h00, data_i};
             state <= ST_INDEXED_BASE;
           end else begin
             route_effective_address(index_register + {8'h00, data_i});
           end
         end
-        ST_INDEXED_BASE: state <= ST_INDEXED_PARTIAL;
+        ST_INDEXED_BASE: begin
+          if (decoded.operation == OP_JSR) state <= ST_PUSH_RETURN_LOW;
+          else state <= ST_INDEXED_PARTIAL;
+        end
         ST_INDEXED_PARTIAL: route_effective_address(effective_address);
         ST_EXTENDED_HIGH: begin
           temporary_high <= data_i;
@@ -2677,6 +2735,34 @@ module m6800_core #(
         end
         ST_PUSH_RETURN_HIGH: begin
           stack_pointer <= stack_pointer - 16'h0001;
+          if ((ARCHITECTURE == 2'd0) &&
+              ((decoded.operation == OP_BSR) || (decoded.operation == OP_JSR))) begin
+            state <= ST_CONTROL_STACK_IDLE;
+          end else begin
+            program_counter <= control_target;
+            finish_to(ST_FETCH);
+          end
+        end
+        ST_JSR_TARGET_PREFETCH: state <= ST_PUSH_RETURN_LOW;
+        ST_CONTROL_STACK_IDLE: begin
+          case (decoded.mode)
+            AM_RELATIVE: state <= ST_CONTROL_RETURN_IDLE;
+            AM_INDEXED_8: state <= ST_CONTROL_INDEX_BASE_IDLE;
+            default: state <= ST_JSR_EXTENDED_LOW_IDLE;
+          endcase
+        end
+        ST_CONTROL_RETURN_IDLE: state <= ST_CONTROL_TARGET_IDLE;
+        ST_CONTROL_TARGET_IDLE: begin
+          program_counter <= control_target;
+          finish_to(ST_FETCH);
+        end
+        ST_CONTROL_INDEX_BASE_IDLE: state <= ST_CONTROL_INDEX_PARTIAL_IDLE;
+        ST_CONTROL_INDEX_PARTIAL_IDLE: begin
+          program_counter <= control_target;
+          finish_to(ST_FETCH);
+        end
+        ST_JSR_EXTENDED_LOW_IDLE: state <= ST_JSR_EXTENDED_LOW_REREAD;
+        ST_JSR_EXTENDED_LOW_REREAD: begin
           program_counter <= control_target;
           finish_to(ST_FETCH);
         end

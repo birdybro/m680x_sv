@@ -95,13 +95,15 @@ test also checks the primary manual's reset, IRQ, NMI, SWI, WAI, and RTI stack
 and vector sequences.
 For the base profile, MC6800 System Design Data Table 8 additionally drives
 explicit cycle traces for every two-cycle inherent/accumulator form, all
-immediate and direct forms, all indexed forms except JSR, and all extended
-forms except JSR. The 165 opcode records carry the complete
+immediate, direct, indexed, extended, and relative forms. The 183 opcode records carry the complete
 cycle-address/direction/data-role/VMA sequence; MC6801 and HD6301 retain their
 own manufacturer timing profiles. Indexed execution exposes the base register
 and low-byte sum before the carry is applied. Stores and read-modify-write
 operations expose their documented VMA-low destination cycles, including
 TST's R/W-low cycle with VMA suppressed.
+BSR and both JSR modes use dedicated states for the documented post-stack
+addresses; extended JSR also performs its target-opcode prefetch and repeated
+low address-byte read without exposing those reads as instruction retirement.
 
 ## MC6800 device bus wrapper
 

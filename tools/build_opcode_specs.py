@@ -702,6 +702,48 @@ def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
                 final_cycle,
             ]
         return prefix + [read(5, "indexed_effective_address", "operand")]
+    if mode == "indexed-unsigned-8" and mnemonic == "JSR":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "indexed_offset"),
+            invalid_read(3, "index_register"),
+            write(4, "stack_pointer", "return_address_low"),
+            write(5, "stack_pointer-1", "return_address_high"),
+            invalid_read(6, "stack_pointer-2"),
+            invalid_read(7, "index_register"),
+            invalid_read(8, "index_register_plus_offset_without_carry"),
+        ]
+    if mode == "extended" and mnemonic == "JSR":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "subroutine_address_high"),
+            read(3, "opcode_address+2", "subroutine_address_low"),
+            read(4, "subroutine_starting_address", "next_instruction_opcode"),
+            write(5, "stack_pointer", "return_address_low"),
+            write(6, "stack_pointer-1", "return_address_high"),
+            invalid_read(7, "stack_pointer-2"),
+            invalid_read(8, "opcode_address+2"),
+            read(9, "opcode_address+2", "subroutine_address_low"),
+        ]
+    if mode == "relative":
+        offset = read(2, "opcode_address+1", "branch_offset")
+        if mnemonic == "BSR":
+            return [
+                opcode,
+                offset,
+                invalid_read(3, "return_address"),
+                write(4, "stack_pointer", "return_address_low"),
+                write(5, "stack_pointer-1", "return_address_high"),
+                invalid_read(6, "stack_pointer-2"),
+                invalid_read(7, "return_address"),
+                invalid_read(8, "subroutine_address"),
+            ]
+        return [
+            opcode,
+            offset,
+            invalid_read(3, "opcode_address+2"),
+            invalid_read(4, "computed_branch_address"),
+        ]
     return []
 
 

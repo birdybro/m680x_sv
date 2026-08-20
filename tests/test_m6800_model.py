@@ -29,7 +29,7 @@ class M6800ModelTests(unittest.TestCase):
             trace = model.step()
             self.assertEqual(len(trace.accesses), trace.documented_cycles)
             complete += 1
-        self.assertEqual(complete, 165)
+        self.assertEqual(complete, 183)
 
     def test_m6800_direct_store_has_documented_vma_low_cycle(self) -> None:
         model = _fixture("m6800", 0x97)
@@ -59,6 +59,29 @@ class M6800ModelTests(unittest.TestCase):
         self.assertEqual([access.kind for access in test_trace.accesses[-2:]], ["read", "write"])
         self.assertEqual([access.bus_valid for access in test_trace.accesses[-2:]], [False, False])
         self.assertEqual(test_trace.accesses[-1].data, test_trace.accesses[-3].data)
+
+    def test_m6800_table8_relative_and_jsr_control_cycles(self) -> None:
+        branch = _fixture("m6800", 0x25)  # BCS, not taken with C clear
+        branch_trace = branch.step()
+        self.assertEqual(
+            [access.address for access in branch_trace.accesses],
+            [0x1000, 0x1001, 0x1002, 0x1012],
+        )
+        self.assertEqual(branch.state.pc, 0x1002)
+
+        bsr = _fixture("m6800", 0x8D)
+        bsr_trace = bsr.step()
+        self.assertEqual(
+            [access.address for access in bsr_trace.accesses],
+            [0x1000, 0x1001, 0x1002, 0x4000, 0x3FFF, 0x3FFE, 0x1002, 0x1012],
+        )
+
+        jsr = _fixture("m6800", 0xBD)
+        jsr_trace = jsr.step()
+        self.assertEqual(
+            [access.address for access in jsr_trace.accesses],
+            [0x1000, 0x1001, 0x1002, 0x1020, 0x4000, 0x3FFF, 0x3FFE, 0x1002, 0x1002],
+        )
 
     def test_every_documented_encoding_executes(self) -> None:
         counts: dict[str, int] = {}
