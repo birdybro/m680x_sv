@@ -48,7 +48,17 @@ module tb_hd63705_peripheral_diff;
   integer map_address;
   integer map_checks;
   integer ram_checks;
+  integer timer_value;
+  integer timer_divide;
+  integer timer_source;
+  integer timer_event_index;
+  integer timer_tcr_checks;
+  integer timer_counter_checks;
+  integer timer_source_checks;
+  integer timer_access_checks;
   logic expected_program_read;
+  logic [7:0] expected_timer;
+  logic [7:0] expected_tcr;
 
   /* verilator lint_off PINCONNECTEMPTY */
   hd63705v0_mcu dut (
@@ -87,6 +97,47 @@ module tb_hd63705_peripheral_diff;
     end
   endtask
 
+  task automatic bus_write(input logic [13:0] address,
+                           input logic [7:0] data);
+    begin
+      stub_address = {2'b00, address};
+      stub_data = data;
+      stub_valid = 1'b1;
+      stub_write = 1'b1;
+      tick();
+    end
+  endtask
+
+  task automatic timer_source_event(input integer source);
+    logic [7:0] timer_before;
+    begin
+      stub_valid = 1'b0;
+      stub_write = 1'b0;
+      case (source)
+        0: begin
+          timer_pin = 1'b0;
+          tick();
+        end
+        1: begin
+          timer_pin = 1'b1;
+          tick();
+        end
+        3: begin
+          timer_before = debug_timer;
+          timer_pin = 1'b0;
+          tick();
+          if (debug_timer !== timer_before) begin
+            $fatal(1, "HD63705 external timer counted on falling edge data=%02x/%02x",
+                   debug_timer, timer_before);
+          end
+          timer_pin = 1'b1;
+          tick();
+        end
+        default: $fatal(1, "HD63705 invalid timer source event %0d", source);
+      endcase
+    end
+  endtask
+
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
@@ -108,6 +159,10 @@ module tb_hd63705_peripheral_diff;
     stub_stopped = 1'b0;
     map_checks = 0;
     ram_checks = 0;
+    timer_tcr_checks = 0;
+    timer_counter_checks = 0;
+    timer_source_checks = 0;
+    timer_access_checks = 0;
     #1;
     reset_n = 1'b0;
     #1;
@@ -251,6 +306,148 @@ module tb_hd63705_peripheral_diff;
       ram_checks = ram_checks + 1;
     end
 
+    // Tables 2-1 through 2-3 define every TCR bit, all eight divider ratios,
+    // and all four input sources. QA635-314A covers TDR access during count;
+    // QA635-315A fixes the external event polarity as rising-edge.
+    timer_pin = 1'b0;
+    for (timer_value = 0; timer_value < 256; timer_value = timer_value + 1) begin
+      bus_write(14'h0009, 8'h20);
+      bus_write(14'h0008, 8'h55);
+      bus_write(14'h0009, timer_value[7:0]);
+      expected_tcr = timer_value[7:0] & 8'h77;
+      if (debug_tcr !== expected_tcr) begin
+        $fatal(1, "HD63705 TCR write value=%02x read=%02x/%02x",
+               timer_value[7:0], debug_tcr, expected_tcr);
+      end
+      if (timer_value[3] && dut.timer_prescaler !== 7'h7f) begin
+        $fatal(1, "HD63705 TCR prescaler initialize value=%02x state=%02x",
+               timer_value[7:0], dut.timer_prescaler);
+      end
+      timer_tcr_checks = timer_tcr_checks + 1;
+    end
+
+    for (timer_divide = 0; timer_divide < 8;
+         timer_divide = timer_divide + 1) begin
+      for (timer_value = 0; timer_value < 256;
+           timer_value = timer_value + 1) begin
+        bus_write(14'h0009, 8'h28 | timer_divide[7:0]);
+        bus_write(14'h0008, timer_value[7:0]);
+        bus_write(14'h0009, 8'h08 | timer_divide[7:0]);
+        stub_valid = 1'b0;
+        stub_write = 1'b0;
+        timer_pin = 1'b0;
+        tick();
+        expected_timer = timer_value[7:0] - 8'h01;
+        expected_tcr = timer_divide[7:0];
+        if (timer_value == 1) expected_tcr = expected_tcr | 8'h80;
+        if (debug_timer !== expected_timer || debug_tcr !== expected_tcr ||
+            timer_irq !== (timer_value == 1)) begin
+          $fatal(1, "HD63705 timer counter value=%02x divide=%0d TDR=%02x/%02x TCR=%02x/%02x irq=%b/%b",
+                 timer_value[7:0], timer_divide, debug_timer, expected_timer,
+                 debug_tcr, expected_tcr, timer_irq, timer_value == 1);
+        end
+        timer_counter_checks = timer_counter_checks + 1;
+      end
+    end
+
+    for (timer_source = 0; timer_source < 4;
+         timer_source = timer_source + 1) begin
+      for (timer_divide = 0; timer_divide < 8;
+           timer_divide = timer_divide + 1) begin
+        timer_pin = 1'b0;
+        bus_write(14'h0009, 8'h28 | timer_divide[7:0]);
+        bus_write(14'h0008, 8'h02);
+        bus_write(14'h0009, (timer_source[7:0] << 4) |
+                            8'h08 | timer_divide[7:0]);
+        stub_valid = 1'b0;
+        stub_write = 1'b0;
+        if (timer_source == 2) begin
+          for (timer_event_index = 0;
+               timer_event_index < (1 << timer_divide) + 2;
+               timer_event_index = timer_event_index + 1) begin
+            timer_pin = timer_event_index[0];
+            tick();
+            if (debug_timer !== 8'h02) begin
+              $fatal(1, "HD63705 stopped timer divide=%0d event=%0d data=%02x",
+                     timer_divide, timer_event_index, debug_timer);
+            end
+          end
+        end else begin
+          if (timer_source == 1) begin
+            timer_pin = 1'b0;
+            repeat (3) begin
+              tick();
+              if (debug_timer !== 8'h02) begin
+                $fatal(1, "HD63705 gated-low timer divide=%0d data=%02x",
+                       timer_divide, debug_timer);
+              end
+            end
+          end
+          timer_source_event(timer_source);
+          if (debug_timer !== 8'h01) begin
+            $fatal(1, "HD63705 timer first source event source=%0d divide=%0d data=%02x",
+                   timer_source, timer_divide, debug_timer);
+          end
+          for (timer_event_index = 1;
+               timer_event_index < (1 << timer_divide);
+               timer_event_index = timer_event_index + 1) begin
+            timer_source_event(timer_source);
+            if (debug_timer !== 8'h01) begin
+              $fatal(1, "HD63705 timer early divide source=%0d divide=%0d event=%0d data=%02x",
+                     timer_source, timer_divide, timer_event_index, debug_timer);
+            end
+          end
+          timer_source_event(timer_source);
+          if (debug_timer !== 8'h00 || !timer_irq) begin
+            $fatal(1, "HD63705 timer terminal source=%0d divide=%0d data=%02x irq=%b",
+                   timer_source, timer_divide, debug_timer, timer_irq);
+          end
+        end
+        timer_source_checks = timer_source_checks + 1;
+      end
+    end
+
+    bus_write(14'h0009, 8'h28);
+    bus_write(14'h0008, 8'h01);
+    bus_write(14'h0009, 8'h08);
+    stub_valid = 1'b0;
+    tick();
+    if (debug_timer !== 8'h00 || !timer_irq) begin
+      $fatal(1, "HD63705 timer request assertion data=%02x irq=%b",
+             debug_timer, timer_irq);
+    end
+    bus_write(14'h0009, 8'he0);
+    if (debug_tcr !== 8'he0 || timer_irq) begin
+      $fatal(1, "HD63705 timer mask/preserve TCR=%02x irq=%b", debug_tcr, timer_irq);
+    end
+    bus_write(14'h0009, 8'ha0);
+    if (debug_tcr !== 8'ha0 || !timer_irq) begin
+      $fatal(1, "HD63705 timer unmask/preserve TCR=%02x irq=%b", debug_tcr, timer_irq);
+    end
+    bus_write(14'h0009, 8'h20);
+    if (debug_tcr !== 8'h20 || timer_irq) begin
+      $fatal(1, "HD63705 timer request clear TCR=%02x irq=%b", debug_tcr, timer_irq);
+    end
+    bus_write(14'h0008, 8'h03);
+    bus_write(14'h0009, 8'h08);
+    stub_address = 16'h0008;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    #1;
+    if (dut.core_data_in !== 8'h03) begin
+      $fatal(1, "HD63705 TDR active read data=%02x", dut.core_data_in);
+    end
+    tick();
+    if (debug_timer !== 8'h02) begin
+      $fatal(1, "HD63705 TDR read disturbed count data=%02x", debug_timer);
+    end
+    bus_write(14'h0008, 8'h55);
+    if (debug_timer !== 8'h55) begin
+      $fatal(1, "HD63705 TDR active write did not restart count data=%02x",
+             debug_timer);
+    end
+    timer_access_checks = 8;
+
     for (map_address = 'h0004; map_address <= 'h0007;
          map_address = map_address + 1) begin
       stub_address = map_address[15:0];
@@ -289,9 +486,10 @@ module tb_hd63705_peripheral_diff;
       ram_checks = ram_checks + 1;
     end
 
-    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d",
+    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d TCR checks=%0d timer counter checks=%0d source/divider checks=%0d timer access checks=%0d",
              32'h63705000, HD63705_PERIPHERAL_VECTOR_COUNT,
-             map_checks, ram_checks);
+             map_checks, ram_checks, timer_tcr_checks, timer_counter_checks,
+             timer_source_checks, timer_access_checks);
     $finish;
   end
 endmodule

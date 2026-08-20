@@ -33,7 +33,8 @@
     "clock_modes": {"00": "every internal E cycle", "01": "internal E cycles while TIMER is high", "10": "stopped", "11": "TIMER rising edges"},
     "wait_vector": "An enabled timer request accepted from WAIT uses 1FF6:1FF7; normal timer and INT2 share 1FF8:1FF9.",
     "external_edge": "Manufacturer Q&A QA635-315A resolves the event-input edge as rising.",
-    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.3, printed pages 110-112; Q&A QA635-315A, handbook printed page 902"}
+    "tdr_access": "Manufacturer Q&A QA635-314A states that a write during countdown restarts from the written byte while a read leaves countdown undisturbed.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.3, figures 2-4 and 2-5, and tables 2-1 through 2-3, printed pages 110-112; Q&A QA635-314A, handbook printed page 902; Q&A QA635-315A, handbook printed page 903; Q&A QA635-316A, handbook printed page 904"}
   },
   "interrupts": [
     {"source": "reset", "vector": "1FFE:1FFF", "priority": 1},
@@ -73,7 +74,7 @@
   "implementation_scope": {
     "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, a stated figure-2-18 STOP normalization, and normalized EPROM programming pins.",
     "model": "model/hd63705v0_device.py independently classifies every physical address and models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, normalized STOP state changes per E cycle, and the combinational EPROM table.",
-    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes and cover register reset/readback, GPIO, timer sources and wait vector, external interrupt priority, eight-bit serial transfer, normalized STOP/STBY, and all five table-2-9 EPROM states.",
+    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes; all 256 TCR writes, 2048 counter/divider pairs, all 32 source/divider combinations, request/mask/TDR access, reset and wait-vector behavior; and cover GPIO, external interrupt priority, eight-bit serial transfer, normalized STOP/STBY, and all five table-2-9 EPROM states.",
     "undefined_policy": "IC-test-area and unused read values, SDR reset data, and the STOP register state disputed by section 2.9/table 2-5 versus figure 2-18 are deterministic FPGA normalizations, not silicon-equivalence claims.",
     "analog_exclusions": ["oscillator startup and duty cycle", "EPROM charge programming, voltage margins, and retention", "pad drive strength", "metastability"]
   }

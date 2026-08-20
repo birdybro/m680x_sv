@@ -6,6 +6,7 @@ from model.common import Memory
 from model.hd63705v0_device import (
     EPROM_DEFINED_STATES,
     HD63705V0CycleInputs,
+    HD63705V0CycleResult,
     HD63705V0DeviceModel,
     HD63705V0EPROMInputs,
     VECTOR_INT,
@@ -184,15 +185,92 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
         for address in range(0x0040, 0x0100):
             self.assertEqual(self.read(model, address).read_data, (address ^ 0x5A) & 0xFF)
 
-    def test_timer_clock_modes_prescaler_and_rising_external_edge(self) -> None:
+    def test_all_timer_control_writes_and_prescaler_initialization(self) -> None:
         model = HD63705V0DeviceModel()
+        for value in range(0x100):
+            self.write(model, 0x09, 0x20)  # stop and clear request
+            self.write(model, 0x08, 0x55)
+            model.state.timer_prescaler = 0
+            result = self.write(model, 0x09, value)
+            self.assertEqual(result.state["TCR"], value & 0x77)
+            if value & 0x08:
+                self.assertEqual(model.state.timer_prescaler, 0x7F)
+
+    def test_all_timer_counter_values_and_dividers(self) -> None:
+        model = HD63705V0DeviceModel()
+        for divide in range(8):
+            for value in range(0x100):
+                self.write(model, 0x09, 0x28 | divide)  # stop/reset prescaler
+                self.write(model, 0x08, value)
+                self.write(model, 0x09, 0x08 | divide)  # internal E/reset prescaler
+                result = self.cycle(model)
+                self.assertEqual(result.state["TDR"], (value - 1) & 0xFF)
+                self.assertEqual(bool(result.state["TCR"] & 0x80), value == 1)
+                self.assertEqual(result.timer_irq, value == 1)
+
+    def test_every_timer_source_and_divider_timing(self) -> None:
+        def eligible_event(
+            model: HD63705V0DeviceModel, source: int
+        ) -> HD63705V0CycleResult:
+            if source == 3:
+                before = model.state.timer_data
+                low = self.cycle(model, timer=False)
+                self.assertEqual(low.state["TDR"], before)
+                return self.cycle(model, timer=True)
+            return self.cycle(model, timer=source == 1)
+
+        for source in range(4):
+            for divide in range(8):
+                model = HD63705V0DeviceModel()
+                self.write(model, 0x09, 0x28 | divide, timer=False)
+                self.write(model, 0x08, 0x02, timer=False)
+                self.write(model, 0x09, (source << 4) | 0x08 | divide, timer=False)
+                interval = 1 << divide
+
+                if source == 2:
+                    for event_index in range(interval + 2):
+                        result = self.cycle(model, timer=bool(event_index & 1))
+                        self.assertEqual(result.state["TDR"], 0x02)
+                    continue
+                if source == 1:
+                    for _ in range(3):
+                        self.assertEqual(self.cycle(model, timer=False).state["TDR"], 0x02)
+
+                self.assertEqual(eligible_event(model, source).state["TDR"], 0x01)
+                for _ in range(interval - 1):
+                    self.assertEqual(eligible_event(model, source).state["TDR"], 0x01)
+                result = eligible_event(model, source)
+                self.assertEqual(result.state["TDR"], 0x00)
+                self.assertTrue(result.timer_irq)
+
+    def test_timer_request_mask_tdr_access_and_rising_external_edge(self) -> None:
+        model = HD63705V0DeviceModel()
+        self.write(model, 0x09, 0x28)
         self.write(model, 0x08, 0x01)
-        self.write(model, 0x09, 0x00)
+        self.write(model, 0x09, 0x08)
         result = self.cycle(model)
         self.assertEqual(result.state["TDR"], 0x00)
         self.assertTrue(result.timer_irq)
 
-        self.write(model, 0x09, 0x30)  # external rising events, divide by one
+        result = self.write(model, 0x09, 0xE0)
+        self.assertEqual(result.state["TCR"], 0xE0)
+        self.assertFalse(result.timer_irq)
+        result = self.write(model, 0x09, 0xA0)
+        self.assertEqual(result.state["TCR"], 0xA0)
+        self.assertTrue(result.timer_irq)
+        result = self.write(model, 0x09, 0x20)
+        self.assertEqual(result.state["TCR"], 0x20)
+        self.assertFalse(result.timer_irq)
+
+        self.write(model, 0x08, 0x03)
+        self.write(model, 0x09, 0x08)
+        result = self.read(model, 0x08)
+        self.assertEqual(result.read_data, 0x03)
+        self.assertEqual(result.state["TDR"], 0x02)
+        result = self.write(model, 0x08, 0x55)
+        self.assertEqual(result.state["TDR"], 0x55)
+
+        self.write(model, 0x09, 0x38)  # external rising events, divide by one
         self.write(model, 0x08, 0x02)
         self.cycle(model, timer=False)
         self.assertEqual(model.state.timer_data, 0x02)
@@ -204,15 +282,6 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
         result = self.cycle(model, timer=True)
         self.assertEqual(result.state["TDR"], 0x00)
         self.assertTrue(result.timer_irq)
-
-        self.write(model, 0x09, 0x19, timer=True)  # gated E, divide by two, reset PSC
-        self.write(model, 0x08, 0x02, timer=False)
-        self.cycle(model, timer=True)
-        self.assertEqual(model.state.timer_data, 0x01)
-        self.cycle(model, timer=True)
-        self.assertEqual(model.state.timer_data, 0x01)
-        self.cycle(model, timer=True)
-        self.assertEqual(model.state.timer_data, 0x00)
 
     def test_interrupt_priority_wait_vector_and_request_clearing(self) -> None:
         model = HD63705V0DeviceModel()

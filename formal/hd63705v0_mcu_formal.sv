@@ -52,6 +52,7 @@ module hd63705v0_mcu_formal;
   logic stopped_state;
   logic sci_clock;
   logic sci_tx;
+  logic timer_irq;
   logic eprom_storage_read;
 
   assign eprom_storage_read = eprom_mode && !eprom_oe_n &&
@@ -78,7 +79,7 @@ module hd63705v0_mcu_formal;
     .eprom_program_voltage_i(eprom_vpp), .eprom_data_o(eprom_data_out),
     .eprom_data_oe_o(eprom_data_oe),
     .eprom_program_data_o(eprom_program_data), .eprom_program_o(eprom_program),
-    .sci_tx_o(sci_tx), .sci_clock_o(sci_clock), .timer_irq_o(),
+    .sci_tx_o(sci_tx), .sci_clock_o(sci_clock), .timer_irq_o(timer_irq),
     .sci_irq_o(), .int_irq_o(), .int2_irq_o(), .irq_vector_o(irq_vector),
     .opcode_fetch_o(), .retire_o(), .illegal_o(), .undefined_o(),
     .waiting_o(waiting_state), .stopped_o(stopped_state),
@@ -98,6 +99,7 @@ module hd63705v0_mcu_formal;
     assert (debug_sp[15:8] == 8'h00);
     assert (debug_sp[7:6] == 2'b11);
     assert (debug_tcr[3] == 1'b0);
+    assert (timer_irq == (debug_tcr[7] && !debug_tcr[6]));
     assert (debug_mr[4:0] == 5'h1f);
     assert (debug_ssr[3:0] == 4'h7);
     assert (irq_vector == 16'h1ffa || irq_vector == 16'h1ff8 ||
@@ -114,6 +116,8 @@ module hd63705v0_mcu_formal;
     end
     if (!standby_n || !reset_n) begin
       assert ({port_a_oe, port_b_oe, port_c_oe, port_d_oe} == '0);
+      assert (debug_timer == 8'hf0);
+      assert (debug_tcr == 8'h50);
     end
     if (eprom_program) begin
       assert (eprom_program_data == eprom_data_in);

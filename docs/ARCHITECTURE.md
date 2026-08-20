@@ -493,7 +493,10 @@ Ports A-C have eight latch/direction bits and Port D has seven. D3/D4/D5 are
 overridden by synchronous Tx/Rx/CK when SCR enables them, while the separately
 named `int2_n_i` represents the interrupt function shared by the D6 package
 pin. The eight-bit down-counter implements internal, gated-internal, stopped,
-and rising-edge external clock modes plus all eight prescale ratios. INT is
+and rising-edge external clock modes plus all eight prescale ratios. Its
+exhaustive regression covers every TCR encoding and counter/divider pair, every
+source/divider combination, software request clearing/masking, and TDR access
+during active countdown. INT is
 edge-latched or edge-and-level sensed; INT2 is falling-edge latched and
 software-cleared. The priority encoder selects INT, timer/INT2, the separate
 timer-from-WAIT vector, and SCI/Timer2 without conflating their status flags.

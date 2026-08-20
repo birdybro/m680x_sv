@@ -237,7 +237,12 @@ stable result; `$ff` reads and ignored writes there and in unused space are a
 deterministic FPGA policy only. Figure 2-18 resets TDR and selected TCR/SSR
 fields on STOP, while section 2.9 prose and table 2-5 say registers are retained
 except TCR6/TCR7. The implementation follows figure 2-18, records the conflict
-as `UNDEFINED_BY_DOCUMENTATION`, and keeps low-power status `PARTIAL`. The
+as `UNDEFINED_BY_DOCUMENTATION`, and keeps low-power status `PARTIAL`. Its
+normalized primary-timer dimension is `COMPLETE`: direct RTL and independent
+model tests cover all 256 TCR encodings, all 2,048 counter/divider pairs, all
+32 source/divider combinations, request/mask control, TDR access during active
+countdown, reset, the Q&A-confirmed rising external edge, and the dedicated
+WAIT vector. Oscillator and TIMER-pin electrical timing remain excluded. The
 manual's `$0000`-`$00ff` programming-range sentence conflicts with its 4-KiB,
 twelve-address-input, and `$1000`-`$1fff` memory-map facts; the interface uses
 the mutually consistent `$0000`-`$0fff` programmer range and preserves the

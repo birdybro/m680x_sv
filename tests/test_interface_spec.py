@@ -171,6 +171,10 @@ class InterfaceSpecificationTests(unittest.TestCase):
             "COMPLETE",
         )
         self.assertEqual(
+            self.hd63705v0_spec["implementation_status"]["primary_timer"],
+            "COMPLETE",
+        )
+        self.assertEqual(
             self.mc68705p5_spec["implementation_status"]["timer_function"],
             "COMPLETE",
         )

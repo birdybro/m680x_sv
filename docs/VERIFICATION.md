@@ -56,6 +56,10 @@ The committed tests cover:
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | HD63705V0 exhaustive memory-map checks | 16,384 |
 | HD63705V0 RAM fill/reset/standby checks | 576 |
+| HD63705V0 exhaustive TCR checks | 256 |
+| HD63705V0 timer counter/divider checks | 2,048 |
+| HD63705V0 timer source/divider checks | 32 |
+| HD63705V0 timer request/mask/TDR-access checks | 8 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 16 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
@@ -345,7 +349,7 @@ fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
 eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field changes and
 external wake, STBY high impedance with RAM retention, and all five normalized
-EPROM control states. Nine independent model tests exercise the same factual
+EPROM control states. Twelve independent model tests exercise the same factual
 areas and exhaustively project the EPROM address space without sharing RTL
 control structure. A direct extension classifies all 16,384 physical addresses
 and performs 576 checks over every RAM byte after fill, reset, and standby. It
@@ -353,6 +357,15 @@ treats `$0013`-`$001f` as manufacturer-prohibited IC-test space and tests `$ff`
 only as the deterministic FPGA normalization. The STOP expectation follows
 figure 2-18; the conflicting section 2.9/table 2-5 retention language is
 preserved as an unresolved primary-document discrepancy.
+
+The primary-timer extension checks all 256 TCR writes, every 8-bit counter value
+under each of the eight divide selections, and all four source modes crossed
+with every divider. It separately verifies stopped and gated-low intervals,
+rising-only external events, request preservation/clearing and masking, and the
+Q&A-defined nondestructive read/restart-on-write TDR behavior. Formal assertions
+tie the interrupt output to TCR7/TCR6 and prove reset values for TDR and TCR.
+This establishes normalized E-cycle digital behavior, not oscillator or TIMER
+pin electrical timing.
 
 Seed `0x63705000` adds 768 normalized E-cycle comparisons. A directed prefix
 precedes deterministic register, pin, memory, interrupt, and low-power traffic;
