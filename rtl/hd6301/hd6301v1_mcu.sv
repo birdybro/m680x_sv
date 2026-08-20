@@ -7,6 +7,7 @@
 module hd6301v1_mcu (
   input  logic        clk_i,
   input  logic        reset_n_i,
+  input  logic        standby_n_i,
   input  logic        clock_enable_i,
   input  logic        nmi_n_i,
   input  logic        irq1_n_i,
@@ -54,6 +55,35 @@ module hd6301v1_mcu (
   output logic [7:0]  debug_receive_data_o,
   output logic [7:0]  debug_opcode_o
 );
+  logic standby_active;
+  logic program_read_internal;
+  logic [7:0] port1_oe_internal;
+  logic [4:0] port2_oe_internal;
+  logic [7:0] port3_oe_internal;
+  logic [7:0] port4_oe_internal;
+  logic os3_n_internal;
+  logic timer_irq_internal;
+  logic sci_irq_internal;
+
+  // HD6301V1 samples STBY synchronously with E. Once accepted, the device
+  // remains in reset state until a later enabled E boundary samples STBY high.
+  always_ff @(posedge clk_i or negedge reset_n_i) begin
+    if (!reset_n_i) begin
+      standby_active <= 1'b0;
+    end else if (clock_enable_i) begin
+      standby_active <= !standby_n_i;
+    end
+  end
+
+  assign program_read_o = program_read_internal && !standby_active;
+  assign port1_oe_o = port1_oe_internal & {8{!standby_active}};
+  assign port2_oe_o = port2_oe_internal & {5{!standby_active}};
+  assign port3_oe_o = port3_oe_internal & {8{!standby_active}};
+  assign port4_oe_o = port4_oe_internal & {8{!standby_active}};
+  assign os3_n_o = standby_active || os3_n_internal;
+  assign timer_irq_o = timer_irq_internal && !standby_active;
+  assign sci_irq_o = sci_irq_internal && !standby_active;
+
   // Mode 7 has no external memory bus; these common integration outputs are
   // intentionally left unconnected at this device-specific boundary.
   /* verilator lint_off PINCONNECTEMPTY */
@@ -68,6 +98,7 @@ module hd6301v1_mcu (
   ) device (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),
+    .standby_reset_n_i(!standby_active),
     .clock_enable_i(clock_enable_i),
     .nmi_n_i(nmi_n_i),
     .irq1_n_i(irq1_n_i),
@@ -80,25 +111,25 @@ module hd6301v1_mcu (
     .program_data_i(program_data_i),
     .external_data_i(8'hff),
     .program_address_o(program_address_o),
-    .program_read_o(program_read_o),
+    .program_read_o(program_read_internal),
     .external_address_o(),
     .external_data_o(),
     .external_write_o(),
     .external_bus_valid_o(),
     .external_opcode_fetch_o(),
     .port1_o(port1_o),
-    .port1_oe_o(port1_oe_o),
+    .port1_oe_o(port1_oe_internal),
     .port2_o(port2_o),
-    .port2_oe_o(port2_oe_o),
+    .port2_oe_o(port2_oe_internal),
     .port3_o(port3_o),
-    .port3_oe_o(port3_oe_o),
+    .port3_oe_o(port3_oe_internal),
     .port4_o(port4_o),
-    .port4_oe_o(port4_oe_o),
-    .os3_n_o(os3_n_o),
+    .port4_oe_o(port4_oe_internal),
+    .os3_n_o(os3_n_internal),
     .sci_tx_o(sci_tx_o),
     .sci_clock_o(sci_clock_o),
-    .timer_irq_o(timer_irq_o),
-    .sci_irq_o(sci_irq_o),
+    .timer_irq_o(timer_irq_internal),
+    .sci_irq_o(sci_irq_internal),
     .opcode_fetch_o(opcode_fetch_o),
     .retire_o(retire_o),
     .illegal_o(illegal_o),

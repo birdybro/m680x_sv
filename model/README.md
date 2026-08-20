@@ -62,6 +62,9 @@ documented transfer behavior. The Mode-7 model additionally owns the HD6301V1
 memory, Port 3/4, strobe, IS3, and address-error facts.
 The same profiles select Hitachi's two-byte FRC write and TOF-at-zero behavior;
 the base MC6801 profile retains its read-only low byte and TOF-at-`$ffff` rule.
+Their independent `standby_reset` transition resets active peripheral state,
+preserves physical RAM without inventing lost-supply values, and retains
+STBY_PWR only while the modeled standby supply remains valid.
 
 `hd63701v0_device.py` selects the EPROM device's 192-byte `$0040-$00ff` RAM
 window and its documented transfer of a misframed receive byte into RDR. For

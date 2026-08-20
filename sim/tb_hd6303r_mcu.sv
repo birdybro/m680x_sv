@@ -2,6 +2,7 @@
 module tb_hd6303r_mcu;
   logic clk;
   logic reset_n;
+  logic standby_n;
   logic nmi_n;
   logic irq1_n;
   logic [4:0] port2_in;
@@ -48,6 +49,7 @@ module tb_hd6303r_mcu;
 
   hd6303r_mcu dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
+    .standby_n_i(standby_n),
     .nmi_n_i(nmi_n), .irq1_n_i(irq1_n), .standby_power_ok_i(1'b1),
     .port1_i(8'h3c), .port2_i(port2_in), .external_data_i(external_data_in),
     .external_address_o(external_address), .external_data_o(external_data_out),
@@ -116,6 +118,7 @@ module tb_hd6303r_mcu;
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
+    standby_n = 1'b1;
     nmi_n = 1'b1;
     irq1_n = 1'b1;
     port2_in = 5'h1d;
@@ -261,6 +264,51 @@ module tb_hd6303r_mcu;
     end
     checks = checks + 2;
 
+    // HD6303R shares the V1 E-synchronous STBY boundary. External bus
+    // qualification and GPIO drive stop while retained RAM remains intact.
+    memory[16'hfffe] = 8'h06; memory[16'hffff] = 8'h00;
+    memory[16'h0600] = 8'h8e; memory[16'h0601] = 8'h01;
+    memory[16'h0602] = 8'hff;
+    memory[16'h0603] = 8'h86; memory[16'h0604] = 8'ha5;
+    memory[16'h0605] = 8'h97; memory[16'h0606] = 8'h80;
+    memory[16'h0607] = 8'h86; memory[16'h0608] = 8'hc0;
+    memory[16'h0609] = 8'h97; memory[16'h060a] = 8'h14;
+    memory[16'h060b] = 8'h86; memory[16'h060c] = 8'hff;
+    memory[16'h060d] = 8'h97; memory[16'h060e] = 8'h00;
+    memory[16'h060f] = 8'h20; memory[16'h0610] = 8'hfe;
+    memory[16'h0620] = 8'h96; memory[16'h0621] = 8'h14;
+    memory[16'h0622] = 8'h96; memory[16'h0623] = 8'h80;
+    memory[16'h0624] = 8'h20; memory[16'h0625] = 8'hfe;
+    #1; reset_n = 1'b0; #1; reset_n = 1'b1;
+    tick(); tick();
+    run_instruction(8'h8e);
+    run_instruction(8'h86); run_instruction(8'h97);
+    run_instruction(8'h86); run_instruction(8'h97);
+    run_instruction(8'h86); run_instruction(8'h97);
+    if (port1_oe != 8'hff) $fatal(1, "HD6303R standby setup DDR");
+    memory[16'hfffe] = 8'h06; memory[16'hffff] = 8'h20;
+    standby_n = 1'b0;
+    #1;
+    if (port1_oe != 8'hff) $fatal(1, "HD6303R STBY was not E-synchronous");
+    tick();
+    if (port1_oe != 8'h00 || port2_oe != 5'h00 || external_valid ||
+        debug_timer != 16'h0000) begin
+      $fatal(1, "HD6303R standby reset/high impedance");
+    end
+    ticks(2);
+    standby_n = 1'b1;
+    cycles = 0;
+    do begin
+      tick();
+      cycles = cycles + 1;
+      if (cycles > 5) $fatal(1, "HD6303R standby release did not reset-vector");
+    end while (debug_pc != 16'h0620 || !opcode_fetch);
+    run_instruction(8'h96);
+    if (debug_a != 8'hc0) $fatal(1, "HD6303R retained STBY_PWR %02x", debug_a);
+    run_instruction(8'h96);
+    if (debug_a != 8'ha5) $fatal(1, "HD6303R standby RAM retention %02x", debug_a);
+    checks = checks + 6;
+
     if (waiting_state || undefined_value || port1_oe != 8'h00 ||
         port2_oe != 5'h00 || debug_address != external_address ||
         ((external_fetch !== 1'b0) && (external_fetch !== 1'b1)) ||
@@ -273,7 +321,7 @@ module tb_hd6303r_mcu;
         debug_tcsr === 8'hxx || debug_trcsr === 8'hxx || debug_receive === 8'hxx) begin
       $fatal(1, "HD6303R deterministic device outputs");
     end
-    $display("HD6303R MODE 2 PASS: %0d ISA, RAM, sleep, timer, SCI, and TRAP checks", checks);
+    $display("HD6303R MODE 2 PASS: %0d ISA, RAM, low-power, timer, SCI, and TRAP checks", checks);
     $finish;
   end
 endmodule

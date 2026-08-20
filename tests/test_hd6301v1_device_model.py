@@ -113,6 +113,24 @@ class HD6301V1Mode7ModelTests(unittest.TestCase):
         self.assertEqual(model.state.timer, 0x0000)
         self.assertTrue(model.state.tcsr & 0x20)
 
+    def test_standby_resets_active_state_and_retains_supplied_ram(self) -> None:
+        model = HD6301V1Mode7Model()
+        self.write(model, 0x0080, 0xA5)
+        self.write(model, 0x0014, 0xC0)
+        self.write(model, 0x0000, 0xFF)
+        self.cycle(model)
+        self.assertNotEqual(model.state.timer, 0)
+
+        model.standby_reset(retention_power_ok=True)
+        self.assertEqual(model.ram[0], 0xA5)
+        self.assertTrue(model.state.standby_power)
+        self.assertTrue(model.state.rame)
+        self.assertEqual(model.port_outputs()[1], 0)
+        self.assertEqual(model.state.timer, 0)
+
+        model.standby_reset(retention_power_ok=False)
+        self.assertFalse(model.state.standby_power)
+
 
 if __name__ == "__main__":
     unittest.main()

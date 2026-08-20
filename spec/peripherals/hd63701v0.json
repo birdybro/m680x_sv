@@ -63,12 +63,12 @@
     "prom_programming": "external 27256-style EPROM programming mode with MCU functions stopped; analog programming interface is not implemented",
     "other_modes": "Modes 0, 1, 2, 5, and 6 are documented but outside the current wrapper",
     "sleep": "SLP stops CPU execution while peripherals continue; implemented by the shared HD6301 CPU profile",
-    "standby": "STBY asynchronously stops clocks and enters reset with conditional RAM retention; not yet represented as an explicit input",
+    "standby": "standby_n_i asynchronously enters reset state, suppresses program/GPIO activity, preserves RAM and supplied STBY_PWR, and restarts through the reset vector on release",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1, 2.12, and 3.1, printed pages 252-262 and 287-294"}
   },
   "memory_control": {
     "RAME": "bit 6 resets set and enables physical 0040-00FF RAM; clearing it leaves those Mode-7 addresses without external memory",
-    "STBY_PWR": "read/write retained-supply validity bit normalized through standby_power_ok_i",
+    "STBY_PWR": "read/write retained-supply validity bit initialized deterministically on external reset, preserved through STBY while standby_power_ok_i is true, and cleared when it is false",
     "address_trap": "RTL traps instruction fetches at 0000-003F and 0100-EFFF; the 0040-007F physical RAM conflict is explicitly unverified",
     "eprom": "F000-FFFF is read-only during MCU operation and supplied through the program-image interface",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "memory maps, sections 2.11, 2.13, and 3.1, printed pages 259-262 and 286-294"}
@@ -76,8 +76,8 @@
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd63701v0_mcu.sv implements the single-chip Mode-7 digital boundary with a separately supplied 4-KiB EPROM image",
     "model": "model/hd63701v0_device.py independently selects V0 RAM, SCI, timer, GPIO, program-memory, and address-error facts",
-    "verification": "model and RTL tests cover EPROM reset vectors, both RAM boundaries, the explicit ambiguous-range policy, unambiguous address TRAP, GPIO, FRC writes, OLVL reset, and V0 framing-error transfer",
-    "excluded_modes": "expanded modes, physical bus pins, analog EPROM programming, standby entry, bi-phase SCI, and external-clock SCI remain unclaimed",
+    "verification": "model and RTL tests cover EPROM reset vectors, both RAM boundaries, the explicit ambiguous-range policy, unambiguous address TRAP, GPIO, FRC writes, OLVL reset, V0 framing-error transfer, asynchronous STBY, reset-vector recovery, and retained RAM/STBY_PWR",
+    "excluded_modes": "expanded modes, physical bus pins, analog EPROM programming, oscillator recovery delay, bi-phase SCI, and external-clock SCI remain unclaimed",
     "analog_exclusions": ["EPROM programming voltage and charge retention", "oscillator behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

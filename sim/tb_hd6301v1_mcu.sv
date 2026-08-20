@@ -2,6 +2,7 @@
 module tb_hd6301v1_mcu;
   logic clk;
   logic reset_n;
+  logic standby_n;
   logic nmi_n;
   logic irq1_n;
   logic is3_n;
@@ -54,6 +55,7 @@ module tb_hd6301v1_mcu;
 
   hd6301v1_mcu dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
+    .standby_n_i(standby_n),
     .nmi_n_i(nmi_n), .irq1_n_i(irq1_n), .standby_power_ok_i(1'b1),
     .port1_i(8'h3c), .port2_i(port2_in), .port3_i(port3_in),
     .port4_i(port4_in), .is3_n_i(is3_n),
@@ -147,6 +149,7 @@ module tb_hd6301v1_mcu;
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
+    standby_n = 1'b1;
     nmi_n = 1'b1;
     irq1_n = 1'b1;
     is3_n = 1'b1;
@@ -334,6 +337,50 @@ module tb_hd6301v1_mcu;
     end
     checks = checks + 2;
 
+    // STBY is sampled on an E boundary. It resets the active device state and
+    // makes the ports high impedance while retained RAM and STBY_PWR survive.
+    firmware[12'h380] = 8'h8e; firmware[12'h381] = 8'h00;
+    firmware[12'h382] = 8'hff;
+    firmware[12'h383] = 8'h86; firmware[12'h384] = 8'ha5;
+    firmware[12'h385] = 8'h97; firmware[12'h386] = 8'h80;
+    firmware[12'h387] = 8'h86; firmware[12'h388] = 8'hc0;
+    firmware[12'h389] = 8'h97; firmware[12'h38a] = 8'h14;
+    firmware[12'h38b] = 8'h86; firmware[12'h38c] = 8'hff;
+    firmware[12'h38d] = 8'h97; firmware[12'h38e] = 8'h00;
+    firmware[12'h38f] = 8'h20; firmware[12'h390] = 8'hfe;
+    firmware[12'h3a0] = 8'h96; firmware[12'h3a1] = 8'h14;
+    firmware[12'h3a2] = 8'h96; firmware[12'h3a3] = 8'h80;
+    firmware[12'h3a4] = 8'h20; firmware[12'h3a5] = 8'hfe;
+    reset_to(16'hf380);
+    run_instruction(8'h8e);
+    run_instruction(8'h86); run_instruction(8'h97);
+    run_instruction(8'h86); run_instruction(8'h97);
+    run_instruction(8'h86); run_instruction(8'h97);
+    if (port1_oe != 8'hff) $fatal(1, "HD6301V1 standby setup DDR");
+    firmware[12'hffe] = 8'hf3; firmware[12'hfff] = 8'ha0;
+    standby_n = 1'b0;
+    #1;
+    if (port1_oe != 8'hff) $fatal(1, "HD6301V1 STBY was not E-synchronous");
+    tick();
+    if (port1_oe != 8'h00 || port2_oe != 5'h00 ||
+        port3_oe != 8'h00 || port4_oe != 8'h00 || program_read ||
+        debug_timer != 16'h0000) begin
+      $fatal(1, "HD6301V1 standby reset/high impedance");
+    end
+    ticks(2);
+    standby_n = 1'b1;
+    cycles = 0;
+    do begin
+      tick();
+      cycles = cycles + 1;
+      if (cycles > 5) $fatal(1, "HD6301V1 standby release did not reset-vector");
+    end while (debug_pc != 16'hf3a0 || !opcode_fetch);
+    run_instruction(8'h96);
+    if (debug_a != 8'hc0) $fatal(1, "HD6301V1 retained STBY_PWR %02x", debug_a);
+    run_instruction(8'h96);
+    if (debug_a != 8'ha5) $fatal(1, "HD6301V1 standby RAM retention %02x", debug_a);
+    checks = checks + 6;
+
     if (waiting_state || undefined_value || port1_oe != 8'h00 ||
         port2_oe != 5'h00 || timer_irq || sci_irq ||
         ((sci_tx !== 1'b0) && (sci_tx !== 1'b1)) ||
@@ -346,7 +393,7 @@ module tb_hd6301v1_mcu;
         debug_b === 8'hxx || debug_x === 16'hxxxx) begin
       $fatal(1, "HD6301V1 deterministic device outputs");
     end
-    $display("HD6301V1 MODE 7 PASS: %0d memory, GPIO, SCI, strobe, TRAP, and IRQ checks",
+    $display("HD6301V1 MODE 7 PASS: %0d memory, GPIO, SCI, low-power, TRAP, and IRQ checks",
              checks);
     $finish;
   end

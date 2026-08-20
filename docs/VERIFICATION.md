@@ -26,14 +26,14 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 95 |
+| Python unit tests | 98 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
-| HD6301V1 Mode-7 integration checks | 24 |
-| HD6303R Mode-2 integration checks | 12 |
-| HD63701V0 Mode-7 integration checks | 21 |
+| HD6301V1 Mode-7 integration checks | 31 |
+| HD6303R Mode-2 integration checks | 18 |
+| HD63701V0 Mode-7 integration checks | 29 |
 | HD63705V0 integration checks | 27 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | M6805 directed core checks | 13 |
@@ -118,7 +118,9 @@ TRAP through the external `$ffee:$ffef` vector. It also verifies that a framing
 error leaves RDR unchanged, with a separate HD6303R peripheral-model regression.
 RTL and model tests cover the Hitachi full-counter write sequence and TOF at
 rollover to `$0000`. The instruction model has a matching regression for the
-masked-request SLP rule.
+masked-request SLP rule. Model and RTL tests additionally cover E-synchronous
+STBY entry, high-impedance GPIO and external-bus suppression, retained RAM and
+STBY_PWR, active-state reset, and external reset-vector recovery.
 
 The HD6301V1 Mode-7 suite fetches reset and interrupt vectors through the
 internal program-image interface, executes from both the 4-KiB program window
@@ -132,17 +134,21 @@ and interrupt state. A fourth model test and the RTL suite verify that a
 framing error sets ORFE without transferring the misframed byte into RDR. A
 fifth model test and the RTL suite verify the Hitachi FRC write and rollover
 semantics. The RTL suite also proves that V1 DDR reset takes effect at an E
-edge rather than at asynchronous RES assertion.
+edge rather than at asynchronous RES assertion. A sixth model test and the RTL
+suite verify E-synchronous STBY sampling, active-domain reset, program/GPIO
+suppression, retained RAM/STBY_PWR, and reset-vector restart.
 
 The HD63701V0 Mode-7 suite fetches reset and TRAP vectors from the separate
 EPROM image, executes at both `$0040` and `$00ff`, checks OLVL reset, exercises
 the 13-cycle TRAP from unambiguous non-memory space, and verifies Port 3/4 GPIO,
-Hitachi FRC writes, and V0 framing-error transfer into RDR. Four independent
+Hitachi FRC writes, and V0 framing-error transfer into RDR. Five independent
 device-model tests cover the RAM/program partitions, RAME, address-error
 classification, timer/GPIO behavior, and SCI difference. Tests deliberately
 identify execution at `$0040`-`$007f` as a normalized policy because the
 manufacturer manual contradicts itself there. It separately checks the
-V0-specific asynchronous DDR clear before another E edge occurs.
+V0-specific asynchronous DDR clear before another E edge occurs. Model and RTL
+tests also verify asynchronous STBY entry, immediate program/GPIO suppression,
+retained RAM/STBY_PWR, active-state reset, and reset-vector restart.
 
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction
@@ -233,11 +239,11 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 10,734 | 1,422 |
+| MC6801 Mode 2 integration | 10,741 | 1,422 |
 | HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 7 integration | 12,183 | 1,480 |
-| HD6303R Mode 2 integration | 11,846 | 1,432 |
-| HD63701V0 Mode 7 integration | 13,833 | 1,992 |
+| HD6301V1 Mode 7 integration | 12,104 | 1,481 |
+| HD6303R Mode 2 integration | 11,849 | 1,433 |
+| HD63701V0 Mode 7 integration | 13,870 | 1,992 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

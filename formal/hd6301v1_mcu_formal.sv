@@ -6,6 +6,7 @@ module hd6301v1_mcu_formal;
   (* anyseq *) logic clock_enable;
   (* anyseq *) logic nmi_n;
   (* anyseq *) logic irq1_n;
+  (* anyseq *) logic standby_n;
   (* anyseq *) logic standby_power_ok;
   (* anyseq *) logic [7:0] port1_in;
   (* anyseq *) logic [4:0] port2_in;
@@ -47,6 +48,7 @@ module hd6301v1_mcu_formal;
   /* verilator lint_off PINCONNECTEMPTY */
   hd6301v1_mcu dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(clock_enable),
+    .standby_n_i(standby_n),
     .nmi_n_i(nmi_n), .irq1_n_i(irq1_n),
     .standby_power_ok_i(standby_power_ok), .port1_i(port1_in),
     .port2_i(port2_in), .port3_i(port3_in), .port4_i(port4_in),

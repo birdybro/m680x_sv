@@ -52,6 +52,7 @@ module tb_mc6801_peripheral_diff #(
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(.OPERATING_MODE(TEST_MODE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
+    .standby_reset_n_i(1'b1),
     .nmi_n_i(1'b1), .irq1_n_i(irq1_n),
     .standby_power_ok_i(standby_power_ok), .port1_i(port1_in),
     .port2_i(port2_in), .port3_i(8'hff), .port4_i(8'hff), .is3_n_i(1'b1),

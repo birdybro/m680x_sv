@@ -61,12 +61,12 @@
     "mode7": "single-chip operation with all program memory and vectors in the internal F000-FFFF mask-ROM window; implemented",
     "other_modes": "Modes 0, 1, 2, 4, 5, and 6 are documented but outside the current HD6301V1 wrapper",
     "sleep": "SLP stops CPU execution while peripherals continue; an enabled interrupt vectors and a masked request resumes at the following instruction",
-    "standby": "STBY stops all clocks and enters reset while RAM retention depends on documented supply conditions; not yet implemented",
+    "standby": "standby_n_i is sampled at the normalized E boundary; accepted STBY enters reset state, disables program/GPIO activity, preserves RAM and supplied STBY_PWR, and restarts through the reset vector on release",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1, 2.2, and 2.12, printed pages 128-139 and 162-166"}
   },
   "memory_control": {
     "RAME": "bit 6 resets set and enables the 0080-00FF internal RAM; clearing it disables that physical RAM, leaving the Mode-7 addresses without an externally accessible memory device",
-    "STBY_PWR": "read/write retained-supply validity bit; FPGA profile deterministically clears it on reset and when standby_power_ok_i is false",
+    "STBY_PWR": "read/write retained-supply validity bit; FPGA profile deterministically initializes it to zero on external reset, preserves it through STBY while standby_power_ok_i remains true, and clears it when that input is false",
     "address_trap": "instruction fetches from 0000-007F or 0100-EFFF invoke unmaskable TRAP; normal data accesses do not",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.11 and 2.13, table 2-13-1, printed pages 161-162 and 166-167"}
   },
@@ -84,8 +84,8 @@
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd6301v1_mcu.sv implements the single-chip Mode-7 digital boundary and accepts a separate 4-KiB FPGA program image",
     "model": "model/hd6301v1_device.py independently classifies Mode-7 E-cycle transactions, GPIO/handshake state, program memory, and address errors",
-    "verification": "Directed RTL execution covers internal reset/vector fetch, executable RAM, both address-error ranges through representative fetch, Port 3/4 GPIO, IS3 latch and ordered flag clear, both OS3 selections, masked SLP wake, and enabled IS3 interrupt vectoring",
-    "excluded_modes": "Expanded modes, physical multiplexed/non-multiplexed bus pins, standby entry, bi-phase SCI, and external-clock SCI remain unclaimed",
+    "verification": "Directed RTL execution covers internal reset/vector fetch, executable RAM, both address-error ranges through representative fetch, Port 3/4 GPIO, IS3 latch and ordered flag clear, both OS3 selections, masked SLP wake, enabled IS3 interrupt vectoring, E-synchronous STBY, reset-vector recovery, and retained RAM/STBY_PWR",
+    "excluded_modes": "Expanded modes, physical multiplexed/non-multiplexed bus pins, oscillator recovery delay, bi-phase SCI, and external-clock SCI remain unclaimed",
     "analog_exclusions": ["mask-ROM contents", "oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

@@ -12,6 +12,7 @@
     {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
     {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "active-high normalized-cycle enable; low preserves all synchronous digital state"},
     {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active-low reset; DDR outputs are cleared asynchronously"},
+    {"name": "standby_n_i", "historical": "STBY", "direction": "input", "fact": "active low asynchronous standby boundary; immediately resets active state, suppresses program reads and GPIO drive, and preserves RAM plus STBY_PWR while retention power remains valid"},
     {"name": "nmi_n_i", "historical": "NMI", "direction": "input", "fact": "active-low non-maskable interrupt whose falling edge is retained"},
     {"name": "irq1_n_i", "historical": "IRQ1", "direction": "input", "fact": "active-low maskable interrupt above internal timer and SCI sources"},
     {"name": "standby_power_ok_i", "historical": "standby RAM supply validity", "direction": "input", "fact": "digital integration indication only; it does not model an analog threshold"},
@@ -37,12 +38,13 @@
     {"name": "timer_irq_o", "historical": "internal IRQ2 timer request", "direction": "output", "fact": "diagnostic enabled timer request"},
     {"name": "sci_irq_o", "historical": "internal IRQ2 SCI request", "direction": "output", "fact": "diagnostic enabled SCI request"}
   ],
-  "halt_interrupt_behavior": "HD63701V0 has no HALT input in Mode 7; SLP retains CPU state while peripherals run, an enabled request vectors, and a masked request resumes at the following instruction",
+  "halt_interrupt_behavior": "HD63701V0 has no HALT input in Mode 7; SLP retains CPU state while peripherals run, an enabled request vectors, and a masked request resumes at the following instruction; asynchronous STBY instead enters reset-state operation and requires a reset-vector restart on release",
   "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["HD63701V0 sections 2.1-2.4, 2.7, and 2.9-2.13, printed pages 252-269 and 281-292"]}],
   "implementation_status": {
     "normalized_digital_interface": "PARTIAL",
     "mode7_eprom_memory": "PARTIAL",
     "gpio_and_strobes": "PARTIAL",
+    "sleep_and_standby_digital": "COMPLETE",
     "prom_programming_interface": "NOT_IMPLEMENTED",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"

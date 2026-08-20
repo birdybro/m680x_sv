@@ -8,6 +8,7 @@
 module hd6303r_mcu (
   input  logic        clk_i,
   input  logic        reset_n_i,
+  input  logic        standby_n_i,
   input  logic        clock_enable_i,
   input  logic        nmi_n_i,
   input  logic        irq1_n_i,
@@ -50,6 +51,28 @@ module hd6303r_mcu (
   output logic [7:0]  debug_receive_data_o,
   output logic [7:0]  debug_opcode_o
 );
+  logic standby_active;
+  logic external_bus_valid_internal;
+  logic [7:0] port1_oe_internal;
+  logic [4:0] port2_oe_internal;
+  logic timer_irq_internal;
+  logic sci_irq_internal;
+
+  // The HD6303R shares the HD6301V1 E-synchronous standby boundary.
+  always_ff @(posedge clk_i or negedge reset_n_i) begin
+    if (!reset_n_i) begin
+      standby_active <= 1'b0;
+    end else if (clock_enable_i) begin
+      standby_active <= !standby_n_i;
+    end
+  end
+
+  assign external_bus_valid_o = external_bus_valid_internal && !standby_active;
+  assign port1_oe_o = port1_oe_internal & {8{!standby_active}};
+  assign port2_oe_o = port2_oe_internal & {5{!standby_active}};
+  assign timer_irq_o = timer_irq_internal && !standby_active;
+  assign sci_irq_o = sci_irq_internal && !standby_active;
+
   // HD6303R Mode 2 has neither on-chip program ROM nor Port 3/4 GPIO.
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
@@ -62,6 +85,7 @@ module hd6303r_mcu (
   ) device (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),
+    .standby_reset_n_i(!standby_active),
     .clock_enable_i(clock_enable_i),
     .nmi_n_i(nmi_n_i),
     .irq1_n_i(irq1_n_i),
@@ -78,12 +102,12 @@ module hd6303r_mcu (
     .external_address_o(external_address_o),
     .external_data_o(external_data_o),
     .external_write_o(external_write_o),
-    .external_bus_valid_o(external_bus_valid_o),
+    .external_bus_valid_o(external_bus_valid_internal),
     .external_opcode_fetch_o(external_opcode_fetch_o),
     .port1_o(port1_o),
-    .port1_oe_o(port1_oe_o),
+    .port1_oe_o(port1_oe_internal),
     .port2_o(port2_o),
-    .port2_oe_o(port2_oe_o),
+    .port2_oe_o(port2_oe_internal),
     .port3_o(),
     .port3_oe_o(),
     .port4_o(),
@@ -91,8 +115,8 @@ module hd6303r_mcu (
     .os3_n_o(),
     .sci_tx_o(sci_tx_o),
     .sci_clock_o(sci_clock_o),
-    .timer_irq_o(timer_irq_o),
-    .sci_irq_o(sci_irq_o),
+    .timer_irq_o(timer_irq_internal),
+    .sci_irq_o(sci_irq_internal),
     .opcode_fetch_o(opcode_fetch_o),
     .retire_o(retire_o),
     .illegal_o(illegal_o),

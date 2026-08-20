@@ -41,6 +41,18 @@ class HD6303RMode2ModelTests(unittest.TestCase):
         self.cycle(model)
         self.assertTrue(model.state.tcsr & 0x20)
 
+    def test_standby_retained_domain(self) -> None:
+        model = HD6303RMode2Model()
+        self.write(model, 0x0080, 0x5A)
+        self.write(model, 0x0014, 0xC0)
+        self.write(model, 0x0000, 0xFF)
+        model.standby_reset(retention_power_ok=True)
+
+        self.assertEqual(model.ram[0], 0x5A)
+        self.assertTrue(model.state.standby_power)
+        self.assertEqual(model.state.port1_ddr, 0)
+        self.assertEqual(model.state.timer, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

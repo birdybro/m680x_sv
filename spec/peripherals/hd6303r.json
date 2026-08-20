@@ -106,7 +106,7 @@
     "mode5": "expanded non-multiplexed partial-decode operation; outside the current profile",
     "unavailable": "Modes 0, 4, 6, and 7 are not available on HD6303R",
     "sleep": "SLP stops CPU execution while peripherals continue; an enabled interrupt vectors, while a masked interrupt request resumes at the following instruction",
-    "standby": "STBY stops clocks and resets internal registers while retaining RAM only under the documented supply conditions; outside the current profile",
+    "standby": "standby_n_i is sampled at the normalized E boundary; accepted STBY resets active state, suppresses the external bus and GPIO drive, retains RAM/STBY_PWR with valid supply, and restarts through the external reset vector",
     "reference": {
       "id": "hitachi-hd6301-hd6303-series-handbook-1989",
       "locator": "HD6301V1/HD6303R notice; sections 2.1, 2.2, and 2.12, tables 2-1-1 and 2-2-1, printed pages 126-139 and 162-166"
@@ -114,9 +114,9 @@
   },
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd6303r_mcu.sv binds the HD6301 CPU profile to the manufacturer-compatible Mode-2 peripheral and RAM integration",
-    "verification": "Directed execution covers external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, and opcode TRAP through the integrated wrapper",
+    "verification": "Directed execution covers external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, opcode TRAP, E-synchronous STBY, external-bus suppression, reset-vector recovery, and retained RAM/STBY_PWR",
     "address_error": "Mode 2 defines no non-memory instruction-fetch region, so the wrapper does not assert an instruction-address-error input; opcode error still invokes TRAP",
-    "excluded_modes": "Modes 1 and 5, standby entry, Port 3 handshake, physical multiplexed-bus waveforms, bi-phase SCI, and external-clock SCI remain unclaimed",
+    "excluded_modes": "Modes 1 and 5, Port 3 handshake, physical multiplexed-bus waveforms, oscillator recovery delay, bi-phase SCI, and external-clock SCI remain unclaimed",
     "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

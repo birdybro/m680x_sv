@@ -188,6 +188,15 @@ E so asserting RES immediately returns every port driver to high impedance.
 The generated sequential blocks keep this timing distinction synthesizable
 without creating a gated clock.
 
+The Hitachi wrappers similarly preserve the documented STBY distinction.
+HD6301V1 and HD6303R sample `standby_n_i` at an enabled E boundary;
+HD63701V0 applies it asynchronously. Accepted standby resets the CPU and
+active peripheral domain, suppresses program/external transactions, and makes
+GPIO high impedance. The inferred RAM array and STBY_PWR retained-domain bit
+survive while `standby_power_ok_i` remains asserted. Release restarts through
+the reset vector; oscillator restart delay and voltage thresholds are outside
+the normalized digital boundary.
+
 ## HD6301V1 single-chip Mode-7 integration
 
 `rtl/hd6301/hd6301v1_mcu.sv` selects the Hitachi CPU profile and the guarded
@@ -231,6 +240,9 @@ external. Its CPU profile adds AIM/OIM/EIM/TIM, XGDX, SLP, Hitachi timing, and
 opcode-error TRAP. During SLP the CPU state stops while the timer and SCI remain
 clocked. An enabled request vectors normally; a masked request releases sleep
 at the following instruction without stacking, as the manufacturer specifies.
+The wrapper also presents the shared E-synchronous STBY boundary, suppressing
+the external transaction qualifier and GPIO drive during reset-state standby
+while retaining supplied RAM and STBY_PWR state.
 
 ## HD63701V0 single-chip Mode-7 integration
 
@@ -252,6 +264,9 @@ source. The wrapper permits execution from the whole RAM window and traps
 `$0000`-`$003f` and `$0100`-`$efff`. This is an explicit normalized integration
 policy, not a silicon-equivalence claim for the disputed range; the structured
 device and peripheral specifications preserve the discrepancy.
+The V0-specific wrapper accepts `standby_n_i` asynchronously, immediately
+removes GPIO/program activity, retains supplied RAM/STBY_PWR, and performs the
+documented reset-vector restart when standby is released.
 
 ## MC68705P5 integration
 

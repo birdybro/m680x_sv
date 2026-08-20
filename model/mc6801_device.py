@@ -187,6 +187,19 @@ class MC6801DeviceModel:
 
         self.state = MC6801PeripheralState()
 
+    def standby_reset(self, *, retention_power_ok: bool = True) -> None:
+        """Enter reset-state operation while preserving the retained domain.
+
+        Hitachi STBY resets active registers but does not erase physical RAM.
+        STBY_PWR survives only when the modeled retention supply remains valid.
+        RAM bytes are left untouched when supply validity is false because the
+        manufacturer does not define their resulting values.
+        """
+
+        retained_standby_power = self.state.standby_power and retention_power_ok
+        self.state = MC6801PeripheralState()
+        self.state.standby_power = retained_standby_power
+
     def register_is_internal(self, address: int) -> bool:
         return (address & 0xFFFF) in INTERNAL_REGISTERS
 

@@ -38,11 +38,13 @@ with device wrappers kept at separate integration boundaries:
   SCI, interrupt priority, and external-memory integration;
 - `hd6301v1_mcu`: HD6301V1 single-chip Mode-7 integration with a separate
   4-KiB FPGA program-image port, executable RAM, four GPIO ports, IS3/OS3,
-  timer/SCI, SLP, and device-generated address/opcode TRAP;
+  timer/SCI, SLP, E-synchronous STBY retention, and device-generated
+  address/opcode TRAP;
 - `hd6303r_mcu`: HD6303R Mode-2 ROMless integration with the HD6301 ISA,
-  opcode TRAP, SLP behavior, RAM, GPIO, timer, and SCI;
+  opcode TRAP, SLP/STBY behavior, RAM, GPIO, timer, and SCI;
 - `hd63701v0_mcu`: HD63701V0 Mode-7 integration with 192-byte RAM, four GPIO
-  ports, timer/SCI, address TRAP, and a separate 4-KiB EPROM-image port;
+  ports, timer/SCI, asynchronous STBY retention, address TRAP, and a separate
+  4-KiB EPROM-image port;
 - `hd63705v0_mcu`: 14-bit HD63705V0 integration with 192-byte RAM, 31 GPIO,
   an eight-bit timer, synchronous SCI/Timer2, INT/INT2 priority, WAIT/STOP/STBY,
   and normalized digital EPROM verify/program controls; and

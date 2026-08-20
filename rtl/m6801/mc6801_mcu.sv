@@ -22,6 +22,7 @@ module mc6801_mcu #(
 ) (
   input  logic        clk_i,
   input  logic        reset_n_i,
+  input  logic        standby_reset_n_i,
   input  logic        clock_enable_i,
   input  logic        nmi_n_i,
   input  logic        irq1_n_i,
@@ -180,6 +181,9 @@ module mc6801_mcu #(
   logic port3_access;
   logic instruction_address_error;
   logic port3_irq;
+  logic device_reset_n;
+
+  assign device_reset_n = reset_n_i && standby_reset_n_i;
 
   function automatic logic register_is_internal(input logic [15:0] address_value);
     begin
@@ -230,8 +234,8 @@ module mc6801_mcu #(
   /* verilator lint_off SYNCASYNCNET */
   generate
     if (PORT_DDR_ASYNC_RESET) begin : generate_async_ddr_reset
-      always_ff @(posedge clk_i or negedge reset_n_i) begin
-        if (!reset_n_i) begin
+      always_ff @(posedge clk_i or negedge device_reset_n) begin
+        if (!device_reset_n) begin
           port1_ddr <= 8'h00;
           port2_ddr <= 5'h00;
           port3_ddr <= 8'h00;
@@ -245,7 +249,7 @@ module mc6801_mcu #(
       end
     end else begin : generate_synchronous_ddr_reset
       always_ff @(posedge clk_i) begin
-        if (!reset_n_i) begin
+        if (!device_reset_n) begin
           port1_ddr <= 8'h00;
           port2_ddr <= 5'h00;
           port3_ddr <= 8'h00;
@@ -352,8 +356,8 @@ module mc6801_mcu #(
     sci_nrz_internal = (rmcr[3:2] == 2'b01) || (rmcr[3:2] == 2'b10);
   end
 
-  always_ff @(posedge clk_i or negedge reset_n_i) begin
-    if (!reset_n_i) begin
+  always_ff @(posedge clk_i or negedge device_reset_n) begin
+    if (!device_reset_n) begin
       port1_latch <= 8'h00;
       port2_latch <= 5'h00;
       port3_latch <= 8'h00;
@@ -368,14 +372,10 @@ module mc6801_mcu #(
       is3_sync2 <= 1'b1;
       port3_clear_armed <= 1'b0;
       rame <= 1'b1;
-      // Silicon reset preserves this bit. A deterministic zero is selected at
-      // the FPGA boundary; analog retention remains outside the digital claim.
-      standby_power <= 1'b0;
     end else if (clock_enable_i) begin
       is3_sync1 <= is3_n_i;
       is3_sync2 <= is3_sync1;
       if (!standby_power_ok_i) begin
-        standby_power <= 1'b0;
         rame <= 1'b0;
       end
       if (internal_write) begin
@@ -395,7 +395,6 @@ module mc6801_mcu #(
             port3_latch_enable <= core_data_out[3];
           end
           16'h0014: begin
-            standby_power <= core_data_out[7] && standby_power_ok_i;
             rame <= core_data_out[6];
           end
           default: ;
@@ -423,6 +422,23 @@ module mc6801_mcu #(
     end
   end
 
+  // STBY_PWR belongs to the retained supply domain. The normalized FPGA
+  // boundary initializes it deterministically on external reset, preserves it
+  // through a standby reset while supply remains valid, and clears it when the
+  // modeled retention supply is lost.
+  always_ff @(posedge clk_i or negedge reset_n_i) begin
+    if (!reset_n_i) begin
+      standby_power <= 1'b0;
+    end else if (clock_enable_i) begin
+      if (!standby_power_ok_i) begin
+        standby_power <= 1'b0;
+      end else if (standby_reset_n_i && internal_write &&
+                   (core_address == 16'h0014)) begin
+        standby_power <= core_data_out[7];
+      end
+    end
+  end
+
   // The reference manual does not define RAM contents after reset. Keeping
   // reset out of the write process preserves inference-friendly device RAM.
   always_ff @(posedge clk_i) begin
@@ -431,8 +447,8 @@ module mc6801_mcu #(
     end
   end
 
-  always_ff @(posedge clk_i or negedge reset_n_i) begin
-    if (!reset_n_i) begin
+  always_ff @(posedge clk_i or negedge device_reset_n) begin
+    if (!device_reset_n) begin
       timer_counter <= 16'h0000;
       output_compare <= 16'hffff;
       input_capture <= 16'h0000;
@@ -521,8 +537,8 @@ module mc6801_mcu #(
     end
   end
 
-  always_ff @(posedge clk_i or negedge reset_n_i) begin
-    if (!reset_n_i) begin
+  always_ff @(posedge clk_i or negedge device_reset_n) begin
+    if (!device_reset_n) begin
       rmcr <= 4'h0;
       trcsr_control <= 5'h00;
       rdrf <= 1'b0;
@@ -663,8 +679,8 @@ module mc6801_mcu #(
   // The IRQ1 request flip-flop is held reset while I is set and retains a
   // sampled low pulse while interrupts are enabled. This is separate from the
   // level-sensitive Port 3, timer, and SCI flag sources.
-  always_ff @(posedge clk_i or negedge reset_n_i) begin
-    if (!reset_n_i) begin
+  always_ff @(posedge clk_i or negedge device_reset_n) begin
+    if (!device_reset_n) begin
       irq1_pending <= 1'b0;
       irq2_pending <= 1'b0;
     end else if (clock_enable_i) begin
@@ -720,7 +736,7 @@ module mc6801_mcu #(
   /* verilator lint_off PINCONNECTEMPTY */
   m6800_core #(.ARCHITECTURE(HITACHI_CPU ? 2'd2 : 2'd1)) cpu (
     .clk_i(clk_i),
-    .reset_n_i(reset_n_i),
+    .reset_n_i(device_reset_n),
     .clock_enable_i(clock_enable_i),
     .bus_ready_i(1'b1),
     .irq_n_i(irq_n),

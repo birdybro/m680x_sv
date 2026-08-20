@@ -77,8 +77,10 @@ manufacturer-compatible register, 128-byte RAM, Port 1/2, timer, SCI, and
 interrupt integration in expanded multiplexed Mode 2. Directed integration
 tests cover HD6301-only instructions, opcode TRAP, continued timer operation in
 SLP, masked-request wake without vectoring, and simultaneous NMI/IRQ priority.
-Modes 1/5, standby entry, Port 3 handshakes, the physical multiplexed waveform,
-bi-phase SCI, and external-clock SCI remain outside this partial claim.
+They also cover E-synchronous STBY entry, high-impedance GPIO/external-bus
+qualification, retained RAM/STBY_PWR, and reset-vector recovery. Modes 1/5,
+Port 3 handshakes, the physical multiplexed waveform, bi-phase SCI, and
+external-clock SCI remain outside this partial claim.
 HD6303R follows the HD6301V1-specific framing-error rule: the shift-register
 byte is not transferred to RDR when the stop bit is missing.
 Both parts also implement Hitachi's writable 16-bit FRC sequence and assert
@@ -90,8 +92,10 @@ IRQ1 source, read/write-selected OS3, common timer/SCI functions, SLP behavior,
 and the `$f000`-`$ffff` internal program/vector window. The program image is an
 integration input. Directed tests verify that instruction fetches in both
 documented non-memory ranges enter the 13-cycle address TRAP while normal data
-accesses do not. Expanded modes, standby entry, bi-phase/external-clock SCI,
-physical timing, and actual mask-ROM contents remain outside this partial claim.
+accesses do not. E-synchronous STBY entry, retained RAM/STBY_PWR, high-impedance
+ports, and reset-vector recovery are tested. Expanded modes,
+bi-phase/external-clock SCI, physical timing, and actual mask-ROM contents
+remain outside this partial claim.
 Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
 The Mode-7 timer regression verifies full-counter double-byte writes and the
 documented Hitachi TOF boundary. It also verifies that V1 DDR clearing waits
@@ -103,7 +107,8 @@ The HD63701V0 claim covers its single-chip Mode 7 digital boundary: the
 interrupts, the V0-specific framing-error transfer, SLP, and a separately
 supplied `$f000`-`$ffff` EPROM image. The RTL and model execute from both RAM
 boundaries and trap representative fetches in the unambiguous non-memory
-range. Expanded modes, explicit asynchronous STBY entry, alternate SCI clock
+range. Asynchronous STBY entry, retained RAM/STBY_PWR, high-impedance ports,
+and reset-vector recovery are tested. Expanded modes, alternate SCI clock
 formats, physical timing, and EPROM programming mode remain outside the claim.
 The V0 regression verifies its distinct asynchronous DDR reset at the digital
 boundary.

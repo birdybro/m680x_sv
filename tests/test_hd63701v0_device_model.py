@@ -83,6 +83,18 @@ class HD63701V0Mode7ModelTests(unittest.TestCase):
         self.cycle(model)
         self.assertTrue(model.state.tcsr & 0x20)
 
+    def test_asynchronous_standby_retained_domain(self) -> None:
+        model = HD63701V0Mode7Model()
+        self.write(model, 0x0040, 0x96)
+        self.write(model, 0x0014, 0xC0)
+        self.write(model, 0x0004, 0xFF)
+        model.standby_reset(retention_power_ok=True)
+
+        self.assertEqual(model.ram[0], 0x96)
+        self.assertTrue(model.state.standby_power)
+        self.assertEqual(model.port34_outputs()[1], 0)
+        self.assertEqual(model.state.timer, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

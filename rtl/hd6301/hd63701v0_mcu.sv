@@ -9,6 +9,7 @@
 module hd63701v0_mcu (
   input  logic        clk_i,
   input  logic        reset_n_i,
+  input  logic        standby_n_i,
   input  logic        clock_enable_i,
   input  logic        nmi_n_i,
   input  logic        irq1_n_i,
@@ -56,6 +57,27 @@ module hd63701v0_mcu (
   output logic [7:0]  debug_receive_data_o,
   output logic [7:0]  debug_opcode_o
 );
+  logic program_read_internal;
+  logic [7:0] port1_oe_internal;
+  logic [4:0] port2_oe_internal;
+  logic [7:0] port3_oe_internal;
+  logic [7:0] port4_oe_internal;
+  logic os3_n_internal;
+  logic timer_irq_internal;
+  logic sci_irq_internal;
+
+  // HD63701V0 accepts STBY asynchronously. The normalized boundary models
+  // the resulting reset state and high-impedance ports; oscillator start-up
+  // delay and standby voltage thresholds remain electrical integration facts.
+  assign program_read_o = program_read_internal && standby_n_i;
+  assign port1_oe_o = port1_oe_internal & {8{standby_n_i}};
+  assign port2_oe_o = port2_oe_internal & {5{standby_n_i}};
+  assign port3_oe_o = port3_oe_internal & {8{standby_n_i}};
+  assign port4_oe_o = port4_oe_internal & {8{standby_n_i}};
+  assign os3_n_o = !standby_n_i || os3_n_internal;
+  assign timer_irq_o = timer_irq_internal && standby_n_i;
+  assign sci_irq_o = sci_irq_internal && standby_n_i;
+
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
     .OPERATING_MODE(3'd7),
@@ -69,19 +91,22 @@ module hd63701v0_mcu (
     .INTERNAL_RAM_BYTES(16'd192),
     .MODE7_ADDRESS_TRAP_LOW_END(16'h003f)
   ) device (
-    .clk_i(clk_i), .reset_n_i(reset_n_i), .clock_enable_i(clock_enable_i),
+    .clk_i(clk_i), .reset_n_i(reset_n_i),
+    .standby_reset_n_i(standby_n_i), .clock_enable_i(clock_enable_i),
     .nmi_n_i(nmi_n_i), .irq1_n_i(irq1_n_i),
     .standby_power_ok_i(standby_power_ok_i), .port1_i(port1_i),
     .port2_i(port2_i), .port3_i(port3_i), .port4_i(port4_i),
     .is3_n_i(is3_n_i), .program_data_i(program_data_i),
     .external_data_i(8'hff), .program_address_o(program_address_o),
-    .program_read_o(program_read_o), .external_address_o(),
+    .program_read_o(program_read_internal), .external_address_o(),
     .external_data_o(), .external_write_o(), .external_bus_valid_o(),
-    .external_opcode_fetch_o(), .port1_o(port1_o), .port1_oe_o(port1_oe_o),
-    .port2_o(port2_o), .port2_oe_o(port2_oe_o), .port3_o(port3_o),
-    .port3_oe_o(port3_oe_o), .port4_o(port4_o), .port4_oe_o(port4_oe_o),
-    .os3_n_o(os3_n_o), .sci_tx_o(sci_tx_o), .sci_clock_o(sci_clock_o),
-    .timer_irq_o(timer_irq_o), .sci_irq_o(sci_irq_o),
+    .external_opcode_fetch_o(), .port1_o(port1_o),
+    .port1_oe_o(port1_oe_internal), .port2_o(port2_o),
+    .port2_oe_o(port2_oe_internal), .port3_o(port3_o),
+    .port3_oe_o(port3_oe_internal), .port4_o(port4_o),
+    .port4_oe_o(port4_oe_internal), .os3_n_o(os3_n_internal),
+    .sci_tx_o(sci_tx_o), .sci_clock_o(sci_clock_o),
+    .timer_irq_o(timer_irq_internal), .sci_irq_o(sci_irq_internal),
     .opcode_fetch_o(opcode_fetch_o), .retire_o(retire_o),
     .illegal_o(illegal_o), .undefined_o(undefined_o), .waiting_o(waiting_o),
     .sleeping_o(sleeping_o), .interrupt_ack_o(interrupt_ack_o),
