@@ -241,6 +241,30 @@ class M6805ModelTests(unittest.TestCase):
         )
         self.assertEqual(bsr.state.pc, 0x1012)
 
+    def test_m6805_table_g2_direct_traces(self) -> None:
+        expected = {
+            0xB6: [0x1000, 0x1001, 0x007F, 0x0010],  # LDA
+            0xB7: [0x1000, 0x1001, 0x007F, 0x0010, 0x0010],  # STA
+            0x3C: [0x1000, 0x1001, 0x007F, 0x0010, 0x0010, 0x0010],  # INC
+            0x3D: [0x1000, 0x1001, 0x007F, 0x0010, 0x0010, 0x0010],  # TST
+            0xBC: [0x1000, 0x1001, 0x007F],  # JMP
+            0xBD: [0x1000, 0x1001, 0x007F, 0x0010, 0x0070, 0x006F, 0x006E],  # JSR
+        }
+        for opcode, addresses in expected.items():
+            with self.subTest(opcode=f"{opcode:02X}"):
+                model = _fixture("m6805", opcode)
+                trace = model.step()
+                self.assertEqual(len(trace.accesses), trace.documented_cycles)
+                self.assertEqual([access.address for access in trace.accesses], addresses)
+
+        jsr = _fixture("m6805", 0xBD)
+        trace = jsr.step()
+        self.assertEqual(
+            [access.kind for access in trace.accesses],
+            ["read"] * 4 + ["write", "write", "read"],
+        )
+        self.assertEqual(jsr.state.pc, 0x0010)
+
     def test_hd6305_low_power_and_irq_entry(self) -> None:
         for opcode, state_name in ((0x8E, "stopped"), (0x8F, "waiting")):
             model = _fixture("hd6305", opcode)

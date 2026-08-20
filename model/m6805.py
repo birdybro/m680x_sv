@@ -250,6 +250,24 @@ class M6805Model:
             return self._fetch8("immediate operand"), None, None
         if mode == "direct":
             address = self._fetch8("direct address")
+            if self.architecture == "m6805":
+                stack_top = self.stack_base | self.stack_mask
+                self._read8(stack_top, "direct unused stack-top read")
+                if mnemonic == "JSR":
+                    self._read8(address, "first subroutine opcode")
+                    return None, address, None
+                if mnemonic == "JMP":
+                    return None, address, None
+                if mnemonic in {"STA", "STX"}:
+                    self._read8(address, "current direct operand")
+                    return None, address, None
+                if mnemonic in RMW_OPS:
+                    repeat_count = 3 if mnemonic == "TST" else 2
+                    operand = 0
+                    for cycle in range(repeat_count):
+                        operand = self._read8(address, f"direct operand read {cycle + 1}")
+                    return operand, address, None
+                return self._read8(address, "direct operand"), address, None
         elif mode == "extended":
             address = self._fetch16("extended address")
         elif mode == "indexed-no-offset":
@@ -323,6 +341,8 @@ class M6805Model:
                 assert address is not None
                 if mnemonic == "JSR":
                     self._push_return_pc()
+                    if self.architecture == "m6805" and record["addressing_mode"] == "direct":
+                        self._read8(self.state.sp, "JSR trailing stack read")
                 self.state.pc = address
                 return
             else:

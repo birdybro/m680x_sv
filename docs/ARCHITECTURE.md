@@ -158,7 +158,8 @@ Family User's Manual table G2: six reads at the high reset-vector address, one
 low-vector read, and a final read at address `$0000` whose input data is not
 used. The same table drives explicit Motorola-only states for inherent and
 relative repeated reads, bit-operation dummy/repeated reads and late branch
-displacement, BSR target prefetch and stack writes, and the dummy reads before
+displacement, direct-address dummy and repeated reads, BSR/JSR target prefetch
+and stack writes, and the dummy reads before
 and after RTS/RTI pulls. These are real bus cycles rather than
 unqualified timing padding. The Hitachi profile retains its separately selected
 reset and instruction sequencing;

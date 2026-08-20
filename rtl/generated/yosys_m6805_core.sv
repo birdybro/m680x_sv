@@ -1597,7 +1597,9 @@ module m6805_core #(
     ST_INDEXED_8,
     ST_INDEXED_16_HIGH,
     ST_INDEXED_16_LOW,
+    ST_ADDRESSING_DUMMY_READ,
     ST_MEMORY_READ,
+    ST_MEMORY_REPEAT_READ,
     ST_MEMORY_WRITE,
     ST_BIT_ADDRESS,
     ST_BIT_DISPLACEMENT,
@@ -1642,6 +1644,7 @@ module m6805_core #(
   logic [3:0] cycles_left;
   logic [15:0] effective_address;
   logic [15:0] control_target;
+  logic [15:0] dummy_address;
   logic [15:0] padding_address;
   logic [15:0] vector_address;
   logic [7:0] temporary_high;
@@ -1749,7 +1752,26 @@ module m6805_core #(
     logic [7:0] stored_value;
     begin
       effective_address <= address_value;
-      if (decoded.operation == OP_JMP) begin
+      if (!HITACHI_PROFILE && (decoded.mode == AM_DIRECT)) begin
+        dummy_address <= STACK_TOP;
+        if (decoded.operation == OP_JMP) begin
+          program_counter <= pc_value(address_value);
+          padding_address <= STACK_TOP;
+          padding_bus_valid <= 1'b1;
+          finish_to(ST_FETCH);
+        end else if (decoded.operation == OP_JSR) begin
+          control_target <= pc_value(address_value);
+          call_trailing_read <= 1'b1;
+          state <= ST_ADDRESSING_DUMMY_READ;
+        end else if ((decoded.operation == OP_STA) || (decoded.operation == OP_STX)) begin
+          stored_value = (decoded.operation == OP_STX) ? index_register : accumulator;
+          write_data <= stored_value;
+          set_nz(stored_value);
+          state <= ST_ADDRESSING_DUMMY_READ;
+        end else begin
+          state <= ST_ADDRESSING_DUMMY_READ;
+        end
+      end else if (decoded.operation == OP_JMP) begin
         program_counter <= pc_value(address_value);
         finish_to(ST_FETCH);
       end else if (decoded.operation == OP_JSR) begin
@@ -1999,8 +2021,12 @@ module m6805_core #(
           bus_valid_o = 1'b1;
         end
       end
-      ST_MEMORY_READ, ST_BIT_READ, ST_BIT_REPEAT_READ: begin
+      ST_MEMORY_READ, ST_MEMORY_REPEAT_READ, ST_BIT_READ, ST_BIT_REPEAT_READ: begin
         address_o = effective_address;
+        bus_valid_o = 1'b1;
+      end
+      ST_ADDRESSING_DUMMY_READ: begin
+        address_o = dummy_address;
         bus_valid_o = 1'b1;
       end
       ST_BIT_DUMMY_READ: begin
@@ -2097,6 +2123,7 @@ module m6805_core #(
       cycles_left <= 4'd0;
       effective_address <= 16'h0000;
       control_target <= 16'h0000;
+      dummy_address <= 16'h0000;
       padding_address <= 16'h0000;
       vector_address <= SWI_VECTOR;
       temporary_high <= 8'h00;
@@ -2246,7 +2273,27 @@ module m6805_core #(
           program_counter <= pc_value(program_counter + 16'h0001);
           route_address({8'h00, index_register} + {temporary_high, data_i});
         end
+        ST_ADDRESSING_DUMMY_READ: begin
+          phase <= 3'd0;
+          if (decoded.operation == OP_JSR) state <= ST_CALL_TARGET_READ;
+          else state <= ST_MEMORY_REPEAT_READ;
+        end
         ST_MEMORY_READ: execute_byte(data_i, 1'b1);
+        ST_MEMORY_REPEAT_READ: begin
+          if ((decoded.operation == OP_STA) || (decoded.operation == OP_STX)) begin
+            state <= ST_MEMORY_WRITE;
+          end else if (is_rmw(decoded.operation)) begin
+            if (((decoded.operation == OP_TST) && (phase == 3'd2)) ||
+                ((decoded.operation != OP_TST) && (phase == 3'd1))) begin
+              phase <= 3'd0;
+              execute_byte(data_i, 1'b1);
+            end else begin
+              phase <= phase + 3'd1;
+            end
+          end else begin
+            execute_byte(data_i, 1'b1);
+          end
+        end
         ST_MEMORY_WRITE: finish_to(ST_FETCH);
         ST_BIT_ADDRESS: begin
           effective_address <= {8'h00, data_i};

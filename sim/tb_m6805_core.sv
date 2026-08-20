@@ -163,7 +163,10 @@ module tb_m6805_core;
       $fatal(1, "M6805 ADD result/flags");
     end
     run_instruction(5, 8'hb7);
-    if (memory[16'h0020] != 8'h80 || !trace_write[2] || trace_address[2] != 16'h0020) begin
+    if (memory[16'h0020] != 8'h80 ||
+        trace_address[2] != 16'h007f || trace_write[2] ||
+        trace_address[3] != 16'h0020 || trace_write[3] || trace_data[3] != 8'h00 ||
+        !trace_write[4] || trace_address[4] != 16'h0020 || trace_data[4] != 8'h80) begin
       $fatal(1, "M6805 direct store trace");
     end
     run_instruction(8, 8'had);
@@ -307,6 +310,79 @@ module tb_m6805_core;
         !trace_valid[8] || trace_write[8] || trace_address[8] != 16'h1012 ||
         !trace_valid[9] || trace_write[9] || trace_address[9] != 16'h1012) begin
       $fatal(1, "M6805 BRSET table-G2 trace");
+    end
+
+    memory[16'h0021] = 8'h5a;
+    memory[16'h1014] = 8'hb6; // LDA $21
+    memory[16'h1015] = 8'h21;
+    run_instruction(4, 8'hb6);
+    if (debug_a != 8'h5a ||
+        !trace_valid[0] || trace_write[0] || trace_address[0] != 16'h1014 ||
+        !trace_valid[1] || trace_write[1] || trace_address[1] != 16'h1015 ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h007f ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h0021 || trace_data[3] != 8'h5a) begin
+      $fatal(1, "M6805 direct read table-G2 trace");
+    end
+
+    memory[16'h1016] = 8'hb7; // STA $22
+    memory[16'h1017] = 8'h22;
+    run_instruction(5, 8'hb7);
+    if (memory[16'h0022] != 8'h5a ||
+        trace_address[0] != 16'h1016 || trace_write[0] ||
+        trace_address[1] != 16'h1017 || trace_write[1] ||
+        trace_address[2] != 16'h007f || trace_write[2] ||
+        trace_address[3] != 16'h0022 || trace_write[3] ||
+        trace_address[4] != 16'h0022 || !trace_write[4] || trace_data[4] != 8'h5a) begin
+      $fatal(1, "M6805 direct store table-G2 trace");
+    end
+
+    memory[16'h1018] = 8'h3c; // INC $22
+    memory[16'h1019] = 8'h22;
+    run_instruction(6, 8'h3c);
+    if (memory[16'h0022] != 8'h5b ||
+        trace_address[0] != 16'h1018 || trace_write[0] ||
+        trace_address[1] != 16'h1019 || trace_write[1] ||
+        trace_address[2] != 16'h007f || trace_write[2] ||
+        trace_address[3] != 16'h0022 || trace_write[3] || trace_data[3] != 8'h5a ||
+        trace_address[4] != 16'h0022 || trace_write[4] || trace_data[4] != 8'h5a ||
+        trace_address[5] != 16'h0022 || !trace_write[5] || trace_data[5] != 8'h5b) begin
+      $fatal(1, "M6805 direct RMW table-G2 trace");
+    end
+
+    memory[16'h101a] = 8'h3d; // TST $22
+    memory[16'h101b] = 8'h22;
+    run_instruction(6, 8'h3d);
+    if (trace_address[0] != 16'h101a || trace_write[0] ||
+        trace_address[1] != 16'h101b || trace_write[1] ||
+        trace_address[2] != 16'h007f || trace_write[2] ||
+        trace_address[3] != 16'h0022 || trace_write[3] || trace_data[3] != 8'h5b ||
+        trace_address[4] != 16'h0022 || trace_write[4] || trace_data[4] != 8'h5b ||
+        trace_address[5] != 16'h0022 || trace_write[5] || trace_data[5] != 8'h5b) begin
+      $fatal(1, "M6805 direct TST table-G2 trace");
+    end
+
+    memory[16'h101c] = 8'hbc; // JMP $30
+    memory[16'h101d] = 8'h30;
+    run_instruction(3, 8'hbc);
+    if (debug_pc != 16'h0030 || trace_address[0] != 16'h101c || trace_write[0] ||
+        trace_address[1] != 16'h101d || trace_write[1] ||
+        trace_address[2] != 16'h007f || trace_write[2]) begin
+      $fatal(1, "M6805 direct JMP table-G2 trace");
+    end
+
+    memory[16'h0030] = 8'hbd; // JSR $40
+    memory[16'h0031] = 8'h40;
+    memory[16'h0040] = 8'h81;
+    run_instruction(7, 8'hbd);
+    if (debug_pc != 16'h0040 || debug_sp != 16'h007d ||
+        trace_address[0] != 16'h0030 || trace_write[0] ||
+        trace_address[1] != 16'h0031 || trace_write[1] ||
+        trace_address[2] != 16'h007f || trace_write[2] ||
+        trace_address[3] != 16'h0040 || trace_write[3] || trace_data[3] != 8'h81 ||
+        trace_address[4] != 16'h007f || !trace_write[4] || trace_data[4] != 8'h32 ||
+        trace_address[5] != 16'h007e || !trace_write[5] || trace_data[5] != 8'h00 ||
+        trace_address[6] != 16'h007d || trace_write[6]) begin
+      $fatal(1, "M6805 direct JSR table-G2 trace");
     end
 
     $display("M6805 CORE PASS: %0d directed reset, bus, stack, and interrupt checks", cases);

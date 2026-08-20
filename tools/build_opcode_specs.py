@@ -1237,6 +1237,39 @@ def _m6805_table_g2_trace(mnemonic: str, mode: str) -> list[dict]:
             read(9, "opcode_address+3", "next_opcode"),
             read(10, "opcode_address+3", "next_opcode"),
         ]
+    if mode == "direct":
+        prefix = [
+            opcode,
+            read(2, "opcode_address+1", "operand_address"),
+            read(3, "0x007f", "unused"),
+        ]
+        if mnemonic == "JMP":
+            return prefix
+        if mnemonic == "JSR":
+            return prefix + [
+                read(4, "subroutine_start", "first_subroutine_opcode"),
+                write(5, "stack_pointer", "return_address_low"),
+                write(6, "stack_pointer-1", "return_address_high"),
+                read(7, "stack_pointer-2", "irrelevant"),
+            ]
+        if mnemonic in {"STA", "STX"}:
+            return prefix + [
+                read(4, "operand_address", "current_operand"),
+                write(5, "operand_address", "new_operand"),
+            ]
+        if mnemonic == "TST":
+            return prefix + [
+                read(4, "operand_address", "operand"),
+                read(5, "operand_address", "operand"),
+                read(6, "operand_address", "operand"),
+            ]
+        if mnemonic in {"NEG", "COM", "LSR", "ROR", "ASR", "ASL", "ROL", "DEC", "INC", "CLR"}:
+            return prefix + [
+                read(4, "operand_address", "current_operand"),
+                read(5, "operand_address", "current_operand"),
+                write(6, "operand_address", "new_operand"),
+            ]
+        return prefix + [read(4, "operand_address", "operand")]
     if mode == "immediate-8":
         return [opcode, read(2, "opcode_address+1", "operand")]
     if mode in {"accumulator-a", "index-register-x"}:
@@ -1333,7 +1366,7 @@ def _m6805_instruction(
     if documented_bus_cycles:
         locator = (
             "appendix G table G2, printed page 240"
-            if mode == "relative"
+            if mode in {"relative", "direct"}
             else "appendix G table G2, printed page 239"
         )
     return {
