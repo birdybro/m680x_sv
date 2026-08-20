@@ -244,6 +244,31 @@ class OpcodeSpecificationTests(unittest.TestCase):
                 if record["classification"] == "documented_instruction"
             )
         )
+        undefined = [
+            record
+            for record in self.m6805["opcodes"]
+            if record["bus_trace_status"] == "UNDEFINED_BY_DOCUMENTATION"
+        ]
+        self.assertEqual(len(undefined), 16)
+        self.assertTrue(all(not record["documented_bus_cycles"] for record in undefined))
+        self.assertTrue(
+            all("table G2 omits" in record["notes"] for record in undefined)
+        )
+
+    def test_undefined_bus_trace_cannot_assign_cycles(self) -> None:
+        broken = deepcopy(self.m6805)
+        broken["opcodes"][0xC0]["documented_bus_cycles"] = [
+            {
+                "cycle": 1,
+                "address": "opcode_address",
+                "direction": "read",
+                "data": "opcode",
+            }
+        ]
+        with self.assertRaisesRegex(
+            validate_opcodes.OpcodeSpecError, "undefined bus trace assigns cycles"
+        ):
+            validate_opcodes.validate_opcode_spec(broken, self.known_references)
 
     def test_m6800_table8_complete_bus_traces_are_structured(self) -> None:
         complete = [

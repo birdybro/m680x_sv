@@ -1715,6 +1715,24 @@ def _m6805_instruction(
             + "Table G2 marks the upper address field of each XFF dummy read as don't-care; "
               "address_defined_mask 0x00ff records only the documented low byte."
         )
+    if (
+        architecture == "m6805"
+        and mode in {"extended", "indexed-unsigned-16"}
+        and not documented_bus_cycles
+    ):
+        notes = (
+            notes + (" " if notes else "")
+            + "Appendix G table G2 omits a detailed cycle row for this documented "
+              "instruction form; its architectural result and total cycle count are "
+              "defined, but its intermediate bus sequence is undefined by the available "
+              "manufacturer documentation."
+        )
+    if documented_bus_cycles:
+        bus_trace_status = "COMPLETE"
+    elif architecture == "m6805" and mode in {"extended", "indexed-unsigned-16"}:
+        bus_trace_status = "UNDEFINED_BY_DOCUMENTATION"
+    else:
+        bus_trace_status = "PARTIAL"
     return {
         "opcode": opcode,
         "opcode_hex": f"{opcode:02X}",
@@ -1733,7 +1751,7 @@ def _m6805_instruction(
         "flags_undefined": flags_undefined,
         "flag_semantics": flag_semantics,
         "memory_operations": _m6805_memory_facts(architecture, mnemonic, mode, length),
-        "bus_trace_status": "COMPLETE" if documented_bus_cycles else "PARTIAL",
+        "bus_trace_status": bus_trace_status,
         "documented_bus_cycles": documented_bus_cycles,
         "stack_effects": stack_effects,
         "branch_behavior": branch_behavior,

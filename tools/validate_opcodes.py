@@ -30,7 +30,12 @@ CLASSIFICATIONS = {
     "undefined_behavior",
 }
 FLAGS = {"H", "I", "N", "Z", "V", "C"}
-BUS_TRACE_STATUSES = {"COMPLETE", "PARTIAL", "NOT_APPLICABLE"}
+BUS_TRACE_STATUSES = {
+    "COMPLETE",
+    "PARTIAL",
+    "NOT_APPLICABLE",
+    "UNDEFINED_BY_DOCUMENTATION",
+}
 
 
 class OpcodeSpecError(RuntimeError):
@@ -152,6 +157,10 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
                 raise OpcodeSpecError(f"{architecture}: instruction {opcode:02X} needs opcode fetch")
             if record["bus_trace_status"] == "COMPLETE" and len(bus_cycles) != record["cycles"]:
                 raise OpcodeSpecError(f"{architecture}: complete bus trace length mismatch for {opcode:02X}")
+            if record["bus_trace_status"] == "UNDEFINED_BY_DOCUMENTATION" and bus_cycles:
+                raise OpcodeSpecError(
+                    f"{architecture}: undefined bus trace assigns cycles for {opcode:02X}"
+                )
             if record["bus_trace_status"] == "NOT_APPLICABLE":
                 raise OpcodeSpecError(f"{architecture}: defined behavior {opcode:02X} needs bus trace status")
         else:

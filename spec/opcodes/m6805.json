@@ -12764,7 +12764,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -12773,7 +12773,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 193,
@@ -12812,7 +12812,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -12821,7 +12821,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 194,
@@ -12863,7 +12863,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -12872,7 +12872,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 195,
@@ -12911,7 +12911,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -12920,7 +12920,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 196,
@@ -12958,7 +12958,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -12967,7 +12967,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 197,
@@ -13004,7 +13004,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -13013,7 +13013,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 198,
@@ -13050,7 +13050,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -13059,7 +13059,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 199,
@@ -13181,7 +13181,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -13190,7 +13190,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 201,
@@ -13234,7 +13234,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -13243,7 +13243,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 202,
@@ -13281,7 +13281,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -13290,7 +13290,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 203,
@@ -13332,7 +13332,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -13341,7 +13341,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 204,
@@ -13370,7 +13370,7 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "load PC with the effective address",
@@ -13379,7 +13379,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 205,
@@ -13510,7 +13510,7 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -13519,7 +13519,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 207,
@@ -14255,7 +14255,7 @@
         "read 2 instruction operand byte(s)",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -14264,7 +14264,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 216,
@@ -14728,7 +14728,7 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
@@ -14739,7 +14739,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 222,
@@ -14862,7 +14862,7 @@
         "read 2 instruction operand byte(s)",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
+      "bus_trace_status": "UNDEFINED_BY_DOCUMENTATION",
       "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
@@ -14871,7 +14871,7 @@
         "id": "motorola-m6805-family-users-manual-1983",
         "locator": "appendix D operation code map and appendix C instruction entries"
       },
-      "notes": ""
+      "notes": "Appendix G table G2 omits a detailed cycle row for this documented instruction form; its architectural result and total cycle count are defined, but its intermediate bus sequence is undefined by the available manufacturer documentation."
     },
     {
       "opcode": 224,
