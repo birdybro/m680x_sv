@@ -6,7 +6,9 @@ module tb_m6805_core;
   logic bus_ready;
   logic irq_n;
   logic [7:0] data_in;
+  /* verilator lint_off SYNCASYNCNET */
   logic [15:0] address;
+  /* verilator lint_on SYNCASYNCNET */
   logic [7:0] data_out;
   logic write_enable;
   logic bus_valid;
@@ -24,6 +26,7 @@ module tb_m6805_core;
   logic [4:0] debug_ccr;
   logic [7:0] debug_opcode;
   logic [3:0] debug_cycles;
+  logic manual_memory_refresh;
   logic [7:0] memory [0:65535];
   logic [15:0] trace_address [0:15];
   logic [7:0] trace_data [0:15];
@@ -32,6 +35,7 @@ module tb_m6805_core;
   logic trace_opcode_fetch [0:15];
   integer index;
   integer cycle_count;
+  integer diagnostic_cycle;
   integer reset_cycle;
   integer cases;
 
@@ -48,7 +52,13 @@ module tb_m6805_core;
     .debug_instruction_cycles_o(debug_cycles)
   );
 
-  assign data_in = memory[address];
+  // Version 5.020 of Verilator does not reschedule a variable-index unpacked-array read
+  // when a procedural testbench write changes the selected element without
+  // changing the address.  The explicit refresh event keeps run-time program
+  // patches deterministic on every simulator in the supported tool matrix.
+  /* verilator lint_off BLKSEQ */
+  always @(address or manual_memory_refresh) data_in = memory[address];
+  /* verilator lint_on BLKSEQ */
   always #5 clk <= ~clk;
   always @(posedge clk) begin
     if (clock_enable && bus_ready && bus_valid && write_enable) memory[address] <= data_out;
@@ -56,6 +66,13 @@ module tb_m6805_core;
 
   task automatic tick;
     begin @(posedge clk); #1; end
+  endtask
+
+  task automatic refresh_memory;
+    begin
+      manual_memory_refresh = ~manual_memory_refresh;
+      #1;
+    end
   endtask
 
   task automatic run_instruction(input integer expected_cycles, input logic [7:0] expected_opcode);
@@ -73,6 +90,14 @@ module tb_m6805_core;
       end while (!retire);
       if (cycle_count != expected_cycles || debug_cycles != expected_cycles[3:0] ||
           debug_opcode != expected_opcode || !opcode_fetch) begin
+        for (diagnostic_cycle = 0; diagnostic_cycle < cycle_count; diagnostic_cycle = diagnostic_cycle + 1) begin
+          $display("  cycle=%0d address=%04x data=%02x write=%b valid=%b fetch=%b",
+                   diagnostic_cycle + 1, trace_address[diagnostic_cycle],
+                   trace_data[diagnostic_cycle], trace_write[diagnostic_cycle],
+                   trace_valid[diagnostic_cycle], trace_opcode_fetch[diagnostic_cycle]);
+        end
+        $display("  final pc=%04x opcode=%02x decoded_cycles=%0d state=%0d cycles_left=%0d retire=%b",
+                 debug_pc, debug_opcode, debug_cycles, dut.state, dut.cycles_left, retire);
         $fatal(1, "M6805 opcode %02x timing mismatch %0d/%0d", expected_opcode, cycle_count, expected_cycles);
       end
       cases = cases + 1;
@@ -103,6 +128,7 @@ module tb_m6805_core;
     clock_enable = 1'b1;
     bus_ready = 1'b1;
     irq_n = 1'b1;
+    manual_memory_refresh = 1'b0;
     cases = 0;
     for (index = 0; index < 65536; index = index + 1) memory[index] = 8'h00;
     memory[16'hfffe] = 8'h10;
@@ -246,6 +272,7 @@ module tb_m6805_core;
 
     memory[16'h100a] = 8'h20; // BRA $100c
     memory[16'h100b] = 8'h00;
+    refresh_memory();
     run_instruction(4, 8'h20);
     if (debug_pc != 16'h100c ||
         !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100a ||
@@ -256,6 +283,7 @@ module tb_m6805_core;
     end
 
     memory[16'h100c] = 8'h83; // SWI
+    refresh_memory();
     run_instruction(11, 8'h83);
     if (debug_pc != 16'h1300 || debug_sp != 16'h007a ||
         !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] ||
@@ -282,6 +310,7 @@ module tb_m6805_core;
 
     memory[16'h100d] = 8'h10; // BSET0 $20
     memory[16'h100e] = 8'h20;
+    refresh_memory();
     run_instruction(7, 8'h10);
     if (memory[16'h0020] != 8'h81 ||
         !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100d ||
@@ -297,6 +326,7 @@ module tb_m6805_core;
     memory[16'h100f] = 8'h00; // BRSET0 $20,$1014
     memory[16'h1010] = 8'h20;
     memory[16'h1011] = 8'h02;
+    refresh_memory();
     run_instruction(10, 8'h00);
     if (debug_pc != 16'h1014 || !debug_ccr[0] ||
         !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100f ||
@@ -315,6 +345,7 @@ module tb_m6805_core;
     memory[16'h0021] = 8'h5a;
     memory[16'h1014] = 8'hb6; // LDA $21
     memory[16'h1015] = 8'h21;
+    refresh_memory();
     run_instruction(4, 8'hb6);
     if (debug_a != 8'h5a ||
         !trace_valid[0] || trace_write[0] || trace_address[0] != 16'h1014 ||
@@ -326,6 +357,7 @@ module tb_m6805_core;
 
     memory[16'h1016] = 8'hb7; // STA $22
     memory[16'h1017] = 8'h22;
+    refresh_memory();
     run_instruction(5, 8'hb7);
     if (memory[16'h0022] != 8'h5a ||
         trace_address[0] != 16'h1016 || trace_write[0] ||
@@ -338,6 +370,7 @@ module tb_m6805_core;
 
     memory[16'h1018] = 8'h3c; // INC $22
     memory[16'h1019] = 8'h22;
+    refresh_memory();
     run_instruction(6, 8'h3c);
     if (memory[16'h0022] != 8'h5b ||
         trace_address[0] != 16'h1018 || trace_write[0] ||
@@ -351,6 +384,7 @@ module tb_m6805_core;
 
     memory[16'h101a] = 8'h3d; // TST $22
     memory[16'h101b] = 8'h22;
+    refresh_memory();
     run_instruction(6, 8'h3d);
     if (trace_address[0] != 16'h101a || trace_write[0] ||
         trace_address[1] != 16'h101b || trace_write[1] ||
@@ -363,6 +397,7 @@ module tb_m6805_core;
 
     memory[16'h101c] = 8'hbc; // JMP $30
     memory[16'h101d] = 8'h30;
+    refresh_memory();
     run_instruction(3, 8'hbc);
     if (debug_pc != 16'h0030 || trace_address[0] != 16'h101c || trace_write[0] ||
         trace_address[1] != 16'h101d || trace_write[1] ||
@@ -373,6 +408,7 @@ module tb_m6805_core;
     memory[16'h0030] = 8'hbd; // JSR $40
     memory[16'h0031] = 8'h40;
     memory[16'h0040] = 8'h81;
+    refresh_memory();
     run_instruction(7, 8'hbd);
     if (debug_pc != 16'h0040 || debug_sp != 16'h007d ||
         trace_address[0] != 16'h0030 || trace_write[0] ||
@@ -391,9 +427,11 @@ module tb_m6805_core;
     end
     memory[16'h0032] = 8'hae; // LDX #$20
     memory[16'h0033] = 8'h20;
+    refresh_memory();
     run_instruction(2, 8'hae);
 
     memory[16'h0034] = 8'hf6; // LDA ,X
+    refresh_memory();
     run_instruction(4, 8'hf6);
     if (debug_a != 8'h81 || trace_address[0] != 16'h0034 || trace_write[0] ||
         trace_address[1] != 16'h0035 || trace_write[1] ||
@@ -404,6 +442,7 @@ module tb_m6805_core;
 
     memory[16'h0035] = 8'he6; // LDA $02,X
     memory[16'h0036] = 8'h02;
+    refresh_memory();
     run_instruction(5, 8'he6);
     if (debug_a != 8'h5b || trace_address[0] != 16'h0035 || trace_write[0] ||
         trace_address[1] != 16'h0036 || trace_write[1] ||
@@ -414,6 +453,7 @@ module tb_m6805_core;
     end
 
     memory[16'h0037] = 8'h7c; // INC ,X
+    refresh_memory();
     run_instruction(6, 8'h7c);
     if (memory[16'h0020] != 8'h82 || trace_address[0] != 16'h0037 || trace_write[0] ||
         trace_address[1] != 16'h0038 || trace_write[1] ||
@@ -426,6 +466,7 @@ module tb_m6805_core;
 
     memory[16'h0038] = 8'hed; // JSR $20,X -> $0040
     memory[16'h0039] = 8'h20;
+    refresh_memory();
     run_instruction(8, 8'hed);
     if (debug_pc != 16'h0040 || debug_sp != 16'h007d ||
         trace_address[0] != 16'h0038 || trace_write[0] ||
@@ -440,6 +481,7 @@ module tb_m6805_core;
     end
 
     memory[16'h0040] = 8'h81; // Return from indexed-8 JSR.
+    refresh_memory();
     run_instruction(6, 8'h81);
     if (debug_pc != 16'h003a || debug_sp != 16'h007f) begin
       $fatal(1, "M6805 indexed-8 JSR return");
@@ -449,6 +491,7 @@ module tb_m6805_core;
     memory[16'h003b] = 8'h12;
     memory[16'h003c] = 8'h34;
     memory[16'h1234] = 8'ha5;
+    refresh_memory();
     run_instruction(6, 8'hc7);
     if (memory[16'h1234] != 8'h5b ||
         trace_address[0] != 16'h003a || trace_write[0] ||
@@ -464,6 +507,7 @@ module tb_m6805_core;
     memory[16'h003e] = 8'h00;
     memory[16'h003f] = 8'h50;
     memory[16'h0050] = 8'h81;
+    refresh_memory();
     run_instruction(8, 8'hcd);
     if (debug_pc != 16'h0050 || debug_sp != 16'h007d ||
         trace_address[0] != 16'h003d || trace_write[0] ||
@@ -486,6 +530,7 @@ module tb_m6805_core;
     memory[16'h0040] = 8'hd6; // LDA $0100,X
     memory[16'h0041] = 8'h01;
     memory[16'h0042] = 8'h00;
+    refresh_memory();
     run_instruction(6, 8'hd6);
     if (debug_a != 8'ha9 ||
         trace_address[0] != 16'h0040 || trace_write[0] ||
@@ -500,6 +545,7 @@ module tb_m6805_core;
     memory[16'h0043] = 8'hdc; // JMP $0008,X -> $0028
     memory[16'h0044] = 8'h00;
     memory[16'h0045] = 8'h08;
+    refresh_memory();
     run_instruction(5, 8'hdc);
     if (debug_pc != 16'h0028 ||
         trace_address[0] != 16'h0043 || trace_write[0] ||
