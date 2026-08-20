@@ -117,6 +117,7 @@ module m6805_core #(
   logic external_interrupt;
   logic padding_bus_valid;
   logic call_trailing_read;
+  logic [1:0] dummy_reads_left;
   logic decoded_sane;
   logic interrupt_enable_delay;
 
@@ -214,8 +215,12 @@ module m6805_core #(
     logic [7:0] stored_value;
     begin
       effective_address <= address_value;
-      if (!HITACHI_PROFILE && (decoded.mode == AM_DIRECT)) begin
+      if (!HITACHI_PROFILE &&
+          ((decoded.mode == AM_DIRECT) ||
+           (decoded.mode == AM_INDEXED_NONE) ||
+           (decoded.mode == AM_INDEXED_8))) begin
         dummy_address <= STACK_TOP;
+        dummy_reads_left <= (decoded.mode == AM_INDEXED_8) ? 2'd2 : 2'd1;
         if (decoded.operation == OP_JMP) begin
           program_counter <= pc_value(address_value);
           padding_address <= STACK_TOP;
@@ -477,6 +482,12 @@ module m6805_core #(
         address_o = program_counter;
         bus_valid_o = 1'b1;
       end
+      ST_INDEXED_NONE: begin
+        if (!HITACHI_PROFILE) begin
+          address_o = program_counter;
+          bus_valid_o = 1'b1;
+        end
+      end
       ST_EXECUTE: begin
         if (!HITACHI_PROFILE) begin
           address_o = program_counter;
@@ -596,6 +607,7 @@ module m6805_core #(
       external_interrupt <= 1'b0;
       padding_bus_valid <= 1'b0;
       call_trailing_read <= 1'b0;
+      dummy_reads_left <= 2'd0;
       interrupt_enable_delay <= 1'b0;
       retire_o <= 1'b0;
       illegal_o <= 1'b0;
@@ -736,9 +748,14 @@ module m6805_core #(
           route_address({8'h00, index_register} + {temporary_high, data_i});
         end
         ST_ADDRESSING_DUMMY_READ: begin
-          phase <= 3'd0;
-          if (decoded.operation == OP_JSR) state <= ST_CALL_TARGET_READ;
-          else state <= ST_MEMORY_REPEAT_READ;
+          if (dummy_reads_left > 2'd1) begin
+            dummy_reads_left <= dummy_reads_left - 2'd1;
+          end else begin
+            dummy_reads_left <= 2'd0;
+            phase <= 3'd0;
+            if (decoded.operation == OP_JSR) state <= ST_CALL_TARGET_READ;
+            else state <= ST_MEMORY_REPEAT_READ;
+          end
         end
         ST_MEMORY_READ: execute_byte(data_i, 1'b1);
         ST_MEMORY_REPEAT_READ: begin

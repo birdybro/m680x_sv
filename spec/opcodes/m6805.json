@@ -7047,14 +7047,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7158,14 +7201,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7207,14 +7293,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7289,14 +7418,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7338,14 +7510,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7389,14 +7604,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7440,14 +7698,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7487,14 +7788,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7565,14 +7909,57 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7611,14 +7998,57 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7688,14 +8118,57 @@
         "read 1 instruction operand byte(s)",
         "write zero to effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 7,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -7736,14 +8209,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -7846,14 +8356,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -7894,14 +8441,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -7975,14 +8559,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -8023,14 +8644,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -8073,14 +8731,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -8123,14 +8818,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -8169,14 +8901,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -8246,14 +9015,51 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -8291,14 +9097,51 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -8367,14 +9210,51 @@
         "read opcode at PC",
         "write zero to effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -13405,14 +14285,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13454,14 +14365,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13506,14 +14448,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13554,14 +14527,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13602,14 +14606,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13649,14 +14684,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13696,14 +14762,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13743,14 +14840,51 @@
         "read 1 instruction operand byte(s)",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13791,14 +14925,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13845,14 +15010,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13893,14 +15089,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13945,14 +15172,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -13984,14 +15242,39 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": "load PC with the effective address",
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -14027,8 +15310,57 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "subroutine_start",
+          "direction": "read",
+          "data": "first_subroutine_opcode"
+        },
+        {
+          "cycle": 6,
+          "address": "stack_pointer",
+          "direction": "write",
+          "data": "return_address_low"
+        },
+        {
+          "cycle": 7,
+          "address": "stack_pointer-1",
+          "direction": "write",
+          "data": "return_address_high"
+        },
+        {
+          "cycle": 8,
+          "address": "stack_pointer-2",
+          "direction": "read",
+          "data": "irrelevant"
+        }
+      ],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
       ],
@@ -14036,7 +15368,7 @@
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -14076,14 +15408,45 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -14122,14 +15485,51 @@
         "read 1 instruction operand byte(s)",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
       "notes": ""
     },
@@ -14171,14 +15571,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14219,14 +15644,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14270,14 +15720,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14317,14 +15792,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14364,14 +15864,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14410,14 +15935,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14456,14 +16006,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14502,14 +16077,45 @@
         "read opcode at PC",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14549,14 +16155,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14602,14 +16233,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14649,14 +16305,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14700,14 +16381,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14738,14 +16444,33 @@
       "memory_operations": [
         "read opcode at PC"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": "load PC with the effective address",
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14780,8 +16505,51 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "subroutine_start",
+          "direction": "read",
+          "data": "first_subroutine_opcode"
+        },
+        {
+          "cycle": 5,
+          "address": "stack_pointer",
+          "direction": "write",
+          "data": "return_address_low"
+        },
+        {
+          "cycle": 6,
+          "address": "stack_pointer-1",
+          "direction": "write",
+          "data": "return_address_high"
+        },
+        {
+          "cycle": 7,
+          "address": "stack_pointer-2",
+          "direction": "read",
+          "data": "irrelevant"
+        }
+      ],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
       ],
@@ -14789,7 +16557,7 @@
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14828,14 +16596,39 @@
         "read opcode at PC",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     },
@@ -14873,14 +16666,45 @@
         "read opcode at PC",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "next_opcode"
+        },
+        {
+          "cycle": 3,
+          "address": "0x007f",
+          "direction": "read",
+          "data": "unused"
+        },
+        {
+          "cycle": 4,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
       "notes": ""
     }

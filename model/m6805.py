@@ -215,6 +215,28 @@ class M6805Model:
     def _signed(byte: int) -> int:
         return byte - 0x100 if byte & 0x80 else byte
 
+    def _table_g2_data_accesses(
+        self, mnemonic: str, address: int, dummy_reads: int
+    ) -> int | None:
+        stack_top = self.stack_base | self.stack_mask
+        for cycle in range(dummy_reads):
+            self._read8(stack_top, f"addressing-mode unused read {cycle + 1}")
+        if mnemonic == "JSR":
+            self._read8(address, "first subroutine opcode")
+            return None
+        if mnemonic == "JMP":
+            return None
+        if mnemonic in {"STA", "STX"}:
+            self._read8(address, "current effective operand")
+            return None
+        if mnemonic in RMW_OPS:
+            repeat_count = 3 if mnemonic == "TST" else 2
+            operand = 0
+            for cycle in range(repeat_count):
+                operand = self._read8(address, f"effective operand read {cycle + 1}")
+            return operand
+        return self._read8(address, "effective operand")
+
     def _decode_operand(self, record: dict) -> tuple[int | None, int | None, int | None]:
         mnemonic = record["mnemonic"]
         mode = record["addressing_mode"]
@@ -251,29 +273,18 @@ class M6805Model:
         if mode == "direct":
             address = self._fetch8("direct address")
             if self.architecture == "m6805":
-                stack_top = self.stack_base | self.stack_mask
-                self._read8(stack_top, "direct unused stack-top read")
-                if mnemonic == "JSR":
-                    self._read8(address, "first subroutine opcode")
-                    return None, address, None
-                if mnemonic == "JMP":
-                    return None, address, None
-                if mnemonic in {"STA", "STX"}:
-                    self._read8(address, "current direct operand")
-                    return None, address, None
-                if mnemonic in RMW_OPS:
-                    repeat_count = 3 if mnemonic == "TST" else 2
-                    operand = 0
-                    for cycle in range(repeat_count):
-                        operand = self._read8(address, f"direct operand read {cycle + 1}")
-                    return operand, address, None
-                return self._read8(address, "direct operand"), address, None
+                return self._table_g2_data_accesses(mnemonic, address, 1), address, None
         elif mode == "extended":
             address = self._fetch16("extended address")
         elif mode == "indexed-no-offset":
             address = self.state.x
+            if self.architecture == "m6805":
+                self._read8(self.state.pc, "next opcode for indexed-no-offset")
+                return self._table_g2_data_accesses(mnemonic, address, 1), address, None
         elif mode == "indexed-unsigned-8":
             address = (self.state.x + self._fetch8("indexed 8-bit offset")) & 0xFFFF
+            if self.architecture == "m6805":
+                return self._table_g2_data_accesses(mnemonic, address, 2), address, None
         elif mode == "indexed-unsigned-16":
             address = (self.state.x + self._fetch16("indexed 16-bit offset")) & 0xFFFF
         else:
@@ -341,7 +352,11 @@ class M6805Model:
                 assert address is not None
                 if mnemonic == "JSR":
                     self._push_return_pc()
-                    if self.architecture == "m6805" and record["addressing_mode"] == "direct":
+                    if self.architecture == "m6805" and record["addressing_mode"] in {
+                        "direct",
+                        "indexed-no-offset",
+                        "indexed-unsigned-8",
+                    }:
                         self._read8(self.state.sp, "JSR trailing stack read")
                 self.state.pc = address
                 return

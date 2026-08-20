@@ -265,6 +265,29 @@ class M6805ModelTests(unittest.TestCase):
         )
         self.assertEqual(jsr.state.pc, 0x0010)
 
+    def test_m6805_table_g2_indexed_no_offset_and_indexed_8_traces(self) -> None:
+        expected = {
+            0xF6: [0x1000, 0x1001, 0x007F, 0x0020],  # LDA ,X
+            0x7C: [0x1000, 0x1001, 0x007F, 0x0020, 0x0020, 0x0020],  # INC ,X
+            0xE6: [0x1000, 0x1001, 0x007F, 0x007F, 0x0030],  # LDA 8-bit,X
+            0xED: [
+                0x1000,
+                0x1001,
+                0x007F,
+                0x007F,
+                0x0030,
+                0x0070,
+                0x006F,
+                0x006E,
+            ],  # JSR 8-bit,X
+        }
+        for opcode, addresses in expected.items():
+            with self.subTest(opcode=f"{opcode:02X}"):
+                model = _fixture("m6805", opcode)
+                trace = model.step()
+                self.assertEqual(len(trace.accesses), trace.documented_cycles)
+                self.assertEqual([access.address for access in trace.accesses], addresses)
+
     def test_hd6305_low_power_and_irq_entry(self) -> None:
         for opcode, state_name in ((0x8E, "stopped"), (0x8F, "waiting")):
             model = _fixture("hd6305", opcode)
