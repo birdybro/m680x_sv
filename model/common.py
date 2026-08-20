@@ -23,6 +23,7 @@ class BusAccess:
     address: int
     data: int
     purpose: str
+    data_defined: bool = True
 
 
 @dataclass

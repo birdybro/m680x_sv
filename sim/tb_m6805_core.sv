@@ -29,6 +29,7 @@ module tb_m6805_core;
   logic [7:0] trace_data [0:15];
   logic trace_write [0:15];
   logic trace_valid [0:15];
+  logic trace_opcode_fetch [0:15];
   integer index;
   integer cycle_count;
   integer cases;
@@ -64,6 +65,7 @@ module tb_m6805_core;
         trace_data[cycle_count] = write_enable ? data_out : data_in;
         trace_write[cycle_count] = write_enable;
         trace_valid[cycle_count] = bus_valid;
+        trace_opcode_fetch[cycle_count] = opcode_fetch;
         tick();
         cycle_count = cycle_count + 1;
         if (cycle_count > 15) $fatal(1, "M6805 opcode %02x did not retire", expected_opcode);
@@ -84,11 +86,12 @@ module tb_m6805_core;
         trace_data[cycle_count] = write_enable ? data_out : data_in;
         trace_write[cycle_count] = write_enable;
         trace_valid[cycle_count] = bus_valid;
+        trace_opcode_fetch[cycle_count] = opcode_fetch;
         tick();
         cycle_count = cycle_count + 1;
-        if (cycle_count > 12) $fatal(1, "M6805 IRQ did not acknowledge");
+        if (cycle_count > 14) $fatal(1, "M6805 IRQ did not acknowledge");
       end while (!interrupt_ack);
-      if (cycle_count != 8) $fatal(1, "M6805 IRQ timing %0d/8", cycle_count);
+      if (cycle_count != 11) $fatal(1, "M6805 IRQ timing %0d/11", cycle_count);
       cases = cases + 1;
     end
   endtask
@@ -167,13 +170,19 @@ module tb_m6805_core;
     irq_n = 1'b0;
     run_interrupt();
     if (debug_pc != 16'h1200 || debug_sp != 16'h007a || !debug_ccr[3] ||
-        !trace_valid[0] || trace_address[0] != 16'h100a ||
-        !trace_write[1] || trace_address[1] != 16'h007f || trace_data[1] != 8'h0a ||
-        trace_address[2] != 16'h007e || trace_data[2] != 8'h10 ||
-        trace_address[3] != 16'h007d || trace_data[3] != 8'h00 ||
-        trace_address[4] != 16'h007c || trace_data[4] != 8'h81 ||
-        trace_address[5] != 16'h007b || trace_address[6] != 16'hfffa ||
-        trace_address[7] != 16'hfffb) begin
+        !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] ||
+        trace_address[0] != 16'h100a || trace_data[0] != 8'h00 ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] ||
+        trace_address[1] != 16'h100a || trace_data[1] != 8'h00 ||
+        !trace_valid[2] || !trace_write[2] || trace_address[2] != 16'h007f || trace_data[2] != 8'h0a ||
+        !trace_valid[3] || !trace_write[3] || trace_address[3] != 16'h007e || trace_data[3] != 8'h10 ||
+        !trace_valid[4] || !trace_write[4] || trace_address[4] != 16'h007d || trace_data[4] != 8'h00 ||
+        !trace_valid[5] || !trace_write[5] || trace_address[5] != 16'h007c || trace_data[5] != 8'h81 ||
+        !trace_valid[6] || !trace_write[6] || trace_address[6] != 16'h007b || trace_data[6] != 8'hf4 ||
+        !trace_valid[7] || trace_write[7] || trace_address[7] != 16'h007a ||
+        !trace_valid[8] || trace_write[8] || trace_address[8] != 16'hfffa || trace_data[8] != 8'h12 ||
+        !trace_valid[9] || trace_write[9] || trace_address[9] != 16'hfffb || trace_data[9] != 8'h00 ||
+        !trace_valid[10] || trace_write[10] || trace_address[10] != 16'hfffc) begin
       $fatal(1, "M6805 IRQ frame/vector trace");
     end
     irq_n = 1'b1;

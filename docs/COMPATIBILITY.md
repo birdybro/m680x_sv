@@ -68,6 +68,15 @@ The timer dimension is `COMPLETE` at that boundary: all 256 TCR encodings, all
 independent model additionally projects all 256 MOR byte values. Electrical
 pad behavior, oscillator physics, and nanosecond minimum pulse widths remain
 outside this digital timer claim.
+The normalized interrupt-controller dimension is `COMPLETE`. Independent model
+and direct RTL matrices cross every external-request, timer-request, and timer-
+mask state. Real-core traces verify external priority, edge-latch acknowledge
+and rearming, retained timer service, the PCL/PCH/X/A/CCR stack order and data,
+both vector reads, and Motorola's exact 11-cycle hardware-interrupt response.
+The complete manufacturer sequence is two next-opcode-address reads, five stack
+writes, an unused stack read, two vector reads, and a trailing read at vector
+low plus one. The stacked PCH has all five unused upper bits set for the
+device's 11-bit program counter.
 EPROM voltage/pulse/retention physics and the copyrighted factory bootstrap-ROM
 image remain outside the distributable implementation.
 
@@ -218,7 +227,8 @@ reserved `CC1:CC0=00` selection does not enable Motorola bi-phase. The V0
 regression also verifies its distinct asynchronous DDR reset.
 
 The HD63705V0 claim covers its distinct 14-bit CPU/device boundary, physical
-`$00c0`-`$00ff` stack window, `$0040`-`$00ff` RAM, `$1000`-`$1fff` EPROM,
+`$00c0`-`$00ff` stack window with one-filled unused PCH bits,
+`$0040`-`$00ff` RAM, `$1000`-`$1fff` EPROM,
 31 GPIO lines, all four primary-timer clock selections and eight prescalers,
 INT/INT2 sensing and documented vector priority, synchronous SCI/Timer2,
 WAIT/STOP/STBY digital state changes, and normalized EPROM verify/program

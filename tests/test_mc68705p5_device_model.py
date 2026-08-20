@@ -5,6 +5,7 @@ import unittest
 from model.common import Memory
 from model.mc68705p5_device import (
     EPROM_CONTROL_DEFINED_STATES,
+    INTERRUPT_RESPONSE_CYCLES,
     MC68705P5CycleInputs,
     MC68705P5DeviceModel,
     MC68705P5EPROMControlInputs,
@@ -323,6 +324,23 @@ class MC68705P5DeviceModelTests(unittest.TestCase):
         self.assertEqual(model.state.timer_data, 0x00)
 
     def test_interrupt_latching_priority_and_vector_acknowledge(self) -> None:
+        self.assertEqual(INTERRUPT_RESPONSE_CYCLES, 11)
+        for request_mask_bits in range(8):
+            model = MC68705P5DeviceModel()
+            model.state.external_request = bool(request_mask_bits & 0x01)
+            model.state.timer_request = bool(request_mask_bits & 0x02)
+            model.state.timer_mask = bool(request_mask_bits & 0x04)
+            result = self.cycle(model)
+            timer_irq = model.state.timer_request and not model.state.timer_mask
+            self.assertEqual(
+                result.irq_request,
+                model.state.external_request or timer_irq,
+            )
+            self.assertEqual(
+                result.irq_vector,
+                VECTOR_EXTERNAL if model.state.external_request else VECTOR_TIMER,
+            )
+
         model = MC68705P5DeviceModel()
         model.state.timer_request = True
         model.state.timer_mask = False

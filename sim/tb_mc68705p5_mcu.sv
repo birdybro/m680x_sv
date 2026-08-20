@@ -127,16 +127,83 @@ module tb_mc68705p5_mcu;
     end
   endtask
 
-  task automatic wait_for_interrupt(input logic [10:0] expected_pc);
+  task automatic wait_for_interrupt(
+    input logic [10:0] expected_pc,
+    input logic [10:0] expected_vector,
+    input logic [10:0] expected_return_pc
+  );
+    logic [10:0] expected_bus_address;
+    logic [7:0] expected_bus_data;
     begin
       cycles = 0;
       do begin
+        if ((cycles <= 1) && (!dut.core_bus_valid || dut.core_write ||
+            dut.core_address[10:0] != expected_return_pc ||
+            dut.core_data_in != 8'h9d || opcode_fetch != (cycles == 0))) begin
+          $fatal(1, "P5 interrupt opcode-read cycle=%0d address=%03x/%03x data=%02x valid=%b write=%b fetch=%b",
+                 cycles, dut.core_address[10:0], expected_return_pc,
+                 dut.core_data_in, dut.core_bus_valid, dut.core_write,
+                 opcode_fetch);
+        end
+        if ((cycles >= 2) && (cycles <= 6)) begin
+          case (cycles)
+            2: begin
+              expected_bus_address = 11'h07f;
+              expected_bus_data = expected_return_pc[7:0];
+            end
+            3: begin
+              expected_bus_address = 11'h07e;
+              expected_bus_data = {5'h1f, expected_return_pc[10:8]};
+            end
+            4: begin
+              expected_bus_address = 11'h07d;
+              expected_bus_data = debug_x;
+            end
+            5: begin
+              expected_bus_address = 11'h07c;
+              expected_bus_data = debug_a;
+            end
+            default: begin
+              expected_bus_address = 11'h07b;
+              expected_bus_data = {3'b111, debug_ccr};
+            end
+          endcase
+          if (!dut.core_bus_valid || !dut.core_write ||
+              dut.core_address[10:0] != expected_bus_address ||
+              dut.core_data_out != expected_bus_data) begin
+            $fatal(1, "P5 interrupt stack cycle %0d address=%03x/%03x data=%02x/%02x valid=%b write=%b",
+                   cycles, dut.core_address[10:0], expected_bus_address,
+                   dut.core_data_out, expected_bus_data,
+                   dut.core_bus_valid, dut.core_write);
+          end
+        end
+        if (cycles == 7) begin
+          if (!dut.core_bus_valid || dut.core_write ||
+              dut.core_address[10:0] != 11'h07a) begin
+            $fatal(1, "P5 interrupt unused-stack read address=%03x valid=%b write=%b",
+                   dut.core_address[10:0], dut.core_bus_valid, dut.core_write);
+          end
+        end
+        if ((cycles >= 8) && (cycles <= 10)) begin
+          case (cycles)
+            8: expected_bus_address = expected_vector;
+            9: expected_bus_address = expected_vector + 11'h001;
+            default: expected_bus_address = expected_vector + 11'h002;
+          endcase
+          if (!dut.core_bus_valid || dut.core_write ||
+              dut.core_address[10:0] != expected_bus_address) begin
+            $fatal(1, "P5 interrupt vector cycle %0d address=%03x/%03x valid=%b write=%b",
+                   cycles, dut.core_address[10:0], expected_bus_address,
+                   dut.core_bus_valid, dut.core_write);
+          end
+        end
         tick();
         cycles = cycles + 1;
-        if (cycles > 16) $fatal(1, "P5 interrupt did not acknowledge");
+        if (cycles > 14) $fatal(1, "P5 interrupt did not acknowledge");
       end while (!interrupt_ack);
-      if (debug_pc[10:0] != expected_pc) begin
-        $fatal(1, "P5 interrupt vector %03x/%03x", debug_pc[10:0], expected_pc);
+      if (cycles != 11 || debug_pc[10:0] != expected_pc) begin
+        $fatal(1, "P5 interrupt response cycles=%0d/11 vector=%03x/%03x",
+               cycles, debug_pc[10:0], expected_pc);
       end
       checks = checks + 1;
     end
@@ -213,15 +280,39 @@ module tb_mc68705p5_mcu;
     int_n = 1'b0;
     run_instruction(8'h9a);
     if (!timer_irq || !external_irq) $fatal(1, "P5 simultaneous requests not pending");
-    wait_for_interrupt(11'h310);
+    wait_for_interrupt(11'h310, 11'h7fa, 11'h211);
     if (external_irq) $fatal(1, "P5 external request latch not cleared");
+    if (debug_sp != 16'h007a || dut.ram[111] != 8'h11 ||
+        dut.ram[110] != 8'hfa || dut.ram[109] != 8'h00 ||
+        dut.ram[108] != 8'h00 || dut.ram[107] != 8'he2) begin
+      $fatal(1, "P5 interrupt frame sp=%04x frame=%02x %02x %02x %02x %02x",
+             debug_sp, dut.ram[111], dut.ram[110], dut.ram[109],
+             dut.ram[108], dut.ram[107]);
+    end
+    checks = checks + 1;
     int_n = 1'b1;
     run_instruction(8'h80);
-    wait_for_interrupt(11'h300);
+    wait_for_interrupt(11'h300, 11'h7f8, 11'h211);
     run_instruction(8'h1f);
     if (timer_irq || debug_timer_control[7]) $fatal(1, "P5 timer request clear");
     run_instruction(8'h80);
     checks = checks + 2;
+
+    // Eleven-bit subroutine returns store the five unused PCH bits as ones.
+    firmware[11'h320] = 8'had; firmware[11'h321] = 8'h01;
+    firmware[11'h323] = 8'h81;
+    reset_to(11'h320);
+    run_instruction(8'had);
+    if (debug_sp != 16'h007d || dut.ram[111] != 8'h22 ||
+        dut.ram[110] != 8'hfb) begin
+      $fatal(1, "P5 BSR frame sp=%04x PCL=%02x PCH=%02x",
+             debug_sp, dut.ram[111], dut.ram[110]);
+    end
+    run_instruction(8'h81);
+    if (debug_sp != 16'h007f || debug_pc[10:0] != 11'h322) begin
+      $fatal(1, "P5 RTS restore sp=%04x pc=%04x", debug_sp, debug_pc);
+    end
+    checks = checks + 1;
 
     // TIMER high-voltage bootstrap selection uses the separate 7F6 vector.
     // Code in the caller-supplied bootstrap ROM exercises the documented PCR

@@ -21,7 +21,10 @@ def fixture(architecture: str, opcode: int) -> M6805Model:
     memory.load(TARGET_PC, [opcode, 0x10, 0x20, 0x30])
     for address in (0x0010, 0x0020, 0x0030, 0x0031, 0x1020, 0x1040):
         memory[address] = (address ^ 0xA6) & 0xFF
-    memory.load(0xFFFA, [0x21, 0x00, 0x22, 0x00, 0x23, 0x00])
+    # The RTL fixture also uses FFFE:FFFF as its reset vector. The final SWI
+    # cycle reads FFFE as documented, although that data is architecturally
+    # unused.
+    memory.load(0xFFFA, [0x21, 0x00, 0x22, 0x00, 0x10, 0x00])
     for address, value in zip(range(0x0060, 0x0065), (0xE0, 0x12, 0x20, 0x10, 0x09), strict=True):
         memory[address] = value
     state = M6805State(a=0x12, x=0x20, sp=0x7F, pc=TARGET_PC, ccr=0)
@@ -78,6 +81,10 @@ def render_access_function(lines: list[str], name: str, vectors: list[tuple]) ->
             lines.extend([
                 f"        16'h{vector_index:02x}{access_index:02x}: begin",
                 f"          {name}_access.write_enable = 1'b{int(access.kind == 'write')};",
+            ])
+            if not access.data_defined:
+                lines.append(f"          {name}_access.data_ignored = 1'b1;")
+            lines.extend([
                 f"          {name}_access.address = 16'h{access.address:04x};",
                 f"          {name}_access.data = 8'h{access.data:02x};",
                 "        end",
@@ -98,7 +105,8 @@ def render() -> str:
         "    logic [4:0] ccr;", "    logic [4:0] ccr_mask;",
         "    logic waiting_state;", "    logic stopped_state;", "    logic [3:0] access_count;",
         "  } opcode_vector_t;",
-        "  typedef struct packed {", "    logic write_enable;", "    logic [15:0] address;",
+        "  typedef struct packed {", "    logic write_enable;", "    logic data_ignored;",
+        "    logic [15:0] address;",
         "    logic [7:0] data;", "  } opcode_access_t;", "",
     ]
     for name, items in vectors.items():

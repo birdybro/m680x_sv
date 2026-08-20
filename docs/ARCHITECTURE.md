@@ -463,7 +463,14 @@ addresses into 16 I/O, 112 RAM, and 1,920 program/MOR locations without a hole
 or overlap; the RTL separately sweeps every address and reads all RAM bytes on
 both sides of reset. Separate directed checks exhaust every per-bit
 latch/direction/pin combination on all 20 GPIO lines and exercise INT assertion,
-vector acknowledgement, held-low suppression, and rearming. DDR reads are
+vector acknowledgement, held-low suppression, and rearming. All eight
+external/timer request and timer-mask states are crossed in both model and RTL.
+The Motorola core takes exactly 11 cycles from the interrupt-recognition
+boundary through two next-opcode-address reads, the five PCL/PCH/X/A/CCR stack
+writes, an unused read at the decremented stack pointer, two vector reads, and a
+trailing read at the address following the low vector byte. Eleven-bit return
+addresses stack PCH with its five unused upper bits set, as required by the
+manufacturer's cycle table. DDR reads are
 normalized to `$ff`, following figures 4 and 16; conflicting printed-page-13
 prose makes their silicon-equivalent value `UNDEFINED_BY_DOCUMENTATION`. A
 generated 768-cycle corpus compares every exposed state boundary. Timer-directed
@@ -482,7 +489,8 @@ for Hitachi decoding, a 14-bit PC/address boundary, stack window
 at `$0000`-`$0012`, 192 bytes of retained RAM at `$0040`-`$00ff`, and the
 integration-owned 4-KiB EPROM image at `$1000`-`$1fff`. Sixteen-bit effective
 addresses produced inside the generic core are deliberately truncated to the
-fourteen physical address bits at this device boundary. Direct regressions
+fourteen physical address bits at this device boundary; the two unused upper
+PCH bits are written as ones in subroutine and interrupt frames. Direct regressions
 classify all 16,384 physical addresses and check every RAM byte after fill,
 reset, and standby. Q&A QA635-338A reserves `$0013`-`$001f` for IC test and
 prohibits software access without defining a stable result; deterministic

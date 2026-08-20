@@ -68,9 +68,12 @@ module m6805_core #(
     ST_PUSH_RETURN_HIGH,
     ST_PULL_PC_HIGH,
     ST_PULL_PC_LOW,
+    ST_INTERRUPT_DELAY,
     ST_INTERRUPT_PUSH,
+    ST_INTERRUPT_DUMMY_READ,
     ST_INTERRUPT_VECTOR_HIGH,
     ST_INTERRUPT_VECTOR_LOW,
+    ST_INTERRUPT_TRAILING_READ,
     ST_RTI_PULL,
     ST_PADDING,
     ST_WAITING,
@@ -437,6 +440,12 @@ module m6805_core #(
         address_o = program_counter;
         bus_valid_o = 1'b1;
       end
+      ST_EXECUTE: begin
+        if (!HITACHI_PROFILE && (decoded.operation == OP_SWI)) begin
+          address_o = program_counter;
+          bus_valid_o = 1'b1;
+        end
+      end
       ST_MEMORY_READ, ST_BIT_READ: begin
         address_o = effective_address;
         bus_valid_o = 1'b1;
@@ -455,7 +464,7 @@ module m6805_core #(
       end
       ST_PUSH_RETURN_HIGH: begin
         address_o = stack_pointer;
-        data_o = program_counter[15:8];
+        data_o = program_counter[15:8] | ~PC_MASK[15:8];
         write_o = 1'b1;
         bus_valid_o = 1'b1;
       end
@@ -469,14 +478,20 @@ module m6805_core #(
         bus_valid_o = 1'b1;
         case (phase)
           3'd0: data_o = program_counter[7:0];
-          3'd1: data_o = program_counter[15:8];
+          3'd1: data_o = program_counter[15:8] | ~PC_MASK[15:8];
           3'd2: data_o = index_register;
           3'd3: data_o = accumulator;
           default: data_o = {3'b111, condition_codes};
         endcase
       end
+      ST_INTERRUPT_DELAY: begin address_o = program_counter; bus_valid_o = 1'b1; end
+      ST_INTERRUPT_DUMMY_READ: begin address_o = stack_pointer; bus_valid_o = 1'b1; end
       ST_INTERRUPT_VECTOR_HIGH: begin address_o = vector_address; bus_valid_o = 1'b1; end
       ST_INTERRUPT_VECTOR_LOW: begin address_o = vector_address + 16'h0001; bus_valid_o = 1'b1; end
+      ST_INTERRUPT_TRAILING_READ: begin
+        address_o = vector_address + 16'h0002;
+        bus_valid_o = 1'b1;
+      end
       default: ;
     endcase
   end
@@ -530,7 +545,17 @@ module m6805_core #(
             vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
             phase <= 3'd0;
-            state <= ST_INTERRUPT_PUSH;
+            if (HITACHI_PROFILE) begin
+              cycles_left <= 4'd7;
+              state <= ST_INTERRUPT_PUSH;
+            end else begin
+              // M6805 Family User's Manual table G2 gives all 11 hardware-
+              // interrupt cycles: two reads at the next opcode address, five
+              // stack writes, an unused stack read, two vector reads, and a
+              // trailing read at the address following the low vector byte.
+              cycles_left <= 4'd10;
+              state <= ST_INTERRUPT_DELAY;
+            end
           end else begin
             instruction_register <= data_i;
             decoded <= fetched_decode;
@@ -654,21 +679,39 @@ module m6805_core #(
           program_counter <= pc_value({temporary_high, data_i});
           finish_to(ST_FETCH);
         end
+        ST_INTERRUPT_DELAY: begin
+          state <= ST_INTERRUPT_PUSH;
+        end
         ST_INTERRUPT_PUSH: begin
           stack_pointer <= stack_advance(stack_pointer, 1'b1);
           if (phase == 3'd4) begin
             condition_codes[CCR_I] <= 1'b1;
-            state <= ST_INTERRUPT_VECTOR_HIGH;
+            if (HITACHI_PROFILE) state <= ST_INTERRUPT_VECTOR_HIGH;
+            else state <= ST_INTERRUPT_DUMMY_READ;
           end else begin
             phase <= phase + 3'd1;
           end
         end
+        ST_INTERRUPT_DUMMY_READ: state <= ST_INTERRUPT_VECTOR_HIGH;
         ST_INTERRUPT_VECTOR_HIGH: begin
           temporary_high <= data_i;
           state <= ST_INTERRUPT_VECTOR_LOW;
         end
         ST_INTERRUPT_VECTOR_LOW: begin
           program_counter <= pc_value({temporary_high, data_i});
+          if (HITACHI_PROFILE) begin
+            if (external_interrupt) begin
+              external_interrupt <= 1'b0;
+              interrupt_ack_o <= 1'b1;
+              state <= ST_FETCH;
+            end else begin
+              finish_to(ST_FETCH);
+            end
+          end else begin
+            state <= ST_INTERRUPT_TRAILING_READ;
+          end
+        end
+        ST_INTERRUPT_TRAILING_READ: begin
           if (external_interrupt) begin
             external_interrupt <= 1'b0;
             interrupt_ack_o <= 1'b1;
@@ -700,6 +743,7 @@ module m6805_core #(
               vector_address <= irq_vector_i;
               external_interrupt <= 1'b1;
               phase <= 3'd0;
+              cycles_left <= 4'd7;
               state <= ST_INTERRUPT_PUSH;
             end else begin
               state <= terminal_state;
@@ -711,6 +755,7 @@ module m6805_core #(
             vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
             phase <= 3'd0;
+            cycles_left <= 4'd7;
             state <= ST_INTERRUPT_PUSH;
           end
         end

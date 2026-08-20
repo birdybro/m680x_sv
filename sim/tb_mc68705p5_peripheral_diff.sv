@@ -39,6 +39,7 @@ module tb_mc68705p5_peripheral_diff;
   integer gpio_checks;
   integer gpio_truth;
   integer interrupt_checks;
+  integer interrupt_state;
   integer memory_index;
   integer memory_checks;
   integer pcr_checks;
@@ -450,6 +451,45 @@ module tb_mc68705p5_peripheral_diff;
     tick();
     if (!external_irq) $fatal(1, "MC68705P5 INT did not rearm");
     interrupt_checks = interrupt_checks + 1;
+
+    // Cross both request sources and the timer mask. Motorola defines
+    // external priority, retained masked requests, and distinct vectors.
+    for (interrupt_state = 0; interrupt_state < 8;
+         interrupt_state = interrupt_state + 1) begin
+      reset_n = 1'b0;
+      int_n = 1'b1;
+      timer_pin = 1'b0;
+      stub_valid = 1'b0;
+      stub_write = 1'b0;
+      #1;
+      reset_n = 1'b1;
+      tick();
+      if (interrupt_state[0]) begin
+        int_n = 1'b0;
+        tick();
+        int_n = 1'b1;
+        tick();
+      end
+      stub_address = 16'h0009;
+      stub_data = 8'h20 |
+                  (interrupt_state[1] ? 8'h80 : 8'h00) |
+                  (interrupt_state[2] ? 8'h40 : 8'h00);
+      stub_valid = 1'b1;
+      stub_write = 1'b1;
+      tick();
+      stub_valid = 1'b0;
+      stub_write = 1'b0;
+      if (external_irq !== interrupt_state[0] ||
+          timer_irq !== (interrupt_state[1] && !interrupt_state[2]) ||
+          dut.irq_n !== !(interrupt_state[0] ||
+                         (interrupt_state[1] && !interrupt_state[2])) ||
+          dut.core_irq_vector !== (interrupt_state[0] ? 16'h07fa : 16'h07f8)) begin
+        $fatal(1, "MC68705P5 interrupt matrix state=%0d ext=%b timer=%b irq_n=%b vector=%04x",
+               interrupt_state, external_irq, timer_irq, dut.irq_n,
+               dut.core_irq_vector);
+      end
+      interrupt_checks = interrupt_checks + 1;
+    end
 
     // Software-controlled TCR makes every bit read/write except write-only
     // PSC, which reads zero. Check all 256 bus values directly.

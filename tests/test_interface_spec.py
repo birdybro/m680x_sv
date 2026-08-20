@@ -192,6 +192,10 @@ class InterfaceSpecificationTests(unittest.TestCase):
             self.mc68705p5_spec["implementation_status"]["timer_function"],
             "COMPLETE",
         )
+        self.assertEqual(
+            self.mc68705p5_spec["implementation_status"]["interrupt_controller"],
+            "COMPLETE",
+        )
 
     def test_unknown_reference_is_rejected(self) -> None:
         broken = deepcopy(self.spec)

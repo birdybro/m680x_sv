@@ -34,13 +34,14 @@
     {"name": "eprom_program_address_o", "historical": "EPROM address latch", "direction": "output", "fact": "latched eleven-bit user-EPROM or MOR/vector address"},
     {"name": "eprom_program_data_o", "historical": "EPROM data latch", "direction": "output", "fact": "latched byte to be programmed"}
   ],
-  "halt_interrupt_behavior": "The MC68705P5 has no documented WAIT or STOP instruction; external and timer requests are retained until instruction-boundary service or software clearing",
+  "halt_interrupt_behavior": "The MC68705P5 has no documented WAIT or STOP instruction; external and timer requests are retained until instruction-boundary service or software clearing, and accepted hardware-interrupt entry takes exactly 11 processor cycles",
   "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locators": ["memory, timer, reset, interrupt, mask-option, on-chip programming, and programming-firmware sections, printed pages 5-17"]}],
   "implementation_status": {
     "normalized_digital_interface": "PARTIAL",
     "single_chip_memory": "COMPLETE",
     "gpio_and_interrupt_pins": "PARTIAL",
     "timer_function": "COMPLETE",
+    "interrupt_controller": "COMPLETE",
     "bootstrap_and_programming_controls": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"

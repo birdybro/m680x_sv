@@ -11,8 +11,8 @@ HD63705V0 transaction paths.
 The project is under active development. Every processor and whole-MCU support
 row remains `PARTIAL`; narrowly scoped dimensions become `COMPLETE` only after
 exhaustive evidence. MC68705P5 and HD63705V0 internal-memory decode and
-normalized digital timer functions, plus HD63705V0 GPIO and synchronous
-SCI/Timer2 and interrupt controller, are the first such closed dimensions. The
+normalized digital timer and interrupt-controller functions, plus HD63705V0
+GPIO and synchronous SCI/Timer2, are the first such closed dimensions. The
 evidence-backed target matrix is in
 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and its authoritative structured
 form is [spec/devices.yml](spec/devices.yml).
@@ -76,6 +76,13 @@ with device wrappers kept at separate integration boundaries:
   GPIO, every programmable and MOR-fixed timer source/prescaler selection,
   interrupt priority/vectors, bootstrap-vector selection, and separate FPGA
   firmware/programming ports for EPROM/bootstrap/vector bytes.
+
+The MC68705P5 interrupt boundary crosses all external/timer request and timer-
+mask combinations and verifies external priority, complete stack/vector bus
+operations, and the manufacturer's exact 11-cycle hardware-interrupt response.
+The trace follows the manufacturer's cycle table: two reads at the next opcode
+address, five stack writes, one unused stack read, two vector reads, and a final
+read at the address following the low vector byte.
 
 All 256 opcode values are explicitly classified for each profile. The current
 five maps contain 1,064 documented instruction encodings, 26 HD6301 map values

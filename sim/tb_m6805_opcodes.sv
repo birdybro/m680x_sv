@@ -135,7 +135,8 @@ module tb_m6805_opcodes #(
             m6805_access(vector_index[7:0], access_count[7:0]);
           if ((access_count == 0) && !opcode_fetch) $fatal(1, "first access is not opcode fetch");
           if (write_enable != expected_access.write_enable || address != expected_access.address ||
-              (write_enable ? data_out : data_in) != expected_access.data) begin
+              (!expected_access.data_ignored &&
+               ((write_enable ? data_out : data_in) != expected_access.data))) begin
             $fatal(1, "M6805 opcode %02x access %0d expected=%0d/%04x/%02x actual=%0d/%04x/%02x",
               expected_vector.opcode, access_count, expected_access.write_enable,
               expected_access.address, expected_access.data, write_enable, address,

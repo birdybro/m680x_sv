@@ -52,7 +52,7 @@ The committed tests cover:
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
 | HD63701V0 four-subphase bus-wrapper checks | 496 |
 | HD63701V0 digital PROM checks | 28 |
-| HD63705V0 integration checks | 34 |
+| HD63705V0 integration checks | 47 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | HD63705V0 exhaustive memory-map checks | 16,384 |
 | HD63705V0 RAM fill/reset/standby checks | 576 |
@@ -62,13 +62,16 @@ The committed tests cover:
 | HD63705V0 timer request/mask/TDR-access checks | 8 |
 | HD63705V0 GPIO truth/fixed-readback/retention checks | 265 |
 | HD63705V0 SCI-DDR selection/override checks | 515 |
+| HD63705V0 SCI Tx/Rx byte checks | 4,096 |
+| HD63705V0 SCI status/rate/protocol checks | 549 |
+| HD63705V0 MR/interrupt priority/protocol checks | 611 |
 | M6805 directed core checks | 13 |
-| MC68705P5 integration checks | 16 |
+| MC68705P5 integration checks | 19 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
 | MC68705P5 PCR/VPP table checks | 8 |
 | MC68705P5 exhaustive memory-map/RAM checks | 2,272 |
 | MC68705P5 GPIO truth/reset/normalized-DDR checks | 164 |
-| MC68705P5 INT pin checks | 5 |
+| MC68705P5 INT protocol/request-mask checks | 13 |
 | MC68705P5 software-timer direct RTL checks | 5,468 |
 | MC68705P5 fixed-MOR timer matrix checks | 224 |
 | HD6301 exact TRAP trace checks | 3 |
@@ -293,7 +296,7 @@ addresses. A symbolic proof covers every address, data byte, voltage
 qualification, CE, and OE combination. The tests deliberately do not claim
 programming voltage magnitude, pulse duration, erasure, or retention physics.
 
-The 34-check HD63705V0 integration suite includes every digital row of table
+The 47-check HD63705V0 integration suite includes every digital row of table
 2-9: ordinary +5-V read, output disable, VPP programming, VPP verification
 with both CE values, and program/verify disable. It also checks the exact
 `$1000`/`$1fff` storage endpoints and safe inactivity without a qualified
@@ -317,6 +320,14 @@ or electrical clock-pad behavior.
 
 Directed M6805-lineage tests cover reset, stalls, arithmetic, direct writes,
 BSR/RTS, the five-byte interrupt frame, vector fetch, and RTI restoration. The
+Motorola profile now checks the MC68705P5 manual's exact 11-cycle hardware-
+interrupt response and the M6805 Family User's Manual table-G2 bus trace: two
+next-opcode-address reads, five ordered stack writes, one unused stack read, two
+vector reads, and the trailing read at vector low plus one. It also checks that
+an 11-bit return PC stacks the unused upper five PCH bits as ones. This audit
+marks only the trailing cycle's manufacturer-labelled unusable input data as
+non-comparable while still checking its address and direction. It found and
+fixes the prior eight-cycle response and zero-filled PCH. The
 HD6305 profile separately proves that a pending interrupt is accepted only
 after the instruction following CLI. The MC68705P5 suites add register/RAM
 decode, DDR behavior, mixed-direction GPIO reads, all four timer sources and
@@ -332,8 +343,11 @@ without VPP. A 2,048-address RTL sweep proves program-memory selection and data
 source at every location, then 224 checks read every RAM byte before and after
 reset to prove decode and retention. An additional 164 GPIO checks exhaust each
 pin's latch/direction/input truth table, reset direction, and the declared `$ff`
-DDR-read normalization; five INT checks cover falling-edge assertion, vector
-acknowledgement, held-low suppression, and high-to-low rearming. Because the
+DDR-read normalization; thirteen interrupt checks add all eight external/timer
+request and timer-mask combinations to falling-edge assertion, vector
+acknowledgement, held-low suppression, and high-to-low rearming. The real-core
+suite checks both vector pairs, external priority, complete frame bytes, and
+exact 11-cycle entry for both external and retained timer requests. Because the
 manual's DDR-read prose conflicts with two of its figures, the normalized read
 value is tested without claiming documented silicon equivalence.
 The timer extension directly checks all 256 TCR writes; every 8-bit counter
@@ -346,7 +360,7 @@ TIE bit that TOPT makes irrelevant. The independent model separately checks all
 behavior, not the manual's electrical or nanosecond pulse-width limits.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
-boundaries and the complete register map. Its 45 checks cover reset/vector
+boundaries and the complete register map. Its 47 checks cover reset/vector
 fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
 eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field
@@ -551,10 +565,10 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD63701V0 Mode 6 integration | 14,051 | 1,957 |
 | HD63701V0 Mode 7 integration | 14,079 | 1,996 |
 | HD63701V0 four-subphase bus wrapper | 14,218 | 1,960 |
-| M6805 | 3,554 | 169 |
-| HD6305 | 3,603 | 170 |
-| MC68705P5 integration | 6,908 | 1,144 |
-| HD63705V0 integration | 9,972 | 1,860 |
+| M6805 | 3,732 | 169 |
+| HD6305 | 3,767 | 170 |
+| MC68705P5 integration | 7,084 | 1,144 |
+| HD63705V0 integration | 10,075 | 1,860 |
 
 Sequential counts include every synthesized DFF primitive and inferred memory
 bit. Cell counts are tool/version/technology dependent and are smoke-test

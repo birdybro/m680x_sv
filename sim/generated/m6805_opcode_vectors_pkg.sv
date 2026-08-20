@@ -18,6 +18,7 @@ package m6805_opcode_vectors_pkg;
   } opcode_vector_t;
   typedef struct packed {
     logic write_enable;
+    logic data_ignored;
     logic [15:0] address;
     logic [7:0] data;
   } opcode_access_t;
@@ -1402,7 +1403,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd8;
+          m6805_vector.access_count = 4'd11;
         end
         106: begin // 97 TAX
           m6805_vector.opcode = 8'h97;
@@ -4265,39 +4266,55 @@ package m6805_opcode_vectors_pkg;
           m6805_access.data = 8'h83;
         end
         16'h6901: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h6902: begin
           m6805_access.write_enable = 1'b1;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h06;
         end
-        16'h6902: begin
+        16'h6903: begin
           m6805_access.write_enable = 1'b1;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
-        16'h6903: begin
+        16'h6904: begin
           m6805_access.write_enable = 1'b1;
           m6805_access.address = 16'h007d;
           m6805_access.data = 8'h20;
         end
-        16'h6904: begin
+        16'h6905: begin
           m6805_access.write_enable = 1'b1;
           m6805_access.address = 16'h007c;
           m6805_access.data = 8'h12;
         end
-        16'h6905: begin
+        16'h6906: begin
           m6805_access.write_enable = 1'b1;
           m6805_access.address = 16'h007b;
           m6805_access.data = 8'he0;
         end
-        16'h6906: begin
+        16'h6907: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h007a;
+          m6805_access.data = 8'h00;
+        end
+        16'h6908: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'hfffc;
           m6805_access.data = 8'h22;
         end
-        16'h6907: begin
+        16'h6909: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'hfffd;
           m6805_access.data = 8'h00;
+        end
+        16'h690a: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address = 16'hfffe;
+          m6805_access.data = 8'h10;
         end
         16'h6a00: begin
           m6805_access.write_enable = 1'b0;

@@ -313,7 +313,7 @@ module tb_hd63705v0_mcu;
     end
     wait_for_interrupt(14'h1530);
     if (debug_sp != 16'h00fa || dut.ram[191] != 8'h29 ||
-        dut.ram[190] != 8'h15 || dut.ram[189] != 8'h00 ||
+        dut.ram[190] != 8'hd5 || dut.ram[189] != 8'h00 ||
         dut.ram[188] != 8'h00 || dut.ram[187][3] != 1'b0) begin
       $fatal(1, "HD63705V0 WAIT pending frame sp=%04x %02x %02x %02x %02x %02x",
              debug_sp, dut.ram[191], dut.ram[190], dut.ram[189],
@@ -336,13 +336,29 @@ module tb_hd63705v0_mcu;
     end
     wait_for_interrupt(14'h1590);
     if (debug_sp != 16'h00fa || dut.ram[191] != 8'h81 ||
-        dut.ram[190] != 8'h15 || dut.ram[189] != 8'h00 ||
+        dut.ram[190] != 8'hd5 || dut.ram[189] != 8'h00 ||
         dut.ram[188] != 8'h00 || dut.ram[187][3] != 1'b0 || int_irq) begin
       $fatal(1, "HD63705V0 STOP pending frame/clear sp=%04x int=%b",
              debug_sp, int_irq);
     end
     int_n = 1'b1;
     checks = checks + 2;
+
+    // The 14-bit PC stores both unused PCH bits as ones for subroutine calls.
+    firmware[14'h15a0] = 8'had; firmware[14'h15a1] = 8'h01;
+    firmware[14'h15a3] = 8'h81;
+    reset_to(14'h15a0);
+    run_instruction(8'had);
+    if (debug_sp != 16'h00fd || dut.ram[191] != 8'ha2 ||
+        dut.ram[190] != 8'hd5) begin
+      $fatal(1, "HD63705V0 BSR frame sp=%04x PCL=%02x PCH=%02x",
+             debug_sp, dut.ram[191], dut.ram[190]);
+    end
+    run_instruction(8'h81);
+    if (debug_sp != 16'h00ff || debug_pc[13:0] != 14'h15a2) begin
+      $fatal(1, "HD63705V0 RTS restore sp=%04x pc=%04x", debug_sp, debug_pc);
+    end
+    checks = checks + 1;
 
     // Masked INT2 and timer requests do not prevent STOP. Their request bits
     // are still captured; figure 2-18 then normalizes the timer request.

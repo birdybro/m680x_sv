@@ -135,9 +135,29 @@ class M6805ModelTests(unittest.TestCase):
         interrupt = _fixture("m6805", 0x83)
         interrupt.state.ccr = 0x11
         interrupt.memory.load(0xFFFC, [0x22, 0x00])
-        interrupt.step()
+        trace = interrupt.step()
         self.assertEqual(interrupt.state.pc, 0x2200)
         self.assertEqual(interrupt.state.sp, 0x6B)
+        self.assertEqual(
+            [(access.kind, access.address, access.data) for access in trace.accesses[:-1]],
+            [
+                ("read", 0x1000, 0x83),
+                ("read", 0x1001, 0x10),
+                ("write", 0x0070, 0x01),
+                ("write", 0x006F, 0x10),
+                ("write", 0x006E, 0x20),
+                ("write", 0x006D, 0x12),
+                ("write", 0x006C, 0xF1),
+                ("read", 0x006B, 0x00),
+                ("read", 0xFFFC, 0x22),
+                ("read", 0xFFFD, 0x00),
+            ],
+        )
+        self.assertEqual(
+            (trace.accesses[-1].kind, trace.accesses[-1].address),
+            ("read", 0xFFFE),
+        )
+        self.assertFalse(trace.accesses[-1].data_defined)
         self.assertEqual(
             [interrupt.memory[address] for address in range(0x6C, 0x71)],
             [0xF1, 0x12, 0x20, 0x10, 0x01],
@@ -148,6 +168,31 @@ class M6805ModelTests(unittest.TestCase):
             interrupt.state.snapshot(),
             M6805State(a=0x12, x=0x20, sp=0x70, pc=0x1001, ccr=0x11).snapshot(),
         )
+
+    def test_m6805_hardware_irq_cycle_table_accesses(self) -> None:
+        model = _fixture("m6805", 0x9D)
+        self.assertTrue(model.service_irq())
+        self.assertEqual(model.state.pc, 0x2100)
+        self.assertEqual(
+            [(access.kind, access.address, access.data) for access in model.bus_accesses[:-1]],
+            [
+                ("read", 0x1000, 0x9D),
+                ("read", 0x1000, 0x9D),
+                ("write", 0x0070, 0x00),
+                ("write", 0x006F, 0x10),
+                ("write", 0x006E, 0x20),
+                ("write", 0x006D, 0x12),
+                ("write", 0x006C, 0xE0),
+                ("read", 0x006B, 0x00),
+                ("read", 0xFFFA, 0x21),
+                ("read", 0xFFFB, 0x00),
+            ],
+        )
+        self.assertEqual(
+            (model.bus_accesses[-1].kind, model.bus_accesses[-1].address),
+            ("read", 0xFFFC),
+        )
+        self.assertFalse(model.bus_accesses[-1].data_defined)
 
     def test_hd6305_low_power_and_irq_entry(self) -> None:
         for opcode, state_name in ((0x8E, "stopped"), (0x8F, "waiting")):

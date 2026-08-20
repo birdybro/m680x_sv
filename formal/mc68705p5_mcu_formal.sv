@@ -36,6 +36,7 @@ module mc68705p5_mcu_formal;
   logic [7:0] debug_tcr;
   logic [7:0] debug_pcr;
   logic timer_irq;
+  logic external_irq;
 
   assign reset_n = past_valid;
   always @(posedge clk) past_valid <= 1'b1;
@@ -54,7 +55,7 @@ module mc68705p5_mcu_formal;
     .eprom_program_enable_o(eprom_program_enable),
     .eprom_program_address_o(eprom_program_address),
     .eprom_program_data_o(eprom_program_data), .timer_irq_o(timer_irq),
-    .external_irq_o(), .opcode_fetch_o(), .retire_o(), .illegal_o(),
+    .external_irq_o(external_irq), .opcode_fetch_o(), .retire_o(), .illegal_o(),
     .undefined_o(), .waiting_o(), .stopped_o(), .interrupt_ack_o(),
     .debug_address_o(debug_address), .debug_pc_o(debug_pc),
     .debug_sp_o(debug_sp), .debug_a_o(debug_a), .debug_x_o(debug_x),
@@ -95,6 +96,7 @@ module mc68705p5_mcu_formal;
     if (!reset_n) begin
       assert (debug_timer == 8'hff);
       assert (debug_tcr == 8'h40);
+      assert (!external_irq);
     end
   end
 
@@ -104,11 +106,11 @@ module mc68705p5_mcu_formal;
       assert ({port_a_out, port_b_out, port_c_out, port_a_oe, port_b_oe,
                port_c_oe, debug_pc, debug_sp, debug_a, debug_x, debug_ccr,
                debug_opcode, debug_timer, debug_tcr,
-               eprom_program_address, eprom_program_data} ==
+               eprom_program_address, eprom_program_data, external_irq} ==
               $past({port_a_out, port_b_out, port_c_out, port_a_oe, port_b_oe,
                      port_c_oe, debug_pc, debug_sp, debug_a, debug_x,
                      debug_ccr, debug_opcode, debug_timer, debug_tcr,
-                     eprom_program_address, eprom_program_data}));
+                     eprom_program_address, eprom_program_data, external_irq}));
     end
   end
 endmodule

@@ -78,6 +78,12 @@ class M6805Model:
     def packed_ccr(self) -> int:
         return 0xE0 | (self.state.ccr & 0x1F)
 
+    @property
+    def bus_accesses(self) -> tuple[BusAccess, ...]:
+        """Return the most recent instruction or interrupt bus sequence."""
+
+        return tuple(self._accesses)
+
     def reset(self) -> None:
         self.state = M6805State()
         self.set_flag("I", True)
@@ -94,9 +100,16 @@ class M6805Model:
         self._accesses = []
         self.state.waiting = False
         self.state.stopped = False
+        if self.architecture == "m6805":
+            self._read8(self.state.pc, "IRQ next opcode")
+            self._read8(self.state.pc, "IRQ repeated next opcode")
         self._stack_complete_state()
         self.set_flag("I", True)
+        if self.architecture == "m6805":
+            self._read8(self.state.sp, "IRQ unused stack read")
         self.state.pc = self._read16(0xFFFA, "IRQ vector")
+        if self.architecture == "m6805":
+            self._read8(0xFFFC, "IRQ trailing vector read", data_defined=False)
         self._validate_state()
         return True
 
@@ -146,10 +159,10 @@ class M6805Model:
         self.state.pc &= 0xFFFF
         self.state.ccr &= 0x1F
 
-    def _read8(self, address: int, purpose: str) -> int:
+    def _read8(self, address: int, purpose: str, *, data_defined: bool = True) -> int:
         address &= 0xFFFF
         value = self.memory[address]
-        self._accesses.append(BusAccess("read", address, value, purpose))
+        self._accesses.append(BusAccess("read", address, value, purpose, data_defined))
         return value
 
     def _write8(self, address: int, value: int, purpose: str) -> None:
@@ -358,9 +371,15 @@ class M6805Model:
             self.state.x = self._pull8("stacked X")
             self._pull_pc()
         elif mnemonic == "SWI":
+            if self.architecture == "m6805":
+                self._read8(self.state.pc, "SWI next opcode")
             self._stack_complete_state()
             self.set_flag("I", True)
+            if self.architecture == "m6805":
+                self._read8(self.state.sp, "SWI unused stack read")
             self.state.pc = self._read16(0xFFFC, "SWI vector")
+            if self.architecture == "m6805":
+                self._read8(0xFFFE, "SWI trailing vector read", data_defined=False)
         elif mnemonic == "TAX":
             self.state.x = self.state.a
         elif mnemonic == "TXA":
