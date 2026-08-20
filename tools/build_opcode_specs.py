@@ -542,7 +542,7 @@ def _aliases(mnemonic: str, architecture: str) -> list[str]:
     return aliases
 
 
-def _m6800_table8_trace(mode: str, cycles: int) -> list[dict]:
+def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
     def read(cycle: int, address: str, data: str) -> dict:
         return {"cycle": cycle, "address": address, "direction": "read", "data": data}
 
@@ -557,6 +557,37 @@ def _m6800_table8_trace(mode: str, cycles: int) -> list[dict]:
         ]
     if mode in {"inherent", "accumulator-a", "accumulator-b"} and cycles == 2:
         return [opcode, read(2, "opcode_address+1", "next_opcode")]
+    if mode == "direct":
+        address = read(2, "opcode_address+1", "direct_address")
+        if cycles == 3:
+            return [opcode, address, read(3, "direct_effective_address", "operand")]
+        if mnemonic in {"CPX", "LDS", "LDX"}:
+            return [
+                opcode,
+                address,
+                read(3, "direct_effective_address", "operand_high"),
+                read(4, "direct_effective_address+1", "operand_low"),
+            ]
+    if mode == "extended":
+        address_high = read(2, "opcode_address+1", "extended_address_high")
+        address_low = read(3, "opcode_address+2", "extended_address_low")
+        if mnemonic == "JMP":
+            return [opcode, address_high, address_low]
+        if cycles == 4:
+            return [
+                opcode,
+                address_high,
+                address_low,
+                read(4, "extended_effective_address", "operand"),
+            ]
+        if mnemonic in {"CPX", "LDS", "LDX"}:
+            return [
+                opcode,
+                address_high,
+                address_low,
+                read(4, "extended_effective_address", "operand_high"),
+                read(5, "extended_effective_address+1", "operand_low"),
+            ]
     return []
 
 
@@ -587,7 +618,7 @@ def _instruction(
             "for NMI or IRQ2; 6 E-cycles for IRQ1"
         )
     documented_bus_cycles = (
-        _m6800_table8_trace(mode, cycles) if architecture == "m6800" else []
+        _m6800_table8_trace(mnemonic, mode, cycles) if architecture == "m6800" else []
     )
     if documented_bus_cycles:
         reference_id = "motorola-mc6800-system-design-data-1976"

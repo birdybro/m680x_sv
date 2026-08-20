@@ -94,8 +94,9 @@ padding states to preserve instruction totals. The directed MC6800 interrupt
 test also checks the primary manual's reset, IRQ, NMI, SWI, WAI, and RTI stack
 and vector sequences.
 For the base profile, MC6800 System Design Data Table 8 additionally drives
-explicit bus-valid reads for every two-cycle inherent/accumulator form and all
-8- and 16-bit immediate forms. Sixty opcode records carry the complete
+explicit bus-valid reads for every two-cycle inherent/accumulator form, all
+8- and 16-bit immediate forms, direct byte/word reads, and extended byte/word
+reads plus JMP. The 107 opcode records carry the complete
 cycle-address/direction/data-role sequence; MC6801 and HD6301 retain their own
 manufacturer timing profiles.
 

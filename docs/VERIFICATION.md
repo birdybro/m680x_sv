@@ -65,7 +65,7 @@ The committed tests cover:
 | HD63705V0 SCI Tx/Rx byte checks | 4,096 |
 | HD63705V0 SCI status/rate/protocol checks | 549 |
 | HD63705V0 MR/interrupt priority/protocol checks | 611 |
-| MC6800 Table-8 opcode encodings with complete structured bus traces | 60 |
+| MC6800 Table-8 opcode encodings with complete structured bus traces | 107 |
 | M6805 table-G2 opcode encodings with complete structured bus traces | 191 |
 | M6805 directed core checks | 36 |
 | MC68705P5 integration checks | 19 |
@@ -92,11 +92,12 @@ Every documented encoding is executed from a generated initial state and
 compared after retirement for architectural state, defined condition codes,
 documented cycle total, and ordered semantic memory accesses. Undefined flag
 bits are masked only where the primary manufacturer table marks them undefined.
-For 60 base-MC6800 encodings, the generated opcode regression also requires one
+For 107 base-MC6800 encodings, the generated opcode regression also requires one
 valid transfer on every documented Table-8 cycle and exact address, direction,
-and data. This first closed group covers every two-cycle inherent/accumulator
-operation and every immediate byte/word operation. MC6801/HD6301 traces remain
-separate rather than inheriting MC6800 bus timing.
+and data. The closed groups cover every two-cycle inherent/accumulator
+operation, every immediate byte/word operation, every direct and extended byte
+or word read, and extended JMP. MC6801/HD6301 traces remain separate rather
+than inheriting MC6800 bus timing.
 
 The random corpus uses recorded seeds `0x68000000` through `0x6804000f`, grouped
 by profile. Each of the 80 straight-line programs contains 64 instructions.

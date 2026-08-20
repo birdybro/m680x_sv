@@ -251,7 +251,7 @@ class OpcodeSpecificationTests(unittest.TestCase):
             for record in self.m6800["opcodes"]
             if record["bus_trace_status"] == "COMPLETE"
         ]
-        self.assertEqual(len(complete), 60)
+        self.assertEqual(len(complete), 107)
         for record in complete:
             self.assertEqual(len(record["documented_bus_cycles"]), record["cycles"])
             self.assertEqual(
@@ -266,6 +266,32 @@ class OpcodeSpecificationTests(unittest.TestCase):
                 "address": "opcode_address+1",
                 "direction": "read",
                 "data": "next_opcode",
+            },
+        )
+        self.assertEqual(
+            self.m6800["opcodes"][0x9C]["documented_bus_cycles"][2:],
+            [
+                {
+                    "cycle": 3,
+                    "address": "direct_effective_address",
+                    "direction": "read",
+                    "data": "operand_high",
+                },
+                {
+                    "cycle": 4,
+                    "address": "direct_effective_address+1",
+                    "direction": "read",
+                    "data": "operand_low",
+                },
+            ],
+        )
+        self.assertEqual(
+            self.m6800["opcodes"][0x7E]["documented_bus_cycles"][-1],
+            {
+                "cycle": 3,
+                "address": "opcode_address+2",
+                "direction": "read",
+                "data": "extended_address_low",
             },
         )
 

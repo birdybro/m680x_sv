@@ -29,7 +29,7 @@ class M6800ModelTests(unittest.TestCase):
             trace = model.step()
             self.assertEqual(len(trace.accesses), trace.documented_cycles)
             complete += 1
-        self.assertEqual(complete, 60)
+        self.assertEqual(complete, 107)
 
     def test_every_documented_encoding_executes(self) -> None:
         counts: dict[str, int] = {}

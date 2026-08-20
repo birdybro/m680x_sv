@@ -5782,14 +5782,33 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": "load PC with the effective address",
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, JMP instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -6778,14 +6797,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SUB instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -6828,14 +6866,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, CMP instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -6881,14 +6938,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SBC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -6961,14 +7037,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, AND instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7009,14 +7104,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, BIT instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7057,14 +7171,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7154,14 +7287,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, EOR instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7209,14 +7361,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7258,14 +7429,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ORA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7311,14 +7501,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADD instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7359,14 +7568,39 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand_high"
+        },
+        {
+          "cycle": 4,
+          "address": "direct_effective_address+1",
+          "direction": "read",
+          "data": "operand_low"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, CPX instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": "On MC6800, C is not affected and N/V are not intended for conditional branching."
     },
@@ -7438,16 +7672,41 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand_high"
+        },
+        {
+          "cycle": 4,
+          "address": "direct_effective_address+1",
+          "direction": "read",
+          "data": "operand_low"
+        }
+      ],
       "stack_effects": [
         "replace SP with the 16-bit operand"
       ],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDS instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8327,14 +8586,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SUB instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8377,14 +8661,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, CMP instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8430,14 +8739,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SBC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8510,14 +8844,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, AND instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8558,14 +8917,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, BIT instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8606,14 +8990,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8703,14 +9112,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, EOR instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8758,14 +9192,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8807,14 +9266,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ORA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8860,14 +9344,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADD instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8908,14 +9417,45 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand_high"
+        },
+        {
+          "cycle": 5,
+          "address": "extended_effective_address+1",
+          "direction": "read",
+          "data": "operand_low"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, CPX instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": "On MC6800, C is not affected and N/V are not intended for conditional branching."
     },
@@ -9000,16 +9540,47 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand_high"
+        },
+        {
+          "cycle": 5,
+          "address": "extended_effective_address+1",
+          "direction": "read",
+          "data": "operand_low"
+        }
+      ],
       "stack_effects": [
         "replace SP with the 16-bit operand"
       ],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDS instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -9947,14 +10518,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SUB instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -9997,14 +10587,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, CMP instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10050,14 +10659,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SBC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10130,14 +10758,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, AND instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10178,14 +10825,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, BIT instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10226,14 +10892,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10323,14 +11008,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, EOR instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10378,14 +11082,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10427,14 +11150,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ORA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10480,14 +11222,33 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADD instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -10590,14 +11351,39 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address"
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "operand_high"
+        },
+        {
+          "cycle": 4,
+          "address": "direct_effective_address+1",
+          "direction": "read",
+          "data": "operand_low"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDX instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11443,14 +12229,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SUB instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11493,14 +12304,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, CMP instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11546,14 +12382,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, SBC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11626,14 +12487,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, AND instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11674,14 +12560,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, BIT instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11722,14 +12633,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11819,14 +12755,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, EOR instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11874,14 +12835,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADC instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11923,14 +12909,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ORA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11976,14 +12987,39 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, ADD instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -12086,14 +13122,45 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "operand_high"
+        },
+        {
+          "cycle": 5,
+          "address": "extended_effective_address+1",
+          "direction": "read",
+          "data": "operand_low"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, LDX instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
