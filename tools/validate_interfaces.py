@@ -49,6 +49,15 @@ REQUIRED_SIGNALS = {
         "port4_o", "port4_oe_o", "standby_active_o", "program_address_o",
         "program_read_o", "program_data_i",
     },
+    "hd63701v0-four-subphase-device-bus": {
+        "phase_clk_i", "phase_reset_n_i", "clock_enable_i", "reset_n_i",
+        "standby_n_i", "standby_power_ok_i", "e_o", "bus_phase_o",
+        "sc1_i", "sc1_o", "sc1_oe_o", "sc2_o", "port1_i", "port1_o",
+        "port1_oe_o", "port2_i", "port2_o", "port2_oe_o", "port3_i",
+        "port3_o", "port3_oe_o", "port4_i", "port4_o", "port4_oe_o",
+        "standby_active_o", "program_address_o", "program_read_o",
+        "program_data_i",
+    },
 }
 
 

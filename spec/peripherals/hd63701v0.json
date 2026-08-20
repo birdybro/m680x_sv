@@ -10,7 +10,7 @@
       "The wrapper implements every documented MCU operating mode: 0, 1, 2, 5, 6, and 7; Modes 3 and 4 are marked not used by the manufacturer.",
       "The EPROM image is supplied through a read-only FPGA program interface; analog programming mode is not represented.",
       "The contradictory Mode-5/7 address-error statements for 0040-007F remain undefined by documentation.",
-      "Standby clock shutdown remains outside the current digital claim; CC1:CC0=00 is documented as an unavailable SCI selection."
+      "Nanosecond oscillator restart and electrical behavior remain outside the digital standby claim; CC1:CC0=00 is documented as an unavailable SCI selection."
     ],
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD63701V0 sections 2.5, 2.7, and 2.9, printed pages 269-279 and 281-285"}
   },
@@ -81,10 +81,10 @@
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "memory maps, sections 2.11, 2.13, and 3.1, printed pages 259-262 and 286-294"}
   },
   "implementation_scope": {
-    "rtl": "rtl/hd6301/hd63701v0_mcu.sv implements every legal Mode-0/1/2/5/6/7 digital memory and port selection with separate normalized external-memory and 4-KiB EPROM-image interfaces",
-    "model": "model/hd63701v0_device.py independently selects every legal mode, V0 RAM, SCI, timer, GPIO, program-memory, external-memory, and address-error fact",
-    "verification": "A 95-check decode suite covers all legal maps and address-error regions, a 30-check six-core bench executes from each mode's selected program source and enters address TRAP through its selected vector source, and Mode-7 directed/model tests cover EPROM vectors, both RAM boundaries, the explicit ambiguous-range policy, exact 13-cycle address TRAP, GPIO, FRC writes, OLVL reset, framing-error transfer, asynchronous STBY, reset-vector recovery, and retained RAM/STBY_PWR",
-    "excluded_modes": "Modes 3 and 4 are not used; physical multiplexed/non-multiplexed half-cycle bus pins, analog EPROM programming, and oscillator recovery delay remain unclaimed",
+    "rtl": "rtl/hd6301/hd63701v0_mcu.sv implements every legal Mode-0/1/2/5/6/7 memory and peripheral selection; hd63701v0_bus_wrapper.sv adds four-subphase Port-1/2/3/4, AS/IOS, R/W/OS3, reset, low-power, and standby pins",
+    "model": "model/hd63701v0_device.py independently selects every legal device mode and model/hd63701v0_bus.py independently projects the physical digital pin phases",
+    "verification": "A 95-check decode suite, 30-check six-core execution bench, Mode-7 directed/model suites, and 468-check all-mode physical wrapper bench cover memory, TRAP, peripheral, reset, standby, WAI/SLP, address/data, AS/IOS, R/W/OS3, and GPIO behavior; the pin model exhaustively projects 65,536 addresses in every address-bus mode",
+    "excluded_modes": "Modes 3 and 4 are not used; analog EPROM programming, nanosecond timing, pads, and oscillator recovery delay remain unclaimed",
     "analog_exclusions": ["EPROM programming voltage and charge retention", "oscillator behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

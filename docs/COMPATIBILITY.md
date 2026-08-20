@@ -167,8 +167,8 @@ The Mode-7 timer regression verifies full-counter double-byte writes and the
 documented Hitachi TOF boundary. It also verifies that V1 DDR clearing waits
 for the next E edge.
 
-The HD63701V0 claim covers every legal Mode 0, 1, 2, 5, 6, and 7 at the
-normalized digital boundary. Mode-directed tests cover internal EPROM in Modes
+The HD63701V0 claim covers every legal Mode 0, 1, 2, 5, 6, and 7 at both the
+normalized transaction and four-subphase digital pin boundaries. Mode-directed tests cover internal EPROM in Modes
 0/5/6/7, external program memory in Modes 1/2, Mode-0 external reset-vector
 handoff, Mode-5 partial decode, mode-specific register and Port-1/3/4 roles,
 RAME-controlled 192-byte RAM at `$0040`-`$00ff`, and every unambiguous
@@ -182,7 +182,10 @@ supplied `$f000`-`$ffff` EPROM image. The RTL and model execute from both RAM
 boundaries and enter the exact 13-cycle address TRAP from unambiguous
 non-memory space. Asynchronous STBY entry, retained RAM/STBY_PWR,
 high-impedance ports and buses, and reset-vector recovery are tested. Physical
-bus waveforms and analog EPROM programming remain outside the claim. The
+pin tests cover Mode-1 dedicated and Modes 0/2/6 multiplexed address/data,
+Mode-5 partial address/IOS, Mode-7 IS3/OS3, R/W, E, internal-write mirroring,
+WAI/SLP, asynchronous reset entry, synchronous reset recovery, and standby.
+Analog EPROM programming and nanosecond/oscillator/pad behavior remain outside the claim. The
 reserved `CC1:CC0=00` selection does not enable Motorola bi-phase. The V0
 regression also verifies its distinct asynchronous DDR reset.
 

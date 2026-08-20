@@ -42,3 +42,10 @@ top. It implements Mode-1 dedicated address/data pins, Mode-2/4 AS-controlled
 Port-3 multiplexing, E-qualified writes, third-reset-cycle address-bus release,
 and standby bus/E behavior. Its structured interface spec keeps only
 nanosecond/oscillator/pad timing outside that active-cycle claim.
+
+`hd6301/hd63701v0_bus_wrapper.sv` is the separate six-legal-mode EPROM-device
+pin top. It implements Mode-1 dedicated address/data, Modes 0/2/6 multiplexed
+address/data and AS, Mode-5 DDR-selected address and IOS, Mode-7 GPIO/IS3/OS3,
+asynchronous all-port reset release, E-boundary reset recovery, WAI/SLP, and
+standby E shutdown. Nanosecond, oscillator, pad, and EPROM programming physics
+remain outside the digital pin claim.

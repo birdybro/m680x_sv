@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "interface": "hd63701v0-four-subphase-device-bus",
+  "device": "hd63701v0",
+  "clock_model": {
+    "rtl_boundary": "phase_clk_i runs at four times E; enabled rising edges advance address, AS-close, E-rise data, and E-fall data subphases without generating an internal clock",
+    "historical_boundary": "the on-chip oscillator divides by four to produce E; expanded data transfer and Mode-7 OS3 occur while E is high, RES does not stop E, and STBY stops E",
+    "status": "PARTIAL",
+    "limitation": "All six legal-mode digital roles, active subphase ordering, asynchronous reset entry, E-boundary reset recovery, low-power states, and standby E suppression are implemented; nanosecond limits, oscillator stabilization, pads, and electrical behavior are not"
+  },
+  "signals": [
+    {"name": "phase_clk_i", "historical": "FPGA integration clock", "direction": "input", "fact": "four enabled rising edges represent one E cycle"},
+    {"name": "phase_reset_n_i", "historical": "FPGA integration only", "direction": "input", "fact": "asynchronously initializes the subphase and safely releases all device outputs separately from historical RES"},
+    {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low holds subphase and normalized MCU state"},
+    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active low immediately releases Ports 1-4; pin roles recover synchronously at the completing E boundary after release"},
+    {"name": "standby_n_i", "historical": "STBY", "direction": "input", "fact": "active low asynchronously enters reset-state pin behavior, stops E, and returns the external sequencer to its address origin"},
+    {"name": "standby_power_ok_i", "historical": "standby RAM supply validity", "direction": "input", "fact": "digital retention-valid indication only"},
+    {"name": "e_o", "historical": "E", "direction": "output", "fact": "low in address/AS-close phases, high in both data phases, continues during RES and WAI/SLP, and is low during STBY"},
+    {"name": "bus_phase_o", "historical": "verification/integration only", "direction": "output", "fact": "zero address, one AS-close/turnaround, two E-rise data, and three E-fall data"},
+    {"name": "sc1_i", "historical": "IS3 in Mode 7", "direction": "input", "fact": "Mode-7 falling-edge input for Port-3 latch and interrupt control"},
+    {"name": "sc1_o", "historical": "AS in Modes 0/2/6 or IOS in Mode 5", "direction": "output", "fact": "AS is high only in the multiplexed address phase; IOS is low exactly for 0100-01FF"},
+    {"name": "sc1_oe_o", "historical": "SC1 role selection", "direction": "output", "fact": "implements the active and reset role table for every legal mode; Mode 7 remains the IS3 input"},
+    {"name": "sc2_o", "historical": "R/W in expanded modes or OS3 in Mode 7", "direction": "output", "fact": "expanded direction is high for reads and low for writes; Mode-7 OS3 is active only during a selected E-high Port-3 access"},
+    {"name": "port1_i", "historical": "P10-P17 GPIO input", "direction": "input", "fact": "physical GPIO samples in every mode except dedicated-address Mode 1"},
+    {"name": "port1_o", "historical": "P10-P17 or A0-A7", "direction": "output", "fact": "Mode 1 lower address; otherwise the Port-1 output latch"},
+    {"name": "port1_oe_o", "historical": "Port-1 direction/address drive", "direction": "output", "fact": "all ones for active Mode-1 address, otherwise the GPIO DDR; asynchronously released by RES and STBY"},
+    {"name": "port2_i", "historical": "P20-P24", "direction": "input", "fact": "physical levels for GPIO, mode sampling, timer capture, and SCI receive"},
+    {"name": "port2_o", "historical": "P20-P24", "direction": "output", "fact": "GPIO latch with documented timer and SCI overrides"},
+    {"name": "port2_oe_o", "historical": "Port-2 direction", "direction": "output", "fact": "GPIO direction with peripheral overrides; asynchronously released by RES and STBY"},
+    {"name": "port3_i", "historical": "P30-P37 GPIO or expanded read data", "direction": "input", "fact": "Mode-7 pin input or external expanded read byte sampled at the E-fall advancement boundary"},
+    {"name": "port3_o", "historical": "P30-P37, D0-D7, or multiplexed A0-A7/D0-D7", "direction": "output", "fact": "Mode-7 GPIO, E-high expanded write data, and low address before AS closes in Modes 0/2/6"},
+    {"name": "port3_oe_o", "historical": "Port-3 direction/address/data drive", "direction": "output", "fact": "multiplexed address drives before AS closes; expanded write data drives only while E is high; Mode 7 follows DDR"},
+    {"name": "port4_i", "historical": "P40-P47 GPIO/partial-address input", "direction": "input", "fact": "physical input levels for Port-4 bits configured as inputs"},
+    {"name": "port4_o", "historical": "P40-P47 or address bus", "direction": "output", "fact": "full upper address in Modes 0/1/2, DDR-selected low address in Mode 5, DDR-selected upper address in Mode 6, and GPIO in Mode 7"},
+    {"name": "port4_oe_o", "historical": "Port-4 direction/address drive", "direction": "output", "fact": "full-address modes drive every bit; partial-address and GPIO modes follow DDR; RES and STBY release all bits"},
+    {"name": "standby_active_o", "historical": "STBY state", "direction": "output", "fact": "reports the active-low standby pin at the digital integration boundary"},
+    {"name": "program_address_o", "historical": "internal EPROM address", "direction": "output", "fact": "address for the separately supplied F000-FFFF program image"},
+    {"name": "program_read_o", "historical": "internal EPROM select", "direction": "output", "fact": "selects the program image in Modes 0/5/6/7, excluding initial Mode-0 external reset-vector handoff"},
+    {"name": "program_data_i", "historical": "internal EPROM data", "direction": "input", "fact": "FPGA image byte; copyrighted program contents are not distributed"}
+  ],
+  "halt_interrupt_behavior": "HD63701V0 has no HALT pin; WAI and SLP present FFFF/read with released expanded data while E continues, Mode-7 GPIO remains retained, and STBY enters reset-state pin behavior and stops E",
+  "references": [
+    {
+      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
+      "locators": [
+        "HD63701V0 sections 2.1 and 2.4, printed pages 252-269",
+        "sections 2.8, 2.10, and 2.12, printed pages 283-291",
+        "figures 3-11-1, 3-11-2, and 3-11-5, printed pages 318-319",
+        "Q&A III.4.5 WAI pin-state table, printed page 493"
+      ]
+    }
+  ],
+  "implementation_status": {
+    "all_six_legal_mode_pin_roles": "COMPLETE",
+    "multiplexed_and_nonmultiplexed_waveforms": "COMPLETE",
+    "mode5_ios_decode": "COMPLETE",
+    "mode7_gpio_is3_os3": "COMPLETE",
+    "internal_write_external_bus_mirroring": "COMPLETE",
+    "wai_and_sleep_pin_states": "COMPLETE",
+    "standby_bus_and_e_behavior": "COMPLETE",
+    "asynchronous_reset_entry_and_e_boundary_recovery": "COMPLETE",
+    "prom_programming_interface": "NOT_IMPLEMENTED",
+    "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
+    "oscillator_and_pad_behavior": "NOT_APPLICABLE"
+  }
+}

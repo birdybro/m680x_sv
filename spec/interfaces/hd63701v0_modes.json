@@ -6,7 +6,7 @@
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "HD63701V0 derives E from its oscillator; E is the documented peripheral and processor cycle reference",
     "status": "PARTIAL",
-    "limitation": "Oscillator division, physical multiplexed/non-multiplexed half-cycle waveforms, EPROM programming waveforms, pad delays, setup/hold, and electrical timing are outside this normalized digital boundary"
+    "limitation": "This normalized transaction boundary intentionally omits pin subphases; the separate hd63701v0-four-subphase-device-bus interface implements digital multiplexed/non-multiplexed waveforms, while EPROM programming, pad delays, setup/hold, and electrical timing remain outside both boundaries"
   },
   "signals": [
     {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
@@ -50,10 +50,10 @@
     "normalized_digital_interface": "COMPLETE",
     "legal_mode_decode": "COMPLETE",
     "internal_eprom_selection": "COMPLETE",
-    "gpio_and_strobes": "PARTIAL",
+    "gpio_and_strobes": "COMPLETE",
     "sleep_and_standby_digital": "COMPLETE",
     "prom_programming_interface": "NOT_IMPLEMENTED",
-    "physical_bus_waveforms": "NOT_IMPLEMENTED",
+    "physical_bus_waveforms": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"
   }

@@ -372,7 +372,8 @@ to `$f000`-`$ffff`; Modes 1/2 expose that range externally. Mode 0 obtains the
 initial reset-vector pair externally, then selects EPROM for later reads of the
 same addresses. Mode 5 limits external memory to `$0100`-`$01ff`; Modes 0/1/2/6
 provide their documented expanded selections. The `external_*` interface is a
-normalized full-address transaction and does not claim historical pin phases.
+normalized full-address transaction; the separate
+`rtl/hd6301/hd63701v0_bus_wrapper.sv` projects historical digital pin phases.
 The program port does not model the separate 27256-style analog programming
 mode, VPP, programming margins, or retention.
 
@@ -389,6 +390,16 @@ removes GPIO/program/external-bus activity, retains supplied RAM/STBY_PWR, and
 performs the mode-selected reset-vector restart when standby is released. The
 complete normalized interface is recorded in
 `../spec/interfaces/hd63701v0_modes.json`.
+
+The device-pin wrapper advances address, AS-close/turnaround, E-rise data, and
+E-fall data subphases on one FPGA integration clock. Mode 1 drives dedicated
+Port-1/4 address pins; Modes 0/2/6 multiplex Port 3 under AS; Mode 5 decodes
+IOS and drives DDR-selected low-address bits; Mode 7 retains GPIO and qualifies
+OS3 to E high. RES asynchronously releases all four ports while E continues,
+then active roles recover only at a completing E boundary. WAI and SLP present
+the documented `$ffff` read-inactive expanded state, whereas STBY immediately
+releases the ports and stops E. The exact contract and primary-manual locators
+are in `../spec/interfaces/hd63701v0_phased_bus.json`.
 
 ## MC68705P5 integration
 
