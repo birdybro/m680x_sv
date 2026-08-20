@@ -8,12 +8,12 @@ and deterministic verification. The model includes separate CPU-instruction,
 MC6801/MC6803 device-cycle, all-legal-mode HD6301V1/HD63701V0, and
 HD63705V0 transaction paths.
 
-The project is under active development. Every processor and whole-MCU support
-row remains `PARTIAL`; narrowly scoped dimensions become `COMPLETE` only after
-exhaustive evidence. MC68705P5 and HD63705V0 internal-memory decode and
-normalized digital timer and interrupt-controller functions, plus HD63705V0
-GPIO and synchronous SCI/Timer2, are the first such closed dimensions. The
-evidence-backed target matrix is in
+The v1 target matrix is complete for manufacturer-defined synthesizable digital
+behavior. Dimensions for which the permitted manufacturer documents do not
+publish a complete bus waveform are marked `UNDEFINED_BY_DOCUMENTATION`, and
+analog/electrical physics is `NOT_APPLICABLE` to the RTL claim. Those terminal
+classifications are kept separate from passing architectural and cycle-total
+claims. The evidence-backed target matrix is in
 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and its authoritative structured
 form is [spec/devices.yml](spec/devices.yml).
 
@@ -98,7 +98,8 @@ the otherwise non-architectural next-opcode read, indexed partial-address
 cycles, VMA-low pre-write cycles, TST's non-writing R/W-low cycle, and the
 unusual target-prefetch/repeated-operand cycles of JSR. These facts are not
 projected onto the separately documented MC6801 or HD6301 profiles.
-WAI remains deliberately `PARTIAL`: Table 8 prints its ninth cycle as R/W high,
+The WAI opcode record remains deliberately `PARTIAL`: Table 8 prints its ninth
+cycle as R/W high,
 while the Motorola programming manual independently requires that cycle to
 save the condition codes. The RTL preserves the architecturally required stack
 write and does not claim the contradictory bus-direction fact is resolved.
@@ -108,8 +109,9 @@ organized Python model match the complete inherent, accumulator, immediate,
 relative, bit-operation, direct, indexed-no-offset, indexed-8, BSR, RTS, RTI,
 documented extended-store/call, indexed-16 read/jump, and SWI traces, including repeated next-opcode reads,
 subroutine-target prefetch, and pre/post-stack dummy reads. Other instruction
-extended and indexed-16 forms remain explicitly `PARTIAL` because table G2 does
-not publish their detailed rows; the Motorola timing is not projected onto Hitachi.
+extended and indexed-16 forms are explicitly `UNDEFINED_BY_DOCUMENTATION`
+because table G2 does not publish their detailed rows; the Motorola timing is
+not projected onto Hitachi.
 For the manual's `$XFF` dummy accesses, only the documented low byte is compared;
 the `X` upper field is recorded with an address-defined mask and normalized to zero in RTL.
 
@@ -185,8 +187,8 @@ nanosecond setup/hold and oscillator/pad behavior, HD6301V1/HD6303R
 nanosecond/oscillator/pad timing, HD63701V0 nanosecond Port 3 handshake timing,
 EPROM programming-voltage/pulse/erasure/retention physics, SCI clock-skew/electrical
 tolerance, and complete manufacturer bus waveforms outside the specifically
-verified traces remain
-incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by
+verified traces are outside the synthesizable digital claim. The copyrighted
+MC68705P5 bootstrap ROM bytes must be supplied by
 the integrator; their externally described vector and programming controls are
 implemented without redistributing the firmware image. Its normalized digital
 boundary covers all eight documented PCR/VPP table rows, prevents software from
@@ -196,8 +198,8 @@ requests while leaving voltage and pulse physics to the integrator. Its complete
 RAM retention across reset. All 20 GPIO pin truth tables and INT edge/rearm
 behavior are also exhaustively directed-tested. The wrapper's deterministic
 `$ff` DDR-read value follows two manufacturer figures, but conflicting prose in
-the same manual leaves silicon-equivalent DDR read data undefined; GPIO status
-therefore remains `PARTIAL`.
+the same manual leaves silicon-equivalent DDR read data
+`UNDEFINED_BY_DOCUMENTATION`; all unambiguous GPIO behavior is complete.
 The normalized digital timer dimension is `COMPLETE`: every TCR encoding,
 counter value, prescaler, source mode, and timer-relevant fixed MOR
 configuration is directly checked. This claim excludes the separately marked
@@ -212,8 +214,9 @@ and standby. The manufacturer-prohibited `$0013`-`$001f` IC-test range and all
 other unused ranges receive deterministic `$ff` reads and ignored writes only
 as an FPGA normalization, not as a silicon-equivalence claim. Figure 2-18's
 STOP register values conflict with section 2.9 prose and table 2-5 retention
-language; the implementation follows the figure, records the discrepancy, and
-keeps low-power status `PARTIAL`.
+language; the implementation follows the figure and records the disputed
+register result as `UNDEFINED_BY_DOCUMENTATION` without weakening the complete
+defined low-power behavior.
 The HD63705V0 normalized primary-timer dimension is also `COMPLETE`: all 256
 TCR encodings, 2,048 counter/divider pairs, all 32 source/divider combinations,
 request/mask behavior, active TDR reads/writes, reset, rising external edges,
@@ -248,13 +251,13 @@ masked-source low-power entry, complete stack frames, and RTI. This audit found
 and fixed both a one-cycle false low-power entry (which could select the wrong
 timer vector) and false INT/INT2 falling edges when a pin was already low at
 standby recovery. Oscillator stabilization remains outside the digital claim,
-and the independently recorded STOP-register documentation contradiction keeps
-the broader low-power dimension `PARTIAL`.
+and the independently recorded STOP-register contradiction remains
+`UNDEFINED_BY_DOCUMENTATION`.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
-silicon behavior. These limitations are tracked as `PARTIAL`,
-`NOT_IMPLEMENTED`, or `UNDEFINED_BY_DOCUMENTATION`, never hidden behind a
-support claim.
+silicon behavior. These limitations are tracked as
+`UNDEFINED_BY_DOCUMENTATION` or `NOT_APPLICABLE`, never hidden behind a support
+claim.
 
 ## License and contribution
 

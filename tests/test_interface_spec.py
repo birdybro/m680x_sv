@@ -215,6 +215,14 @@ class InterfaceSpecificationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "invalid interface reference"):
             validate_interfaces.validate_interface(broken, self.devices, self.references)
 
+    def test_v1_interface_partial_status_is_rejected(self) -> None:
+        broken = deepcopy(self.spec)
+        broken["clock_model"]["status"] = "PARTIAL"
+        with self.assertRaisesRegex(
+            validate_interfaces.InterfaceSpecError, "non-terminal status"
+        ):
+            validate_interfaces.validate_interface(broken, self.devices, self.references)
+
 
 if __name__ == "__main__":
     unittest.main()

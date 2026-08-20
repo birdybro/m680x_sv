@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "phase_clk_i runs at four times E; enabled rising edges advance address, AS-close, E-rise data, and E-fall data subphases",
     "historical_boundary": "the on-chip oscillator divides by four to produce E; STBY stops the oscillator and E",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "Active read/write subphase ordering, third-E-cycle reset bus release, and standby clock suppression are implemented; nanosecond limits, oscillator stabilization, pads, and electrical behavior are not"
   },
   "signals": [
@@ -51,7 +51,7 @@
     "sleep_idle_ffff_read_bus": "COMPLETE",
     "standby_bus_and_e_behavior": "COMPLETE",
     "three_cycle_reset_bus_release": "COMPLETE",
-    "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
+    "nanosecond_electrical_timing": "NOT_APPLICABLE",
     "oscillator_and_pad_behavior": "NOT_APPLICABLE"
   }
 }

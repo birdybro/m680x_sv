@@ -5,8 +5,8 @@
   "clock_model": {
     "rtl_boundary": "clk_i rising edge advances one complete normalized processor cycle when clock_enable_i is high",
     "historical_boundary": "MC6800 uses non-overlapping phi1 and phi2 inputs; data transfer is active during phi2",
-    "status": "PARTIAL",
-    "limitation": "This normalized wrapper does not project subphases; use mc6800-four-subphase-integration-bus for documented digital phase ordering. Nanosecond widths, separation, setup, and hold timing remain unimplemented"
+    "status": "COMPLETE",
+    "limitation": "This normalized wrapper does not project subphases; use mc6800-four-subphase-integration-bus for documented digital phase ordering. Nanosecond widths, separation, setup, and hold timing are outside synthesizable digital scope"
   },
   "signals": [
     {"name": "clk_i", "historical": "phi1/phi2 integration boundary", "direction": "input", "fact": "one rising edge advances one complete normalized processor cycle; this is not either historical phase pin"},
@@ -38,8 +38,8 @@
     }
   ],
   "implementation_status": {
-    "architectural_bus_control": "PARTIAL",
-    "electrical_timing": "NOT_IMPLEMENTED",
+    "architectural_bus_control": "COMPLETE",
+    "electrical_timing": "NOT_APPLICABLE",
     "analog_behavior": "NOT_APPLICABLE"
   }
 }

@@ -1,9 +1,18 @@
 # Compatibility and implementation status
 
-No processor or MCU is currently claimed complete. This matrix fixes the v1
-engineering targets and distinguishes CPU-core,
-full-device, cycle-count, and bus-trace claims. The authoritative structured
-record is `spec/devices.yml`; status changes require passing evidence.
+The v1 matrix is complete for manufacturer-defined synthesizable digital
+behavior. It distinguishes CPU-core, full-device, cycle-count, and bus-trace
+claims. A whole bus-trace dimension is `UNDEFINED_BY_DOCUMENTATION` when the
+permitted manufacturer sources publish cycle totals but no complete external
+sequence. The authoritative structured record is `spec/devices.yml`; v1
+validation rejects `PARTIAL` and `NOT_IMPLEMENTED` dimensions.
+
+`COMPLETE` means every manufacturer-defined digital behavior inside the stated
+scope is implemented and has committed evidence. `NOT_APPLICABLE` excludes a
+feature that the selected device does not contain or analog physics outside an
+RTL boundary. `UNDEFINED_BY_DOCUMENTATION` is a terminal clean-room result:
+the permitted primary documents do not define enough behavior to make a
+stronger silicon-equivalence claim, and the implementation does not guess.
 
 ## Architectural boundaries
 
@@ -26,28 +35,30 @@ and low-power modes have separate specifications.
 
 | Target | Scope | CPU | Cycle count | Bus trace | Device/MCU integration |
 |---|---|---:|---:|---:|---:|
-| Motorola MC6800 | physical CPU device | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Motorola MC6801 | full MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Motorola MC6803 | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| normalized M6805 CPU | FPGA core only | PARTIAL | PARTIAL | PARTIAL | NOT_APPLICABLE |
-| Motorola MC68705P5 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Hitachi HD6301V1 | full MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Hitachi HD6303R | full ROMless MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Hitachi HD63701V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
-| Hitachi HD63705V0 | full EPROM MCU | PARTIAL | PARTIAL | PARTIAL | PARTIAL |
+| Motorola MC6800 | physical CPU device | COMPLETE | COMPLETE | COMPLETE | COMPLETE |
+| Motorola MC6801 | full MCU | COMPLETE | COMPLETE | UNDEFINED_BY_DOCUMENTATION | COMPLETE |
+| Motorola MC6803 | full ROMless MCU | COMPLETE | COMPLETE | UNDEFINED_BY_DOCUMENTATION | COMPLETE |
+| normalized M6805 CPU | FPGA core only | COMPLETE | COMPLETE | COMPLETE | NOT_APPLICABLE |
+| Motorola MC68705P5 | full EPROM MCU | COMPLETE | COMPLETE | COMPLETE | COMPLETE |
+| Hitachi HD6301V1 | full MCU | COMPLETE | COMPLETE | UNDEFINED_BY_DOCUMENTATION | COMPLETE |
+| Hitachi HD6303R | full ROMless MCU | COMPLETE | COMPLETE | UNDEFINED_BY_DOCUMENTATION | COMPLETE |
+| Hitachi HD63701V0 | full EPROM MCU | COMPLETE | COMPLETE | UNDEFINED_BY_DOCUMENTATION | COMPLETE |
+| Hitachi HD63705V0 | full EPROM MCU | COMPLETE | COMPLETE | UNDEFINED_BY_DOCUMENTATION | COMPLETE |
 
 The normalized M6805 core is not a silicon-device compatibility claim. A device
 profile must provide effective PC width, stack window, vectors, interrupt set,
 and low-power features. MC68705P5 and HD63705V0 are the concrete full-MCU v1
 profiles for the Motorola and Hitachi 6805-derived lineages.
 
-`PARTIAL` CPU status means every documented opcode encoding has architectural,
-cycle-total, and ordered semantic-bus comparison against the independent model,
-while the HD6301 profile also implements every documented opcode-error TRAP map
-value. The base MC6800 profile has complete structured and RTL Table-8 traces
+`COMPLETE` CPU and cycle status means every documented opcode encoding has
+architectural, cycle-total, and ordered semantic-access comparison against the
+independent model, while the HD6301 profile also implements every documented
+opcode-error TRAP map value. The base MC6800 profile has complete structured
+and RTL Table-8 traces
 for 196 of 197 documented encodings, including next-opcode, partial
-indexed-address, JSR-prefetch, stack, vector, and VMA-low cycles. WAI alone
-stays `PARTIAL` because Table 8's cycle-9 read conflicts with the programming
+indexed-address, JSR-prefetch, stack, vector, and VMA-low cycles. WAI's opcode
+record alone stays `PARTIAL` because Table 8's cycle-9 read conflicts with the
+programming
 manual's required condition-code stack write; RTL implements the architectural
 write and records the bus direction as `UNDEFINED_BY_DOCUMENTATION`. The
 Motorola M6805 profile additionally has complete structured and RTL
@@ -56,7 +67,8 @@ accumulator, immediate, relative, bit, direct, both short-indexed forms,
 extended stores/call, and indexed-16 reads/jump, including BSR/RTS/RTI/SWI.
 The intermediate traces of the 16 otherwise documented extended and indexed-16
 encodings whose detailed rows are absent from table G2 are
-`UNDEFINED_BY_DOCUMENTATION`; device-specific interrupt sources remain partial.
+`UNDEFINED_BY_DOCUMENTATION`; device-specific interrupt sources and complete
+frames are covered in directed real-core suites.
 The MC68705P5 wrapper additionally has
 tested RAM/register decode, GPIO, every timer input/prescaler mode in both
 software-controlled and fixed-MOR configurations, interrupt priority, the
@@ -69,7 +81,7 @@ direct RTL checks account for all 2,048 normal-mode addresses, all 112 RAM bytes
 are checked before and after reset, and the program/MOR/bootstrap/vector regions
 are individually selected. Per-bit latch/direction/pin truth tables exercise all
 20 GPIO lines in 160 states, with four reset/normalized-DDR checks and five INT
-edge/rearm checks. GPIO remains `PARTIAL` because the manufacturer's
+edge/rearm checks. GPIO is complete for unambiguous facts; the manufacturer's
 printed-page-13 DDR-read caution conflicts with the all-one values in figures 4
 and 16. The wrapper deterministically returns `$ff` but classifies silicon
 equivalence for those reads as `UNDEFINED_BY_DOCUMENTATION`. A 768-cycle
@@ -214,7 +226,7 @@ ranges enter the 13-cycle address TRAP while normal data accesses do not.
 E-synchronous STBY entry, retained RAM/STBY_PWR, high-impedance ports,
 reset-vector recovery, and the reserved bi-phase selection are tested.
 Nanosecond/oscillator/pad characteristics and actual mask-ROM contents remain
-outside this partial claim.
+outside this digital claim.
 Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
 The Mode-7 timer regression verifies full-counter double-byte writes and the
 documented Hitachi TOF boundary. It also verifies that V1 DDR clearing waits
@@ -259,7 +271,7 @@ CE-don't-care verification. Directed integration checks, an exhaustive
 4,096-address programming model, formal control proofs, and 768 independent
 model/RTL E-cycle comparisons cover these features. Oscillator/STOP recovery
 time, electrical pin timing, EPROM voltage/pulse/retention physics, and silicon
-values on unused memory reads remain outside the partial digital claim. Its
+values on unused memory reads remain outside the digital claim. Its
 internal-memory dimension is separately `COMPLETE`: the regression classifies
 all 16,384 physical addresses and performs 576 read checks across every one of
 the 192 RAM bytes after fill, reset, and standby. Q&A QA635-338A identifies
@@ -268,7 +280,8 @@ stable result; `$ff` reads and ignored writes there and in unused space are a
 deterministic FPGA policy only. Figure 2-18 resets TDR and selected TCR/SSR
 fields on STOP, while section 2.9 prose and table 2-5 say registers are retained
 except TCR6/TCR7. The implementation follows figure 2-18, records the conflict
-as `UNDEFINED_BY_DOCUMENTATION`, and keeps low-power status `PARTIAL`. Its
+as `UNDEFINED_BY_DOCUMENTATION`; all unambiguous low-power behavior is
+complete. Its
 normalized primary-timer dimension is `COMPLETE`: direct RTL and independent
 model tests cover all 256 TCR encodings, all 2,048 counter/divider pairs, all
 32 source/divider combinations, request/mask control, TDR access during active

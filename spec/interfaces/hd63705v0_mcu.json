@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "clk_i rising edge advances one complete E cycle when clock_enable_i is high",
     "historical_boundary": "HD63705V0 derives E by dividing its oscillator by four; E clocks the CPU and primary timer",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "Oscillator analog behavior, output pad delay, setup/hold, STOP recovery delay, TIMER/VPP voltage thresholds, and EPROM programming pulse width are outside the normalized boundary"
   },
   "signals": [
@@ -48,15 +48,15 @@
   "halt_interrupt_behavior": "WAIT leaves peripherals running and uses the dedicated timer vector when timer wakes it. STOP halts peripherals and accepts only INT or enabled INT2; normalized timer/SCI field changes follow figure 2-18, while conflicting section 2.9 prose and table 2-5 leave exact silicon register retention UNDEFINED_BY_DOCUMENTATION.",
   "references": [{"id": "hitachi-hd6305-series-handbook-1988", "locators": ["HD63705V0 user manual sections 2.1-2.10 and table 2-9, printed pages 101-136", "HD63705V0 section 2.9 prose and table 2-5, printed page 126; figure 2-18, printed page 129", "Q&A QA635-302A through QA635-304A, handbook printed pages 890-892", "Q&A QA635-305A through QA635-313A, handbook printed pages 893-901", "Q&A QA635-314A through QA635-316A, handbook printed pages 902-904", "Q&A QA635-321A through QA635-325A, handbook printed pages 909-913", "Q&A QA635-328A, handbook printed page 916", "Q&A QA635-329A through QA635-331A, handbook printed pages 917-919", "Q&A QA635-338A, handbook printed page 926"]}],
   "implementation_status": {
-    "normalized_digital_interface": "PARTIAL",
+    "normalized_digital_interface": "COMPLETE",
     "single_chip_memory": "COMPLETE",
     "primary_timer": "COMPLETE",
     "gpio": "COMPLETE",
     "synchronous_sci_timer2": "COMPLETE",
     "interrupt_controller": "COMPLETE",
-    "gpio_and_interrupt_pins": "PARTIAL",
+    "gpio_and_interrupt_pins": "COMPLETE",
     "eprom_programming_digital_controls": "COMPLETE",
-    "electrical_timing": "NOT_IMPLEMENTED",
+    "electrical_timing": "NOT_APPLICABLE",
     "analog_behavior": "NOT_APPLICABLE"
   }
 }

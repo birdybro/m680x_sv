@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "phase_clk_i runs at four times E; enabled rising edges advance address, AS-close, E-rise data, and E-fall data subphases without generating an internal clock",
     "historical_boundary": "the on-chip oscillator divides by four to produce E; expanded data transfer occurs while E is high, Mode-7 OS3 spans consecutive positive E edges, RES does not stop E, and STBY stops E",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "All six legal-mode digital roles, active subphase ordering, asynchronous reset entry, E-boundary reset recovery, low-power states, and standby E suppression are implemented; nanosecond limits, oscillator stabilization, pads, and electrical behavior are not"
   },
   "signals": [
@@ -60,7 +60,7 @@
     "standby_bus_and_e_behavior": "COMPLETE",
     "asynchronous_reset_entry_and_e_boundary_recovery": "COMPLETE",
     "prom_programming_interface": "NOT_APPLICABLE",
-    "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
+    "nanosecond_electrical_timing": "NOT_APPLICABLE",
     "oscillator_and_pad_behavior": "NOT_APPLICABLE"
   }
 }

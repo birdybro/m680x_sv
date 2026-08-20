@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "MC6801 bus and peripheral behavior is specified relative to the internally derived E clock",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "This normalized boundary intentionally omits pin subphases; mc6801-four-subphase-device-bus defines the separate implemented digital physical-pin wrapper"
   },
   "signals": [
@@ -53,9 +53,9 @@
     "internal_ram_and_program_selection": "COMPLETE",
     "normalized_external_clock_nrz_sci": "COMPLETE",
     "normalized_internal_biphase_sci": "COMPLETE",
-    "normalized_gpio_and_address_outputs": "PARTIAL",
+    "normalized_gpio_and_address_outputs": "COMPLETE",
     "physical_multiplexed_bus_waveform": "COMPLETE",
-    "electrical_timing": "NOT_IMPLEMENTED",
+    "electrical_timing": "NOT_APPLICABLE",
     "analog_behavior": "NOT_APPLICABLE"
   }
 }

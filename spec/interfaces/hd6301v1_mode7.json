@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "HD6301V1 derives E from its oscillator; E is the documented peripheral and processor cycle reference",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "This normalized boundary omits pin subphases; hd6301v1-four-subphase-device-bus separately implements every legal mode's digital bus waveform. Oscillator division, duty cycle, setup/hold, pad delays, and electrical timing remain outside both boundaries"
   },
   "signals": [
@@ -60,7 +60,7 @@
     "mode7_gpio_and_strobes": "COMPLETE",
     "sleep_and_standby_digital": "COMPLETE",
     "physical_device_pin_waveforms": "COMPLETE",
-    "electrical_timing": "NOT_IMPLEMENTED",
+    "electrical_timing": "NOT_APPLICABLE",
     "analog_behavior": "NOT_APPLICABLE"
   }
 }

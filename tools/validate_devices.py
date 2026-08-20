@@ -180,6 +180,13 @@ def validate_devices(spec: dict, reference_manifest: dict) -> None:
             raise DeviceSpecError(f"{device_id}: status fields are incomplete")
         if any(value not in required_statuses for value in device["status"].values()):
             raise DeviceSpecError(f"{device_id}: invalid status value")
+        if device["release_target"] == "v1" and any(
+            value in {"PARTIAL", "NOT_IMPLEMENTED"}
+            for value in device["status"].values()
+        ):
+            raise DeviceSpecError(
+                f"{device_id}: v1 target retains a non-terminal implementation status"
+            )
         if device["implementation_scope"] == "FULL_MCU" and any(
             device["status"][field] == "NOT_APPLICABLE"
             for field in ("device_wrapper", "internal_memory", "gpio")

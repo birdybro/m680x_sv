@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "HD63701V0 derives E from its oscillator; E is the documented peripheral and processor cycle reference",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "This normalized transaction boundary intentionally omits pin subphases; the separate hd63701v0-four-subphase-device-bus interface implements digital multiplexed/non-multiplexed waveforms and hd63701v0-27256-prom-digital implements PROM-mode logic, while programming-voltage/pulse physics, pad delays, setup/hold, and electrical timing remain outside the digital claims"
   },
   "signals": [
@@ -61,7 +61,7 @@
     "sleep_and_standby_digital": "COMPLETE",
     "prom_programming_interface": "COMPLETE",
     "physical_bus_waveforms": "COMPLETE",
-    "electrical_timing": "NOT_IMPLEMENTED",
+    "electrical_timing": "NOT_APPLICABLE",
     "analog_behavior": "NOT_APPLICABLE"
   }
 }

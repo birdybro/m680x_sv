@@ -22,7 +22,7 @@
   "operating_modes": {
     "mode2": "expanded multiplexed ROMless operation with internal RAM controlled by RAME",
     "mode3": "expanded multiplexed ROMless/RAMless operation with the RAM window external",
-    "mode0": "manufacturer test operation with undefined internal ROM contents; not implemented",
+    "mode0": "manufacturer test operation whose internal ROM contents are UNDEFINED_BY_DOCUMENTATION and outside the claimed Modes 2/3 profile",
     "other_modes": "undefined by manufacturer documentation and rejected by the public MC6803 profile",
     "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 2.4.2, printed page 2-21; figures 2-10 and 2-11, printed pages 2-12 to 2-13"}
   },

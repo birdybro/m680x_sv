@@ -13,7 +13,10 @@ from tools.validate_devices import _load_json
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC_DIRECTORY = ROOT / "spec" / "interfaces"
-VALID_STATUS = {"COMPLETE", "PARTIAL", "NOT_IMPLEMENTED", "NOT_APPLICABLE"}
+VALID_STATUS = {
+    "COMPLETE", "PARTIAL", "NOT_IMPLEMENTED", "NOT_APPLICABLE",
+    "UNDEFINED_BY_DOCUMENTATION",
+}
 REQUIRED_SIGNALS = {
     "mc6800-bus-control": {
         "clk_i", "clock_enable_i", "reset_n_i", "irq_n_i", "nmi_n_i",
@@ -100,8 +103,8 @@ def validate_interface(spec: dict, devices: dict, references: dict) -> None:
     }
     if set(spec) != required or spec["schema_version"] != 1:
         raise InterfaceSpecError("interface record has incomplete fields or schema")
-    device_ids = {device["id"] for device in devices["devices"]}
-    if spec["device"] not in device_ids:
+    device_records = {device["id"]: device for device in devices["devices"]}
+    if spec["device"] not in device_records:
         raise InterfaceSpecError(f"unknown device {spec['device']!r}")
     if not isinstance(spec["interface"], str) or not spec["interface"]:
         raise InterfaceSpecError("interface needs an identifier")
@@ -158,6 +161,14 @@ def validate_interface(spec: dict, devices: dict, references: dict) -> None:
                for status in spec["implementation_status"].values())
     ):
         raise InterfaceSpecError("invalid implementation status")
+    if device_records[spec["device"]]["release_target"] == "v1" and (
+        spec["clock_model"]["status"] in {"PARTIAL", "NOT_IMPLEMENTED"}
+        or any(
+            status in {"PARTIAL", "NOT_IMPLEMENTED"}
+            for status in spec["implementation_status"].values()
+        )
+    ):
+        raise InterfaceSpecError("v1 interface retains a non-terminal status")
 
 
 def main() -> int:

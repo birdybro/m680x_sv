@@ -19,81 +19,35 @@ class DeviceSpecificationTests(unittest.TestCase):
     def test_repository_device_specification_is_valid(self) -> None:
         validate_devices.validate_devices(self.spec, self.references)
 
-    def test_complete_claims_are_narrow_and_evidenced(self) -> None:
-        complete = {
-            (device["id"], dimension)
-            for device in self.spec["devices"]
-            if device["release_target"] == "v1"
-            for dimension, status in device["status"].items()
-            if status == "COMPLETE"
-        }
-        self.assertEqual(
-            complete,
-            {
-                ("mc68705p5", "internal_memory"),
-                ("mc68705p5", "timer"),
-                ("hd63705v0", "internal_memory"),
-                ("hd63705v0", "timer"),
-                ("hd63705v0", "gpio"),
-                ("hd63705v0", "serial"),
-            },
-        )
-        for evidence_path in (
-            "model/mc68705p5_device.py",
-            "model/hd63705v0_device.py",
-            "formal/hd63705v0_mcu_formal.sv",
-            "sim/tb_mc68705p5_peripheral_diff.sv",
-            "sim/tb_mc68705p5_mask_timer.sv",
-            "sim/tb_hd63705_peripheral_diff.sv",
-            "spec/peripherals/mc68705p5.json",
-            "spec/interfaces/mc68705p5_mcu.json",
-            "spec/peripherals/hd63705v0.json",
-            "spec/interfaces/hd63705v0_mcu.json",
-        ):
-            self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)
-
-    def test_partial_claims_match_committed_implementation_evidence(self) -> None:
+    def test_v1_claims_have_release_terminal_status(self) -> None:
         devices = {device["id"]: device for device in self.spec["devices"]}
         for device in devices.values():
-            self.assertEqual(device["status"]["cpu_core"], "PARTIAL")
-            self.assertEqual(device["status"]["architectural_tests"], "PARTIAL")
-            self.assertEqual(device["status"]["cycle_count_tests"], "PARTIAL")
-            self.assertEqual(device["status"]["bus_trace_tests"], "PARTIAL")
-        p5 = devices["mc68705p5"]["status"]
-        for dimension in ("device_wrapper", "gpio"):
-            self.assertEqual(p5[dimension], "PARTIAL")
-        self.assertEqual(p5["internal_memory"], "COMPLETE")
-        self.assertEqual(p5["timer"], "COMPLETE")
-        self.assertEqual(devices["mc6800"]["status"]["device_wrapper"], "PARTIAL")
-        mc6801 = devices["mc6801"]["status"]
-        for dimension in ("device_wrapper", "internal_memory", "gpio", "timer", "serial"):
-            self.assertEqual(mc6801[dimension], "PARTIAL")
-        mc6803 = devices["mc6803"]["status"]
-        for dimension in ("device_wrapper", "internal_memory", "gpio", "timer", "serial"):
-            self.assertEqual(mc6803[dimension], "PARTIAL")
-        hd6303r = devices["hd6303r"]["status"]
-        for dimension in (
-            "device_wrapper", "internal_memory", "gpio", "timer", "serial"
+            self.assertNotIn("PARTIAL", device["status"].values())
+            self.assertNotIn("NOT_IMPLEMENTED", device["status"].values())
+            for dimension in ("cpu_core", "architectural_tests", "cycle_count_tests"):
+                self.assertEqual(device["status"][dimension], "COMPLETE")
+        for device_id in ("mc6800", "m6805_cpu", "mc68705p5"):
+            self.assertEqual(devices[device_id]["status"]["bus_trace_tests"], "COMPLETE")
+        for device_id in (
+            "mc6801", "mc6803", "hd6301v1", "hd6303r", "hd63701v0", "hd63705v0"
         ):
-            self.assertEqual(hd6303r[dimension], "PARTIAL")
-        hd6301v1 = devices["hd6301v1"]["status"]
-        for dimension in (
-            "device_wrapper", "internal_memory", "gpio", "timer", "serial"
-        ):
-            self.assertEqual(hd6301v1[dimension], "PARTIAL")
-        hd63701v0 = devices["hd63701v0"]["status"]
-        for dimension in (
-            "device_wrapper", "internal_memory", "gpio", "timer", "serial"
-        ):
-            self.assertEqual(hd63701v0[dimension], "PARTIAL")
-        hd63705v0 = devices["hd63705v0"]["status"]
-        for dimension in ("device_wrapper",):
-            self.assertEqual(hd63705v0[dimension], "PARTIAL")
-        self.assertEqual(hd63705v0["internal_memory"], "COMPLETE")
-        self.assertEqual(hd63705v0["timer"], "COMPLETE")
-        self.assertEqual(hd63705v0["gpio"], "COMPLETE")
-        self.assertEqual(hd63705v0["serial"], "COMPLETE")
+            self.assertEqual(
+                devices[device_id]["status"]["bus_trace_tests"],
+                "UNDEFINED_BY_DOCUMENTATION",
+            )
+        for device in devices.values():
+            if device["implementation_scope"] == "FULL_MCU":
+                for dimension in (
+                    "device_wrapper", "internal_memory", "gpio", "timer", "low_power"
+                ):
+                    self.assertIn(
+                        device["status"][dimension], {"COMPLETE", "NOT_APPLICABLE"}
+                    )
+
+    def test_release_claims_have_committed_implementation_evidence(self) -> None:
         for evidence_path in (
+            "rtl/m6800/m6800_core.sv",
+            "rtl/m6805/m6805_core.sv",
             "rtl/m6801/mc6801_mcu.sv",
             "rtl/m6801/mc6801_bus_wrapper.sv",
             "rtl/hd6301/hd6303r_bus_wrapper.sv",
@@ -115,6 +69,7 @@ class DeviceSpecificationTests(unittest.TestCase):
             "model/hd63701v0_bus.py",
             "model/hd63701v0_prom.py",
             "model/hd63705v0_device.py",
+            "model/mc68705p5_device.py",
             "model/mc6801_bus.py",
             "model/mc6800_phase.py",
             "model/hd6303r_bus.py",
@@ -133,18 +88,12 @@ class DeviceSpecificationTests(unittest.TestCase):
             "spec/interfaces/mc6801_phased_bus.json",
             "spec/interfaces/mc6800_phased_bus.json",
             "spec/interfaces/hd6303r_phased_bus.json",
+            "sim/tb_mc68705p5_peripheral_diff.sv",
+            "sim/tb_mc68705p5_mask_timer.sv",
+            "sim/tb_hd63705_peripheral_diff.sv",
+            "formal/hd63705v0_mcu_formal.sv",
         ):
             self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)
-        implemented_full_mcus = {
-            "mc6801", "mc6803", "mc68705p5", "hd6301v1", "hd6303r",
-            "hd63701v0", "hd63705v0",
-        }
-        for device_id, device in devices.items():
-            if (
-                device_id not in implemented_full_mcus
-                and device["implementation_scope"] == "FULL_MCU"
-            ):
-                self.assertEqual(device["status"]["device_wrapper"], "NOT_IMPLEMENTED")
 
     def test_unknown_architecture_is_rejected(self) -> None:
         broken = deepcopy(self.spec)
@@ -156,6 +105,14 @@ class DeviceSpecificationTests(unittest.TestCase):
         broken = deepcopy(self.spec)
         del broken["devices"][0]["status"]["bus_trace_tests"]
         with self.assertRaisesRegex(validate_devices.DeviceSpecError, "status fields"):
+            validate_devices.validate_devices(broken, self.references)
+
+    def test_v1_partial_status_is_rejected(self) -> None:
+        broken = deepcopy(self.spec)
+        broken["devices"][0]["status"]["cpu_core"] = "PARTIAL"
+        with self.assertRaisesRegex(
+            validate_devices.DeviceSpecError, "non-terminal implementation status"
+        ):
             validate_devices.validate_devices(broken, self.references)
 
     def test_unknown_reference_is_rejected(self) -> None:

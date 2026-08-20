@@ -11,9 +11,10 @@ Verification results are reported at four distinct levels:
 | Semantic access | Documented operand, data, stack, and vector accesses occur in the expected order |
 | External bus trace | Address, direction, validity, and data match every manufacturer-documented external cycle boundary |
 
-The all-opcode tests currently establish the first three levels. They do not
-turn padding cycles into guessed external accesses. Detailed external-bus claims
-remain `PARTIAL` unless a manufacturer timing diagram provides the sequence.
+The all-opcode tests establish the first three levels. They do not turn padding
+cycles into guessed external accesses. Detailed external-bus claims are
+`COMPLETE` where manufacturer timing tables publish the sequence and
+`UNDEFINED_BY_DOCUMENTATION` where they do not.
 
 ## Current deterministic regressions
 
@@ -26,7 +27,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 202 |
+| Python unit tests | 204 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -358,9 +359,10 @@ next-instruction reads, subroutine-target prefetch, ordered stack direction and
 data, and irrelevant pre/post-stack reads. Table G2's `$XFF` notation is checked
 with an explicit `$00ff` address-defined mask because the table note defines `X`
 as don't-care; the normalized core drives those upper bits low. The other 16
-documented extended/indexed-16 encodings remain `PARTIAL` because the table does
-not provide detailed rows for them; their intermediate bus sequences are
-`UNDEFINED_BY_DOCUMENTATION`, not inferred from neighboring rows. This audit found
+documented extended/indexed-16 encodings have verified architectural results
+and cycle totals, but their intermediate bus sequences are
+`UNDEFINED_BY_DOCUMENTATION` because the table provides no detailed rows; they
+are not inferred from neighboring instructions. This audit found
 and fixed the prior two-cycle reset response, bootstrap remap drop after the first
 high-vector cycle, eight-cycle interrupt response, zero-filled PCH, and the
 incorrect reuse of the hardware-IRQ trailing address for SWI. The

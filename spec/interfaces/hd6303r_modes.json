@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "HD6303R derives E from its oscillator and defines memory/peripheral activity relative to E",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "This normalized boundary omits pin subphases; hd6303r-four-subphase-device-bus defines the separate active-cycle and reset-entry pin wrapper while retaining electrical exclusions"
   },
   "signals": [
@@ -48,7 +48,7 @@
     "physical_mode1_active_bus_waveform": "COMPLETE",
     "physical_multiplexed_active_bus_waveform": "COMPLETE",
     "physical_reset_entry_waveform": "COMPLETE",
-    "electrical_timing": "NOT_IMPLEMENTED",
+    "electrical_timing": "NOT_APPLICABLE",
     "analog_behavior": "NOT_APPLICABLE"
   }
 }

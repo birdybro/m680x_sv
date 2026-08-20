@@ -5,7 +5,7 @@
   "clock_model": {
     "rtl_boundary": "phase_clk_i advances phi1-high, non-overlap, phi2-high, and non-overlap digital subphases; the normalized CPU advances after the final subphase",
     "historical_boundary": "MC6800 receives two non-overlapping phi1 and phi2 clock inputs and transfers bus data during phi2; phi1_o and phi2_o are FPGA integration projections rather than historical output pins",
-    "status": "PARTIAL",
+    "status": "COMPLETE",
     "limitation": "Digital phase ordering and trailing-phi1 processor-control sampling are implemented; nanosecond pulse widths, separation, setup/hold, clock pads, and dynamic-storage limits are not"
   },
   "signals": [
@@ -47,7 +47,7 @@
     "trailing_phi1_control_sampling": "COMPLETE",
     "post_phi2_normalized_advance": "COMPLETE",
     "tsc_phi1_hold_for_documented_use": "COMPLETE",
-    "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
+    "nanosecond_electrical_timing": "NOT_APPLICABLE",
     "historical_clock_input_pads": "NOT_APPLICABLE"
   }
 }

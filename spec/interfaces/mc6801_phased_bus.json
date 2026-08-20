@@ -47,7 +47,7 @@
     "mode_dependent_pin_roles": "COMPLETE",
     "wai_post_stack_sp_read_bus": "COMPLETE",
     "wai_interrupt_response_latency": "COMPLETE",
-    "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
+    "nanosecond_electrical_timing": "NOT_APPLICABLE",
     "oscillator_and_pad_behavior": "NOT_APPLICABLE"
   }
 }
