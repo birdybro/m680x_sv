@@ -43,6 +43,13 @@
     "verification": "All eight external-request, timer-request, and timer-mask combinations are checked independently in the model and directly in RTL. Real-core tests verify exact 11-cycle external and timer entry, every documented bus address/direction and stack byte, external priority and automatic latch clear, retained timer service, and both vector reads. The cycle-11 data input is explicitly non-comparable because the manufacturer labels it unusable; its address and read direction remain exact.",
     "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locator": "Interrupts and reset/interrupt flowchart, printed pages 10-12; table 5, printed page 22"}, {"id": "motorola-m6805-family-users-manual-1983", "locator": "Appendix G, table G2, printed page 243"}]
   },
+  "reset_response": {
+    "cycles": 8,
+    "bus_sequence": "Cycles 1-6 read the reset-vector high address 7FE, cycle 7 reads reset-vector low at 7FF, and cycle 8 reads 000 with input data unusable by the CPU. All cycles are reads and none is an opcode fetch.",
+    "bootstrap_selection": "When bootstrap is accepted, all six logical 7FE reads select bootstrap-ROM address 7F6 and the logical 7FF read selects 7F7; later ordinary vector-region reads are not remapped.",
+    "verification": "The independent CPU model records all eight reads. Directed real-core tests check every logical address, direction, valid qualifier, and opcode-fetch qualifier; MC68705P5 integration tests repeat this for normal and bootstrap storage selection. Cycle-8 input data is explicitly non-comparable because the manufacturer marks it unusable.",
+    "reference": {"id": "motorola-m6805-family-users-manual-1983", "locator": "Appendix G, table G2, printed page 243"}
+  },
   "implementation_scope": {
     "firmware_storage": "Address decode is internal; user EPROM, bootstrap ROM, and vector data use the FPGA firmware-memory port. Copyrighted bootstrap bytes are not redistributed.",
     "bootstrap": "A separately qualified TIMER-pin high-voltage input selects the 7F6:7F7 vector when MOR secure mode is clear.",

@@ -32,6 +32,7 @@ module tb_random_m6805 #(
   integer byte_index;
   integer memory_index;
   integer cycle_count;
+  integer reset_cycle;
   integer total_retirements;
 
   m6805_core #(.HITACHI_PROFILE(TEST_HITACHI)) dut (
@@ -90,8 +91,8 @@ module tb_random_m6805 #(
       end
       tick();
       reset_n = 1'b1;
-      tick();
-      tick();
+      for (reset_cycle = 0; reset_cycle < (TEST_HITACHI ? 2 : 8);
+           reset_cycle = reset_cycle + 1) tick();
       if (debug_pc != 16'h1000 || debug_sp != 16'h007f) begin
         $fatal(1, "random M6805 reset mismatch PC=%04x SP=%04x", debug_pc, debug_sp);
       end

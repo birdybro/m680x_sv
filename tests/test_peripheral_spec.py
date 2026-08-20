@@ -61,6 +61,12 @@ class PeripheralSpecificationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_peripherals.PeripheralSpecError, "invalid reference"):
             validate_peripherals.validate_peripheral(broken, self.devices, self.references)
 
+    def test_mc68705p5_reset_response_is_fully_classified(self) -> None:
+        reset = self.spec["reset_response"]
+        self.assertEqual(reset["cycles"], 8)
+        self.assertIn("Cycles 1-6", reset["bus_sequence"])
+        self.assertIn("unusable", reset["bus_sequence"])
+
 
 if __name__ == "__main__":
     unittest.main()

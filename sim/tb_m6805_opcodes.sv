@@ -34,6 +34,7 @@ module tb_m6805_opcodes #(
   integer setup_instruction;
   integer cycle_count;
   integer access_count;
+  integer reset_cycle;
 
   m6805_core #(.HITACHI_PROFILE(TEST_HITACHI)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1), .bus_ready_i(1'b1),
@@ -103,8 +104,8 @@ module tb_m6805_opcodes #(
       memory[16'h1008] = 8'h30;
       tick();
       reset_n = 1'b1;
-      tick();
-      tick();
+      for (reset_cycle = 0; reset_cycle < (TEST_HITACHI ? 2 : 8);
+           reset_cycle = reset_cycle + 1) tick();
       for (setup_instruction = 0; setup_instruction < 3; setup_instruction = setup_instruction + 1) begin
         run_setup_instruction();
       end

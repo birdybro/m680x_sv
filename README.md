@@ -83,6 +83,11 @@ operations, and the manufacturer's exact 11-cycle hardware-interrupt response.
 The trace follows the manufacturer's cycle table: two reads at the next opcode
 address, five stack writes, one unused stack read, two vector reads, and a final
 read at the address following the low vector byte.
+Its normalized reset boundary also matches the manufacturer's eight-cycle
+table: six reset-vector-high reads, one low read, and one non-opcode read at
+address zero with unusable input data. Normal and bootstrap vector selection are
+both traced; bootstrap remapping remains active for every repeated high-byte
+read and ends after the low byte.
 
 All 256 opcode values are explicitly classified for each profile. The current
 five maps contain 1,064 documented instruction encodings, 26 HD6301 map values

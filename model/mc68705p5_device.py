@@ -18,6 +18,7 @@ VECTOR_EXTERNAL = 0x7FA
 VECTOR_SWI = 0x7FC
 VECTOR_RESET = 0x7FE
 INTERRUPT_RESPONSE_CYCLES = 11
+RESET_RESPONSE_CYCLES = 8
 EPROM_CONTROL_DEFINED_STATES = frozenset(
     {
         "program",
@@ -234,13 +235,13 @@ class MC68705P5DeviceModel:
         address = inputs.address & 0x7FF
         if (
             self.bootstrap_selected(inputs)
-            and self.state.reset_vector_phase == 0
+            and self.state.reset_vector_phase != 2
             and address == VECTOR_RESET
         ):
             return VECTOR_BOOTSTRAP
         if (
             self.bootstrap_selected(inputs)
-            and self.state.reset_vector_phase == 1
+            and self.state.reset_vector_phase != 2
             and address == VECTOR_RESET + 1
         ):
             return VECTOR_BOOTSTRAP + 1

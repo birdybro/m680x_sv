@@ -47,6 +47,7 @@ module m6805_core #(
   typedef enum logic [5:0] {
     ST_RESET_HIGH,
     ST_RESET_LOW,
+    ST_RESET_TRAILING_READ,
     ST_FETCH,
     ST_EXECUTE,
     ST_RELATIVE,
@@ -429,6 +430,7 @@ module m6805_core #(
     case (state)
       ST_RESET_HIGH: begin address_o = RESET_VECTOR; bus_valid_o = 1'b1; end
       ST_RESET_LOW: begin address_o = RESET_VECTOR + 16'h0001; bus_valid_o = 1'b1; end
+      ST_RESET_TRAILING_READ: begin address_o = 16'h0000; bus_valid_o = 1'b1; end
       ST_FETCH: begin
         address_o = program_counter;
         bus_valid_o = 1'b1;
@@ -528,16 +530,25 @@ module m6805_core #(
       interrupt_ack_o <= 1'b0;
       if (interrupt_enable_delay) interrupt_enable_delay <= 1'b0;
       if (state != ST_FETCH && state != ST_RESET_HIGH && state != ST_RESET_LOW &&
+          state != ST_RESET_TRAILING_READ &&
           state != ST_WAITING && state != ST_STOPPED && state != ST_ILLEGAL) begin
         cycles_left <= cycles_left - 4'd1;
       end
       case (state)
         ST_RESET_HIGH: begin
-          temporary_high <= data_i;
-          state <= ST_RESET_LOW;
+          if (HITACHI_PROFILE || (phase == 3'd5)) begin
+            temporary_high <= data_i;
+            phase <= 3'd0;
+            state <= ST_RESET_LOW;
+          end else begin
+            phase <= phase + 3'd1;
+          end
         end
         ST_RESET_LOW: begin
           program_counter <= pc_value({temporary_high, data_i});
+          state <= HITACHI_PROFILE ? ST_FETCH : ST_RESET_TRAILING_READ;
+        end
+        ST_RESET_TRAILING_READ: begin
           state <= ST_FETCH;
         end
         ST_FETCH: begin

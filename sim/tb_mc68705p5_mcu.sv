@@ -85,6 +85,7 @@ module tb_mc68705p5_mcu;
 
   task automatic reset_to(input logic [10:0] address_value);
     logic [10:0] vector_address;
+    integer reset_cycle;
     begin
       vector_address = bootstrap_voltage ? 11'h7f6 : 11'h7fe;
       firmware[vector_address] = {5'h00, address_value[10:8]};
@@ -98,12 +99,23 @@ module tb_mc68705p5_mcu;
       end
       tick();
       reset_n = 1'b1;
-      tick();
-      if (!program_read || program_address != vector_address + 11'h001) begin
-        $fatal(1, "P5 reset vector low address=%03x expected=%03x",
-               program_address, vector_address + 11'h001);
+      for (reset_cycle = 0; reset_cycle < 8; reset_cycle = reset_cycle + 1) begin
+        if (!dut.core_bus_valid || dut.core_write || opcode_fetch ||
+            ((reset_cycle < 6) &&
+             ((dut.core_address[10:0] != 11'h7fe) || !program_read ||
+              (program_address != vector_address))) ||
+            ((reset_cycle == 6) &&
+             ((dut.core_address[10:0] != 11'h7ff) || !program_read ||
+              (program_address != vector_address + 11'h001))) ||
+            ((reset_cycle == 7) &&
+             ((dut.core_address[10:0] != 11'h000) || program_read ||
+              (program_address != 11'h000)))) begin
+          $fatal(1, "P5 reset cycle %0d core=%03x storage=%03x read=%b write=%b fetch=%b",
+                 reset_cycle + 1, dut.core_address[10:0], program_address,
+                 program_read, dut.core_write, opcode_fetch);
+        end
+        tick();
       end
-      tick();
       if (debug_pc[10:0] != address_value || debug_sp != 16'h007f || !debug_ccr[3]) begin
         $fatal(1, "P5 reset architectural state pc=%04x sp=%04x ccr=%02x", debug_pc,
                debug_sp, debug_ccr);

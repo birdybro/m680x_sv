@@ -32,6 +32,7 @@ module tb_m6805_core;
   logic trace_opcode_fetch [0:15];
   integer index;
   integer cycle_count;
+  integer reset_cycle;
   integer cases;
 
   m6805_core dut (
@@ -127,9 +128,16 @@ module tb_m6805_core;
     #1;
     if (!bus_valid || address != 16'hfffe || write_enable) $fatal(1, "M6805 reset high vector");
     reset_n = 1'b1;
-    tick();
-    if (address != 16'hffff || !bus_valid) $fatal(1, "M6805 reset low vector");
-    tick();
+    for (reset_cycle = 0; reset_cycle < 8; reset_cycle = reset_cycle + 1) begin
+      if (!bus_valid || write_enable || opcode_fetch ||
+          ((reset_cycle < 6) && (address != 16'hfffe)) ||
+          ((reset_cycle == 6) && (address != 16'hffff)) ||
+          ((reset_cycle == 7) && (address != 16'h0000))) begin
+        $fatal(1, "M6805 reset cycle %0d address=%04x valid=%b write=%b fetch=%b",
+               reset_cycle + 1, address, bus_valid, write_enable, opcode_fetch);
+      end
+      tick();
+    end
     if (debug_pc != 16'h1000 || debug_sp != 16'h007f || !debug_ccr[3]) begin
       $fatal(1, "M6805 reset state");
     end

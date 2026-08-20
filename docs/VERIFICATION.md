@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 154 |
+| Python unit tests | 186 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -320,14 +320,21 @@ or electrical clock-pad behavior.
 
 Directed M6805-lineage tests cover reset, stalls, arithmetic, direct writes,
 BSR/RTS, the five-byte interrupt frame, vector fetch, and RTI restoration. The
-Motorola profile now checks the MC68705P5 manual's exact 11-cycle hardware-
+Motorola reset regression checks all eight table-G2 cycles: six high-vector
+reads, the low-vector read, and the address-`$0000` trailing read. Every address,
+read direction, bus-valid qualifier, and non-opcode-fetch qualifier is exact;
+only the manufacturer-labelled unusable input byte on cycle eight is excluded
+from data comparison. The MC68705P5 integration repeats the trace for normal and
+bootstrap vector selection, including all six remapped high-byte reads. The
+Motorola profile also checks the MC68705P5 manual's exact 11-cycle hardware-
 interrupt response and the M6805 Family User's Manual table-G2 bus trace: two
 next-opcode-address reads, five ordered stack writes, one unused stack read, two
 vector reads, and the trailing read at vector low plus one. It also checks that
 an 11-bit return PC stacks the unused upper five PCH bits as ones. This audit
 marks only the trailing cycle's manufacturer-labelled unusable input data as
-non-comparable while still checking its address and direction. It found and
-fixes the prior eight-cycle response and zero-filled PCH. The
+non-comparable while still checking its address and direction. This audit found
+and fixed the prior two-cycle reset response, bootstrap remap drop after the first
+high-vector cycle, eight-cycle interrupt response, and zero-filled PCH. The
 HD6305 profile separately proves that a pending interrupt is accepted only
 after the instruction following CLI. The MC68705P5 suites add register/RAM
 decode, DDR behavior, mixed-direction GPIO reads, all four timer sources and
@@ -459,6 +466,8 @@ within those bounds:
   at post-stack SP for MC6801, and invalid `$ffff` for HD6301;
 - a masked request releases HD6301 SLP without leaving the core asleep;
 - interrupt-vector selection is legal;
+- accepted M6805 reset cycles expose six high-vector reads, one low-vector
+  read, and one address-zero read, while HD6305 retains its two vector reads;
 - the M6805 stack remains inside `$0060`-`$007f`; and
 - architectural state, bus outputs, and status remain stable when clock enable
   is inactive or an active transfer is waiting for `bus_ready_i`.
@@ -565,10 +574,10 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD63701V0 Mode 6 integration | 14,051 | 1,957 |
 | HD63701V0 Mode 7 integration | 14,079 | 1,996 |
 | HD63701V0 four-subphase bus wrapper | 14,218 | 1,960 |
-| M6805 | 3,732 | 169 |
-| HD6305 | 3,767 | 170 |
-| MC68705P5 integration | 7,084 | 1,144 |
-| HD63705V0 integration | 10,075 | 1,860 |
+| M6805 | 3,733 | 169 |
+| HD6305 | 3,788 | 170 |
+| MC68705P5 integration | 7,102 | 1,144 |
+| HD63705V0 integration | 10,086 | 1,860 |
 
 Sequential counts include every synthesized DFF primitive and inferred memory
 bit. Cell counts are tool/version/technology dependent and are smoke-test

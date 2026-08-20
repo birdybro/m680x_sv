@@ -121,10 +121,10 @@ module mc68705p5_mcu #(
 
   always_comb begin
     selected_program_address = core_address[10:0];
-    if (bootstrap_effective && (reset_vector_phase == 2'd0) &&
+    if (bootstrap_effective && (reset_vector_phase != 2'd2) &&
         (core_address[10:0] == RESET_VECTOR[10:0])) begin
       selected_program_address = 11'h7f6;
-    end else if (bootstrap_effective && (reset_vector_phase == 2'd1) &&
+    end else if (bootstrap_effective && (reset_vector_phase != 2'd2) &&
                  (core_address[10:0] == (RESET_VECTOR[10:0] + 11'h001))) begin
       selected_program_address = 11'h7f7;
     end

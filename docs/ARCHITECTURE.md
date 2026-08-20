@@ -153,6 +153,13 @@ documented Hitachi additions. It does not share the M6800 execution state machin
 The Hitachi profile defers maskable interrupt recognition until the instruction
 following CLI retires, independently of the Motorola profile.
 
+The Motorola profile implements the eight-cycle reset response in the M6805
+Family User's Manual table G2: six reads at the high reset-vector address, one
+low-vector read, and a final read at address `$0000` whose input data is not
+used. The Hitachi profile retains its separately selected reset sequencing;
+Motorola timing is not projected onto it without a Hitachi primary-source
+basis.
+
 ## MC6801 operating modes and MC6803 expanded-mode integration
 
 `rtl/m6801/mc6801_mcu.sv` surrounds the M6801 CPU profile with the normalized
@@ -457,6 +464,11 @@ represented: absent VPP disconnects the PCR from the array, `PLE=0,PGE=1`
 latches address/data, `PLE=0,PGE=0` requests programming, and `PLE=1` permits
 reads. Software writes attempting either invalid `PGE=0,PLE=1` row are coerced
 to `PGE=1`, as required by the register description.
+During reset, the wrapper keeps the accepted bootstrap selection across all six
+logical `$07fe` high-vector reads, maps the low-vector read to `$07f7`, and
+releases the remap before later ordinary vector-region accesses. The eighth
+reset cycle is an internal read at `$0000`; it does not select firmware storage
+and its returned byte is architecturally unusable.
 `model/mc68705p5_device.py` independently models these transactions, memory,
 GPIO, timer, and interrupt state. The normal memory map partitions all 2,048
 addresses into 16 I/O, 112 RAM, and 1,920 program/MOR locations without a hole

@@ -77,6 +77,12 @@ The complete manufacturer sequence is two next-opcode-address reads, five stack
 writes, an unused stack read, two vector reads, and a trailing read at vector
 low plus one. The stacked PCH has all five unused upper bits set for the
 device's 11-bit program counter.
+The normalized reset-response bus-trace dimension is also `COMPLETE`: the
+independent model and real core agree on the documented eight reads, and the
+MC68705P5 wrapper verifies ordinary and bootstrap storage selection across all
+six repeated high-vector cycles. Cycle-eight input data remains intentionally
+non-comparable because Motorola labels it unusable; its address, direction, and
+qualifiers are still checked.
 EPROM voltage/pulse/retention physics and the copyrighted factory bootstrap-ROM
 image remain outside the distributable implementation.
 

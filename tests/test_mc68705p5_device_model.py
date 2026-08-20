@@ -9,6 +9,7 @@ from model.mc68705p5_device import (
     MC68705P5CycleInputs,
     MC68705P5DeviceModel,
     MC68705P5EPROMControlInputs,
+    RESET_RESPONSE_CYCLES,
     VECTOR_BOOTSTRAP,
     VECTOR_EXTERNAL,
     VECTOR_RESET,
@@ -373,6 +374,11 @@ class MC68705P5DeviceModelTests(unittest.TestCase):
         self.assertEqual(bootstrap.program_address, VECTOR_BOOTSTRAP)
         self.assertEqual(bootstrap.read_data, 0x34)
         self.assertTrue(bootstrap.bootstrap_mode)
+        for _ in range(RESET_RESPONSE_CYCLES - 3):
+            repeated_high = self.read(model, VECTOR_RESET, bootstrap_voltage=False)
+            self.assertEqual(repeated_high.program_address, VECTOR_BOOTSTRAP)
+            self.assertEqual(repeated_high.read_data, 0x34)
+            self.assertTrue(repeated_high.bootstrap_mode)
         bootstrap_low = self.read(model, VECTOR_RESET + 1, bootstrap_voltage=False)
         self.assertEqual(bootstrap_low.program_address, VECTOR_BOOTSTRAP + 1)
         self.assertTrue(bootstrap_low.bootstrap_mode)

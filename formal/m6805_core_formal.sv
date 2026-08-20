@@ -5,6 +5,7 @@ module m6805_core_formal #(
   (* anyseq *) logic clk;
   logic reset_n;
   logic past_valid = 1'b0;
+  logic [3:0] accepted_reset_cycles;
   (* anyseq *) logic clock_enable;
   (* anyseq *) logic bus_ready;
   (* anyseq *) logic irq_n;
@@ -31,6 +32,14 @@ module m6805_core_formal #(
   assign reset_n = past_valid;
   always @(posedge clk) past_valid <= 1'b1;
 
+  always @(posedge clk) begin
+    if (!reset_n) accepted_reset_cycles <= 4'd0;
+    else if (clock_enable && bus_ready &&
+             (accepted_reset_cycles < (HITACHI_PROFILE ? 4'd2 : 4'd8))) begin
+      accepted_reset_cycles <= accepted_reset_cycles + 4'd1;
+    end
+  end
+
   m6805_core #(.HITACHI_PROFILE(HITACHI_PROFILE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(clock_enable),
     .bus_ready_i(bus_ready), .irq_n_i(irq_n), .interrupt_pin_n_i(irq_n),
@@ -49,6 +58,21 @@ module m6805_core_formal #(
     assert (!opcode_fetch || (bus_valid && !write_enable));
     assert (!(waiting_state && stopped_state));
     if (past_valid) assert ((debug_sp & 16'hffe0) == 16'h0060);
+    if (past_valid &&
+        (accepted_reset_cycles < (HITACHI_PROFILE ? 4'd2 : 4'd8))) begin
+      assert (bus_valid && !write_enable && !opcode_fetch);
+      if (HITACHI_PROFILE && (accepted_reset_cycles == 4'd0)) begin
+        assert (address == 16'hfffe);
+      end else if (HITACHI_PROFILE) begin
+        assert (address == 16'hffff);
+      end else if (accepted_reset_cycles < 4'd6) begin
+        assert (address == 16'hfffe);
+      end else if (accepted_reset_cycles == 4'd6) begin
+        assert (address == 16'hffff);
+      end else begin
+        assert (address == 16'h0000);
+      end
+    end
   end
 
   always @(posedge clk) begin

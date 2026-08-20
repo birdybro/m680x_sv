@@ -32,7 +32,7 @@ PERIPHERAL_SECTIONS = {
     "registers", "timer", "interrupts", "gpio", "sci", "operating_modes",
     "memory_control",
 }
-OPTIONAL_PERIPHERAL_SECTIONS = {"interrupt_controller"}
+OPTIONAL_PERIPHERAL_SECTIONS = {"interrupt_controller", "reset_response"}
 
 
 def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
@@ -138,6 +138,7 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
     for section in (
         "timer", "gpio", "sci", "operating_modes", "memory_control",
         "interrupt_controller",
+        "reset_response",
     ):
         if section in spec:
             validate_citations(spec[section], section)

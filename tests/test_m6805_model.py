@@ -255,6 +255,12 @@ class M6805ModelTests(unittest.TestCase):
         self.assertEqual(reset.state.pc, 0xABCD)
         self.assertEqual(reset.state.sp, 0x7F)
         self.assertTrue(reset.flag("I"))
+        self.assertEqual(
+            [(access.kind, access.address) for access in reset.bus_accesses],
+            [("read", 0xFFFE)] * 6 + [("read", 0xFFFF), ("read", 0x0000)],
+        )
+        self.assertTrue(all(access.data_defined for access in reset.bus_accesses[:-1]))
+        self.assertFalse(reset.bus_accesses[-1].data_defined)
         reset.memory[0xABCD] = 0x9C
         reset.state.sp = 0x22
         reset.step()

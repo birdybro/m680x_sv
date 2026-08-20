@@ -89,7 +89,15 @@ class M6805Model:
         self.set_flag("I", True)
         self._irq_defer_instructions = 0
         self._accesses = []
-        self.state.pc = self._read16(0xFFFE, "reset vector")
+        if self.architecture == "m6805":
+            vector_high = 0
+            for cycle in range(6):
+                vector_high = self._read8(0xFFFE, f"reset vector high {cycle + 1}")
+            vector_low = self._read8(0xFFFF, "reset vector low")
+            self.state.pc = (vector_high << 8) | vector_low
+            self._read8(0x0000, "reset trailing read", data_defined=False)
+        else:
+            self.state.pc = self._read16(0xFFFE, "reset vector")
         self.last_trace = None
 
     def service_irq(self) -> bool:
