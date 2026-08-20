@@ -17,7 +17,11 @@ jobs:
   complete-gate:
     name: Complete committed-source gate
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    # The complete gate intentionally runs 21 bounded proofs and 30 generic
+    # synthesis tops after both simulator matrices. Ubuntu-hosted runner timing
+    # measurements put the normal sequential runtime above one hour, so retain
+    # deterministic serial execution with explicit headroom for runner variance.
+    timeout-minutes: 120
 
     steps:
       - name: Check out source
