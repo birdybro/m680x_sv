@@ -103,7 +103,7 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
-across two simulators, twelve bounded formal profiles, and thirteen synthesis
+across two simulators, thirteen bounded formal profiles, and fifteen synthesis
 tops.
 Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
