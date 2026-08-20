@@ -124,7 +124,7 @@ module tb_m6805_core;
     memory[16'h100b] = 8'h4c; // INCA
     memory[16'h100c] = 8'h81; // RTS
     memory[16'h1200] = 8'h80; // RTI
-    memory[16'h1300] = 8'h9d; // SWI handler first opcode
+    memory[16'h1300] = 8'h80; // SWI handler first opcode: RTI
 
     #1;
     reset_n = 1'b0;
@@ -268,8 +268,45 @@ module tb_m6805_core;
         !trace_valid[8] || trace_write[8] || trace_address[8] != 16'hfffc || trace_data[8] != 8'h13 ||
         !trace_valid[9] || trace_write[9] || trace_address[9] != 16'hfffd || trace_data[9] != 8'h00 ||
         !trace_valid[10] || trace_write[10] || trace_opcode_fetch[10] ||
-        trace_address[10] != 16'h1300 || trace_data[10] != 8'h9d) begin
+        trace_address[10] != 16'h1300 || trace_data[10] != 8'h80) begin
       $fatal(1, "M6805 SWI frame/vector/handler-prefetch trace");
+    end
+
+    run_instruction(9, 8'h80);
+    if (debug_pc != 16'h100d || debug_sp != 16'h007f) begin
+      $fatal(1, "M6805 post-SWI RTI restore");
+    end
+
+    memory[16'h100d] = 8'h10; // BSET0 $20
+    memory[16'h100e] = 8'h20;
+    run_instruction(7, 8'h10);
+    if (memory[16'h0020] != 8'h81 ||
+        !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100d ||
+        !trace_valid[1] || trace_write[1] || trace_address[1] != 16'h100e ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h007f ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h0020 || trace_data[3] != 8'h80 ||
+        !trace_valid[4] || trace_write[4] || trace_address[4] != 16'h0020 || trace_data[4] != 8'h80 ||
+        !trace_valid[5] || trace_write[5] || trace_address[5] != 16'h0020 || trace_data[5] != 8'h80 ||
+        !trace_valid[6] || !trace_write[6] || trace_address[6] != 16'h0020 || trace_data[6] != 8'h81) begin
+      $fatal(1, "M6805 BSET table-G2 trace");
+    end
+
+    memory[16'h100f] = 8'h00; // BRSET0 $20,$1014
+    memory[16'h1010] = 8'h20;
+    memory[16'h1011] = 8'h02;
+    run_instruction(10, 8'h00);
+    if (debug_pc != 16'h1014 || !debug_ccr[0] ||
+        !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100f ||
+        !trace_valid[1] || trace_write[1] || trace_address[1] != 16'h1010 ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h007f ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h0020 || trace_data[3] != 8'h81 ||
+        !trace_valid[4] || trace_write[4] || trace_address[4] != 16'h0020 || trace_data[4] != 8'h81 ||
+        !trace_valid[5] || trace_write[5] || trace_address[5] != 16'h0020 || trace_data[5] != 8'h81 ||
+        !trace_valid[6] || trace_write[6] || trace_address[6] != 16'h0020 || trace_data[6] != 8'h81 ||
+        !trace_valid[7] || trace_write[7] || trace_address[7] != 16'h1011 || trace_data[7] != 8'h02 ||
+        !trace_valid[8] || trace_write[8] || trace_address[8] != 16'h1012 ||
+        !trace_valid[9] || trace_write[9] || trace_address[9] != 16'h1012) begin
+      $fatal(1, "M6805 BRSET table-G2 trace");
     end
 
     $display("M6805 CORE PASS: %0d directed reset, bus, stack, and interrupt checks", cases);

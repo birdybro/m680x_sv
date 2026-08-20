@@ -69,8 +69,16 @@ class M6805ModelTests(unittest.TestCase):
     def test_bit_modify_and_test_branch_copy_tested_bit_to_c(self) -> None:
         set_bit = _fixture("m6805", 0x16)  # BSET3
         set_bit.memory[0x10] = 0x01
-        set_bit.step()
+        set_trace = set_bit.step()
         self.assertEqual(set_bit.memory[0x10], 0x09)
+        self.assertEqual(
+            [access.address for access in set_trace.accesses],
+            [0x1000, 0x1001, 0x007F, 0x0010, 0x0010, 0x0010, 0x0010],
+        )
+        self.assertEqual(
+            [access.kind for access in set_trace.accesses],
+            ["read"] * 6 + ["write"],
+        )
 
         clear_bit = _fixture("m6805", 0x17)  # BCLR3
         clear_bit.memory[0x10] = 0xFF
@@ -80,9 +88,24 @@ class M6805ModelTests(unittest.TestCase):
         branch_set = _fixture("m6805", 0x06)  # BRSET3
         branch_set.memory.load(0x1001, [0x10, 0x7F])
         branch_set.memory[0x10] = 0x08
-        branch_set.step()
+        branch_trace = branch_set.step()
         self.assertEqual(branch_set.state.pc, 0x1082)
         self.assertTrue(branch_set.flag("C"))
+        self.assertEqual(
+            [access.address for access in branch_trace.accesses],
+            [
+                0x1000,
+                0x1001,
+                0x007F,
+                0x0010,
+                0x0010,
+                0x0010,
+                0x0010,
+                0x1002,
+                0x1003,
+                0x1003,
+            ],
+        )
 
         branch_clear = _fixture("m6805", 0x07)  # BRCLR3
         branch_clear.memory.load(0x1001, [0x10, 0x80])

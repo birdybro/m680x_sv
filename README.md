@@ -91,10 +91,10 @@ read and ends after the low byte.
 The separate 11-cycle SWI trace ends with a defined read of the first handler
 opcode at the address resolved from `$07fc:$07fd`; hardware IRQ instead ends
 with the documented unusable-data read after its low vector byte.
-For 62 Motorola encodings, the opcode specification now records every table-G2
+For 94 Motorola encodings, the opcode specification now records every table-G2
 cycle as structured address/direction/data-role facts. RTL and the independently
 organized Python model match the complete inherent, accumulator, immediate,
-relative, BSR, RTS, RTI, and SWI traces, including repeated next-opcode reads,
+relative, bit-operation, BSR, RTS, RTI, and SWI traces, including repeated next-opcode reads,
 subroutine-target prefetch, and pre/post-stack dummy reads. Other instruction
 forms remain explicitly `PARTIAL` until their documented table rows are
 implemented and checked; the Motorola timing is not projected onto Hitachi.

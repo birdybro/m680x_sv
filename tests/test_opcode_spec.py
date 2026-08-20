@@ -202,7 +202,7 @@ class OpcodeSpecificationTests(unittest.TestCase):
             for record in self.m6805["opcodes"]
             if record["bus_trace_status"] == "COMPLETE"
         ]
-        self.assertEqual(len(complete), 62)
+        self.assertEqual(len(complete), 94)
         for record in complete:
             self.assertEqual(len(record["documented_bus_cycles"]), record["cycles"])
             self.assertEqual(

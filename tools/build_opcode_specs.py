@@ -1214,6 +1214,29 @@ def _m6805_table_g2_trace(mnemonic: str, mode: str) -> list[dict]:
         return {"cycle": cycle, "address": address, "direction": "write", "data": data}
 
     opcode = read(1, "opcode_address", "opcode")
+    if mode == "bit-set-clear-direct":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "operand_address"),
+            read(3, "0x007f", "unused"),
+            read(4, "operand_address", "operand"),
+            read(5, "operand_address", "operand"),
+            read(6, "operand_address", "operand"),
+            write(7, "operand_address", "manipulated_operand"),
+        ]
+    if mode == "bit-test-branch-direct":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "operand_address"),
+            read(3, "0x007f", "unused"),
+            read(4, "operand_address", "operand"),
+            read(5, "operand_address", "operand"),
+            read(6, "operand_address", "operand"),
+            read(7, "operand_address", "operand"),
+            read(8, "opcode_address+2", "branch_offset"),
+            read(9, "opcode_address+3", "next_opcode"),
+            read(10, "opcode_address+3", "next_opcode"),
+        ]
     if mode == "immediate-8":
         return [opcode, read(2, "opcode_address+1", "operand")]
     if mode in {"accumulator-a", "index-register-x"}:

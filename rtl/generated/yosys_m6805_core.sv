@@ -1601,6 +1601,8 @@ module m6805_core #(
     ST_MEMORY_WRITE,
     ST_BIT_ADDRESS,
     ST_BIT_DISPLACEMENT,
+    ST_BIT_DUMMY_READ,
+    ST_BIT_REPEAT_READ,
     ST_BIT_READ,
     ST_BIT_WRITE,
     ST_BSR_NEXT_READ,
@@ -1645,6 +1647,7 @@ module m6805_core #(
   logic [7:0] temporary_high;
   logic [7:0] write_data;
   logic [7:0] branch_displacement;
+  logic bit_branch_taken;
   logic [2:0] phase;
   logic external_interrupt;
   logic padding_bus_valid;
@@ -1996,8 +1999,12 @@ module m6805_core #(
           bus_valid_o = 1'b1;
         end
       end
-      ST_MEMORY_READ, ST_BIT_READ: begin
+      ST_MEMORY_READ, ST_BIT_READ, ST_BIT_REPEAT_READ: begin
         address_o = effective_address;
+        bus_valid_o = 1'b1;
+      end
+      ST_BIT_DUMMY_READ: begin
+        address_o = STACK_TOP;
         bus_valid_o = 1'b1;
       end
       ST_MEMORY_WRITE, ST_BIT_WRITE: begin
@@ -2095,6 +2102,7 @@ module m6805_core #(
       temporary_high <= 8'h00;
       write_data <= 8'h00;
       branch_displacement <= 8'h00;
+      bit_branch_taken <= 1'b0;
       phase <= 3'd0;
       external_interrupt <= 1'b0;
       padding_bus_valid <= 1'b0;
@@ -2243,16 +2251,53 @@ module m6805_core #(
         ST_BIT_ADDRESS: begin
           effective_address <= {8'h00, data_i};
           program_counter <= pc_value(program_counter + 16'h0001);
-          if (decoded.mode == AM_BIT_TEST_BRANCH) begin
+          if (!HITACHI_PROFILE) begin
+            phase <= 3'd0;
+            state <= ST_BIT_DUMMY_READ;
+          end else if (decoded.mode == AM_BIT_TEST_BRANCH) begin
             state <= ST_BIT_DISPLACEMENT;
           end else begin
             state <= ST_BIT_READ;
           end
         end
+        ST_BIT_DUMMY_READ: state <= ST_BIT_REPEAT_READ;
+        ST_BIT_REPEAT_READ: begin
+          if (decoded.mode == AM_BIT_TEST_BRANCH) begin
+            if (phase == 3'd3) begin
+              condition_codes[CCR_C] <= data_i[decoded.bit_index];
+              bit_branch_taken <=
+                (data_i[decoded.bit_index] == (decoded.operation == OP_BRSET));
+              phase <= 3'd0;
+              state <= ST_BIT_DISPLACEMENT;
+            end else begin
+              phase <= phase + 3'd1;
+            end
+          end else if (phase == 3'd2) begin
+            if (decoded.operation == OP_BSET) begin
+              write_data <= data_i | (8'h01 << decoded.bit_index);
+            end else begin
+              write_data <= data_i & ~(8'h01 << decoded.bit_index);
+            end
+            phase <= 3'd0;
+            state <= ST_BIT_WRITE;
+          end else begin
+            phase <= phase + 3'd1;
+          end
+        end
         ST_BIT_DISPLACEMENT: begin
           branch_displacement <= data_i;
           program_counter <= pc_value(program_counter + 16'h0001);
-          state <= ST_BIT_READ;
+          if (!HITACHI_PROFILE) begin
+            padding_address <= pc_value(program_counter + 16'h0001);
+            padding_bus_valid <= 1'b1;
+            if (bit_branch_taken) begin
+              program_counter <= pc_value(program_counter + 16'h0001 +
+                {{8{data_i[7]}}, data_i});
+            end
+            finish_to(ST_FETCH);
+          end else begin
+            state <= ST_BIT_READ;
+          end
         end
         ST_BIT_READ: begin
           if ((decoded.operation == OP_BRSET) || (decoded.operation == OP_BRCLR)) begin

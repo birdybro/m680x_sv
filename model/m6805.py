@@ -220,10 +220,27 @@ class M6805Model:
         mode = record["addressing_mode"]
         if mode == "bit-test-branch-direct":
             address = self._fetch8("direct bit address")
+            if self.architecture == "m6805":
+                stack_top = self.stack_base | self.stack_mask
+                self._read8(stack_top, "bit-branch unused stack-top read")
+                operand = 0
+                for cycle in range(4, 8):
+                    operand = self._read8(address, f"bit-test operand cycle {cycle}")
+                displacement = self._signed(self._fetch8("relative displacement"))
+                self._read8(self.state.pc, "next opcode after bit branch")
+                self._read8(self.state.pc, "repeated next opcode after bit branch")
+                return operand, address, displacement
             displacement = self._signed(self._fetch8("relative displacement"))
             return self._read8(address, "bit-test operand"), address, displacement
         if mode == "bit-set-clear-direct":
             address = self._fetch8("direct bit address")
+            if self.architecture == "m6805":
+                stack_top = self.stack_base | self.stack_mask
+                self._read8(stack_top, "bit-modify unused stack-top read")
+                operand = 0
+                for cycle in range(4, 7):
+                    operand = self._read8(address, f"bit-modify operand cycle {cycle}")
+                return operand, address, None
             return self._read8(address, "bit-modify operand"), address, None
         if mode in {"inherent", "accumulator-a", "index-register-x"}:
             return None, None, None
