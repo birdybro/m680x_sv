@@ -195,6 +195,12 @@ class InterfaceSpecificationTests(unittest.TestCase):
             "COMPLETE",
         )
         self.assertEqual(
+            self.mc68705p5_spec["implementation_status"][
+                "software_interrupt_bus_trace"
+            ],
+            "COMPLETE",
+        )
+        self.assertEqual(
             self.mc68705p5_spec["implementation_status"]["timer_function"],
             "COMPLETE",
         )

@@ -4312,9 +4312,8 @@ package m6805_opcode_vectors_pkg;
         end
         16'h690a: begin
           m6805_access.write_enable = 1'b0;
-          m6805_access.data_ignored = 1'b1;
-          m6805_access.address = 16'hfffe;
-          m6805_access.data = 8'h10;
+          m6805_access.address = 16'h2200;
+          m6805_access.data = 8'h00;
         end
         16'h6a00: begin
           m6805_access.write_enable = 1'b0;

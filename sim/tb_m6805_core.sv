@@ -109,6 +109,8 @@ module tb_m6805_core;
     memory[16'hffff] = 8'h00;
     memory[16'hfffa] = 8'h12;
     memory[16'hfffb] = 8'h00;
+    memory[16'hfffc] = 8'h13;
+    memory[16'hfffd] = 8'h00;
     memory[16'h1000] = 8'h9a; // CLI
     memory[16'h1001] = 8'ha6; // LDA #$7f
     memory[16'h1002] = 8'h7f;
@@ -122,6 +124,7 @@ module tb_m6805_core;
     memory[16'h100b] = 8'h4c; // INCA
     memory[16'h100c] = 8'h81; // RTS
     memory[16'h1200] = 8'h80; // RTI
+    memory[16'h1300] = 8'h9d; // SWI handler first opcode
 
     #1;
     reset_n = 1'b0;
@@ -199,6 +202,26 @@ module tb_m6805_core;
         debug_x != 8'h00 || debug_ccr[3] || illegal || undefined_value ||
         waiting_state || stopped_state) begin
       $fatal(1, "M6805 RTI state restore");
+    end
+
+    memory[16'h100a] = 8'h83; // SWI
+    run_instruction(11, 8'h83);
+    if (debug_pc != 16'h1300 || debug_sp != 16'h007a ||
+        !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] ||
+        trace_address[0] != 16'h100a ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] ||
+        trace_address[1] != 16'h100b ||
+        !trace_valid[2] || !trace_write[2] || trace_address[2] != 16'h007f || trace_data[2] != 8'h0b ||
+        !trace_valid[3] || !trace_write[3] || trace_address[3] != 16'h007e || trace_data[3] != 8'h10 ||
+        !trace_valid[4] || !trace_write[4] || trace_address[4] != 16'h007d || trace_data[4] != 8'h00 ||
+        !trace_valid[5] || !trace_write[5] || trace_address[5] != 16'h007c || trace_data[5] != 8'h81 ||
+        !trace_valid[6] || !trace_write[6] || trace_address[6] != 16'h007b || trace_data[6] != 8'hf4 ||
+        !trace_valid[7] || trace_write[7] || trace_address[7] != 16'h007a ||
+        !trace_valid[8] || trace_write[8] || trace_address[8] != 16'hfffc || trace_data[8] != 8'h13 ||
+        !trace_valid[9] || trace_write[9] || trace_address[9] != 16'hfffd || trace_data[9] != 8'h00 ||
+        !trace_valid[10] || trace_write[10] || trace_opcode_fetch[10] ||
+        trace_address[10] != 16'h1300 || trace_data[10] != 8'h9d) begin
+      $fatal(1, "M6805 SWI frame/vector/handler-prefetch trace");
     end
 
     $display("M6805 CORE PASS: %0d directed reset, bus, stack, and interrupt checks", cases);

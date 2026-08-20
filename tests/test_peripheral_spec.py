@@ -67,6 +67,11 @@ class PeripheralSpecificationTests(unittest.TestCase):
         self.assertIn("Cycles 1-6", reset["bus_sequence"])
         self.assertIn("unusable", reset["bus_sequence"])
 
+    def test_mc68705p5_swi_and_hardware_irq_trailing_reads_differ(self) -> None:
+        controller = self.spec["interrupt_controller"]
+        self.assertIn("first handler opcode", controller["software_response"])
+        self.assertIn("unlike hardware IRQ", controller["software_response"])
+
 
 if __name__ == "__main__":
     unittest.main()

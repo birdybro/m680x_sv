@@ -155,9 +155,9 @@ class M6805ModelTests(unittest.TestCase):
         )
         self.assertEqual(
             (trace.accesses[-1].kind, trace.accesses[-1].address),
-            ("read", 0xFFFE),
+            ("read", 0x2200),
         )
-        self.assertFalse(trace.accesses[-1].data_defined)
+        self.assertTrue(trace.accesses[-1].data_defined)
         self.assertEqual(
             [interrupt.memory[address] for address in range(0x6C, 0x71)],
             [0xF1, 0x12, 0x20, 0x10, 0x01],

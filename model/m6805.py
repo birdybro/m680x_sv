@@ -387,7 +387,7 @@ class M6805Model:
                 self._read8(self.state.sp, "SWI unused stack read")
             self.state.pc = self._read16(0xFFFC, "SWI vector")
             if self.architecture == "m6805":
-                self._read8(0xFFFE, "SWI trailing vector read", data_defined=False)
+                self._read8(self.state.pc, "SWI handler first opcode")
         elif mnemonic == "TAX":
             self.state.x = self.state.a
         elif mnemonic == "TXA":

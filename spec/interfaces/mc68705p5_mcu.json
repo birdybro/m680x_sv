@@ -42,6 +42,7 @@
     "gpio_and_interrupt_pins": "PARTIAL",
     "timer_function": "COMPLETE",
     "interrupt_controller": "COMPLETE",
+    "software_interrupt_bus_trace": "COMPLETE",
     "reset_response_bus_trace": "COMPLETE",
     "bootstrap_and_programming_controls": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",

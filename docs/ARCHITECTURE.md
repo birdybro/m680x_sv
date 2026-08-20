@@ -482,7 +482,12 @@ boundary through two next-opcode-address reads, the five PCL/PCH/X/A/CCR stack
 writes, an unused read at the decremented stack pointer, two vector reads, and a
 trailing read at the address following the low vector byte. Eleven-bit return
 addresses stack PCH with its five unused upper bits set, as required by the
-manufacturer's cycle table. DDR reads are
+manufacturer's cycle table.
+The synchronous SWI path has its own table-G2 ending: after the same five-byte
+frame, unused stack read, and two software-vector reads, cycle 11 reads the
+first handler opcode at the resolved vector address. It does not reuse the
+hardware IRQ's vector-low-plus-one trailing address.
+DDR reads are
 normalized to `$ff`, following figures 4 and 16; conflicting printed-page-13
 prose makes their silicon-equivalent value `UNDEFINED_BY_DOCUMENTATION`. A
 generated 768-cycle corpus compares every exposed state boundary. Timer-directed

@@ -491,7 +491,10 @@ module m6805_core #(
       ST_INTERRUPT_VECTOR_HIGH: begin address_o = vector_address; bus_valid_o = 1'b1; end
       ST_INTERRUPT_VECTOR_LOW: begin address_o = vector_address + 16'h0001; bus_valid_o = 1'b1; end
       ST_INTERRUPT_TRAILING_READ: begin
-        address_o = vector_address + 16'h0002;
+        // Hardware IRQ discards vector-low+1, while HMOS SWI cycle 11
+        // prefetches the first handler opcode at the resolved vector.
+        address_o = external_interrupt ?
+                    (vector_address + 16'h0002) : program_counter;
         bus_valid_o = 1'b1;
       end
       default: ;

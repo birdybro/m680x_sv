@@ -1134,7 +1134,9 @@ def _m6805_register_facts(mnemonic: str, mode: str) -> tuple[list[str], list[str
     return _dedupe(read), _dedupe(written)
 
 
-def _m6805_memory_facts(mnemonic: str, mode: str, length: int) -> list[str]:
+def _m6805_memory_facts(
+    architecture: str, mnemonic: str, mode: str, length: int
+) -> list[str]:
     operations = ["read opcode at PC"]
     if length > 1:
         operations.append(f"read {length - 1} instruction operand byte(s)")
@@ -1164,6 +1166,8 @@ def _m6805_memory_facts(mnemonic: str, mode: str, length: int) -> list[str]:
         operations.append("read CCR, A, X, and PC bytes from stack")
     elif mnemonic == "SWI":
         operations += ["write PC, X, A, and CCR bytes to stack", "read SWI vector at FFFC:FFFD"]
+        if architecture == "m6805":
+            operations.append("read first handler opcode at resolved vector on cycle 11")
     return operations
 
 
@@ -1236,7 +1240,7 @@ def _m6805_instruction(
         "flags_affected": flags_affected,
         "flags_undefined": flags_undefined,
         "flag_semantics": flag_semantics,
-        "memory_operations": _m6805_memory_facts(mnemonic, mode, length),
+        "memory_operations": _m6805_memory_facts(architecture, mnemonic, mode, length),
         "stack_effects": stack_effects,
         "branch_behavior": branch_behavior,
         "vector_behavior": vector_behavior,
@@ -1304,9 +1308,15 @@ def _build_6805_family(architecture: str, *, hitachi: bool) -> dict:
         mode = "relative" if mnemonic == "BSR" else "inherent"
         length = 2 if mnemonic == "BSR" else 1
         notes = ""
+        instruction_locator = map_locator
+        if not hitachi and mnemonic == "SWI":
+            instruction_locator = "appendix G table G2, printed page 239"
         if not hitachi and opcode in {0x8E, 0x8F}:
             raise AssertionError("HMOS specification must not include CMOS-only low-power instructions")
-        _put(records, _m6805_instruction(opcode, architecture, mnemonic, mode, length, cycles, reference_id, map_locator, notes=notes))
+        _put(records, _m6805_instruction(
+            opcode, architecture, mnemonic, mode, length, cycles,
+            reference_id, instruction_locator, notes=notes,
+        ))
     if not hitachi:
         for opcode, mnemonic in ((0x8E, "STOP"), (0x8F, "WAIT")):
             records[opcode]["notes"] = f"{mnemonic} is documented for the M146805 CMOS family only, not the M6805 HMOS architecture classified here."

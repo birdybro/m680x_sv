@@ -88,6 +88,9 @@ table: six reset-vector-high reads, one low read, and one non-opcode read at
 address zero with unusable input data. Normal and bootstrap vector selection are
 both traced; bootstrap remapping remains active for every repeated high-byte
 read and ends after the low byte.
+The separate 11-cycle SWI trace ends with a defined read of the first handler
+opcode at the address resolved from `$07fc:$07fd`; hardware IRQ instead ends
+with the documented unusable-data read after its low vector byte.
 
 All 256 opcode values are explicitly classified for each profile. The current
 five maps contain 1,064 documented instruction encodings, 26 HD6301 map values

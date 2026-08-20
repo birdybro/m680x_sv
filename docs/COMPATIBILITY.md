@@ -83,6 +83,9 @@ MC68705P5 wrapper verifies ordinary and bootstrap storage selection across all
 six repeated high-vector cycles. Cycle-eight input data remains intentionally
 non-comparable because Motorola labels it unusable; its address, direction, and
 qualifiers are still checked.
+SWI is independently trace-complete for this normalized boundary: its cycle 11
+uses the resolved handler address and compares the defined first-opcode byte,
+instead of applying the hardware IRQ trailing-read rule.
 EPROM voltage/pulse/retention physics and the copyrighted factory bootstrap-ROM
 image remain outside the distributable implementation.
 

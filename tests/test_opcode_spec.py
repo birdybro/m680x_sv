@@ -184,6 +184,18 @@ class OpcodeSpecificationTests(unittest.TestCase):
                 self.assertEqual(spec["opcodes"][opcode]["flags_affected"], ["N", "Z"])
                 self.assertNotIn("C", spec["opcodes"][opcode]["flags_affected"])
 
+    def test_m6805_swi_records_handler_prefetch(self) -> None:
+        swi = self.m6805["opcodes"][0x83]
+        self.assertEqual(swi["cycles"], 11)
+        self.assertIn(
+            "read first handler opcode at resolved vector on cycle 11",
+            swi["memory_operations"],
+        )
+        self.assertNotIn(
+            "read first handler opcode at resolved vector on cycle 11",
+            self.hd6305["opcodes"][0x83]["memory_operations"],
+        )
+
     def test_hd6305_cycle_adjustments_match_operation_map(self) -> None:
         expected = {
             0x3D: 4,
