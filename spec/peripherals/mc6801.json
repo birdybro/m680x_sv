@@ -85,7 +85,7 @@
     {"source": "sci", "vector": "FFF0:FFF1", "priority": 6}
   ],
   "implementation_scope": {
-    "current_profile": "Normalized Mode 0-7 plus 1R/6R decode, internal RAM/ROM selection, Port 3/4 functions, and Mode 4-to-5 transition. Physical bus multiplexing, Port 3 handshake completeness, bi-phase SCI, and external-clock SCI remain separate profiles.",
+    "current_profile": "Normalized Mode 0-7 plus 1R/6R decode, internal RAM/ROM selection, Port 3/4 functions, Mode 4-to-5 transition, internally clocked NRZ, and P22-clocked 8x external NRZ. Physical bus multiplexing, Port 3 handshake completeness, and bi-phase SCI remain separate profiles.",
     "differential_evidence": "Two deterministic seeds compare 768 independent-model E-cycle transactions per mode against internal decode, GPIO, timer, SCI, and interrupt RTL state.",
     "undefined_output_latches": "RTL selects deterministic zero after reset without claiming that manufacturer-undefined silicon latch value.",
     "standby_retention": "RTL exposes standby validity without claiming analog threshold or power-domain retention equivalence.",

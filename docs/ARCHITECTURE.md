@@ -173,11 +173,13 @@ set. The core resamples the wrapper's priority vector after stacking, matching
 the documented late encoder and its default-SCI result when software removes
 the identity of an already latched IRQ2 request.
 
-The SCI presently implements the two internally clocked NRZ modes, all four
-internal divisors, nine-mark transmitter preamble, LSB-first ten-bit frames,
-ordered TDRE/RDRF/ORFE clearing, center-sampled receive, overrun/framing status,
-wake-mark counting, pin overrides, and shared interrupt. Bi-phase coding and
-external 8x clock mode are not approximated and remain outside the claim.
+The SCI implements all three NRZ clock selections: internal clock, internal
+clock exported on P22, and the external 8x clock input on P22. It includes all
+four internal divisors, an eight-edge external divider, nine-mark transmitter
+preamble, LSB-first ten-bit frames, ordered TDRE/RDRF/ORFE clearing,
+center-sampled receive, overrun/framing status, wake-mark counting, pin
+overrides, and shared interrupt. Bi-phase coding is not approximated and
+remains outside the claim.
 The common block has an explicit framing-error transfer parameter: MC6801 and
 HD63701V0 transfer a misframed receive byte into RDR while leaving RDRF clear,
 whereas HD6301V1 and HD6303R inhibit that transfer. Device wrappers select the

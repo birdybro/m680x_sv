@@ -148,6 +148,8 @@ module mc6801_mcu #(
   logic [3:0] rx_bit_index;
   logic [7:0] rx_shift;
   logic [3:0] wake_mark_count;
+  logic sci_clock_previous;
+  logic [2:0] sci_external_subcycles;
 
   logic [15:0] core_address;
   logic [7:0] core_data_in;
@@ -173,7 +175,12 @@ module mc6801_mcu #(
   logic timer_overflow_event;
   logic sci_bit_tick;
   logic [12:0] sci_divisor;
-  logic sci_nrz_internal;
+  logic sci_nrz_format;
+  logic sci_external_nrz;
+  logic sci_external_clock_rise;
+  logic sci_receive_count_event;
+  logic [12:0] sci_receive_half_interval;
+  logic [12:0] sci_receive_bit_interval;
   logic sci_clock_level;
   logic timer_counter_write;
   logic capture_high_read;
@@ -421,7 +428,20 @@ module mc6801_mcu #(
         sci_clock_level = timer_counter[11];
       end
     endcase
-    sci_nrz_internal = (rmcr[3:2] == 2'b01) || (rmcr[3:2] == 2'b10);
+    sci_nrz_format = rmcr[3:2] != 2'b00;
+    sci_external_nrz = rmcr[3:2] == 2'b11;
+    sci_external_clock_rise = !sci_clock_previous && port2_i[2];
+    if (sci_external_nrz) begin
+      sci_bit_tick = sci_external_clock_rise &&
+        (sci_external_subcycles == 3'd7);
+      sci_receive_count_event = sci_external_clock_rise;
+      sci_receive_half_interval = 13'd4;
+      sci_receive_bit_interval = 13'd8;
+    end else begin
+      sci_receive_count_event = 1'b1;
+      sci_receive_half_interval = sci_divisor >> 1;
+      sci_receive_bit_interval = sci_divisor;
+    end
   end
 
   always_ff @(posedge clk_i or negedge device_reset_n) begin
@@ -626,8 +646,16 @@ module mc6801_mcu #(
       rx_bit_index <= 4'd0;
       rx_shift <= 8'h00;
       wake_mark_count <= 4'd0;
+      sci_clock_previous <= 1'b1;
+      sci_external_subcycles <= 3'd0;
     end else if (clock_enable_i) begin
       rx_previous <= port2_i[3];
+      sci_clock_previous <= port2_i[2];
+      if (sci_external_nrz && sci_external_clock_rise) begin
+        sci_external_subcycles <= sci_external_subcycles + 3'd1;
+      end else if (!sci_external_nrz) begin
+        sci_external_subcycles <= 3'd0;
+      end
 
       if (internal_read && (core_address == 16'h0011)) begin
         tdre_clear_armed <= tdre;
@@ -641,7 +669,10 @@ module mc6801_mcu #(
 
       if (internal_write) begin
         case (core_address)
-          16'h0010: rmcr <= core_data_out[3:0];
+          16'h0010: begin
+            rmcr <= core_data_out[3:0];
+            sci_external_subcycles <= 3'd0;
+          end
           16'h0011: begin
             trcsr_control <= core_data_out[4:0];
             if (!trcsr_control[1] && core_data_out[1]) begin
@@ -677,7 +708,7 @@ module mc6801_mcu #(
         end
       end
 
-      if (sci_bit_tick && sci_nrz_internal && trcsr_control[1]) begin
+      if (sci_bit_tick && sci_nrz_format && trcsr_control[1]) begin
         if (tx_preamble_remaining != 4'd0) begin
           tx_preamble_remaining <= tx_preamble_remaining - 4'd1;
         end else if (tx_active) begin
@@ -702,28 +733,28 @@ module mc6801_mcu #(
         end
       end
 
-      if (!trcsr_control[3] || !sci_nrz_internal || trcsr_control[0]) begin
+      if (!trcsr_control[3] || !sci_nrz_format || trcsr_control[0]) begin
         rx_busy <= 1'b0;
       end else if (!rx_busy) begin
         if (rx_previous && !port2_i[3]) begin
           rx_busy <= 1'b1;
-          rx_countdown <= sci_divisor >> 1;
+          rx_countdown <= sci_receive_half_interval;
           rx_bit_index <= 4'd0;
         end
-      end else if (rx_countdown > 13'd1) begin
+      end else if (sci_receive_count_event && (rx_countdown > 13'd1)) begin
         rx_countdown <= rx_countdown - 13'd1;
-      end else if (rx_bit_index == 4'd0) begin
+      end else if (sci_receive_count_event && (rx_bit_index == 4'd0)) begin
         if (port2_i[3]) begin
           rx_busy <= 1'b0;
         end else begin
           rx_bit_index <= 4'd1;
-          rx_countdown <= sci_divisor;
+          rx_countdown <= sci_receive_bit_interval;
         end
-      end else if (rx_bit_index <= 4'd8) begin
+      end else if (sci_receive_count_event && (rx_bit_index <= 4'd8)) begin
         rx_shift[rx_bit_index[2:0] - 3'd1] <= port2_i[3];
         rx_bit_index <= rx_bit_index + 4'd1;
-        rx_countdown <= sci_divisor;
-      end else begin
+        rx_countdown <= sci_receive_bit_interval;
+      end else if (sci_receive_count_event) begin
         rx_busy <= 1'b0;
         if (!port2_i[3]) begin
           if (SCI_TRANSFER_FRAMING_ERROR && !rdrf && !orfe) begin
@@ -733,7 +764,7 @@ module mc6801_mcu #(
           // A following zero is itself the next start bit (continuous BREAK).
           rx_busy <= 1'b1;
           rx_bit_index <= 4'd1;
-          rx_countdown <= sci_divisor;
+          rx_countdown <= sci_receive_bit_interval;
         end else if (rdrf || orfe) begin
           orfe <= 1'b1;
         end else begin

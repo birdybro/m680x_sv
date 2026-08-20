@@ -44,6 +44,7 @@ FIELDS = (
     ("port2_oe", 5),
     ("sci_tx", 1),
     ("sci_clock", 1),
+    ("sci_external_subcycles", 3),
     ("irq1_pending", 1),
     ("irq2_pending", 1),
     ("rame", 1),
@@ -123,6 +124,7 @@ def build_mode(mode: int) -> list[int]:
             "port2_oe": port2_oe,
             "sci_tx": state.sci_tx,
             "sci_clock": bool(state.timer & (sci_divisor >> 1)),
+            "sci_external_subcycles": state.sci_external_subcycles,
             "irq1_pending": state.irq1_pending,
             "irq2_pending": state.irq2_pending,
             "rame": state.rame,
@@ -174,6 +176,27 @@ def build_mode(mode: int) -> list[int]:
             cycle(port2=level << 3, interrupt_mask=False)
     read(0x0011, interrupt_mask=False)
     read(0x0012, interrupt_mask=False)
+
+    # Externally clocked NRZ uses P22 as an input and divides its positive
+    # edges by eight. Exercise simultaneous transmit and receive while varying
+    # no timer-derived speed-select assumption.
+    write(0x0011, 0x00)
+    write(0x0010, 0x0C)
+    read(0x0011)
+    write(0x0013, 0x69)
+    write(0x0011, 0x0A)
+
+    def external_serial_bit(level: int) -> None:
+        for _ in range(8):
+            cycle(port2=(level & 1) << 3, interrupt_mask=False)
+            cycle(port2=((level & 1) << 3) | 0x04, interrupt_mask=False)
+
+    for _ in range(9):
+        external_serial_bit(1)
+    for level in [0, *(0xC3 >> bit & 1 for bit in range(8)), 1]:
+        external_serial_bit(level)
+    read(0x0011, port2=0x0C, interrupt_mask=False)
+    read(0x0012, port2=0x0C, interrupt_mask=False)
 
     rng = random.Random(SEEDS[mode])
     addresses = [

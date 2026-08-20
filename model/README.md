@@ -52,7 +52,9 @@ transactions and E-cycle events rather than either CPU execution state machine.
 It models mode-selected registers, RAM/ROM/vector sources, Mode-4 RAM aliases
 and one-way Mode-5 transition, normalized external selection, GPIO/address
 functions, the capture/compare/overflow timer and ordered flag protocols,
-internally clocked NRZ SCI framing/status, and retained IRQ1/IRQ2 requests.
+internally or externally clocked NRZ SCI framing/status, and retained IRQ1/IRQ2
+requests. The external-clock path independently counts eight sampled P22
+positive edges per serial bit.
 MC6803 users select only its documented Modes 2/3; no behavior is assigned to
 the modes which that device's manual leaves undefined.
 

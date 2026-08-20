@@ -26,12 +26,13 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 102 |
+| Python unit tests | 103 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801 Mode 0-7/1R/6R decode checks | 62 |
 | MC6801 real-core mode boot paths | 2 |
+| MC6801 external-clock SCI checks | 165 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
 | HD6301V1 Mode-7 integration checks | 31 |
 | HD6303R Mode-2 integration checks | 18 |
@@ -88,18 +89,23 @@ external reset-vector decode, expanded-mode register exclusions, physical-pin
 GPIO reads, write-only DDR reads, RAME-controlled RAM, Mode 3 external RAM,
 synchronized input capture, ordered ICF clearing, output compare, IRQ1-over-
 timer priority, distinct vectors, NRZ transmit framing, center-sampled receive,
-SCI overrun retention, MC6801 misframed-byte transfer, status-clearing
-protocols, sticky SCI pin direction,
+SCI overrun retention, MC6801 misframed-byte transfer, P22-forced input in
+external clock mode, exact eight-positive-edge bit division, simultaneous
+external-clock transmit/receive, status-clearing protocols, sticky SCI pin
+direction,
 and a one-cycle IRQ1 pulse which arrives after IRQ2 entry has started and wins
 the documented late vector-priority selection. It also removes a timer source's
 identity after latching IRQ2 and verifies the documented default SCI vector.
 
-The independent Python device model has twelve focused regressions for all-mode
+The independent Python device model has thirteen focused regressions for all-mode
 decode, RAM/ROM/vector behavior, physical-pin GPIO behavior and SCI direction overrides,
 coherent timer reads and ordered status clears, second-cycle input capture,
 overflow/compare events, retained IRQ priority, and internally clocked NRZ
-transmit/receive with unread-data overrun retention. Its cycle/event structure
-is separate from the RTL wrapper.
+transmit/receive with unread-data overrun retention. The additional external
+NRZ regression proves that a stationary P22 clock cannot advance serial state,
+then compares the transmitted and received ten-bit frames after exactly eight
+positive P22 edges per bit. Its cycle/event structure is separate from the RTL
+wrapper.
 
 Two recorded seeds, `0x68030002` and `0x68030003`, drive 768 E-cycle
 transactions per mode through a verification-only CPU bus source. After every
@@ -252,12 +258,12 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 11,044 | 1,432 |
-| MC6801 Mode 4/5 integration | 10,993 | 1,471 |
+| MC6801 Mode 2 integration | 11,099 | 1,436 |
+| MC6801 Mode 4/5 integration | 10,980 | 1,475 |
 | HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 7 integration | 12,056 | 1,481 |
-| HD6303R Mode 2 integration | 12,163 | 1,443 |
-| HD63701V0 Mode 7 integration | 13,862 | 1,992 |
+| HD6301V1 Mode 7 integration | 12,129 | 1,485 |
+| HD6303R Mode 2 integration | 12,236 | 1,447 |
+| HD63701V0 Mode 7 integration | 13,902 | 1,996 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

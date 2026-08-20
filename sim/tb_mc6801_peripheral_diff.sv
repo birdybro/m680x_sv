@@ -142,6 +142,7 @@ module tb_mc6801_peripheral_diff #(
           dut.irq2_pending !== expected.irq2_pending ||
           dut.rame !== expected.rame || dut.standby_power !== expected.standby_power ||
           sci_tx !== expected.sci_tx || sci_clock !== expected.sci_clock ||
+          dut.sci_external_subcycles !== expected.sci_external_subcycles ||
           retire || illegal || undefined_value || waiting_state || sleeping_state ||
           interrupt_ack ||
           debug_pc !== 16'h0000 || debug_sp !== 16'h0000 || debug_a !== 8'h00 ||

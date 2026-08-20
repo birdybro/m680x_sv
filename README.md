@@ -119,7 +119,7 @@ cycle boundaries being checked.
 Pin-level MC6800 phase generation/electrical timing, physical MC6801/MC6803
 bus multiplexing and complete Port 3 handshake timing, Hitachi
 MCU modes outside HD6301V1/HD63701V0 Mode 7 and HD6303R Mode 2, analog EPROM
-programming physics, unsupported asynchronous-SCI clock formats, and complete
+programming physics, bi-phase SCI coding, and complete
 manufacturer bus waveforms outside the specifically verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by
 the integrator; their externally described vector and programming controls are

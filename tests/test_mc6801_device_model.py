@@ -253,6 +253,39 @@ class MC6801DeviceModelTests(unittest.TestCase):
         self.assertFalse(model.state.rdrf)
         self.assertFalse(model.state.orfe)
 
+    def test_external_nrz_clock_divides_p22_edges_by_eight(self) -> None:
+        model = MC6801DeviceModel(2)
+        self.write(model, 0x0001, 0x04)
+        self.write(model, 0x0010, 0x0C)
+        self.assertEqual(model.port_outputs()[3] & 0x04, 0)
+        self.read(model, 0x0011)
+        self.write(model, 0x0013, 0xA6)
+        self.write(model, 0x0011, 0x0A)
+
+        for _ in range(32):
+            self.idle(model, port2=0x0C)
+        self.assertFalse(model.state.tdre)
+        self.assertEqual(model.state.tx_marks, 9)
+        self.assertEqual(model.state.sci_external_subcycles, 0)
+
+        def external_bit(level: int) -> None:
+            for _ in range(8):
+                self.idle(model, port2=level << 3)
+                self.idle(model, port2=(level << 3) | 0x04)
+
+        for _ in range(9):
+            external_bit(1)
+        transmitted = []
+        for level in [0, *(0xC3 >> bit & 1 for bit in range(8)), 1]:
+            external_bit(level)
+            transmitted.append(model.state.sci_tx)
+
+        self.assertEqual(transmitted, [0, *(0xA6 >> bit & 1 for bit in range(8)), 1])
+        self.assertTrue(model.state.tdre)
+        self.assertTrue(model.state.rdrf)
+        self.assertFalse(model.state.orfe)
+        self.assertEqual(model.state.receive_data, 0xC3)
+
     def test_mc6801_framing_error_transfers_misframed_byte(self) -> None:
         model = MC6801DeviceModel()
         self.write(model, 0x0010, 0x04)

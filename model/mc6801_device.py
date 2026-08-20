@@ -110,6 +110,8 @@ class MC6801PeripheralState:
     rx_bit: int = 0
     rx_shift: int = 0
     wake_marks: int = 0
+    sci_clock_previous: bool = True
+    sci_external_subcycles: int = 0
     irq1_pending: bool = False
     irq2_pending: bool = False
 
@@ -141,6 +143,7 @@ class MC6801PeripheralState:
             "TRCSR": self.trcsr,
             "RDR": self.receive_data,
             "sci_tx": self.sci_tx,
+            "sci_external_subcycles": self.sci_external_subcycles,
             "irq1_pending": self.irq1_pending,
             "irq2_pending": self.irq2_pending,
         }
@@ -633,10 +636,27 @@ class MC6801DeviceModel:
         s = self.state
         old_control = s.trcsr_control
         divisor = SCI_DIVISORS[s.rmcr & 0x03]
-        bit_tick = ((s.timer & (divisor - 1)) == 0)
-        internal_nrz = (s.rmcr >> 2) in {1, 2}
+        clock_pin = bool(inputs.port2 & 0x04)
+        external_clock_rise = not s.sci_clock_previous and clock_pin
+        external_nrz = (s.rmcr >> 2) == 3
+        nrz_format = (s.rmcr >> 2) != 0
+        if external_nrz:
+            bit_tick = external_clock_rise and s.sci_external_subcycles == 7
+            count_event = external_clock_rise
+            half_interval = 4
+            bit_interval = 8
+        else:
+            bit_tick = (s.timer & (divisor - 1)) == 0
+            count_event = True
+            half_interval = divisor // 2
+            bit_interval = divisor
         receive_pin = bool(inputs.port2 & 0x08)
 
+        s.sci_clock_previous = clock_pin
+        if external_nrz and external_clock_rise:
+            s.sci_external_subcycles = (s.sci_external_subcycles + 1) & 0x07
+        elif not external_nrz:
+            s.sci_external_subcycles = 0
         s.rx_previous, previous_pin = receive_pin, s.rx_previous
         if internal_read and address == 0x0011:
             s.status_armed = (int(s.rdrf or s.orfe) << 1) | int(s.tdre)
@@ -648,6 +668,7 @@ class MC6801DeviceModel:
         if internal_write:
             if address == 0x0010:
                 s.rmcr = inputs.data & 0x0F
+                s.sci_external_subcycles = 0
             elif address == 0x0011:
                 s.trcsr_control = inputs.data & 0x1F
                 if not old_control & 0x02 and inputs.data & 0x02:
@@ -671,7 +692,7 @@ class MC6801DeviceModel:
             else:
                 s.wake_marks = 0
 
-        if bit_tick and internal_nrz and old_control & 0x02:
+        if bit_tick and nrz_format and old_control & 0x02:
             if s.tx_marks:
                 s.tx_marks -= 1
             elif s.tx_bits:
@@ -690,27 +711,27 @@ class MC6801DeviceModel:
                 s.tx_bits = 10
                 s.tdre = True
 
-        if not old_control & 0x08 or not internal_nrz or old_control & 0x01:
+        if not old_control & 0x08 or not nrz_format or old_control & 0x01:
             s.rx_busy = False
         elif not s.rx_busy:
             if previous_pin and not receive_pin:
                 s.rx_busy = True
-                s.rx_countdown = divisor // 2
+                s.rx_countdown = half_interval
                 s.rx_bit = 0
-        elif s.rx_countdown > 1:
+        elif count_event and s.rx_countdown > 1:
             s.rx_countdown -= 1
-        elif s.rx_bit == 0:
+        elif count_event and s.rx_bit == 0:
             if receive_pin:
                 s.rx_busy = False
             else:
                 s.rx_bit = 1
-                s.rx_countdown = divisor
-        elif s.rx_bit <= 8:
+                s.rx_countdown = bit_interval
+        elif count_event and s.rx_bit <= 8:
             mask = 1 << (s.rx_bit - 1)
             s.rx_shift = (s.rx_shift | mask) if receive_pin else (s.rx_shift & ~mask)
             s.rx_bit += 1
-            s.rx_countdown = divisor
-        else:
+            s.rx_countdown = bit_interval
+        elif count_event:
             s.rx_busy = False
             if not receive_pin:
                 if self.transfer_framing_error and not s.rdrf and not s.orfe:
@@ -718,7 +739,7 @@ class MC6801DeviceModel:
                 s.orfe = True
                 s.rx_busy = True
                 s.rx_bit = 1
-                s.rx_countdown = divisor
+                s.rx_countdown = bit_interval
             elif s.rdrf or s.orfe:
                 s.orfe = True
             else:
