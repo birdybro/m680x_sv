@@ -19,11 +19,22 @@ class DeviceSpecificationTests(unittest.TestCase):
     def test_repository_device_specification_is_valid(self) -> None:
         validate_devices.validate_devices(self.spec, self.references)
 
-    def test_no_current_v1_dimension_is_claimed_complete(self) -> None:
-        for device in self.spec["devices"]:
-            if device["release_target"] != "v1":
-                continue
-            self.assertNotIn("COMPLETE", device["status"].values(), device["id"])
+    def test_complete_claims_are_narrow_and_evidenced(self) -> None:
+        complete = {
+            (device["id"], dimension)
+            for device in self.spec["devices"]
+            if device["release_target"] == "v1"
+            for dimension, status in device["status"].items()
+            if status == "COMPLETE"
+        }
+        self.assertEqual(complete, {("mc68705p5", "internal_memory")})
+        for evidence_path in (
+            "model/mc68705p5_device.py",
+            "sim/tb_mc68705p5_peripheral_diff.sv",
+            "spec/peripherals/mc68705p5.json",
+            "spec/interfaces/mc68705p5_mcu.json",
+        ):
+            self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)
 
     def test_partial_claims_match_committed_implementation_evidence(self) -> None:
         devices = {device["id"]: device for device in self.spec["devices"]}
@@ -33,8 +44,9 @@ class DeviceSpecificationTests(unittest.TestCase):
             self.assertEqual(device["status"]["cycle_count_tests"], "PARTIAL")
             self.assertEqual(device["status"]["bus_trace_tests"], "PARTIAL")
         p5 = devices["mc68705p5"]["status"]
-        for dimension in ("device_wrapper", "internal_memory", "gpio", "timer"):
+        for dimension in ("device_wrapper", "gpio", "timer"):
             self.assertEqual(p5[dimension], "PARTIAL")
+        self.assertEqual(p5["internal_memory"], "COMPLETE")
         self.assertEqual(devices["mc6800"]["status"]["device_wrapper"], "PARTIAL")
         mc6801 = devices["mc6801"]["status"]
         for dimension in ("device_wrapper", "internal_memory", "gpio", "timer", "serial"):

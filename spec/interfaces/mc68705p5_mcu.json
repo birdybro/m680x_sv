@@ -38,7 +38,7 @@
   "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locators": ["memory, timer, reset, interrupt, mask-option, on-chip programming, and programming-firmware sections, printed pages 5-17"]}],
   "implementation_status": {
     "normalized_digital_interface": "PARTIAL",
-    "single_chip_memory": "PARTIAL",
+    "single_chip_memory": "COMPLETE",
     "gpio_and_interrupt_pins": "PARTIAL",
     "bootstrap_and_programming_controls": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",

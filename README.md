@@ -8,10 +8,12 @@ and deterministic verification. The model includes separate CPU-instruction,
 MC6801/MC6803 device-cycle, all-legal-mode HD6301V1/HD63701V0, and
 HD63705V0 transaction paths.
 
-The project is under active development. Every current implementation claim is
-`PARTIAL`; no processor or MCU is represented as production-complete. The
-evidence-backed target matrix is in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)
-and its authoritative structured form is [spec/devices.yml](spec/devices.yml).
+The project is under active development. Every processor and whole-MCU support
+row remains `PARTIAL`; narrowly scoped dimensions become `COMPLETE` only after
+exhaustive evidence. MC68705P5 internal-memory decode is the first such closed
+dimension. The evidence-backed target matrix is in
+[docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and its authoritative structured
+form is [spec/devices.yml](spec/devices.yml).
 
 ## Clean-room engineering
 
@@ -151,7 +153,9 @@ the integrator; their externally described vector and programming controls are
 implemented without redistributing the firmware image. Its normalized digital
 boundary covers all eight documented PCR/VPP table rows, prevents software from
 entering either invalid PGE/PLE encoding, and exposes latch/program
-requests while leaving voltage and pulse physics to the integrator.
+requests while leaving voltage and pulse physics to the integrator. Its complete
+11-bit memory partition and all 112 RAM bytes are exhaustively checked, including
+RAM retention across reset.
 The HD63705V0 digital programming boundary does implement all five documented
 read/output-disable/program/verify/disable states; separate +5-V-read and VPP
 qualifiers avoid conflating voltage states while leaving their analog

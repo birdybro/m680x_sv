@@ -52,9 +52,13 @@ secure-qualified bootstrap vector, and digital PCR address/data/program
 sequencing. All eight rows of Motorola's PCR/VPP table are classified; every
 software encoding is directly checked with and without VPP, the invalid PGE/PLE
 combination is unreachable, and all 2,048 programming addresses are classified.
-A 768-cycle independent peripheral model/RTL comparison covers the normalized
-boundary. EPROM voltage/pulse/retention physics and the copyrighted factory
-bootstrap-ROM image remain outside the distributable implementation.
+The internal-memory dimension is `COMPLETE`: independent classification and
+direct RTL checks account for all 2,048 normal-mode addresses, all 112 RAM bytes
+are checked before and after reset, and the program/MOR/bootstrap/vector regions
+are individually selected. A 768-cycle independent peripheral model/RTL
+comparison covers the normalized boundary. EPROM voltage/pulse/retention physics
+and the copyrighted factory bootstrap-ROM image remain outside the distributable
+implementation.
 
 The MC6800 device-wrapper claim covers normalized digital HALT/TSC/DBE/VMA/BA
 and three-state ownership behavior, including interrupt retention while halted.

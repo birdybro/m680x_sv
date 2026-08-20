@@ -58,6 +58,7 @@ The committed tests cover:
 | MC68705P5 integration checks | 21 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
 | MC68705P5 PCR/VPP table checks | 8 |
+| MC68705P5 exhaustive memory-map/RAM checks | 2,272 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
@@ -309,12 +310,15 @@ after the instruction following CLI. The MC68705P5 suites add register/RAM
 decode, DDR behavior, mixed-direction GPIO reads, all four timer sources and
 all prescalers, TOPT/MOR-fixed timer behavior, timer request clearing,
 simultaneous external/timer priority, distinct vectors, secure-qualified
-bootstrap selection, and PCR/VPP address/data/program sequencing. Eight focused
+bootstrap selection, and PCR/VPP address/data/program sequencing. Nine focused
 Python model tests classify every manufacturer PCR-table row, exhaustively
-project the 11-bit programming address decode, and cover memory, GPIO, timer,
-interrupt, and bootstrap behavior. Seed `0x68705a05` provides 768 cycle-by-cycle
-comparisons without sharing the RTL control structure; eight additional direct
-RTL checks exercise every software PCR encoding both with and without VPP.
+project both normal and programming address partitions, and cover memory, GPIO,
+timer, interrupt, and bootstrap behavior. Seed `0x68705a05` provides 768
+cycle-by-cycle comparisons without sharing the RTL control structure; eight
+additional direct RTL checks exercise every software PCR encoding both with and
+without VPP. A 2,048-address RTL sweep proves program-memory selection and data
+source at every location, then 224 checks read every RAM byte before and after
+reset to prove decode and retention.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
 boundaries and the complete register map. Its 34 checks cover reset/vector

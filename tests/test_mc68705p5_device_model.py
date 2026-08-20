@@ -98,6 +98,30 @@ class MC68705P5DeviceModelTests(unittest.TestCase):
         # 1804 user bytes plus the separately addressed mask-option byte.
         self.assertEqual(programmable, 1805)
 
+    def test_normal_memory_map_partition_is_exhaustive(self) -> None:
+        program = Memory()
+        model = MC68705P5DeviceModel(program_memory=program)
+        counts = {"io": 0, "ram": 0, "program": 0, "storage_read": 0}
+        for address in range(0x800):
+            classes = (
+                address < 0x010,
+                model.ram_is_internal(address),
+                model.program_is_internal(address),
+            )
+            self.assertEqual(sum(classes), 1, f"address {address:03x}")
+            counts[("io", "ram", "program")[classes.index(True)]] += 1
+            program[address] = (address ^ 0xA6) & 0xFF
+            result = self.read(model, address)
+            self.assertEqual(result.program_address, address)
+            expected_read = model.program_storage_address(address)
+            self.assertEqual(result.program_read, expected_read)
+            if expected_read:
+                counts["storage_read"] += 1
+                self.assertEqual(result.read_data, (address ^ 0xA6) & 0xFF)
+        self.assertEqual(
+            counts, {"io": 16, "ram": 112, "program": 1920, "storage_read": 1919}
+        )
+
     def test_memory_gpio_and_reset_preserve_ram(self) -> None:
         program = Memory()
         program[0x080] = 0xA5

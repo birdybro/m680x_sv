@@ -458,8 +458,11 @@ latches address/data, `PLE=0,PGE=0` requests programming, and `PLE=1` permits
 reads. Software writes attempting either invalid `PGE=0,PLE=1` row are coerced
 to `PGE=1`, as required by the register description.
 `model/mc68705p5_device.py` independently models these transactions, memory,
-GPIO, timer, and interrupt state; a generated 768-cycle corpus compares every
-exposed state boundary. The interface contract is
+GPIO, timer, and interrupt state. The normal memory map partitions all 2,048
+addresses into 16 I/O, 112 RAM, and 1,920 program/MOR locations without a hole
+or overlap; the RTL separately sweeps every address and reads all RAM bytes on
+both sides of reset. A generated 768-cycle corpus compares every exposed state
+boundary. The interface contract is
 [spec/interfaces/mc68705p5_mcu.json](../spec/interfaces/mc68705p5_mcu.json).
 
 ## HD63705V0 integration

@@ -35,7 +35,10 @@ module tb_mc68705p5_peripheral_diff;
   logic [7:0] debug_pcr;
   mc68705p5_peripheral_vector_t expected;
   integer cycle_index;
+  integer memory_index;
+  integer memory_checks;
   integer pcr_checks;
+  logic expected_program_read;
 
   /* verilator lint_off PINCONNECTEMPTY */
   mc68705p5_mcu dut (
@@ -119,6 +122,7 @@ module tb_mc68705p5_peripheral_diff;
     stub_write = 1'b0;
     stub_valid = 1'b0;
     stub_interrupt_mask = 1'b1;
+    memory_checks = 0;
     pcr_checks = 0;
     #1;
     reset_n = 1'b0;
@@ -200,8 +204,92 @@ module tb_mc68705p5_peripheral_diff;
     check_pcr_write(1'b1, 2'b10, 8'hfa, 1'b1, 1'b0, 1'b0);
     check_pcr_write(1'b1, 2'b11, 8'hfb, 1'b0, 1'b0, 1'b1);
 
-    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d PCR states=%0d",
-             32'h68705a05, MC68705P5_PERIPHERAL_VECTOR_COUNT, pcr_checks);
+    // Figure 4 accounts for every physical address: I/O, RAM, user EPROM,
+    // MOR, bootstrap ROM, or vector EPROM. PCR is disconnected for ordinary
+    // reads, and the integration-owned program byte is address-distinct.
+    stub_valid = 1'b0;
+    reset_n = 1'b0;
+    #1;
+    vpp_present = 1'b0;
+    bootstrap_voltage = 1'b0;
+    port_a_in = 8'hff;
+    port_b_in = 8'hff;
+    port_c_in = 4'hf;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    for (memory_index = 0; memory_index < 2048;
+         memory_index = memory_index + 1) begin
+      stub_address = memory_index[15:0];
+      program_data = memory_index[7:0] ^ 8'ha6;
+      expected_program_read =
+        ((memory_index >= 'h080) && (memory_index <= 'h783)) ||
+        ((memory_index >= 'h785) && (memory_index <= 'h7ff));
+      #1;
+      if (program_address !== memory_index[10:0] ||
+          program_read !== expected_program_read) begin
+        $fatal(1, "MC68705P5 memory select address=%03x storage_address=%03x read=%b/%b",
+               memory_index[10:0], program_address, program_read,
+               expected_program_read);
+      end
+      if (!((memory_index >= 'h010) && (memory_index <= 'h07f))) begin
+        if (expected_program_read && dut.core_data_in !== program_data) begin
+          $fatal(1, "MC68705P5 program read address=%03x data=%02x/%02x",
+                 memory_index[10:0], dut.core_data_in, program_data);
+        end else if ((memory_index == 'h784) && dut.core_data_in !== 8'h00) begin
+          $fatal(1, "MC68705P5 MOR read data=%02x", dut.core_data_in);
+        end else if (!expected_program_read && (memory_index != 'h784) &&
+                     (memory_index != 'h009) && dut.core_data_in !== 8'hff) begin
+          $fatal(1, "MC68705P5 I/O/reserved read address=%03x data=%02x",
+                 memory_index[10:0], dut.core_data_in);
+        end else if ((memory_index == 'h009) && dut.core_data_in !== 8'h40) begin
+          $fatal(1, "MC68705P5 reset TCR read data=%02x", dut.core_data_in);
+        end
+      end
+      memory_checks = memory_checks + 1;
+    end
+
+    // Fill every physical RAM byte with an address-derived value, read all of
+    // them back, assert reset, then prove the manufacturer-unspecified RAM is
+    // retained rather than silently initialized by the wrapper.
+    reset_n = 1'b1;
+    #1;
+    for (memory_index = 'h010; memory_index <= 'h07f;
+         memory_index = memory_index + 1) begin
+      stub_address = memory_index[15:0];
+      stub_data = memory_index[7:0] ^ 8'h5a;
+      stub_write = 1'b1;
+      tick();
+    end
+    stub_write = 1'b0;
+    for (memory_index = 'h010; memory_index <= 'h07f;
+         memory_index = memory_index + 1) begin
+      stub_address = memory_index[15:0];
+      #1;
+      if (dut.core_data_in !== (memory_index[7:0] ^ 8'h5a)) begin
+        $fatal(1, "MC68705P5 RAM read address=%03x data=%02x",
+               memory_index[10:0], dut.core_data_in);
+      end
+      memory_checks = memory_checks + 1;
+    end
+    stub_valid = 1'b0;
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    stub_valid = 1'b1;
+    for (memory_index = 'h010; memory_index <= 'h07f;
+         memory_index = memory_index + 1) begin
+      stub_address = memory_index[15:0];
+      #1;
+      if (dut.core_data_in !== (memory_index[7:0] ^ 8'h5a)) begin
+        $fatal(1, "MC68705P5 RAM retention address=%03x data=%02x",
+               memory_index[10:0], dut.core_data_in);
+      end
+      memory_checks = memory_checks + 1;
+    end
+
+    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d PCR states=%0d memory checks=%0d",
+             32'h68705a05, MC68705P5_PERIPHERAL_VECTOR_COUNT, pcr_checks,
+             memory_checks);
     $finish;
   end
 endmodule
