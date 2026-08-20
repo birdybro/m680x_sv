@@ -267,13 +267,20 @@ The wrapper currently implements:
 - the eight-bit wrapping down-counter, seven-bit programmable prescaler,
   TOPT-dependent TCR reads/writes, timer mask/request, and input-mode selection;
 - falling-edge-latched external INT above timer interrupt priority; and
-- the PCR's digital control state plus an immutable `MASK_OPTION` parameter.
+- the PCR's digital control state, immutable `MASK_OPTION` parameter,
+  high-voltage bootstrap selection, and latched EPROM program address/data.
 
 `program_address_o`, `program_read_o`, and `program_data_i` connect the user
 EPROM, bootstrap ROM, and vector regions to an FPGA firmware memory. This keeps
 copyrighted Motorola bootstrap bytes outside the repository and lets the system
 choose its ROM initialization mechanism. Analog VPP/EPROM programming physics
-are excluded; the digital PCR control outputs are exposed for integration.
+are excluded. `bootstrap_voltage_i` selects the documented `$07f6:$07f7`
+bootstrap vector unless MOR secure mode is set. The PCR/VPP-qualified latch and
+program outputs carry a stable user-EPROM/MOR/vector address and byte to an
+integration-owned storage programmer. `model/mc68705p5_device.py` independently
+models these transactions, memory, GPIO, timer, and interrupt state; a generated
+768-cycle corpus compares every exposed state boundary. The interface contract
+is [spec/interfaces/mc68705p5_mcu.json](../spec/interfaces/mc68705p5_mcu.json).
 
 ## HD63705V0 integration
 

@@ -77,9 +77,18 @@ The model explicitly resynchronizes TIMER and CK levels while stopped so that
 recovery cannot manufacture an edge which occurred while peripheral clocks
 were disabled.
 
+`mc68705p5_device.py` independently owns the P5's 11-bit memory partitions,
+GPIO/DDR rules, four timer input modes, programmable and MOR-fixed prescalers,
+external/timer priority, bootstrap-vector selection, and VPP/PCR-qualified
+EPROM address/data latch. It treats the bootstrap program as integration-owned
+program memory and does not reproduce Motorola's factory ROM bytes.
+
 `tools/build_mc6801_peripheral_vectors.py` records independent model results
 for 768 transactions in each expanded mode. A verification-only bus source
 then presents those exact transactions to the peripheral RTL without using the
 CPU execution engine as an oracle.
 `tools/build_hd63705_peripheral_vectors.py` does the same for 768 HD63705V0
 transactions, including a directed protocol prefix and seed `0x63705000`.
+`tools/build_mc68705p5_peripheral_vectors.py` records 768 P5 transactions with
+seed `0x68705a05`, including all timer source classes, both RAM boundaries,
+interrupt acknowledgement, bootstrap vectors, and EPROM latch/program phases.

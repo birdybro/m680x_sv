@@ -26,8 +26,12 @@ module mc68705p5_mcu #(
   output logic        program_read_o,
   input  logic [7:0]  program_data_i,
   input  logic        vpp_present_i,
+  input  logic        bootstrap_voltage_i,
+  output logic        bootstrap_mode_o,
   output logic        eprom_latch_enable_o,
   output logic        eprom_program_enable_o,
+  output logic [10:0] eprom_program_address_o,
+  output logic [7:0]  eprom_program_data_o,
   output logic        timer_irq_o,
   output logic        external_irq_o,
   output logic        opcode_fetch_o,
@@ -46,7 +50,8 @@ module mc68705p5_mcu #(
   output logic [7:0]  debug_opcode_o,
   output logic [3:0]  debug_instruction_cycles_o,
   output logic [7:0]  debug_timer_o,
-  output logic [7:0]  debug_timer_control_o
+  output logic [7:0]  debug_timer_control_o,
+  output logic [7:0]  debug_program_control_o
 );
   localparam logic [15:0] TIMER_VECTOR = 16'h07f8;
   localparam logic [15:0] EXTERNAL_VECTOR = 16'h07fa;
@@ -68,6 +73,8 @@ module mc68705p5_mcu #(
   logic external_request;
   logic pcr_latch_enable;
   logic pcr_program_enable;
+  logic [10:0] eprom_address_latch;
+  logic [7:0] eprom_data_latch;
   logic timer_input_event;
   logic timer_counter_event;
   logic timer_tin;
@@ -76,17 +83,52 @@ module mc68705p5_mcu #(
   logic [6:0] timer_prescale_mask;
   logic [7:0] core_data_in;
   logic [7:0] core_data_out;
+  // The generic core computes sixteen-bit effective addresses; the physical
+  // MC68705P5 device boundary exposes and decodes only A10:A0.
+  /* verilator lint_off UNUSEDSIGNAL */
   logic [15:0] core_address;
+  /* verilator lint_on UNUSEDSIGNAL */
   logic [15:0] core_irq_vector;
   logic [15:0] core_debug_pc;
   logic core_write;
   logic core_bus_valid;
   logic irq_n;
+  logic bootstrap_select;
+  logic bootstrap_active;
+  logic bootstrap_effective;
+  logic [1:0] reset_vector_phase;
+  logic [10:0] selected_program_address;
 
-  function automatic logic program_address(input logic [10:0] address_value);
-    program_address = ((address_value >= 11'h080) && (address_value <= 11'h783)) ||
-                      (address_value >= 11'h785);
+  function automatic logic program_storage_address(input logic [10:0] address_value);
+    program_storage_address =
+      ((address_value >= 11'h080) && (address_value <= 11'h783)) ||
+      (address_value >= 11'h785);
   endfunction
+
+  function automatic logic bootstrap_rom_address(input logic [10:0] address_value);
+    bootstrap_rom_address = (address_value >= 11'h785) &&
+                            (address_value <= 11'h7f7);
+  endfunction
+
+  function automatic logic eprom_address(input logic [10:0] address_value);
+    eprom_address = ((address_value >= 11'h080) && (address_value <= 11'h784)) ||
+                    (address_value >= 11'h7f8);
+  endfunction
+
+  assign bootstrap_select = bootstrap_voltage_i && !MASK_OPTION[3];
+  assign bootstrap_effective = (reset_vector_phase == 2'd0) ?
+                               bootstrap_select : bootstrap_active;
+
+  always_comb begin
+    selected_program_address = core_address[10:0];
+    if (bootstrap_effective && (reset_vector_phase == 2'd0) &&
+        (core_address[10:0] == RESET_VECTOR[10:0])) begin
+      selected_program_address = 11'h7f6;
+    end else if (bootstrap_effective && (reset_vector_phase == 2'd1) &&
+                 (core_address[10:0] == (RESET_VECTOR[10:0] + 11'h001))) begin
+      selected_program_address = 11'h7f7;
+    end
+  end
 
   always_comb begin
     if (MASK_OPTION[6]) begin
@@ -138,8 +180,11 @@ module mc68705p5_mcu #(
       default: begin
         if ((core_address[10:0] >= 11'h010) && (core_address[10:0] <= 11'h07f)) begin
           core_data_in = ram[core_address[6:0] - 7'h10];
-        end else if (program_address(core_address[10:0])) begin
-          core_data_in = program_data_i;
+        end else if (program_storage_address(selected_program_address)) begin
+          if (bootstrap_rom_address(selected_program_address) ||
+              !vpp_present_i || pcr_latch_enable) begin
+            core_data_in = program_data_i;
+          end
         end
       end
     endcase
@@ -162,9 +207,22 @@ module mc68705p5_mcu #(
       external_request <= 1'b0;
       pcr_latch_enable <= 1'b1;
       pcr_program_enable <= 1'b1;
+      eprom_address_latch <= 11'h000;
+      eprom_data_latch <= 8'h00;
+      bootstrap_active <= 1'b0;
+      reset_vector_phase <= 2'd0;
     end else if (clock_enable_i) begin
       timer_pin_previous <= timer_i;
       int_pin_previous <= int_n_i;
+
+      if ((reset_vector_phase == 2'd0) && core_bus_valid && !core_write &&
+          (core_address[10:0] == RESET_VECTOR[10:0])) begin
+        bootstrap_active <= bootstrap_select;
+        reset_vector_phase <= 2'd1;
+      end else if ((reset_vector_phase == 2'd1) && core_bus_valid && !core_write &&
+                   (core_address[10:0] == (RESET_VECTOR[10:0] + 11'h001))) begin
+        reset_vector_phase <= 2'd2;
+      end
 
       if (int_pin_previous && !int_n_i) external_request <= 1'b1;
       if (core_bus_valid && !core_write && (core_address[10:0] == 11'h7fa)) begin
@@ -205,6 +263,11 @@ module mc68705p5_mcu #(
           end
           default: ;
         endcase
+        if (eprom_address(core_address[10:0]) && vpp_present_i &&
+            !pcr_latch_enable && pcr_program_enable) begin
+          eprom_address_latch <= core_address[10:0];
+          eprom_data_latch <= core_data_out;
+        end
       end
     end
   end
@@ -263,15 +326,24 @@ module mc68705p5_mcu #(
   assign port_a_oe_o = port_a_ddr;
   assign port_b_oe_o = port_b_ddr;
   assign port_c_oe_o = port_c_ddr;
-  assign program_address_o = core_address[10:0];
-  assign program_read_o = core_bus_valid && !core_write && program_address(core_address[10:0]);
-  assign eprom_latch_enable_o = !pcr_latch_enable;
-  assign eprom_program_enable_o = !pcr_program_enable && !pcr_latch_enable && vpp_present_i;
+  assign program_address_o = selected_program_address;
+  assign program_read_o = core_bus_valid && !core_write &&
+                          program_storage_address(selected_program_address) &&
+                          (bootstrap_rom_address(selected_program_address) ||
+                           !vpp_present_i || pcr_latch_enable);
+  assign bootstrap_mode_o = bootstrap_effective;
+  assign eprom_latch_enable_o = !pcr_latch_enable && vpp_present_i;
+  assign eprom_program_enable_o = !pcr_program_enable && !pcr_latch_enable &&
+                                  vpp_present_i;
+  assign eprom_program_address_o = eprom_address_latch;
+  assign eprom_program_data_o = eprom_data_latch;
   assign timer_irq_o = timer_control[7] && !timer_control[6];
   assign external_irq_o = external_request;
-  assign debug_address_o = core_address;
+  assign debug_address_o = {5'h00, core_address[10:0]};
   assign debug_pc_o = core_debug_pc;
   assign debug_timer_o = timer_data;
   assign debug_timer_control_o = MASK_OPTION[6] ? {timer_control[7:6], 6'h3f} :
                                                   timer_control;
+  assign debug_program_control_o = {5'h1f, !vpp_present_i,
+                                    pcr_program_enable, pcr_latch_enable};
 endmodule

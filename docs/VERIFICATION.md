@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 90 |
+| Python unit tests | 95 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
@@ -37,11 +37,12 @@ The committed tests cover:
 | HD63705V0 integration checks | 27 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | M6805 directed core checks | 13 |
-| MC68705P5 integration checks | 11 |
+| MC68705P5 integration checks | 21 |
+| MC68705P5 peripheral model/RTL cycle comparisons | 768 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 10 at depth 10 |
+| Bounded formal profiles | 11 at depth 10 |
 | Synthesis tops | 12 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
@@ -154,10 +155,14 @@ cycles.
 Directed M6805-lineage tests cover reset, stalls, arithmetic, direct writes,
 BSR/RTS, the five-byte interrupt frame, vector fetch, and RTI restoration. The
 HD6305 profile separately proves that a pending interrupt is accepted only
-after the instruction following CLI. The MC68705P5 suite adds register/RAM
-decode, DDR behavior, mixed-direction GPIO
-reads, timer underflow/mask/request clearing, simultaneous external/timer
-priority, distinct vectors, and firmware-memory decode.
+after the instruction following CLI. The MC68705P5 suites add register/RAM
+decode, DDR behavior, mixed-direction GPIO reads, all four timer sources and
+all prescalers, TOPT/MOR-fixed timer behavior, timer request clearing,
+simultaneous external/timer priority, distinct vectors, secure-qualified
+bootstrap selection, and PCR/VPP address/data/program sequencing. Five focused
+Python model tests and seed `0x68705a05` provide 768 cycle-by-cycle comparisons
+of memory decode, GPIO, timer, interrupts, bootstrap selection, and programming
+controls without sharing the RTL control structure.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
 boundaries and the complete register map. Its 27 checks cover reset/vector
@@ -179,8 +184,8 @@ edge on resume.
 ## Formal checks
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
-HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration, and
-HD6301V1 and HD63701V0 Mode-7 integrations and the HD63705V0 MCU. At
+HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration,
+MC68705P5, HD6301V1 and HD63701V0 Mode-7 integrations, and the HD63705V0 MCU. At
 depth 10 it proves the committed
 safety properties for all symbolic input sequences:
 
@@ -197,6 +202,9 @@ safety properties for all symbolic input sequences:
 - MC6801 external fetches are qualified reads, internal register addresses do
   not escape onto the expanded bus, SCI overrides force documented Port 2
   directions, and MCU state is stable while clock enable is inactive.
+- MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
+  remapping respects secure mode, program reads stay within internal storage,
+  VPP qualifies programming controls, and disabled-cycle state stalls.
 - HD6301V1 program reads occur only in `$f000`-`$ffff`, non-memory instruction
   fetches never select program memory, OS3 is confined to PORT3 accesses, and
   complete digital device state is stable while clock enable is inactive.
@@ -213,8 +221,8 @@ Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
 delay traces, the MC68705P5, HD6301V1, HD6303R, HD63701V0, and HD63705V0
 device suites, both MC6801/MC6803 peripheral differential profiles, and the
-HD63705V0 peripheral differential corpus from the generated package-flattened
-view. Icarus reports its known conservative `always_*`
+MC68705P5 and HD63705V0 peripheral differential corpora from generated
+package-flattened views. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
 hide it.
 
@@ -232,7 +240,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD63701V0 Mode 7 integration | 13,833 | 1,992 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
-| MC68705P5 integration | 6,711 | 1,122 |
+| MC68705P5 integration | 6,940 | 1,144 |
 | HD63705V0 integration | 9,969 | 1,858 |
 
 Cell counts are tool/version/technology dependent and are smoke-test evidence,

@@ -36,7 +36,9 @@
     {"source": "reset", "vector": "7FE:7FF", "priority": 0}
   ],
   "implementation_scope": {
-    "firmware_storage": "Address decode is internal; user EPROM, bootstrap ROM, and vector data use the FPGA firmware-memory port.",
+    "firmware_storage": "Address decode is internal; user EPROM, bootstrap ROM, and vector data use the FPGA firmware-memory port. Copyrighted bootstrap bytes are not redistributed.",
+    "bootstrap": "A separately qualified TIMER-pin high-voltage input selects the 7F6:7F7 vector when MOR secure mode is clear.",
+    "programming": "PCR PLE/PGE plus the digital VPP detector control EPROM read, address/data latch, and program-request outputs. User EPROM, MOR, and vector addresses are programmable; bootstrap ROM is not.",
     "unspecified_port_latch_reset": "The RTL selects deterministic zero for FPGA operation and makes no silicon-equivalence claim for the manufacturer-undefined reset value.",
     "unspecified_ram_reset": "RAM is not reset because the manufacturer reset description does not define its initial contents.",
     "analog_exclusions": ["oscillator analog behavior", "EPROM programming voltage and pulse physics", "pad drive strength"]

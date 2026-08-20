@@ -46,9 +46,12 @@ cycle-total, and ordered semantic-bus comparison against the independent model,
 while the HD6301 profile also implements every documented opcode-error TRAP map
 value. Detailed manufacturer bus-waveform coverage and remaining device-specific
 interrupt sources are not yet complete. The MC68705P5 wrapper additionally has
-tested RAM/register decode, GPIO, base timer behavior, and interrupt priority;
-EPROM programming physics, every timer input/prescaler mode, and bootstrap-mode
-integration remain incomplete.
+tested RAM/register decode, GPIO, every timer input/prescaler mode in both
+software-controlled and fixed-MOR configurations, interrupt priority, the
+secure-qualified bootstrap vector, and digital PCR address/data/program
+sequencing. A 768-cycle independent peripheral model/RTL comparison covers the
+normalized boundary. EPROM voltage/pulse/retention physics and the copyrighted
+factory bootstrap-ROM image remain outside the distributable implementation.
 
 The MC6800 device-wrapper claim covers normalized digital HALT/TSC/DBE/VMA/BA
 and three-state ownership behavior, including interrupt retention while halted.

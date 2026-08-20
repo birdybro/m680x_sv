@@ -17,8 +17,13 @@ module tb_mc68705p5_mcu;
   logic [10:0] program_address;
   logic program_read;
   logic [7:0] program_data;
+  logic vpp_present;
+  logic bootstrap_voltage;
+  logic bootstrap_mode;
   logic eprom_latch_enable;
   logic eprom_program_enable;
+  logic [10:0] eprom_program_address;
+  logic [7:0] eprom_program_data;
   logic timer_irq;
   logic external_irq;
   logic opcode_fetch;
@@ -38,6 +43,7 @@ module tb_mc68705p5_mcu;
   logic [3:0] debug_cycles;
   logic [7:0] debug_timer;
   logic [7:0] debug_timer_control;
+  logic [7:0] debug_program_control;
   logic [7:0] firmware [0:2047];
   integer index;
   integer cycles;
@@ -50,9 +56,12 @@ module tb_mc68705p5_mcu;
     .port_b_o(port_b_out), .port_c_o(port_c_out), .port_a_oe_o(port_a_oe),
     .port_b_oe_o(port_b_oe), .port_c_oe_o(port_c_oe),
     .program_address_o(program_address), .program_read_o(program_read),
-    .program_data_i(program_data), .vpp_present_i(1'b0),
+    .program_data_i(program_data), .vpp_present_i(vpp_present),
+    .bootstrap_voltage_i(bootstrap_voltage), .bootstrap_mode_o(bootstrap_mode),
     .eprom_latch_enable_o(eprom_latch_enable),
-    .eprom_program_enable_o(eprom_program_enable), .timer_irq_o(timer_irq),
+    .eprom_program_enable_o(eprom_program_enable),
+    .eprom_program_address_o(eprom_program_address),
+    .eprom_program_data_o(eprom_program_data), .timer_irq_o(timer_irq),
     .external_irq_o(external_irq), .opcode_fetch_o(opcode_fetch),
     .retire_o(retire), .illegal_o(illegal), .undefined_o(undefined_value),
     .waiting_o(waiting_state), .stopped_o(stopped_state),
@@ -60,7 +69,8 @@ module tb_mc68705p5_mcu;
     .debug_pc_o(debug_pc), .debug_sp_o(debug_sp), .debug_a_o(debug_a),
     .debug_x_o(debug_x), .debug_ccr_o(debug_ccr),
     .debug_opcode_o(debug_opcode), .debug_instruction_cycles_o(debug_cycles),
-    .debug_timer_o(debug_timer), .debug_timer_control_o(debug_timer_control)
+    .debug_timer_o(debug_timer), .debug_timer_control_o(debug_timer_control),
+    .debug_program_control_o(debug_program_control)
   );
 
   assign program_data = firmware[program_address];
@@ -74,17 +84,25 @@ module tb_mc68705p5_mcu;
   endtask
 
   task automatic reset_to(input logic [10:0] address_value);
+    logic [10:0] vector_address;
     begin
-      firmware[11'h7fe] = {5'h00, address_value[10:8]};
-      firmware[11'h7ff] = address_value[7:0];
+      vector_address = bootstrap_voltage ? 11'h7f6 : 11'h7fe;
+      firmware[vector_address] = {5'h00, address_value[10:8]};
+      firmware[vector_address + 11'h001] = address_value[7:0];
       #1;
       reset_n = 1'b0;
       #1;
-      if (!program_read || program_address != 11'h7fe) $fatal(1, "P5 reset vector high");
+      if (!program_read || program_address != vector_address) begin
+        $fatal(1, "P5 reset vector high address=%03x expected=%03x",
+               program_address, vector_address);
+      end
       tick();
       reset_n = 1'b1;
       tick();
-      if (!program_read || program_address != 11'h7ff) $fatal(1, "P5 reset vector low");
+      if (!program_read || program_address != vector_address + 11'h001) begin
+        $fatal(1, "P5 reset vector low address=%03x expected=%03x",
+               program_address, vector_address + 11'h001);
+      end
       tick();
       if (debug_pc[10:0] != address_value || debug_sp != 16'h007f || !debug_ccr[3]) begin
         $fatal(1, "P5 reset architectural state pc=%04x sp=%04x ccr=%02x", debug_pc,
@@ -133,6 +151,8 @@ module tb_mc68705p5_mcu;
     port_a_in = 8'h3c;
     port_b_in = 8'h5a;
     port_c_in = 4'h9;
+    vpp_present = 1'b0;
+    bootstrap_voltage = 1'b0;
     checks = 0;
     for (index = 0; index < 2048; index = index + 1) firmware[index] = 8'h9d;
 
@@ -148,7 +168,7 @@ module tb_mc68705p5_mcu;
     #1;
     reset_to(11'h100);
     if (port_a_oe != 8'h00 || port_b_oe != 8'h00 || port_c_oe != 4'h0 ||
-        debug_timer_control != 8'h40) begin
+        debug_timer_control != 8'h40 || debug_program_control != 8'hff) begin
       $fatal(1, "P5 peripheral reset state pa=%02x pb=%02x pc=%x t=%02x tc=%02x",
              port_a_oe, port_b_oe, port_c_oe, debug_timer, debug_timer_control);
     end
@@ -203,6 +223,42 @@ module tb_mc68705p5_mcu;
     run_instruction(8'h80);
     checks = checks + 2;
 
+    // TIMER high-voltage bootstrap selection uses the separate 7F6 vector.
+    // Code in the caller-supplied bootstrap ROM exercises the documented PCR
+    // latch/program sequence without modeling high-voltage pulse physics.
+    firmware[11'h790] = 8'ha6; firmware[11'h791] = 8'h02; // PLE low, PGE high
+    firmware[11'h792] = 8'hb7; firmware[11'h793] = 8'h0b;
+    firmware[11'h794] = 8'ha6; firmware[11'h795] = 8'h5a;
+    firmware[11'h796] = 8'hb7; firmware[11'h797] = 8'h80; // latch EPROM byte
+    firmware[11'h798] = 8'ha6; firmware[11'h799] = 8'h00; // enable programming
+    firmware[11'h79a] = 8'hb7; firmware[11'h79b] = 8'h0b;
+    firmware[11'h79c] = 8'h9d;
+    bootstrap_voltage = 1'b1;
+    vpp_present = 1'b1;
+    reset_to(11'h790);
+    if (!bootstrap_mode) $fatal(1, "P5 bootstrap selection not retained");
+    run_instruction(8'ha6); run_instruction(8'hb7);
+    if (!eprom_latch_enable || eprom_program_enable ||
+        debug_program_control != 8'hfa) begin
+      $fatal(1, "P5 EPROM latch state latch=%b program=%b",
+             eprom_latch_enable, eprom_program_enable);
+    end
+    run_instruction(8'ha6); run_instruction(8'hb7);
+    if (eprom_program_address != 11'h080 || eprom_program_data != 8'h5a) begin
+      $fatal(1, "P5 EPROM address/data latch address=%03x data=%02x",
+             eprom_program_address, eprom_program_data);
+    end
+    run_instruction(8'ha6); run_instruction(8'hb7);
+    if (!eprom_program_enable || eprom_program_address != 11'h080 ||
+        eprom_program_data != 8'h5a || debug_program_control != 8'hf8) begin
+      $fatal(1, "P5 EPROM program request enable=%b address=%03x data=%02x",
+             eprom_program_enable, eprom_program_address, eprom_program_data);
+    end
+    checks = checks + 4;
+    bootstrap_voltage = 1'b0;
+    vpp_present = 1'b0;
+    #1;
+
     if (eprom_latch_enable || eprom_program_enable || waiting_state || stopped_state ||
         port_b_out != 8'h00 || port_c_out != 4'h0 || debug_address >= 16'h0800 ||
         debug_pc[15:11] != 5'h00 || debug_x != 8'h00 ||
@@ -213,7 +269,7 @@ module tb_mc68705p5_mcu;
              port_b_out, port_c_out, debug_address, debug_pc, debug_x, opcode_fetch,
              debug_ccr);
     end
-    $display("MC68705P5 MCU PASS: %0d memory, GPIO, timer, priority, and vector checks", checks);
+    $display("MC68705P5 MCU PASS: %0d memory, GPIO, timer, priority, bootstrap, and programming checks", checks);
     $finish;
   end
 endmodule

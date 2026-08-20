@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "interface": "mc68705p5-normalized-digital",
+  "device": "mc68705p5",
+  "clock_model": {
+    "rtl_boundary": "clk_i rising edge advances one processor cycle when clock_enable_i is high",
+    "historical_boundary": "the selected on-chip oscillator is divided by four to produce the internal processor clocks",
+    "status": "PARTIAL",
+    "limitation": "oscillator analog behavior, pad delay, setup/hold, and EPROM programming pulse width are outside the normalized boundary"
+  },
+  "signals": [
+    {"name": "clk_i", "historical": "oscillator-derived processor clock", "direction": "input", "fact": "one rising edge advances one normalized processor cycle"},
+    {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low preserves all synchronous state"},
+    {"name": "reset_n_i", "historical": "RESET", "direction": "input", "fact": "active-low asynchronous digital reset boundary"},
+    {"name": "int_n_i", "historical": "INT", "direction": "input", "fact": "active-low falling-edge-latched external interrupt"},
+    {"name": "timer_i", "historical": "TIMER", "direction": "input", "fact": "timer gate or positive-transition event input at normal logic levels"},
+    {"name": "port_a_i", "historical": "Port A pins", "direction": "input", "fact": "eight physical input levels"},
+    {"name": "port_a_o", "historical": "Port A pins", "direction": "output", "fact": "eight-bit output latch"},
+    {"name": "port_a_oe_o", "historical": "Port A DDR", "direction": "output", "fact": "one enables the corresponding output driver"},
+    {"name": "port_b_i", "historical": "Port B pins", "direction": "input", "fact": "eight physical input levels"},
+    {"name": "port_b_o", "historical": "Port B pins", "direction": "output", "fact": "eight-bit output latch"},
+    {"name": "port_b_oe_o", "historical": "Port B DDR", "direction": "output", "fact": "one enables the corresponding output driver"},
+    {"name": "port_c_i", "historical": "Port C pins", "direction": "input", "fact": "four physical input levels"},
+    {"name": "port_c_o", "historical": "Port C pins", "direction": "output", "fact": "four-bit output latch"},
+    {"name": "port_c_oe_o", "historical": "Port C DDR", "direction": "output", "fact": "one enables the corresponding output driver"},
+    {"name": "program_address_o", "historical": "internal EPROM or bootstrap-ROM address", "direction": "output", "fact": "eleven-bit address presented to the FPGA firmware-storage owner"},
+    {"name": "program_read_o", "historical": "internal program-memory read", "direction": "output", "fact": "qualifies reads of user EPROM, bootstrap ROM, and vector bytes after PCR/VPP selection"},
+    {"name": "program_data_i", "historical": "internal program-memory data", "direction": "input", "fact": "byte supplied by FPGA user-EPROM/bootstrap-ROM storage"},
+    {"name": "vpp_present_i", "historical": "VPP high-voltage detector", "direction": "input", "fact": "digital indication that programming voltage is present; no voltage magnitude is modeled"},
+    {"name": "bootstrap_voltage_i", "historical": "TIMER pin VIHTP detector", "direction": "input", "fact": "sampled during reset to select the 7F6:7F7 bootstrap vector when secure mode is clear"},
+    {"name": "bootstrap_mode_o", "historical": "bootstrap-mode selection", "direction": "output", "fact": "indicates the bootstrap selection accepted for the current reset session"},
+    {"name": "eprom_latch_enable_o", "historical": "PCR PLE low with VPP", "direction": "output", "fact": "indicates the digital EPROM address/data latch phase"},
+    {"name": "eprom_program_enable_o", "historical": "PCR PGE and PLE low with VPP", "direction": "output", "fact": "level request for the external FPGA storage owner to perform a program operation"},
+    {"name": "eprom_program_address_o", "historical": "EPROM address latch", "direction": "output", "fact": "latched eleven-bit user-EPROM or MOR/vector address"},
+    {"name": "eprom_program_data_o", "historical": "EPROM data latch", "direction": "output", "fact": "latched byte to be programmed"}
+  ],
+  "halt_interrupt_behavior": "The MC68705P5 has no documented WAIT or STOP instruction; external and timer requests are retained until instruction-boundary service or software clearing",
+  "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locators": ["memory, timer, reset, interrupt, mask-option, on-chip programming, and programming-firmware sections, printed pages 5-17"]}],
+  "implementation_status": {
+    "normalized_digital_interface": "PARTIAL",
+    "single_chip_memory": "PARTIAL",
+    "gpio_and_interrupt_pins": "PARTIAL",
+    "bootstrap_and_programming_controls": "PARTIAL",
+    "electrical_timing": "NOT_IMPLEMENTED",
+    "analog_behavior": "NOT_APPLICABLE"
+  }
+}

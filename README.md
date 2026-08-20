@@ -46,9 +46,10 @@ with device wrappers kept at separate integration boundaries:
 - `hd63705v0_mcu`: 14-bit HD63705V0 integration with 192-byte RAM, 31 GPIO,
   an eight-bit timer, synchronous SCI/Timer2, INT/INT2 priority, WAIT/STOP/STBY,
   and normalized digital EPROM verify/program controls; and
-- `mc68705p5_mcu`: an initial concrete 11-bit device integration with RAM and
-  register decode, GPIO, programmable timer, interrupt priority/vectors, and a
-  separate FPGA firmware-memory port for EPROM/bootstrap/vector bytes.
+- `mc68705p5_mcu`: an 11-bit device integration with RAM and register decode,
+  GPIO, every programmable and MOR-fixed timer source/prescaler selection,
+  interrupt priority/vectors, bootstrap-vector selection, and separate FPGA
+  firmware/programming ports for EPROM/bootstrap/vector bytes.
 
 All 256 opcode values are explicitly classified for each profile. The current
 five maps contain 1,064 documented instruction encodings, 26 HD6301 map values
@@ -96,9 +97,10 @@ make ci                authoritative complete committed-source gate
 
 The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
-retirement comparisons, 1,536 MC6801/MC6803 and 768 HD63705V0 peripheral cycle
-comparisons, and directed reset/stack/interrupt/device tests across two
-simulators, ten bounded formal profiles, and twelve synthesis tops.
+retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
+peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
+across two simulators, eleven bounded formal profiles, and twelve synthesis
+tops.
 Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
@@ -114,9 +116,11 @@ cycle boundaries being checked.
 Pin-level MC6800 phase generation/electrical timing, MC6801 modes outside the
 normalized Mode 2/3 boundary, physical MC6801/MC6803 bus multiplexing, Hitachi
 MCU modes outside HD6301V1/HD63701V0 Mode 7 and HD6303R Mode 2, analog EPROM
-programming physics, unsupported asynchronous-SCI clock formats, complete
-manufacturer bus waveforms outside the specifically verified traces, and
-several P5 timer/programming modes remain incomplete.
+programming physics, unsupported asynchronous-SCI clock formats, and complete
+manufacturer bus waveforms outside the specifically verified traces remain
+incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by
+the integrator; their externally described vector and programming controls are
+implemented without redistributing the firmware image.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
 silicon behavior. These limitations are tracked as `PARTIAL`,
