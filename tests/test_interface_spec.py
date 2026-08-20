@@ -21,6 +21,9 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.hd6303r_bus_spec = json.loads(
             (ROOT / "spec/interfaces/hd6303r_phased_bus.json").read_text()
         )
+        self.hd6303r_modes_spec = json.loads(
+            (ROOT / "spec/interfaces/hd6303r_modes.json").read_text()
+        )
         self.devices = validate_devices._load_json(ROOT / "spec/devices.yml")
         self.references = load_manifest(ROOT / "docs/references.yml")
 
@@ -69,6 +72,12 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.assertEqual(
             self.hd6303r_bus_spec["implementation_status"][
                 "three_cycle_reset_bus_release"
+            ],
+            "COMPLETE",
+        )
+        self.assertEqual(
+            self.hd6303r_modes_spec["implementation_status"][
+                "physical_reset_entry_waveform"
             ],
             "COMPLETE",
         )

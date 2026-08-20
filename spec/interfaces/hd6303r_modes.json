@@ -47,7 +47,7 @@
     "sleep_and_standby_digital": "COMPLETE",
     "physical_mode1_active_bus_waveform": "COMPLETE",
     "physical_multiplexed_active_bus_waveform": "COMPLETE",
-    "physical_reset_entry_waveform": "NOT_IMPLEMENTED",
+    "physical_reset_entry_waveform": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"
   }
