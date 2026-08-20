@@ -56,6 +56,7 @@ module hd6303r_mcu #(
 );
   logic standby_active;
   logic external_bus_valid_internal;
+  logic external_opcode_fetch_internal;
   logic [7:0] port1_oe_internal;
   logic [4:0] port2_oe_internal;
   logic timer_irq_internal;
@@ -71,6 +72,7 @@ module hd6303r_mcu #(
   end
 
   assign external_bus_valid_o = external_bus_valid_internal && !standby_active;
+  assign external_opcode_fetch_o = external_opcode_fetch_internal && !standby_active;
   assign port1_oe_o = port1_oe_internal & {8{!standby_active}};
   assign port2_oe_o = port2_oe_internal & {5{!standby_active}};
   assign timer_irq_o = timer_irq_internal && !standby_active;
@@ -110,7 +112,7 @@ module hd6303r_mcu #(
     .external_data_o(external_data_o),
     .external_write_o(external_write_o),
     .external_bus_valid_o(external_bus_valid_internal),
-    .external_opcode_fetch_o(external_opcode_fetch_o),
+    .external_opcode_fetch_o(external_opcode_fetch_internal),
     .port1_o(port1_o),
     .port1_oe_o(port1_oe_internal),
     .port2_o(port2_o),

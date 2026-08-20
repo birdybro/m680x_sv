@@ -103,15 +103,22 @@ byte is not transferred to RDR when the stop bit is missing.
 Both parts also implement Hitachi's writable 16-bit FRC sequence and assert
 TOF on rollover to `$0000`, rather than using the MC6801 write/overflow rules.
 
-The HD6301V1 claim covers single-chip Mode 7: its internal register window,
-RAME-controlled executable 128-byte RAM, four GPIO ports, IS3 input latch and
-IRQ1 source, read/write-selected OS3, common timer/SCI functions, SLP behavior,
-and the `$f000`-`$ffff` internal program/vector window. The program image is an
-integration input. Directed tests verify that instruction fetches in both
-documented non-memory ranges enter the 13-cycle address TRAP while normal data
-accesses do not. E-synchronous STBY entry, retained RAM/STBY_PWR, high-impedance
-ports, reset-vector recovery, and the reserved bi-phase selection are tested.
-Expanded modes, physical timing, and actual mask-ROM contents remain outside
+The HD6301V1 claim covers every legal Mode 0, 1, 2, 4, 5, 6, and 7 at the
+normalized digital boundary. Mode-directed tests cover the `$f000`-`$ffff`
+mask-ROM selection in Modes 0/5/6/7, external program space in Modes 1/2/4,
+Mode-0 external reset-vector handoff, Mode-5 partial decode, Mode-1 Port-1
+address function, mode-specific register exclusions, and common internal RAM.
+A seven-core integration bench executes the same program from the correct
+internal or external source in every mode and compares its architectural
+result. The program image remains an integration input.
+
+Mode 7 additionally covers all four GPIO ports, the IS3 input latch and IRQ1
+source, read/write-selected OS3, common timer/SCI functions, and SLP behavior.
+Directed tests verify that instruction fetches in both documented non-memory
+ranges enter the 13-cycle address TRAP while normal data accesses do not.
+E-synchronous STBY entry, retained RAM/STBY_PWR, high-impedance ports,
+reset-vector recovery, and the reserved bi-phase selection are tested. Physical
+multiplexed/non-multiplexed timing and actual mask-ROM contents remain outside
 this partial claim.
 Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
 The Mode-7 timer regression verifies full-counter double-byte writes and the

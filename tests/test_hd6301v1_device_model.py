@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 from model.common import Memory
-from model.hd6301v1_device import HD6301V1Mode7Model
+from model.hd6301v1_device import HD6301V1DeviceModel, HD6301V1Mode7Model
 from model.mc6801_device import MC6801CycleInputs, VECTOR_IRQ1
 
 
@@ -141,6 +141,60 @@ class HD6301V1Mode7ModelTests(unittest.TestCase):
 
         model.standby_reset(retention_power_ok=False)
         self.assertFalse(model.state.standby_power)
+
+
+class HD6301V1LegalModeModelTests(unittest.TestCase):
+    @staticmethod
+    def read(model: HD6301V1DeviceModel, address: int):
+        return model.cycle(MC6801CycleInputs(address=address, valid=True))
+
+    def test_all_legal_modes_have_documented_memory_partitions(self) -> None:
+        with self.assertRaises(ValueError):
+            HD6301V1DeviceModel(3)
+
+        for mode in (0, 1, 2, 4, 5, 6, 7):
+            external = Memory()
+            program = Memory()
+            external[0xF000] = 0x5A
+            program[0xF000] = 0xA5
+            model = HD6301V1DeviceModel(
+                mode, external_memory=external, program_memory=program
+            )
+            self.assertEqual(model.active_mode, mode)
+            self.assertTrue(model.ram_is_internal(0x0080))
+
+            result = self.read(model, 0xF000)
+            if mode in {0, 5, 6, 7}:
+                self.assertEqual(result.read_data, 0xA5)
+                self.assertTrue(result.program_bus)
+                self.assertFalse(result.external_bus)
+            else:
+                self.assertEqual(result.read_data, 0x5A)
+                self.assertFalse(result.program_bus)
+                self.assertTrue(result.external_bus)
+
+        mode0 = HD6301V1DeviceModel(0)
+        self.assertTrue(self.read(mode0, 0xFFFE).external_bus)
+        self.assertTrue(self.read(mode0, 0xFFFF).external_bus)
+        self.assertTrue(self.read(mode0, 0xFFFE).program_bus)
+
+        mode1 = HD6301V1DeviceModel(1)
+        self.assertFalse(mode1.register_is_internal(0x0000))
+        self.assertFalse(mode1.register_is_internal(0x0002))
+
+        mode4 = HD6301V1DeviceModel(4)
+        self.assertTrue(self.read(mode4, 0x1280).external_bus)
+        mode4.cycle(
+            MC6801CycleInputs(address=0x0003, valid=True, write=True, data=0x20)
+        )
+        self.assertEqual(mode4.active_mode, 4)
+
+        mode5 = HD6301V1DeviceModel(5)
+        self.assertTrue(self.read(mode5, 0x0100).external_bus)
+        self.assertFalse(self.read(mode5, 0x0200).external_bus)
+
+        mode7 = HD6301V1DeviceModel(7)
+        self.assertFalse(self.read(mode7, 0x0100).external_bus)
 
 
 if __name__ == "__main__":

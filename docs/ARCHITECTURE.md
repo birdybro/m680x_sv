@@ -216,13 +216,23 @@ survive while `standby_power_ok_i` remains asserted. Release restarts through
 the reset vector; oscillator restart delay and voltage thresholds are outside
 the normalized digital boundary.
 
-## HD6301V1 single-chip Mode-7 integration
+## HD6301V1 Mode-0/1/2/4/5/6/7 integration
 
 `rtl/hd6301/hd6301v1_mcu.sv` selects the Hitachi CPU profile and the guarded
-Mode-7 path in the common HD6801-compatible device block. The sharing is based
-on Hitachi's compatibility statement and is limited by explicit parameters;
-the distinct memory map, Port 3/4 registers, strobe state, and address-error
-decode are enabled only for this wrapper.
+paths in the common HD6801-compatible device block for every legal operating
+mode. The sharing is based on Hitachi's compatibility statement and is limited
+by explicit parameters. `HITACHI_NEW_MODES` selects Hitachi's non-multiplexed
+Mode 1 and Mode-2-equivalent Mode 4 meanings, while the distinct Mode-7 Port
+3/4, strobe, and address-error behavior remains separately guarded.
+
+Modes 0, 5, 6, and 7 select the 4-KiB `$f000`-`$ffff` internal mask-ROM image.
+Mode 0 initially obtains its two reset-vector bytes from the external boundary
+before later vector reads select the internal image. Modes 1, 2, and 4 disable
+the ROM and expose all program space externally. Mode 5 selects only external
+`$0100`-`$01ff`, Mode 6 provides its multiplexed partial-decode bus, and Modes
+0/1/2/4 provide their documented full expanded spaces. Every legal mode keeps
+RAME-controlled RAM at `$0080`-`$00ff`; mode-specific register exclusions and
+Port 1/3/4 functions follow table 2-2-1.
 
 Mode 7 decodes registers at `$0000`-`$001f`, RAME-controlled executable RAM at
 `$0080`-`$00ff`, and read-only program space at `$f000`-`$ffff`. Instruction
@@ -234,12 +244,15 @@ unusable regions neither trap nor escape onto an invented external bus.
 documented 4-KiB internal mask-ROM window to an integration-owned FPGA image,
 including reset and interrupt vectors. The clean-room repository supplies no
 copyrighted mask-ROM contents. Reads and writes to RAM and peripheral registers
-do not assert `program_read_o`.
+do not assert `program_read_o`. The `external_*` signals expose a normalized
+full-address transaction for expanded modes; they do not claim the physical
+Port-3 multiplexing, AS/RW phases, or pin electrical timing.
 
-Ports 3 and 4 expose separate input, output-latch, and output-enable vectors.
-The active-low `is3_n_i` input sets the P3CSR flag and optionally captures Port
-3. Reading P3CSR while set arms the documented clear; the following PORT3 read
-or write clears it unless a new edge occurs. `os3_n_o` pulses during the
+In Mode 7, Ports 3 and 4 expose separate input, output-latch, and output-enable
+vectors. The active-low `is3_n_i` input sets the P3CSR flag and optionally
+captures Port 3. Reading P3CSR while set arms the documented clear; the
+following PORT3 read or write clears it unless a new edge occurs. `os3_n_o`
+pulses during the
 P3CSR-selected PORT3 read or write E-cycle. The exact interface contract and
 electrical exclusions are recorded in
 `../spec/interfaces/hd6301v1_mode7.json`.

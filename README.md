@@ -5,8 +5,8 @@ the documented Motorola M6800, MC6801/MC6803, M6805/MC68705 and related Hitachi
 HD6301/HD6303/HD6305 processor families. It provides synthesizable FPGA RTL,
 machine-readable architecture facts, a structurally independent Python model,
 and deterministic verification. The model includes separate CPU-instruction,
-MC6801/MC6803 device-cycle, HD6301V1/HD63701V0 Mode-7, and HD63705V0
-transaction paths.
+MC6801/MC6803 device-cycle, all-legal-mode HD6301V1, HD63701V0 Mode-7, and
+HD63705V0 transaction paths.
 
 The project is under active development. Every current implementation claim is
 `PARTIAL`; no processor or MCU is represented as production-complete. The
@@ -37,10 +37,10 @@ with device wrappers kept at separate integration boundaries:
 - `mc6801_mcu`: normalized MC6801 Mode 0-7/1R/6R register, RAM, mask-ROM,
   GPIO/address, timer, SCI, interrupt-priority, and memory-selection integration;
   MC6803 uses the same block only in its documented Modes 2/3;
-- `hd6301v1_mcu`: HD6301V1 single-chip Mode-7 integration with a separate
-  4-KiB FPGA program-image port, executable RAM, four GPIO ports, IS3/OS3,
-  timer/SCI, SLP, E-synchronous STBY retention, and device-generated
-  address/opcode TRAP;
+- `hd6301v1_mcu`: every legal HD6301V1 Mode 0/1/2/4/5/6/7 integration with a
+  separate 4-KiB FPGA mask-ROM image port, normalized expanded-memory bus,
+  executable RAM, mode-dependent ports/strobes, timer/SCI, SLP,
+  E-synchronous STBY retention, and Mode-7 address/opcode TRAP;
 - `hd6303r_mcu`: HD6303R legal Mode-1/2/4 ROMless integration with the HD6301
   ISA, opcode TRAP, SLP/STBY behavior, RAM, mode-dependent Port 1, timer, and
   SCI;
@@ -103,7 +103,7 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
-across two simulators, thirteen bounded formal profiles, and fifteen synthesis
+across two simulators, fourteen bounded formal profiles, and twenty synthesis
 tops.
 Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
@@ -118,8 +118,8 @@ cycle boundaries being checked.
 ## Known limitations
 
 Pin-level MC6800 phase generation/electrical timing, physical MC6801/MC6803
-bus multiplexing and complete Port 3 handshake timing, HD6301V1/HD63701V0
-MCU modes outside Mode 7, analog EPROM
+bus multiplexing and complete Port 3 handshake timing, HD63701V0 MCU modes
+outside Mode 7, analog EPROM
 programming physics, SCI clock-skew/electrical tolerance, and complete
 manufacturer bus waveforms outside the specifically verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by

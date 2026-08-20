@@ -298,7 +298,7 @@ module tb_hd6303r_mcu #(
     #1;
     if (port1_oe != 8'hff) $fatal(1, "HD6303R STBY was not E-synchronous");
     tick();
-    if (port1_oe != 8'h00 || port2_oe != 5'h00 || external_valid ||
+    if (port1_oe != 8'h00 || port2_oe != 5'h00 || external_valid || external_fetch ||
         debug_timer != 16'h0000) begin
       $fatal(1, "HD6303R standby reset/high impedance");
     end

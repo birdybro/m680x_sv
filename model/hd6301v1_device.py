@@ -1,9 +1,9 @@
-"""Independent HD6301V1 single-chip Mode-7 digital device model.
+"""Independent HD6301V1 legal-mode digital device model.
 
 The model extends the documented HD6801-compatible peripheral behavior with
-the independently specified Hitachi memory map, Port 3/4 registers, strobes,
-IS3 latch/interrupt, and instruction-address error classification.  It models
-E-cycle transactions rather than the RTL state machine.
+the independently specified Hitachi mode maps, Port 3/4 registers, strobes,
+IS3 latch/interrupt, and Mode-7 instruction-address error classification. It
+models E-cycle transactions rather than the RTL state machine.
 """
 
 from __future__ import annotations
@@ -21,24 +21,34 @@ from model.mc6801_device import (
 MODE7_REGISTERS = INTERNAL_REGISTERS | frozenset(range(0x0004, 0x0008)) | {0x000F}
 
 
-class HD6301V1Mode7Model(MC6801DeviceModel):
-    """Specification-derived model of the HD6301V1 Mode-7 device boundary."""
+class HD6301V1DeviceModel(MC6801DeviceModel):
+    """Specification-derived model of every legal HD6301V1 mode."""
 
-    def __init__(self, *, program_memory: Memory | None = None) -> None:
-        # Initialize the common peripheral state through the documented
-        # HD6801-compatible Mode-7 profile, then select Hitachi differences.
+    def __init__(
+        self,
+        operating_mode: int = 7,
+        *,
+        external_memory: Memory | None = None,
+        program_memory: Memory | None = None,
+    ) -> None:
+        if operating_mode not in {0, 1, 2, 4, 5, 6, 7}:
+            raise ValueError("HD6301V1 operating mode must be 0, 1, 2, 4, 5, 6, or 7")
         super().__init__(
-            7,
+            operating_mode,
+            external_memory=external_memory,
+            program_memory=program_memory,
             transfer_framing_error=False,
             sci_biphase_supported=False,
+            hitachi_new_modes=True,
             timer_counter_double_write=True,
             timer_overflow_at_zero=True,
         )
         self.instruction_address_trap_low_end = 0x007F
-        self.program_memory = program_memory if program_memory is not None else Memory()
 
     def register_is_internal(self, address: int) -> bool:
-        return (address & 0xFFFF) in MODE7_REGISTERS
+        if self.active_mode == 7:
+            return (address & 0xFFFF) in MODE7_REGISTERS
+        return super().register_is_internal(address)
 
     def ram_is_internal(self, address: int) -> bool:
         address &= 0xFFFF
@@ -49,13 +59,12 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
             < self.internal_ram_start + len(self.ram)
         )
 
-    @staticmethod
-    def program_is_internal(address: int) -> bool:
-        return (address & 0xFFFF) >= 0xF000
+    def program_is_internal(self, address: int) -> bool:
+        return self.active_mode in {0, 5, 6, 7} and (address & 0xFFFF) >= 0xF000
 
     def instruction_address_error(self, address: int) -> bool:
         address &= 0xFFFF
-        return (
+        return self.active_mode == 7 and (
             address <= self.instruction_address_trap_low_end
             or 0x0100 <= address <= 0xEFFF
         )
@@ -71,6 +80,14 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
     ) -> int:
         address &= 0xFFFF
         state = self.state
+        if self.active_mode != 7:
+            return super().read_register(
+                address,
+                port1=port1,
+                port2=port2,
+                port3=port3,
+                port4=port4,
+            )
         if address in {0x0004, 0x0005}:
             return 0xFF
         if address == 0x0006:
@@ -83,7 +100,11 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
 
     @property
     def port3_irq(self) -> bool:
-        return self.state.port3_is3_flag and self.state.port3_is3_enable
+        return bool(
+            self.active_mode == 7
+            and self.state.port3_is3_flag
+            and self.state.port3_is3_enable
+        )
 
     def irq_vector(self, irq1_n: bool = True) -> int:
         if self.port3_irq:
@@ -105,7 +126,10 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
         )
 
     def cycle(self, inputs: MC6801CycleInputs = MC6801CycleInputs()) -> MC6801CycleResult:
-        """Advance one E-cycle and classify every Mode-7 address explicitly."""
+        """Advance one E-cycle and classify the selected Hitachi mode."""
+
+        if self.active_mode != 7:
+            return super().cycle(inputs)
 
         if not 0 <= inputs.data <= 0xFF:
             raise ValueError("cycle write data must be eight-bit")
@@ -174,6 +198,9 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
         internal_read: bool,
         internal_write: bool,
     ) -> None:
+        if self.active_mode != 7:
+            super()._advance_port34(inputs, address, internal_read, internal_write)
+            return
         state = self.state
         falling_edge = state.is3_sync[1] and not state.is3_sync[0]
         state.is3_sync = [inputs.is3_n, state.is3_sync[0]]
@@ -207,3 +234,10 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
             if state.port3_latch_enable and not state.port3_latch_valid:
                 state.port3_input_latch = inputs.port3 & 0xFF
                 state.port3_latch_valid = True
+
+
+class HD6301V1Mode7Model(HD6301V1DeviceModel):
+    """Backward-compatible name for the single-chip Mode-7 profile."""
+
+    def __init__(self, *, program_memory: Memory | None = None) -> None:
+        super().__init__(7, program_memory=program_memory)

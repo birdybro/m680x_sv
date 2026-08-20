@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 106 |
+| Python unit tests | 107 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
@@ -36,6 +36,8 @@ The committed tests cover:
 | MC6801 bi-phase SCI checks | 24 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
 | HD6301V1 Mode-7 integration checks | 32 |
+| HD6301V1 legal-mode decode checks | 77 |
+| HD6301V1 seven-mode execution/source checks | 28 |
 | HD6303R Mode-1/2/4 integration checks | 57 |
 | HD6303R legal-mode decode checks | 41 |
 | HD63701V0 Mode-7 integration checks | 30 |
@@ -47,8 +49,8 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 13 (11 at depth 10; 2 mode-decode profiles at depth 5) |
-| Synthesis tops | 15 |
+| Bounded formal profiles | 14 (11 at depth 10; 3 mode-decode profiles at depth 5) |
+| Synthesis tops | 20 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -149,6 +151,13 @@ STBY entry, high-impedance GPIO and external-bus suppression, retained RAM and
 STBY_PWR, active-state reset, external reset-vector recovery, and explicit
 rejection of the Motorola-only bi-phase selection.
 
+The 77-check HD6301V1 mode suite verifies every legal Mode 0/1/2/4/5/6/7
+memory partition, register exclusion, Port-1/4 address role, mask-ROM source,
+Mode-0 reset-vector handoff, and Mode-5 partial-decode window. A separate
+seven-core bench executes the same RAM-using program in every mode and performs
+28 checks of retire progress, architectural result, vector source, and program
+source. The independent model rejects Mode 3 and verifies each legal partition.
+
 The HD6301V1 Mode-7 suite fetches reset and interrupt vectors through the
 internal program-image interface, executes from both the 4-KiB program window
 and 128-byte RAM, and verifies a 13-cycle address TRAP from documented
@@ -157,15 +166,10 @@ P3CSR's ordered flag-clear protocol, read- and write-selected active-low OS3
 pulses, masked IS3 release from SLP, and enabled IS3 vectoring through the IRQ1
 priority slot. Three independent Python model tests cover the Mode-7 address
 partition, program-select/address-error distinction, GPIO, latch, flag, strobe,
-and interrupt state. A fourth model test and the RTL suite verify that a
-framing error sets ORFE without transferring the misframed byte into RDR. A
-fifth model test and the RTL suite verify the Hitachi FRC write and rollover
-semantics. The RTL suite also proves that V1 DDR reset takes effect at an E
-edge rather than at asynchronous RES assertion. A sixth model test and the RTL
-suite verify E-synchronous STBY sampling, active-domain reset, program/GPIO
-suppression, retained RAM/STBY_PWR, and reset-vector restart. A seventh model
-test plus a wrapper-parameter check prove that reserved `CC1:CC0=00` does not
-activate Motorola bi-phase behavior.
+and interrupt state. Additional model and RTL tests verify framing-error RDR
+inhibition, Hitachi FRC write/rollover semantics, E-edge DDR reset, synchronous
+STBY sampling and retention, and rejection of reserved `CC1:CC0=00` bi-phase
+behavior.
 
 The HD63701V0 Mode-7 suite fetches reset and TRAP vectors from the separate
 EPROM image, executes at both `$0040` and `$00ff`, checks OLVL reset, exercises
@@ -222,8 +226,8 @@ edge on resume.
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
 HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration and
-Mode-0/Mode-4 decode, HD6303R legal-mode decode,
-MC68705P5, HD6301V1 and HD63701V0 Mode-7 integrations, and the HD63705V0 MCU. At
+Mode-0/Mode-4 decode, HD6303R and HD6301V1 legal-mode decode, MC68705P5,
+HD6301V1 and HD63701V0 Mode-7 integrations, and the HD63705V0 MCU. At
 depth 10 it proves the committed
 safety properties for all symbolic input sequences:
 
@@ -247,9 +251,12 @@ safety properties for all symbolic input sequences:
 - MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
   remapping respects secure mode, program reads stay within internal storage,
   VPP qualifies programming controls, and disabled-cycle state stalls.
-- HD6301V1 program reads occur only in `$f000`-`$ffff`, non-memory instruction
-  fetches never select program memory, OS3 is confined to PORT3 accesses, and
-  complete digital device state is stable while clock enable is inactive.
+- HD6301V1 program reads occur only in `$f000`-`$ffff`, Mode 1 never selects
+  program memory and drives its full address, Mode-5 external selection remains
+  in `$0100`-`$01ff`, expanded selections do not overlap the mask-ROM port,
+  non-memory Mode-7 fetches never select program memory, OS3 is confined to
+  PORT3 accesses, and complete digital device state is stable while clock
+  enable is inactive.
 - HD63705V0 PC/SP and physical-address geometry remain legal, interrupt vectors
   stay in the documented set, EPROM verify/program qualification is coherent,
   standby/EPROM mode disables GPIO drive, and disabled-cycle state stalls.
@@ -275,13 +282,18 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 11,348 | 1,454 |
-| MC6801 Mode 4/5 integration | 11,401 | 1,493 |
+| MC6801 Mode 2 integration | 11,370 | 1,454 |
+| MC6801 Mode 4/5 integration | 11,412 | 1,493 |
 | HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 7 integration | 12,156 | 1,485 |
-| HD6303R Mode 1 integration | 12,025 | 1,421 |
-| HD6303R Mode 2 integration | 12,232 | 1,447 |
-| HD6303R Mode 4 integration | 12,100 | 1,437 |
+| HD6301V1 Mode 0 integration | 12,115 | 1,438 |
+| HD6301V1 Mode 1 integration | 12,051 | 1,421 |
+| HD6301V1 Mode 4 integration | 12,130 | 1,437 |
+| HD6301V1 Mode 5 integration | 12,055 | 1,445 |
+| HD6301V1 Mode 6 integration | 12,186 | 1,454 |
+| HD6301V1 Mode 7 integration | 12,099 | 1,485 |
+| HD6303R Mode 1 integration | 12,033 | 1,421 |
+| HD6303R Mode 2 integration | 12,229 | 1,447 |
+| HD6303R Mode 4 integration | 12,097 | 1,437 |
 | HD63701V0 Mode 7 integration | 13,934 | 1,996 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |

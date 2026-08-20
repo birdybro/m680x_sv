@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
-// HD6301V1 normalized single-chip Mode-7 digital integration.
+// HD6301V1 normalized Mode-0/1/2/4/5/6/7 digital integration.
 //
 // The 4-KiB mask-ROM image is an FPGA integration input rather than part of
-// this clean-room core. program_read_o selects documented F000-FFFF accesses;
-// RAM, registers, GPIO, timer, SCI, strobes, and TRAP decode remain internal.
-module hd6301v1_mcu (
+// this clean-room core. program_read_o selects documented internal F000-FFFF
+// accesses; external_* exposes a normalized full-address transaction rather
+// than the historical multiplexed or non-multiplexed half-cycle waveforms.
+module hd6301v1_mcu #(
+  parameter logic [2:0] OPERATING_MODE = 3'd7
+) (
   input  logic        clk_i,
   input  logic        reset_n_i,
   input  logic        standby_n_i,
@@ -20,6 +23,12 @@ module hd6301v1_mcu (
   output logic [15:0] program_address_o,
   output logic        program_read_o,
   input  logic [7:0]  program_data_i,
+  output logic [15:0] external_address_o,
+  output logic [7:0]  external_data_o,
+  output logic        external_write_o,
+  output logic        external_bus_valid_o,
+  output logic        external_opcode_fetch_o,
+  input  logic [7:0]  external_data_i,
   output logic [7:0]  port1_o,
   output logic [7:0]  port1_oe_o,
   output logic [4:0]  port2_o,
@@ -57,6 +66,8 @@ module hd6301v1_mcu (
 );
   logic standby_active;
   logic program_read_internal;
+  logic external_bus_valid_internal;
+  logic external_opcode_fetch_internal;
   logic [7:0] port1_oe_internal;
   logic [4:0] port2_oe_internal;
   logic [7:0] port3_oe_internal;
@@ -76,6 +87,8 @@ module hd6301v1_mcu (
   end
 
   assign program_read_o = program_read_internal && !standby_active;
+  assign external_bus_valid_o = external_bus_valid_internal && !standby_active;
+  assign external_opcode_fetch_o = external_opcode_fetch_internal && !standby_active;
   assign port1_oe_o = port1_oe_internal & {8{!standby_active}};
   assign port2_oe_o = port2_oe_internal & {5{!standby_active}};
   assign port3_oe_o = port3_oe_internal & {8{!standby_active}};
@@ -84,13 +97,15 @@ module hd6301v1_mcu (
   assign timer_irq_o = timer_irq_internal && !standby_active;
   assign sci_irq_o = sci_irq_internal && !standby_active;
 
-  // Mode 7 has no external memory bus; these common integration outputs are
-  // intentionally left unconnected at this device-specific boundary.
+  // HITACHI_NEW_MODES prevents numeric Mode 1/4 values from importing the
+  // different Motorola MC6801 maps. HD6301_MODE7 enables address TRAP only
+  // when the configured mode is actually Mode 7.
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
-    .OPERATING_MODE(3'd7),
+    .OPERATING_MODE(OPERATING_MODE),
     .HITACHI_CPU(1'b1),
     .HD6301_MODE7(1'b1),
+    .HITACHI_NEW_MODES(1'b1),
     .SCI_TRANSFER_FRAMING_ERROR(1'b0),
     .SCI_BIPHASE_SUPPORTED(1'b0),
     .TIMER_COUNTER_DOUBLE_WRITE(1'b1),
@@ -112,14 +127,14 @@ module hd6301v1_mcu (
     .port4_i(port4_i),
     .is3_n_i(is3_n_i),
     .program_data_i(program_data_i),
-    .external_data_i(8'hff),
+    .external_data_i(external_data_i),
     .program_address_o(program_address_o),
     .program_read_o(program_read_internal),
-    .external_address_o(),
-    .external_data_o(),
-    .external_write_o(),
-    .external_bus_valid_o(),
-    .external_opcode_fetch_o(),
+    .external_address_o(external_address_o),
+    .external_data_o(external_data_o),
+    .external_write_o(external_write_o),
+    .external_bus_valid_o(external_bus_valid_internal),
+    .external_opcode_fetch_o(external_opcode_fetch_internal),
     .port1_o(port1_o),
     .port1_oe_o(port1_oe_internal),
     .port2_o(port2_o),

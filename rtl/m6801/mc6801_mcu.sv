@@ -366,7 +366,7 @@ module mc6801_mcu #(
     end else begin
       case (active_mode)
         3'd0, 3'd5, 3'd7:
-          program_address_select = core_address >= 16'hf800;
+          program_address_select = program_address_in_range(core_address);
         3'd1: program_address_select = !hitachi_mode1_nonmultiplexed &&
           program_address_in_range(core_address) && (core_address < 16'hfff0);
         3'd6: program_address_select = program_address_in_range(core_address);
