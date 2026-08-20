@@ -75,7 +75,7 @@ module tb_mc6801_port3;
   );
   /* verilator lint_on PINCONNECTEMPTY */
 
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
 
   task automatic check(input logic condition, input string label_value);
     begin
