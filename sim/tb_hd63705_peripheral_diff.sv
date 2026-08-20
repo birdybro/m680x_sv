@@ -75,12 +75,41 @@ module tb_hd63705_peripheral_diff;
   integer sci_ssr_checks;
   integer sci_rate_checks;
   integer sci_protocol_checks;
+  integer interrupt_initial;
+  integer interrupt_mask_value;
+  integer interrupt_mr_checks;
+  integer interrupt_priority_checks;
+  integer interrupt_protocol_checks;
   logic expected_program_read;
   logic [7:0] expected_timer;
   logic [7:0] expected_tcr;
   logic [7:0] expected_ddr;
   logic [7:0] expected_ssr;
   logic expected_sci_clock;
+
+  task automatic check_interrupt_state(
+    input logic expected_int,
+    input logic expected_int2,
+    input logic expected_timer_request,
+    input logic expected_serial,
+    input logic [15:0] expected_vector,
+    input integer mask_value,
+    input integer stage
+  );
+    begin
+      if (int_irq !== expected_int || int2_irq !== expected_int2 ||
+          timer_irq !== expected_timer_request || sci_irq !== expected_serial ||
+          dut.irq_request !== (expected_int || expected_int2 ||
+                               expected_timer_request || expected_serial) ||
+          irq_vector !== expected_vector) begin
+        $fatal(1, "HD63705 interrupt priority mask=%0d stage=%0d int=%b/%b int2=%b/%b timer=%b/%b serial=%b/%b any=%b vector=%04x/%04x",
+               mask_value, stage, int_irq, expected_int, int2_irq,
+               expected_int2, timer_irq, expected_timer_request, sci_irq,
+               expected_serial, dut.irq_request, irq_vector, expected_vector);
+      end
+      interrupt_priority_checks = interrupt_priority_checks + 1;
+    end
+  endtask
 
   /* verilator lint_off PINCONNECTEMPTY */
   hd63705v0_mcu dut (
@@ -192,6 +221,9 @@ module tb_hd63705_peripheral_diff;
     sci_ssr_checks = 0;
     sci_rate_checks = 0;
     sci_protocol_checks = 0;
+    interrupt_mr_checks = 0;
+    interrupt_priority_checks = 0;
+    interrupt_protocol_checks = 0;
     #1;
     reset_n = 1'b0;
     #1;
@@ -271,6 +303,182 @@ module tb_hd63705_peripheral_diff;
     port_b_in = 8'hff;
     port_c_in = 8'hff;
     port_d_in = 7'h7f;
+
+    // Section 2.7(3) defines MR7 as clear-only software state. Exhaust both
+    // initial request values and every software byte, including the fact that
+    // writing one cannot synthesize a request that was not already pending.
+    for (interrupt_initial = 0; interrupt_initial < 2;
+         interrupt_initial = interrupt_initial + 1) begin
+      for (sci_value = 0; sci_value < 256; sci_value = sci_value + 1) begin
+        reset_n = 1'b0;
+        #1;
+        reset_n = 1'b1;
+        stub_valid = 1'b0;
+        stub_write = 1'b0;
+        int_n = 1'b1;
+        int2_n = 1'b1;
+        tick();
+        if (interrupt_initial != 0) begin
+          int2_n = 1'b0;
+          tick();
+          int2_n = 1'b1;
+          tick();
+        end
+        bus_write(14'h000a, sci_value[7:0]);
+        expected_ssr = (((interrupt_initial != 0) && sci_value[7]) ? 8'h80 : 8'h00) |
+                       (sci_value[7:0] & 8'h60) | 8'h1f;
+        if (debug_mr !== expected_ssr) begin
+          $fatal(1, "HD63705 MR write initial=%0d value=%02x MR=%02x/%02x",
+                 interrupt_initial, sci_value[7:0], debug_mr, expected_ssr);
+        end
+        interrupt_mr_checks = interrupt_mr_checks + 1;
+      end
+    end
+
+    // QA635-325A distinguishes an already-low standby-return pin from a new
+    // falling edge. Level-selected INT still requests immediately, while INT2
+    // must first return high and fall in active operation.
+    reset_n = 1'b0;
+    int_n = 1'b0;
+    int2_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    stub_valid = 1'b0;
+    stub_write = 1'b0;
+    tick();
+    tick();
+    if (int_irq || int2_irq || debug_mr[7]) begin
+      $fatal(1, "HD63705 standby-return low synthesized edge MR=%02x", debug_mr);
+    end
+    interrupt_protocol_checks = interrupt_protocol_checks + 1;
+    bus_write(14'h000a, 8'h20);
+    if (!int_irq || int2_irq) begin
+      $fatal(1, "HD63705 level INT after low recovery int=%b int2=%b",
+             int_irq, int2_irq);
+    end
+    interrupt_protocol_checks = interrupt_protocol_checks + 1;
+    int_n = 1'b1;
+    int2_n = 1'b1;
+    stub_valid = 1'b0;
+    tick();
+    int2_n = 1'b0;
+    tick();
+    if (!int2_irq || !debug_mr[7]) begin
+      $fatal(1, "HD63705 INT2 active falling edge MR=%02x", debug_mr);
+    end
+    interrupt_protocol_checks = interrupt_protocol_checks + 1;
+
+    // Cross every interrupt-source mask combination with all requests set,
+    // then clear sources in priority order. This proves both shared vectors
+    // and the distinct timer-from-WAIT selection elsewhere in the suite.
+    for (interrupt_mask_value = 0; interrupt_mask_value < 16;
+         interrupt_mask_value = interrupt_mask_value + 1) begin
+      reset_n = 1'b0;
+      #1;
+      reset_n = 1'b1;
+      stub_valid = 1'b0;
+      stub_write = 1'b0;
+      stub_waiting = 1'b0;
+      stub_stopped = 1'b0;
+      int_n = 1'b1;
+      int2_n = 1'b1;
+      timer_pin = 1'b0;
+      port_d_in = 7'h20;
+      tick();
+      bus_write(14'h000a, 8'h00);
+      int_n = 1'b0;
+      int2_n = 1'b0;
+      stub_valid = 1'b0;
+      tick();
+      int_n = 1'b1;
+      int2_n = 1'b1;
+      tick();
+      bus_write(14'h0008, 8'h01);
+      bus_write(14'h0009, 8'h00);
+      stub_valid = 1'b0;
+      tick();
+      bus_write(14'h0010, 8'h70);
+      stub_address = 16'h0012;
+      stub_valid = 1'b1;
+      stub_write = 1'b0;
+      tick();
+      stub_valid = 1'b0;
+      for (sci_bit = 0; sci_bit < 8; sci_bit = sci_bit + 1) begin
+        port_d_in = 7'h00;
+        tick();
+        port_d_in = 7'h20;
+        tick();
+      end
+      bus_write(14'h0010, 8'h00);
+      if (!int_irq || !debug_mr[7] || !debug_tcr[7] ||
+          debug_ssr[7:6] !== 2'b11) begin
+        $fatal(1, "HD63705 interrupt request setup mask=%0d MR=%02x TCR=%02x SSR=%02x",
+               interrupt_mask_value, debug_mr, debug_tcr, debug_ssr);
+      end
+
+      bus_write(14'h000a, interrupt_mask_value[0] ? 8'hc0 : 8'h80);
+      bus_write(14'h0009, interrupt_mask_value[1] ? 8'he0 : 8'ha0);
+      bus_write(14'h0011, 8'hc0 |
+                (interrupt_mask_value[2] ? 8'h20 : 8'h00) |
+                (interrupt_mask_value[3] ? 8'h10 : 8'h00));
+      check_interrupt_state(1'b1, !interrupt_mask_value[0],
+                            !interrupt_mask_value[1],
+                            !interrupt_mask_value[2] || !interrupt_mask_value[3],
+                            16'h1ffa, interrupt_mask_value, 0);
+
+      stub_address = 16'h1ffa;
+      stub_valid = 1'b1;
+      stub_write = 1'b0;
+      tick();
+      stub_valid = 1'b0;
+      if (!interrupt_mask_value[0]) begin
+        check_interrupt_state(1'b0, 1'b1, !interrupt_mask_value[1],
+                              !interrupt_mask_value[2] || !interrupt_mask_value[3],
+                              16'h1ff8, interrupt_mask_value, 1);
+      end else if (!interrupt_mask_value[1]) begin
+        check_interrupt_state(1'b0, 1'b0, 1'b1,
+                              !interrupt_mask_value[2] || !interrupt_mask_value[3],
+                              16'h1ff8, interrupt_mask_value, 1);
+      end else begin
+        check_interrupt_state(1'b0, 1'b0, 1'b0,
+                              !interrupt_mask_value[2] || !interrupt_mask_value[3],
+                              16'h1ff4, interrupt_mask_value, 1);
+      end
+
+      bus_write(14'h000a, interrupt_mask_value[0] ? 8'h40 : 8'h00);
+      if (!interrupt_mask_value[1]) begin
+        check_interrupt_state(1'b0, 1'b0, 1'b1,
+                              !interrupt_mask_value[2] || !interrupt_mask_value[3],
+                              16'h1ff8, interrupt_mask_value, 2);
+      end else begin
+        check_interrupt_state(1'b0, 1'b0, 1'b0,
+                              !interrupt_mask_value[2] || !interrupt_mask_value[3],
+                              16'h1ff4, interrupt_mask_value, 2);
+      end
+
+      bus_write(14'h0009, interrupt_mask_value[1] ? 8'h60 : 8'h20);
+      check_interrupt_state(1'b0, 1'b0, 1'b0,
+                            !interrupt_mask_value[2] || !interrupt_mask_value[3],
+                            16'h1ff4, interrupt_mask_value, 3);
+      bus_write(14'h0011, 8'h40 |
+                (interrupt_mask_value[2] ? 8'h20 : 8'h00) |
+                (interrupt_mask_value[3] ? 8'h10 : 8'h00));
+      check_interrupt_state(1'b0, 1'b0, 1'b0,
+                            !interrupt_mask_value[3], 16'h1ff4,
+                            interrupt_mask_value, 4);
+      bus_write(14'h0011,
+                (interrupt_mask_value[2] ? 8'h20 : 8'h00) |
+                (interrupt_mask_value[3] ? 8'h10 : 8'h00));
+      check_interrupt_state(1'b0, 1'b0, 1'b0, 1'b0, 16'h1ff4,
+                            interrupt_mask_value, 5);
+    end
+
+    reset_n = 1'b0;
+    int_n = 1'b1;
+    int2_n = 1'b1;
+    #1;
+    reset_n = 1'b1;
+    tick();
     stub_valid = 1'b1;
     stub_write = 1'b0;
     for (map_address = 0; map_address < 16384;
@@ -922,12 +1130,13 @@ module tb_hd63705_peripheral_diff;
       ram_checks = ram_checks + 1;
     end
 
-    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d TCR checks=%0d timer counter checks=%0d source/divider checks=%0d timer access checks=%0d GPIO checks=%0d SCI DDR checks=%0d SCI Tx checks=%0d SCI Rx checks=%0d SCI SSR checks=%0d SCI rate checks=%0d SCI protocol checks=%0d",
+    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d TCR checks=%0d timer counter checks=%0d source/divider checks=%0d timer access checks=%0d GPIO checks=%0d SCI DDR checks=%0d SCI Tx checks=%0d SCI Rx checks=%0d SCI SSR checks=%0d SCI rate checks=%0d SCI protocol checks=%0d MR checks=%0d interrupt priority checks=%0d interrupt protocol checks=%0d",
              32'h63705000, HD63705_PERIPHERAL_VECTOR_COUNT,
              map_checks, ram_checks, timer_tcr_checks, timer_counter_checks,
              timer_source_checks, timer_access_checks, gpio_checks,
              sci_ddr_checks, sci_tx_checks, sci_rx_checks, sci_ssr_checks,
-             sci_rate_checks, sci_protocol_checks);
+             sci_rate_checks, sci_protocol_checks, interrupt_mr_checks,
+             interrupt_priority_checks, interrupt_protocol_checks);
     $finish;
   end
 endmodule

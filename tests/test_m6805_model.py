@@ -164,6 +164,25 @@ class M6805ModelTests(unittest.TestCase):
             self.assertTrue(model.flag("I"))
             self.assertEqual(model.state.sp, 0x6B)
 
+    def test_hd6305_pending_irq_prevents_wait_and_stop_entry(self) -> None:
+        for opcode in (0x8E, 0x8F):
+            model = _fixture("hd6305", opcode)
+            model.memory.load(0xFFFA, [0x24, 0x00])
+            model.set_flag("I", True)
+            model.irq_n = False
+            trace = model.step()
+            self.assertEqual(trace.documented_cycles, 4)
+            self.assertFalse(model.state.waiting)
+            self.assertFalse(model.state.stopped)
+            self.assertFalse(model.flag("I"))
+            self.assertTrue(model.service_irq())
+            self.assertEqual(model.state.pc, 0x2400)
+            self.assertEqual(model.state.sp, 0x6B)
+            self.assertEqual(
+                [model.memory[address] for address in range(0x6C, 0x71)],
+                [0xE0, 0x12, 0x20, 0x10, 0x01],
+            )
+
     def test_five_bit_stack_wraps_within_0060_to_007f(self) -> None:
         model = _fixture("m6805", 0xCD)
         model.state.sp = 0x60

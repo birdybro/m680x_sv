@@ -287,6 +287,85 @@ module tb_hd63705v0_mcu;
     if (int2_irq || debug_mr[7]) $fatal(1, "HD63705V0 INT2 software clear");
     checks = checks + 2;
 
+    // QA635-329A: a pending unmasked source completes the four-cycle WAIT
+    // or STOP instruction but prevents entry into the low-power state. A
+    // timer already pending before WAIT therefore uses the normal $1ff8
+    // vector, not the special vector reserved for a timer arising in WAIT.
+    firmware[14'h1520] = 8'ha6; firmware[14'h1521] = 8'h01;
+    firmware[14'h1522] = 8'hb7; firmware[14'h1523] = 8'h08;
+    firmware[14'h1524] = 8'ha6; firmware[14'h1525] = 8'h00;
+    firmware[14'h1526] = 8'hb7; firmware[14'h1527] = 8'h09;
+    firmware[14'h1528] = 8'h8f;
+    firmware[14'h1530] = 8'h1f; firmware[14'h1531] = 8'h09;
+    firmware[14'h1532] = 8'h80;
+    firmware[14'h1540] = 8'h80;
+    firmware[14'h1ff6] = 8'h15; firmware[14'h1ff7] = 8'h40;
+    firmware[14'h1ff8] = 8'h15; firmware[14'h1ff9] = 8'h30;
+    timer_pin = 1'b0;
+    reset_to(14'h1520);
+    run_instruction(8'ha6); run_instruction(8'hb7);
+    run_instruction(8'ha6); run_instruction(8'hb7);
+    if (!timer_irq) $fatal(1, "HD63705V0 pending timer setup");
+    run_instruction(8'h8f);
+    if (waiting_state || stopped_state || irq_vector != 16'h1ff8) begin
+      $fatal(1, "HD63705V0 pending timer entered WAIT wait=%b stop=%b vector=%04x",
+             waiting_state, stopped_state, irq_vector);
+    end
+    wait_for_interrupt(14'h1530);
+    if (debug_sp != 16'h00fa || dut.ram[191] != 8'h29 ||
+        dut.ram[190] != 8'h15 || dut.ram[189] != 8'h00 ||
+        dut.ram[188] != 8'h00 || dut.ram[187][3] != 1'b0) begin
+      $fatal(1, "HD63705V0 WAIT pending frame sp=%04x %02x %02x %02x %02x %02x",
+             debug_sp, dut.ram[191], dut.ram[190], dut.ram[189],
+             dut.ram[188], dut.ram[187]);
+    end
+    checks = checks + 2;
+
+    // A falling INT while I is still set likewise prevents STOP and retains
+    // the complete next-PC/X/A/CCR frame. The vector fetch clears edge INT.
+    firmware[14'h1580] = 8'h8e;
+    firmware[14'h1590] = 8'h80;
+    firmware[14'h1ffa] = 8'h15; firmware[14'h1ffb] = 8'h90;
+    int_n = 1'b1;
+    reset_to(14'h1580);
+    int_n = 1'b0;
+    run_instruction(8'h8e);
+    if (waiting_state || stopped_state || irq_vector != 16'h1ffa) begin
+      $fatal(1, "HD63705V0 pending INT entered STOP wait=%b stop=%b vector=%04x",
+             waiting_state, stopped_state, irq_vector);
+    end
+    wait_for_interrupt(14'h1590);
+    if (debug_sp != 16'h00fa || dut.ram[191] != 8'h81 ||
+        dut.ram[190] != 8'h15 || dut.ram[189] != 8'h00 ||
+        dut.ram[188] != 8'h00 || dut.ram[187][3] != 1'b0 || int_irq) begin
+      $fatal(1, "HD63705V0 STOP pending frame/clear sp=%04x int=%b",
+             debug_sp, int_irq);
+    end
+    int_n = 1'b1;
+    checks = checks + 2;
+
+    // Masked INT2 and timer requests do not prevent STOP. Their request bits
+    // are still captured; figure 2-18 then normalizes the timer request.
+    firmware[14'h15c0] = 8'ha6; firmware[14'h15c1] = 8'h01;
+    firmware[14'h15c2] = 8'hb7; firmware[14'h15c3] = 8'h08;
+    firmware[14'h15c4] = 8'ha6; firmware[14'h15c5] = 8'h40;
+    firmware[14'h15c6] = 8'hb7; firmware[14'h15c7] = 8'h09;
+    firmware[14'h15c8] = 8'h8e;
+    int2_n = 1'b1;
+    reset_to(14'h15c0);
+    run_instruction(8'ha6); run_instruction(8'hb7);
+    run_instruction(8'ha6); run_instruction(8'hb7);
+    int2_n = 1'b0;
+    run_instruction(8'h8e);
+    tick();
+    if (!stopped_state || !debug_mr[7] || debug_tcr[7] ||
+        debug_tcr[6] != 1'b1) begin
+      $fatal(1, "HD63705V0 masked requests blocked STOP stop=%b MR=%02x TCR=%02x",
+             stopped_state, debug_mr, debug_tcr);
+    end
+    int2_n = 1'b1;
+    checks = checks + 2;
+
     // External-clock synchronous transmit and receive exercise all eight bits.
     firmware[14'h1600] = 8'ha6; firmware[14'h1601] = 8'hf0;
     firmware[14'h1602] = 8'hb7; firmware[14'h1603] = 8'h10;

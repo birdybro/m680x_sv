@@ -260,6 +260,18 @@ prohibited mid-transfer SDR access specified by QA635-305A through QA635-313A.
 The undefined partial-data result of that prohibited access is deterministically
 cancelled without a silicon-equivalence claim. Oscillator, CK-pad, and
 electrical timing remain excluded.
+The normalized interrupt-controller dimension is `COMPLETE`. Exhaustive model
+and direct RTL matrices cover MR7 clear-only behavior, every request/mask
+priority combination, INT edge and level modes, INT2 falling-edge retention,
+masked/unmasked delivery, shared and timer-from-WAIT vectors, simultaneous and
+repeated service, complete stack/RTI state, and Q&A-defined low-power entry and
+standby-return behavior. QA635-329A prevents WAIT/STOP entry when an unmasked
+request is already pending; a pending timer therefore uses `$1ff8`, not the
+`$1ff6` vector reserved for a timer arising after WAIT entry. QA635-325A also
+requires that an already-low standby-return pin not be invented as a falling
+edge. Both behaviors have direct real-core regressions. Oscillator recovery and
+the separately disputed STOP register state remain outside this closed digital
+controller dimension.
 The manual's `$0000`-`$00ff` programming-range sentence conflicts with its 4-KiB,
 twelve-address-input, and `$1000`-`$1fff` memory-map facts; the interface uses
 the mutually consistent `$0000`-`$0fff` programmer range and preserves the

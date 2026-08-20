@@ -32,6 +32,7 @@ PERIPHERAL_SECTIONS = {
     "registers", "timer", "interrupts", "gpio", "sci", "operating_modes",
     "memory_control",
 }
+OPTIONAL_PERIPHERAL_SECTIONS = {"interrupt_controller"}
 
 
 def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
@@ -44,7 +45,7 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
         "implementation_scope",
     }
     required = inherited_required if "inherits" in spec else full_required
-    allowed = full_required | PERIPHERAL_SECTIONS | {"inherits"}
+    allowed = full_required | PERIPHERAL_SECTIONS | OPTIONAL_PERIPHERAL_SECTIONS | {"inherits"}
     if not required <= set(spec) or set(spec) - allowed or spec["schema_version"] != 1:
         raise PeripheralSpecError("peripheral record has incomplete fields or schema")
     device_ids = {device["id"] for device in devices["devices"]}
@@ -134,7 +135,10 @@ def validate_peripheral(spec: dict, devices: dict, references: dict) -> None:
             for index, nested in enumerate(value):
                 validate_citations(nested, f"{owner}[{index}]")
 
-    for section in ("timer", "gpio", "sci", "operating_modes", "memory_control"):
+    for section in (
+        "timer", "gpio", "sci", "operating_modes", "memory_control",
+        "interrupt_controller",
+    ):
         if section in spec:
             validate_citations(spec[section], section)
 

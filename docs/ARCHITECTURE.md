@@ -504,6 +504,14 @@ during active countdown. INT is edge-latched or edge-and-level sensed; INT2 is
 falling-edge latched and
 software-cleared. The priority encoder selects INT, timer/INT2, the separate
 timer-from-WAIT vector, and SCI/Timer2 without conflating their status flags.
+Masked requests retain their source flags. INT edge mode clears its private
+latch on the INT vector fetch while level mode continues to reflect a low pin;
+INT2 remains in clear-only MR7. A reset/standby recovery arm captures the first
+active INT/INT2 levels without manufacturing a falling edge, as required by
+QA635-325A. The core completes a pending-request WAIT/STOP in four cycles but
+transitions directly to interrupt stacking without exposing the low-power state,
+which preserves the normal `$1ff8` timer vector before WAIT and reserves
+`$1ff6` for a timer request arising after WAIT is established (QA635-329A).
 
 The synchronous SCI changes LSB-first transmit data on CK falling edges and
 samples receive data on rising edges. The eighth rising edge sets the SCI

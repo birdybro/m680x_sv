@@ -346,12 +346,12 @@ TIE bit that TOPT makes irrelevant. The independent model separately checks all
 behavior, not the manual's electrical or nanosecond pulse-width limits.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
-boundaries and the complete register map. Its 34 checks cover reset/vector
+boundaries and the complete register map. Its 45 checks cover reset/vector
 fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
 eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field
 changes and external wake, STBY high impedance with RAM retention, and all five normalized
-EPROM control states. Nineteen independent model tests exercise the same factual
+EPROM control states. Twenty-one independent model tests exercise the same factual
 areas and exhaustively project the EPROM address space without sharing RTL
 control structure. A direct extension classifies all 16,384 physical addresses
 and performs 576 checks over every RAM byte after fill, reset, and standby. It
@@ -394,6 +394,24 @@ the documented transfer-fault disable. QA635-308A leaves partial shifted data
 undefined after the prohibited access, so deterministic cancellation is tested
 without a silicon-data claim. Both Verilator and Icarus run the same direct
 matrix.
+
+The interrupt-controller extension crosses both initial MR7 states with every
+one of 256 MR writes (512 direct RTL and 512 independent-model cases). The model
+then checks all 1,024 combinations of INT, INT2/timer/SCI/Timer2 request and
+mask state with both normal and WAIT vector selection; the RTL independently
+walks 96 source-clear stages across all 16 peripheral-mask combinations. Three
+direct protocol sequences and independent model cases verify edge-only and
+edge-plus-level INT, INT2 masking and clear-only retention, held-low suppression,
+high-to-low rearming, and the QA635-325A rule that pins already low at standby
+recovery do not create an edge. Real-core checks cover simultaneous INT/INT2,
+priority and repeated service, software clearing, the instruction-after-CLI
+delay, timer entry from established WAIT, and complete PC/X/A/CCR stack frames.
+Pending timer and INT cases prove QA635-329A's four-cycle WAIT/STOP completion
+without low-power entry; the timer takes normal `$1ff8`, while a request arising
+inside WAIT takes `$1ff6`. A masked timer plus masked INT2 case proves that
+retained masked requests still permit STOP. This audit found and fixes both the
+false one-cycle low-power state/wrong-vector defect and synthesized edges on
+already-low standby-return pins.
 
 Seed `0x63705000` adds 768 normalized E-cycle comparisons. A directed prefix
 precedes deterministic register, pin, memory, interrupt, and low-power traffic;
@@ -482,7 +500,9 @@ within those bounds:
   stay in the documented set, all five table-2-9 EPROM states use exact
   ordinary-read/VPP/CE/OE qualification, standby/EPROM mode disables GPIO
   drive, disabled-cycle state stalls, SCI/Timer2 interrupt output is exactly
-  its two request/mask equations, and SCI control/status reset values are exact.
+  its two request/mask equations, INT2 delivery is exactly MR7 and not MR6,
+  interrupt-vector priority follows the documented source order, and SCI
+  control/status reset values are exact.
 
 These bounded safety proofs complement simulation; they are not a liveness or
 full instruction-correctness proof.
@@ -531,10 +551,10 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD63701V0 Mode 6 integration | 14,051 | 1,957 |
 | HD63701V0 Mode 7 integration | 14,079 | 1,996 |
 | HD63701V0 four-subphase bus wrapper | 14,218 | 1,960 |
-| M6805 | 3,609 | 169 |
-| HD6305 | 3,611 | 170 |
-| MC68705P5 integration | 6,940 | 1,144 |
-| HD63705V0 integration | 9,984 | 1,859 |
+| M6805 | 3,554 | 169 |
+| HD6305 | 3,603 | 170 |
+| MC68705P5 integration | 6,908 | 1,144 |
+| HD63705V0 integration | 9,972 | 1,860 |
 
 Sequential counts include every synthesized DFF primitive and inferred memory
 bit. Cell counts are tool/version/technology dependent and are smoke-test

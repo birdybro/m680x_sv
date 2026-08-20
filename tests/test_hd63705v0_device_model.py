@@ -383,6 +383,95 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
         model.state.sci_mask = False
         self.assertEqual(self.cycle(model).irq_vector, VECTOR_SCI_TIMER2)
 
+    def test_all_miscellaneous_writes_and_interrupt_priority_combinations(self) -> None:
+        for initial_int2_request in (False, True):
+            for value in range(0x100):
+                model = HD63705V0DeviceModel()
+                self.cycle(model)
+                model.state.int2_request = initial_int2_request
+                result = self.write(model, 0x0A, value)
+                expected_request = initial_int2_request and bool(value & 0x80)
+                expected = (
+                    (0x80 if expected_request else 0x00) | (value & 0x60) | 0x1F
+                )
+                self.assertEqual(result.state["MR"], expected)
+
+        for request_mask_bits in range(0x100):
+            for int_request in (False, True):
+                for waiting in (False, True):
+                    model = HD63705V0DeviceModel()
+                    s = model.state
+                    s.int_latch = int_request
+                    s.int2_request = bool(request_mask_bits & 0x01)
+                    s.timer_request = bool(request_mask_bits & 0x02)
+                    s.sci_request = bool(request_mask_bits & 0x04)
+                    s.timer2_request = bool(request_mask_bits & 0x08)
+                    s.int2_mask = bool(request_mask_bits & 0x10)
+                    s.timer_mask = bool(request_mask_bits & 0x20)
+                    s.sci_mask = bool(request_mask_bits & 0x40)
+                    s.timer2_mask = bool(request_mask_bits & 0x80)
+                    result = self.cycle(model, waiting=waiting)
+                    int2 = s.int2_request and not s.int2_mask
+                    timer = s.timer_request and not s.timer_mask
+                    serial = (s.sci_request and not s.sci_mask) or (
+                        s.timer2_request and not s.timer2_mask
+                    )
+                    self.assertEqual(result.irq_request, int_request or int2 or timer or serial)
+                    expected_vector = VECTOR_SCI_TIMER2
+                    if int_request:
+                        expected_vector = VECTOR_INT
+                    elif int2:
+                        expected_vector = VECTOR_TIMER_INT2
+                    elif timer:
+                        expected_vector = VECTOR_WAIT_TIMER if waiting else VECTOR_TIMER_INT2
+                    self.assertEqual(result.irq_vector, expected_vector)
+
+    def test_external_interrupt_edges_levels_masks_and_standby_recovery(self) -> None:
+        model = HD63705V0DeviceModel()
+        result = self.cycle(model, int_n=False, int2_n=False)
+        self.assertFalse(result.int_irq)
+        self.assertFalse(result.int2_irq)
+        self.assertFalse(result.state["MR"] & 0x80)
+        result = self.cycle(model, int_n=False, int2_n=False)
+        self.assertFalse(result.int_irq)
+        self.assertFalse(result.int2_irq)
+
+        result = self.write(model, 0x0A, 0x20, int_n=False, int2_n=False)
+        self.assertTrue(result.int_irq)
+        self.assertFalse(result.int2_irq)
+        result = self.write(model, 0x0A, 0x00, int_n=False, int2_n=False)
+        self.assertFalse(result.int_irq)
+        self.cycle(model, int_n=True, int2_n=True)
+        result = self.cycle(model, int_n=True, int2_n=False)
+        self.assertTrue(result.state["MR"] & 0x80)
+        self.assertTrue(result.int2_irq)
+        result = self.write(model, 0x0A, 0xC0, int2_n=False)
+        self.assertFalse(result.int2_irq)
+        self.assertTrue(result.state["MR"] & 0x80)
+        result = self.write(model, 0x0A, 0x80, int2_n=False)
+        self.assertTrue(result.int2_irq)
+        result = self.write(model, 0x0A, 0x00, int2_n=False)
+        self.assertFalse(result.int2_irq)
+        self.assertFalse(result.state["MR"] & 0x80)
+        self.assertFalse(self.cycle(model, int2_n=False).int2_irq)
+        self.cycle(model, int2_n=True)
+        self.assertTrue(self.cycle(model, int2_n=False).int2_irq)
+
+        model = HD63705V0DeviceModel()
+        self.write(model, 0x0A, 0x00, int_n=True)
+        self.assertTrue(self.cycle(model, int_n=False).int_irq)
+        result = self.read(model, VECTOR_INT, int_n=False)
+        self.assertFalse(result.int_irq)
+        self.assertFalse(self.cycle(model, int_n=False).int_irq)
+        self.cycle(model, int_n=True)
+        self.assertTrue(self.cycle(model, int_n=False).int_irq)
+
+        model = HD63705V0DeviceModel()
+        self.write(model, 0x0A, 0x20, int_n=True)
+        self.assertTrue(self.cycle(model, int_n=False).int_irq)
+        self.assertTrue(self.read(model, VECTOR_INT, int_n=False).int_irq)
+        self.assertFalse(self.cycle(model, int_n=True).int_irq)
+
     def test_synchronous_sci_external_transfer_and_pin_overrides(self) -> None:
         model = HD63705V0DeviceModel()
         self.write(model, 0x10, 0xF0, port_d=0x7F)  # Tx/Rx, external clock

@@ -146,6 +146,7 @@ class HD63705V0PeripheralState:
     int_previous: bool = True
     int_latch: bool = False
     int2_previous: bool = True
+    external_interrupts_armed: bool = False
     int2_request: bool = False
     int2_mask: bool = True
     int_level_sensitive: bool = False
@@ -217,6 +218,7 @@ class HD63705V0PeripheralState:
             "sci_tx": self.transmit_output,
             "sci_disabled": self.sci_disabled,
             "int_latch": self.int_latch,
+            "external_interrupts_armed": self.external_interrupts_armed,
             "stop_initialized": self.stop_initialized,
         }
 
@@ -420,6 +422,13 @@ class HD63705V0DeviceModel:
 
     def _advance_external_interrupts(self, inputs: HD63705V0CycleInputs) -> None:
         s = self.state
+        if not s.external_interrupts_armed:
+            # QA635-325A: inputs already low on standby recovery have not made
+            # a falling transition in active operation. First capture levels.
+            s.int_previous = inputs.int_n
+            s.int2_previous = inputs.int2_n
+            s.external_interrupts_armed = True
+            return
         if s.int_previous and not inputs.int_n:
             s.int_latch = True
         if s.int2_previous and not inputs.int2_n:

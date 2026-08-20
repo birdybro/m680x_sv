@@ -377,10 +377,14 @@ class M6805Model:
             self._merge_flags(result, record)
         elif mnemonic in {"STOP", "WAIT"}:
             self.set_flag("I", False)
-            if mnemonic == "STOP":
-                self.state.stopped = True
-            else:
-                self.state.waiting = True
+            # HD6305 QA635-329A states that a pending unmasked request lets
+            # the four-cycle instruction complete without entering low power.
+            # The caller accepts that now-unmasked request at the boundary.
+            if self.architecture != "hd6305" or self.irq_n:
+                if mnemonic == "STOP":
+                    self.state.stopped = True
+                else:
+                    self.state.waiting = True
         elif mnemonic == "NOP":
             pass
         else:

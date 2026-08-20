@@ -2229,8 +2229,19 @@ module m6805_core #(
         end
         ST_PADDING: begin
           if (cycles_left <= 4'd1) begin
-            state <= terminal_state;
             retire_o <= 1'b1;
+            if (HITACHI_PROFILE &&
+                (terminal_state == ST_WAITING || terminal_state == ST_STOPPED) &&
+                !irq_n_i) begin
+              // Hitachi QA635-329A: a pending unmasked request completes the
+              // four-cycle WAIT/STOP instruction without entering low power.
+              vector_address <= irq_vector_i;
+              external_interrupt <= 1'b1;
+              phase <= 3'd0;
+              state <= ST_INTERRUPT_PUSH;
+            end else begin
+              state <= terminal_state;
+            end
           end
         end
         ST_WAITING, ST_STOPPED: begin

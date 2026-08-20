@@ -92,6 +92,7 @@ module hd63705v0_mcu (
   logic int_previous;
   logic int_latch;
   logic int2_previous;
+  logic external_interrupts_armed;
   logic [7:5] miscellaneous;
   logic [7:0] sci_control;
   logic [7:4] sci_status;
@@ -280,6 +281,7 @@ module hd63705v0_mcu (
       int_previous <= 1'b1;
       int_latch <= 1'b0;
       int2_previous <= 1'b1;
+      external_interrupts_armed <= 1'b0;
       miscellaneous <= 3'b010;
       sci_control <= 8'h00;
       sci_status <= 4'b0011;
@@ -298,13 +300,21 @@ module hd63705v0_mcu (
       stopped_previous <= 1'b0;
     end else if (clock_enable_i) begin
       timer_previous <= timer_i;
-      int_previous <= int_n_i;
-      int2_previous <= int2_n_i;
       sci_external_previous <= port_d_i[5];
       stopped_previous <= stopped_o;
 
-      if (int_previous && !int_n_i) int_latch <= 1'b1;
-      if (int2_previous && !int2_n_i) miscellaneous[7] <= 1'b1;
+      if (!external_interrupts_armed) begin
+        // QA635-325A: an input already low when active operation resumes from
+        // standby is not an edge. Capture both starting levels before arming.
+        int_previous <= int_n_i;
+        int2_previous <= int2_n_i;
+        external_interrupts_armed <= 1'b1;
+      end else begin
+        int_previous <= int_n_i;
+        int2_previous <= int2_n_i;
+        if (int_previous && !int_n_i) int_latch <= 1'b1;
+        if (int2_previous && !int2_n_i) miscellaneous[7] <= 1'b1;
+      end
       if (core_bus_valid && !core_write && (core_address[13:0] == 14'h1ffa)) begin
         int_latch <= 1'b0;
       end

@@ -12,7 +12,7 @@ The project is under active development. Every processor and whole-MCU support
 row remains `PARTIAL`; narrowly scoped dimensions become `COMPLETE` only after
 exhaustive evidence. MC68705P5 and HD63705V0 internal-memory decode and
 normalized digital timer functions, plus HD63705V0 GPIO and synchronous
-SCI/Timer2, are the first such closed dimensions. The
+SCI/Timer2 and interrupt controller, are the first such closed dimensions. The
 evidence-backed target matrix is in
 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and its authoritative structured
 form is [spec/devices.yml](spec/devices.yml).
@@ -202,6 +202,18 @@ QA635-308A does not guarantee partially shifted data after that prohibited
 access; cancelling the partial transfer is therefore a deterministic FPGA
 normalization, not a silicon-data claim. Oscillator, CK-pad, and electrical
 timing remain excluded.
+Its normalized interrupt-controller dimension is `COMPLETE`: the model crosses
+all 1,024 request/mask/WAIT priority combinations and both initial MR7 states
+with all 256 MR writes, while direct RTL performs 512 MR checks, 96 ordered
+priority stages, and edge/level/standby-return protocols. Real-core regressions
+verify simultaneous and repeated service, masked retention, CLI delay, normal
+versus timer-from-WAIT vectors, rejected WAIT/STOP entry with a pending source,
+masked-source low-power entry, complete stack frames, and RTI. This audit found
+and fixed both a one-cycle false low-power entry (which could select the wrong
+timer vector) and false INT/INT2 falling edges when a pin was already low at
+standby recovery. Oscillator stabilization remains outside the digital claim,
+and the independently recorded STOP-register documentation contradiction keeps
+the broader low-power dimension `PARTIAL`.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
 silicon behavior. These limitations are tracked as `PARTIAL`,

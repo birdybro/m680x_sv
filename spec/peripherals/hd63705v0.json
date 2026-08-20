@@ -44,6 +44,15 @@
     {"source": "timer-accepted-from-WAIT", "vector": "1FF6:1FF7", "priority": 5},
     {"source": "SCI-or-Timer2", "vector": "1FF4:1FF5", "priority": 6}
   ],
+  "interrupt_controller": {
+    "int": "MR5 selects falling-edge latch or falling-edge plus active-low level sensing. The edge latch clears automatically when INT service begins; BIL/BIR observe the physical pin without changing the latch.",
+    "int2": "A falling edge sets clear-only MR7 even while MR6 or CCR I masks service. MR6 masks delivery and writing zero to MR7 clears the retained request; writing one cannot create a request.",
+    "masked_retention": "INT, INT2, timer, SCI, and Timer2 requests remain pending while CCR I or their source mask inhibits service and are accepted after the applicable masks clear.",
+    "priority": "INT precedes INT2, primary timer, and SCI/Timer2. INT2 and the primary timer share 1FF8:1FF9; a primary-timer request arising after WAIT entry uses 1FF6:1FF7; SCI and Timer2 share 1FF4:1FF5.",
+    "low_power_entry": "A pending unmasked request completes the four-cycle WAIT or STOP instruction without entering low power. Masked INT2/internal requests do not prevent entry. Once STOP is established only INT or enabled INT2 can wake it.",
+    "standby_recovery": "INT edge mode and INT2 do not synthesize an edge when their pin was already low as active operation resumes; INT level mode can request while low.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.7 and 2.9, figures 2-14 through 2-18, and table 2-4, printed pages 120-129; Q&A QA635-321A through QA635-325A, printed pages 909-913; Q&A QA635-329A through QA635-331A, printed pages 917-919"}
+  },
   "gpio": {
     "ports": "Ports A, B, and C have eight bits; Port D has seven bits. Every bit has a direction bit and reset selects input.",
     "multiplexing": "D3 is synchronous Tx, D4 is Rx, D5 is CK, and D6 shares the INT2 package pin. Selecting Tx/Rx/CK both overrides the active pin direction and writes the corresponding DDRD direction; QA635-302A says that stored direction remains after SCI is disabled. D0-D2 and D6 remain ordinary GPIO during SCI.",
@@ -77,7 +86,7 @@
   "implementation_scope": {
     "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, a stated figure-2-18 STOP normalization, and normalized EPROM programming pins.",
     "model": "model/hd63705v0_device.py independently classifies every physical address and models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, normalized STOP state changes per E cycle, and the combinational EPROM table.",
-    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes; all 256 TCR writes, 2048 counter/divider pairs, all 32 source/divider combinations, request/mask/TDR access, reset and wait-vector behavior; all 248 GPIO bit truth-table combinations plus fixed Port-D readback, WAIT/STOP retention, and all 512 SCR/initial-DDR combinations; all 256 synchronous transmit bytes, all 256 receive bytes, all 256 SSR values, all 32 Timer2 source/rate combinations, and 261 SDR protocol cases; and cover external interrupt priority, normalized STOP/STBY, and all five table-2-9 EPROM states.",
+    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes; all 256 TCR writes, 2048 counter/divider pairs, all 32 source/divider combinations, request/mask/TDR access, reset and wait-vector behavior; all 248 GPIO bit truth-table combinations plus fixed Port-D readback, WAIT/STOP retention, and all 512 SCR/initial-DDR combinations; all 256 synchronous transmit bytes, all 256 receive bytes, all 256 SSR values, all 32 Timer2 source/rate combinations, and 261 SDR protocol cases; both initial request states under all 256 MR writes, all 1024 request/mask/WAIT priority combinations in the independent model, 96 direct RTL priority stages, external edge/level/rearm/standby recovery, pending-request low-power rejection, complete stack frames, repeated priority service, and RTI; normalized STOP/STBY; and all five table-2-9 EPROM states.",
     "undefined_policy": "IC-test-area and unused read values, SDR reset data, partial data following a prohibited mid-transfer SDR access, and the STOP register state disputed by section 2.9/table 2-5 versus figure 2-18 are deterministic FPGA normalizations, not silicon-equivalence claims.",
     "analog_exclusions": ["oscillator startup and duty cycle", "EPROM charge programming, voltage margins, and retention", "pad drive strength", "metastability"]
   }
