@@ -14,6 +14,8 @@ module mc6801_bus_wrapper_formal;
   logic sc1oe_mode2;
   logic sc2_mode2;
   logic [15:0] address_mode2;
+  logic [15:0] sp_mode2;
+  logic waiting_mode2;
   logic [1:0] phase5;
   logic e5;
   logic [7:0] p3oe_mode5;
@@ -21,6 +23,8 @@ module mc6801_bus_wrapper_formal;
   logic sc1oe_mode5;
   logic sc2_mode5;
   logic [15:0] address_mode5;
+  logic [15:0] sp_mode5;
+  logic waiting_mode5;
 
   assign reset_n = past_valid;
   always @(posedge clk) past_valid <= 1'b1;
@@ -36,8 +40,9 @@ module mc6801_bus_wrapper_formal;
     .port4_oe_o(p4oe_mode2), .sc1_i(1'b1), .sc1_o(sc1_mode2),
     .sc1_oe_o(sc1oe_mode2), .sc2_o(sc2_mode2), .e_o(e2),
     .bus_phase_o(phase2), .opcode_fetch_o(), .retire_o(), .illegal_o(),
-    .undefined_o(), .waiting_o(), .interrupt_ack_o(), .operating_mode_o(),
-    .debug_address_o(address_mode2), .debug_pc_o(), .debug_sp_o(),
+    .undefined_o(), .waiting_o(waiting_mode2), .interrupt_ack_o(),
+    .operating_mode_o(), .debug_address_o(address_mode2), .debug_pc_o(),
+    .debug_sp_o(sp_mode2),
     .debug_a_o(), .debug_b_o(), .debug_x_o(), .debug_ccr_o()
   );
 
@@ -51,8 +56,9 @@ module mc6801_bus_wrapper_formal;
     .port4_oe_o(), .sc1_i(1'b1), .sc1_o(sc1_mode5),
     .sc1_oe_o(sc1oe_mode5), .sc2_o(sc2_mode5), .e_o(e5),
     .bus_phase_o(phase5), .opcode_fetch_o(), .retire_o(), .illegal_o(),
-    .undefined_o(), .waiting_o(), .interrupt_ack_o(), .operating_mode_o(),
-    .debug_address_o(address_mode5), .debug_pc_o(), .debug_sp_o(),
+    .undefined_o(), .waiting_o(waiting_mode5), .interrupt_ack_o(),
+    .operating_mode_o(), .debug_address_o(address_mode5), .debug_pc_o(),
+    .debug_sp_o(sp_mode5),
     .debug_a_o(), .debug_b_o(), .debug_x_o(), .debug_ccr_o()
   );
   /* verilator lint_on PINCONNECTEMPTY */
@@ -71,16 +77,25 @@ module mc6801_bus_wrapper_formal;
       assert (sc1oe_mode5);
       assert (sc1_mode2 == (phase2 == 2'd0));
       if (phase2 == 2'd0) begin
-        assert (p3_mode2 == address_mode2[7:0]);
+        if (waiting_mode2) assert (p3_mode2 == sp_mode2[7:0]);
+        else assert (p3_mode2 == address_mode2[7:0]);
         assert (p3oe_mode2 == 8'hff);
-        assert (p4_mode2 == address_mode2[15:8]);
+        if (waiting_mode2) assert (p4_mode2 == sp_mode2[15:8]);
+        else assert (p4_mode2 == address_mode2[15:8]);
         assert (p4oe_mode2 == 8'hff);
       end
       if (phase2 == 2'd1) assert (p3oe_mode2 == 8'h00);
+      if (waiting_mode2 && (phase2 != 2'd0)) assert (p3oe_mode2 == 8'h00);
       if ((phase2 != 2'd0) && (p3oe_mode2 != 8'h00)) assert (e2);
 
-      assert (sc1_mode5 == !((address_mode5 >= 16'h0100) &&
-                             (address_mode5 <= 16'h01ff)));
+      if (waiting_mode5) begin
+        assert (sc1_mode5 == !((sp_mode5 >= 16'h0100) &&
+                               (sp_mode5 <= 16'h01ff)));
+        assert (p3oe_mode5 == 8'h00);
+      end else begin
+        assert (sc1_mode5 == !((address_mode5 >= 16'h0100) &&
+                               (address_mode5 <= 16'h01ff)));
+      end
       if (!e5) assert (p3oe_mode5 == 8'h00);
       if (p3oe_mode5 != 8'h00) assert (e5 && !sc2_mode5);
     end

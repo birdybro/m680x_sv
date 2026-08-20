@@ -56,6 +56,15 @@ module m6800_core_formal #(
     assert (!opcode_fetch || (bus_valid && !write_enable));
     assert (!(waiting_state && sleeping_state));
     assert ((interrupt_vector != 2'b11) || (ARCHITECTURE == 2'd2));
+    if (waiting_state) begin
+      assert (!write_enable && !opcode_fetch);
+      if (ARCHITECTURE == 2'd0) assert (!bus_valid);
+      else if (ARCHITECTURE == 2'd1) begin
+        assert (bus_valid && (address == debug_sp));
+      end else begin
+        assert (!bus_valid && (address == 16'hffff));
+      end
+    end
   end
 
   always @(posedge clk) begin

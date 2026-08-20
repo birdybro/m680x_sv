@@ -64,6 +64,35 @@ class MC6801BusModelTests(unittest.TestCase):
                 self.assertTrue(pins.sc1)
                 self.assertTrue(pins.sc2)
 
+    def test_wai_repeats_post_stack_sp_read(self) -> None:
+        for phase in range(4):
+            mode2 = self.pins(
+                2,
+                phase,
+                waiting=True,
+                stack_pointer=0x1FF8,
+                write=True,
+                normalized_port3_oe=0xFF,
+            )
+            self.assertTrue(mode2.sc2)
+            self.assertEqual(mode2.port4, 0x1F)
+            self.assertEqual(mode2.port3_oe, 0xFF if phase == 0 else 0)
+            if phase == 0:
+                self.assertEqual(mode2.port3, 0xF8)
+
+            mode5 = self.pins(
+                5,
+                phase,
+                waiting=True,
+                stack_pointer=0x0180,
+                write=True,
+                normalized_port3_oe=0xFF,
+            )
+            self.assertTrue(mode5.sc2)
+            self.assertFalse(mode5.sc1)
+            self.assertEqual(mode5.port4, 0x80)
+            self.assertEqual(mode5.port3_oe, 0)
+
     def test_invalid_mode_and_phase_are_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "operating mode"):
             self.pins(8, 0)

@@ -169,6 +169,14 @@ Port 3 and emit the high address on Port 4; Mode 5 emits active-low IOS for
 GPIO/IS3/OS3 roles. The active-mode output makes the one-way Mode-4-to-5 pin
 transition immediate at its completing E boundary.
 
+WAI is not generalized across the lineage. MC6801RM(AD2) section 5.4.2 states
+that the expanded bus repeatedly reads the address seven below the pre-WAI SP,
+which is the current post-stack SP. The core and pin wrapper therefore present
+that address with read direction until an interrupt is accepted. The base
+MC6800 profile retains its separate bus-release behavior. The currently
+implemented wake path does not yet claim MC6801's documented five/six-E-cycle
+interrupt-to-handler timing.
+
 `phase_reset_n_i` is an FPGA integration reset for the subphase counter and is
 separate from historical `reset_n_i`; the latter resets the device while E
 continues. This wrapper models documented digital ordering, not oscillator,
@@ -294,6 +302,10 @@ bus. Every write, including an internal-RAM/register write, remains visible on
 the physical data bus as the handbook specifies. Accepted STBY releases the
 address/data buses and holds E low; SLP leaves E active and presents a
 read-direction `$ffff` idle address, with the multiplexed data phase released.
+Inherited WAI instead follows Hitachi Q&A III.4.5: `$ffff` remains on the
+address pins, data is released, and the documented read/write strobes are
+inactive. At the normalized interface this is an invalid cycle with address
+`$ffff`; the physical wrapper keeps R/W high without asserting a data drive.
 The exact normalized and pin boundaries are recorded in
 `../spec/interfaces/hd6303r_modes.json` and
 `../spec/interfaces/hd6303r_phased_bus.json`.

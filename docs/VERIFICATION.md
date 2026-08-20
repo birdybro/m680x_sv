@@ -26,13 +26,14 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 123 |
+| Python unit tests | 127 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
+| M6800/MC6801/HD6301 real-core WAI-bus checks | 18 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801 Mode 0-7/1R/6R decode checks | 62 |
 | MC6801 real-core mode boot paths | 2 |
-| MC6801 four-subphase bus-wrapper checks | 197 |
+| MC6801 four-subphase bus-wrapper checks | 205 |
 | MC6801 external-clock SCI checks | 165 |
 | MC6801 bi-phase SCI checks | 24 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
@@ -41,7 +42,7 @@ The committed tests cover:
 | HD6301V1 seven-mode execution/source checks | 28 |
 | HD6303R Mode-1/2/4 integration checks | 57 |
 | HD6303R legal-mode decode checks | 47 |
-| HD6303R four-subphase bus-wrapper checks | 125 |
+| HD6303R four-subphase bus-wrapper checks | 142 |
 | HD63701V0 Mode-7 integration checks | 30 |
 | HD63701V0 legal-mode decode checks | 95 |
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
@@ -126,14 +127,20 @@ decode, RAM/control state, GPIO value and direction, timer/capture/compare
 state, SCI state and pins, interrupt requests, retained request latches, and
 late priority vector. Directed protocol sequences precede the deterministic
 random register/pin traffic. These checks establish peripheral transaction and
-state timing at the normalized E-cycle boundary. A separate 197-check
+state timing at the normalized E-cycle boundary. A separate 205-check
 four-subphase bench verifies the manufacturer-documented physical digital
 ordering across all eight modes: E low/high phases, AS closure, Port-3 address
 and bus turnaround, E-qualified write data, Mode-0 internal-read monitoring,
 Mode-5 IOS endpoints, reset pin states, single-chip pin roles, clock-enable
 stall, and the Mode-4-to-5 transition. Its independent Python pin model checks
 every mode/phase combination and exhaustively classifies all 65,536 Mode-5 IOS
-addresses. Neither path claims nanosecond electrical limits.
+addresses. Both paths also check that MC6801 WAI repeatedly reads the
+post-stack SP, preserves Mode-5 IOS decoding, and releases Port 3 during the
+read-data phase. A separate real-core bench enters WAI in all three
+M6800-lineage profiles and makes 18 steady-state/stall checks distinguishing
+MC6800 bus release, MC6801 post-stack-SP reads, and HD6301 inactive-strobe
+`$ffff`. Neither path claims nanosecond electrical limits or MC6801's currently
+unverified five/six-E-cycle wake latency.
 
 The HD6301 TRAP suite independently exercises an unassigned opcode and an
 instruction-address-error input. It compares the exact 13-cycle normalized bus
@@ -143,15 +150,15 @@ the complete stacked state, unmaskable I-bit update, RTI restoration of the
 faulting PC, and immediate retrap when the invalid opcode remains present.
 
 The HD6303R pin suite independently checks all three legal operating modes.
-Its 125 RTL assertions cover Mode-1 dedicated low/high address pins,
+Its 142 RTL assertions cover Mode-1 dedicated low/high address pins,
 Mode-2/4 AS and multiplexed Port-3 turnaround, read release, E-qualified
 writes, physical mirroring of internal writes, R/W, historical-reset E
-continuation, the SLP `$ffff` idle-read bus with E still active, E-synchronous
-standby entry/exit, standby bus release, and E suppression. The separate Python
-model exhaustively projects all 65,536 addresses onto both physical
-organizations and independently checks the SLP/STBY distinction. The documented
-third reset cycle and nanosecond/electrical behavior are explicitly not counted
-as verified.
+continuation, distinct WAI and SLP `$ffff` bus states with E still active,
+E-synchronous standby entry/exit, standby bus release, and E suppression. The
+separate Python model exhaustively projects all 65,536 addresses onto both
+physical organizations and independently checks the WAI/SLP/STBY distinction.
+The documented third reset cycle and nanosecond/electrical behavior are
+explicitly not counted as verified.
 
 The HD6303R suite executes through the integrated device wrapper separately in
 each legal Mode 1, 2, and 4. Every profile checks external reset vectors,
@@ -270,6 +277,8 @@ bounds:
 - a write is always a valid bus cycle;
 - an opcode fetch is a valid read;
 - waiting and sleeping/stopped states are mutually exclusive;
+- WAI bus state follows the selected profile: released for M6800, a valid read
+  at post-stack SP for MC6801, and invalid `$ffff` for HD6301;
 - a masked request releases HD6301 SLP without leaving the core asleep;
 - interrupt-vector selection is legal;
 - the M6805 stack remains inside `$0060`-`$007f`; and
@@ -331,27 +340,27 @@ Representative generic Yosys 0.68 results from the current source are:
 |---|---:|---:|
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
-| MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 11,364 | 1,454 |
-| MC6801 Mode 4/5 integration | 11,379 | 1,493 |
-| MC6801 four-subphase bus wrapper | 11,422 | 1,456 |
-| HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 0 integration | 12,102 | 1,425 |
-| HD6301V1 Mode 1 integration | 12,149 | 1,416 |
-| HD6301V1 Mode 4 integration | 12,137 | 1,424 |
-| HD6301V1 Mode 5 integration | 12,080 | 1,424 |
-| HD6301V1 Mode 6 integration | 12,133 | 1,433 |
-| HD6301V1 Mode 7 integration | 12,113 | 1,456 |
-| HD6303R Mode 1 integration | 12,131 | 1,416 |
-| HD6303R Mode 2 integration | 12,343 | 1,434 |
-| HD6303R Mode 4 integration | 12,114 | 1,424 |
-| HD6303R four-subphase bus wrapper | 12,310 | 1,449 |
+| MC6801 | 6,181 | 217 |
+| MC6801 Mode 2 integration | 11,390 | 1,454 |
+| MC6801 Mode 4/5 integration | 11,393 | 1,493 |
+| MC6801 four-subphase bus wrapper | 11,520 | 1,459 |
+| HD6301 | 7,321 | 218 |
+| HD6301V1 Mode 0 integration | 12,127 | 1,438 |
+| HD6301V1 Mode 1 integration | 12,107 | 1,421 |
+| HD6301V1 Mode 4 integration | 12,167 | 1,437 |
+| HD6301V1 Mode 5 integration | 12,165 | 1,445 |
+| HD6301V1 Mode 6 integration | 12,188 | 1,454 |
+| HD6301V1 Mode 7 integration | 12,183 | 1,485 |
+| HD6303R Mode 1 integration | 12,090 | 1,421 |
+| HD6303R Mode 2 integration | 12,382 | 1,447 |
+| HD6303R Mode 4 integration | 12,144 | 1,437 |
+| HD6303R four-subphase bus wrapper | 12,303 | 1,449 |
 | HD63701V0 Mode 0 integration | 13,888 | 1,949 |
-| HD63701V0 Mode 1 integration | 13,838 | 1,932 |
-| HD63701V0 Mode 2 integration | 14,023 | 1,958 |
-| HD63701V0 Mode 5 integration | 13,878 | 1,956 |
-| HD63701V0 Mode 6 integration | 13,986 | 1,965 |
-| HD63701V0 Mode 7 integration | 13,967 | 1,996 |
+| HD63701V0 Mode 1 integration | 13,786 | 1,932 |
+| HD63701V0 Mode 2 integration | 13,978 | 1,958 |
+| HD63701V0 Mode 5 integration | 13,937 | 1,956 |
+| HD63701V0 Mode 6 integration | 14,043 | 1,965 |
+| HD63701V0 Mode 7 integration | 14,034 | 1,996 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

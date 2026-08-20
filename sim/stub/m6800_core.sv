@@ -48,14 +48,14 @@ module m6800_core #(
     retire_o = 1'b0;
     illegal_o = 1'b0;
     undefined_o = 1'b0;
-    waiting_o = 1'b0;
+    waiting_o = stub_waiting;
     sleeping_o = stub_sleeping;
     interrupt_ack_o = 1'b0;
     interrupt_vector_o = 2'b00;
     debug_a_o = 8'h00;
     debug_b_o = 8'h00;
     debug_x_o = 16'h0000;
-    debug_sp_o = 16'h0000;
+    debug_sp_o = stub_sp;
     debug_pc_o = 16'h0000;
     debug_ccr_o = {1'b0, stub_interrupt_mask, 4'b0000};
     debug_opcode_o = 8'h00;

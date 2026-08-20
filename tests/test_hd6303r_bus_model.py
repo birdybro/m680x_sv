@@ -95,6 +95,22 @@ class HD6303RBusModelTests(unittest.TestCase):
                 elif phase == 0:
                     self.assertEqual(pins.port3, 0xFF)
 
+    def test_wai_presents_ffff_with_inactive_read_write_strobes(self) -> None:
+        for mode in (1, 2, 4):
+            for phase in range(4):
+                pins = self.pins(mode, phase, waiting=True, write=True)
+                self.assertEqual(pins.e, phase >= 2)
+                self.assertTrue(pins.sc2)
+                self.assertEqual(pins.port4, 0xFF)
+                self.assertEqual(
+                    pins.port3_oe,
+                    0xFF if mode != 1 and phase == 0 else 0,
+                )
+                if mode == 1:
+                    self.assertEqual(pins.port1, 0xFF)
+                elif phase == 0:
+                    self.assertEqual(pins.port3, 0xFF)
+
     def test_invalid_mode_and_phase_are_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "operating mode"):
             self.pins(5, 0)

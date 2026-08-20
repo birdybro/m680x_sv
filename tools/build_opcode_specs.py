@@ -556,6 +556,9 @@ def _instruction(
     )
     registers_read, registers_written = _register_facts(mnemonic, mode)
     stack_effects, branch_behavior, vector_behavior = _control_facts(mnemonic, condition)
+    memory_operations = _memory_facts(mnemonic, mode, length)
+    if architecture == "m6801" and mnemonic == "WAI":
+        memory_operations.append("repeat read at post-stack SP while waiting")
     return {
         "opcode": opcode,
         "opcode_hex": f"{opcode:02X}",
@@ -573,7 +576,7 @@ def _instruction(
         "flags_affected": flags_affected,
         "flags_undefined": flags_undefined,
         "flag_semantics": flag_semantics,
-        "memory_operations": _memory_facts(mnemonic, mode, length),
+        "memory_operations": memory_operations,
         "stack_effects": stack_effects,
         "branch_behavior": branch_behavior,
         "vector_behavior": vector_behavior,
@@ -855,7 +858,23 @@ def build_hd6301() -> dict:
         record["primary_reference"] = {"id": reference_id, "locator": map_locator}
         if record["classification"] == "documented_instruction":
             record["cycles"] = _hd6301_cycles(record)
-            if record["mnemonic"] == "CPX":
+            if record["mnemonic"] == "WAI":
+                record["memory_operations"] = [
+                    operation
+                    for operation in record["memory_operations"]
+                    if operation != "repeat read at post-stack SP while waiting"
+                ]
+                record["memory_operations"].append(
+                    "present FFFF with read/write strobes inactive while waiting"
+                )
+                record["primary_reference"]["locator"] = (
+                    "Q&A III.4.5, WAI pin states (printed page 493)"
+                )
+                record["notes"] = (
+                    "Unlike the MC6801, WAI presents FFFF while the data bus is "
+                    "high impedance and the read/write strobes are inactive."
+                )
+            elif record["mnemonic"] == "CPX":
                 record["notes"] = "HD6301 CPX affects C and supports every applicable conditional branch."
             elif record["mnemonic"] == "DAA":
                 record["flags_undefined"] = []

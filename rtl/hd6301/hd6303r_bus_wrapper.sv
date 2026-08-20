@@ -72,10 +72,11 @@ module hd6303r_bus_wrapper #(
   assign multiplexed_mode = (OPERATING_MODE == 3'd2) ||
     (OPERATING_MODE == 3'd4);
   assign mode1_nonmultiplexed = OPERATING_MODE == 3'd1;
-  // HD6301V1/HD6303R table 2-12-1 keeps E active in SLP while forcing the
-  // expanded buses to the idle read state: address FFFF and R/W high.
-  assign pin_address = sleeping_o ? 16'hffff : cycle_address;
-  assign pin_write = sleeping_o ? 1'b0 : cycle_write;
+  // HD6301V1/HD6303R table 2-12-1 defines SLP, while Q&A III.4.5 defines
+  // the corresponding WAI pin state. Both keep E active and present FFFF;
+  // neither permits a physical data write.
+  assign pin_address = (sleeping_o || waiting_o) ? 16'hffff : cycle_address;
+  assign pin_write = (sleeping_o || waiting_o) ? 1'b0 : cycle_write;
   assign device_clock_enable = clock_enable_i &&
     (bus_phase == PHASE_E_FALL);
   assign bus_phase_o = bus_phase;

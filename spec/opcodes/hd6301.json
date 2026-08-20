@@ -2719,7 +2719,8 @@
       "flag_semantics": {},
       "memory_operations": [
         "read opcode at PC",
-        "write PC, X, A, B, and CCR bytes to stack"
+        "write PC, X, A, B, and CCR bytes to stack",
+        "present FFFF with read/write strobes inactive while waiting"
       ],
       "stack_effects": [
         "push PCL, PCH, X low, X high, A, B, and CCR once, then wait"
@@ -2728,9 +2729,9 @@
       "vector_behavior": "on an accepted interrupt, load that source's vector without stacking the state again",
       "primary_reference": {
         "id": "hitachi-hd6301-hd6303-series-handbook-1989",
-        "locator": "HD6301V1 section 3.2, tables 3-2-1 through 3-2-5, printed pages 171-175"
+        "locator": "Q&A III.4.5, WAI pin states (printed page 493)"
       },
-      "notes": ""
+      "notes": "Unlike the MC6801, WAI presents FFFF while the data bus is high impedance and the read/write strobes are inactive."
     },
     {
       "opcode": 63,

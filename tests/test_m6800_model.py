@@ -212,6 +212,20 @@ class M6800ModelTests(unittest.TestCase):
         self.assertEqual(model.state.pc, 0x2200)
         self.assertTrue(model.flag("I"))
 
+    def test_wai_steady_bus_state_is_variant_specific(self) -> None:
+        expected = {
+            "m6800": {"address": None, "read": False, "valid": False},
+            "m6801": {"address": 0x3FF9, "read": True, "valid": True},
+            "hd6301": {"address": 0xFFFF, "read": False, "valid": False},
+        }
+        for architecture, bus_state in expected.items():
+            model = _fixture(architecture, 0x3E)
+            with self.assertRaisesRegex(RuntimeError, "not in the WAI state"):
+                model.waiting_bus_state()
+            model.step()
+            self.assertEqual(model.state.sp, 0x3FF9)
+            self.assertEqual(model.waiting_bus_state(), bus_state)
+
     def test_nmi_is_unmasked_and_stacks_running_state(self) -> None:
         model = _fixture("m6800", 0x01)
         model.set_flag("I", True)

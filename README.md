@@ -39,7 +39,8 @@ with device wrappers kept at separate integration boundaries:
   MC6803 uses the same block only in its documented Modes 2/3;
 - `mc6801_bus_wrapper`: device-oriented four-subphase E/AS/R/W/IOS and
   Port-3 address/data waveform for every Motorola operating mode, including
-  the dynamic Mode-4-to-5 pin-role transition;
+  the dynamic Mode-4-to-5 pin-role transition and documented post-stack-SP
+  read cycles while WAI is active;
 - `hd6301v1_mcu`: every legal HD6301V1 Mode 0/1/2/4/5/6/7 integration with a
   separate 4-KiB FPGA mask-ROM image port, normalized expanded-memory bus,
   executable RAM, mode-dependent ports/strobes, timer/SCI, SLP,
@@ -48,8 +49,8 @@ with device wrappers kept at separate integration boundaries:
   ISA, opcode TRAP, SLP/STBY behavior, RAM, mode-dependent Port 1, timer, and
   SCI;
 - `hd6303r_bus_wrapper`: active-cycle Mode-1 dedicated and Mode-2/4
-  multiplexed address/data waveforms, including the SLP `$ffff` idle read and
-  standby E suppression;
+  multiplexed address/data waveforms, including distinct WAI/SLP `$ffff` idle
+  states and standby E suppression;
 - `hd63701v0_mcu`: every legal HD63701V0 Mode 0/1/2/5/6/7 integration with
   192-byte RAM, mode-selected ports and normalized external bus, timer/SCI,
   asynchronous STBY retention, per-mode address TRAP, and a separate 4-KiB
@@ -76,6 +77,11 @@ bus transfer is active or `bus_ready_i` is asserted. `bus_valid_o` qualifies
 `address_o`, `write_o`, and write data; read data is sampled from `data_i` on
 the completing edge. Active-low interrupt pins and asynchronous active-low reset
 match their documented logical polarity without generating internal clocks.
+The low-power steady bus is profile-specific: MC6800 releases its normalized
+bus in WAI, MC6801 repeatedly reads the current post-stack SP, and HD6301
+presents `$ffff` with an invalid normalized transaction to represent inactive
+read/write strobes. MC6801's separate documented interrupt-response latency
+remains a partial timing claim.
 
 ## Build and verification
 

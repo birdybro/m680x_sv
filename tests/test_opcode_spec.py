@@ -130,6 +130,27 @@ class OpcodeSpecificationTests(unittest.TestCase):
         self.assertEqual(self.hd6301["opcodes"][0x19]["flags_undefined"], [])
         self.assertNotIn("V", self.hd6301["opcodes"][0x19]["flags_affected"])
 
+    def test_wai_steady_bus_facts_are_variant_specific(self) -> None:
+        m6800_wai = self.m6800["opcodes"][0x3E]
+        m6801_wai = self.m6801["opcodes"][0x3E]
+        hd6301_wai = self.hd6301["opcodes"][0x3E]
+        self.assertNotIn(
+            "repeat read at post-stack SP while waiting",
+            m6800_wai["memory_operations"],
+        )
+        self.assertIn(
+            "repeat read at post-stack SP while waiting",
+            m6801_wai["memory_operations"],
+        )
+        self.assertIn(
+            "present FFFF with read/write strobes inactive while waiting",
+            hd6301_wai["memory_operations"],
+        )
+        self.assertNotIn(
+            "repeat read at post-stack SP while waiting",
+            hd6301_wai["memory_operations"],
+        )
+
     def test_hd6301_undefined_map_cells_are_documented_traps(self) -> None:
         traps = [
             record for record in self.hd6301["opcodes"]

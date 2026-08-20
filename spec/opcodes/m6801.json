@@ -2441,7 +2441,8 @@
       "flag_semantics": {},
       "memory_operations": [
         "read opcode at PC",
-        "write PC, X, A, B, and CCR bytes to stack"
+        "write PC, X, A, B, and CCR bytes to stack",
+        "repeat read at post-stack SP while waiting"
       ],
       "stack_effects": [
         "push PCL, PCH, X low, X high, A, B, and CCR once, then wait"

@@ -84,6 +84,17 @@ class M6800Model:
     def packed_ccr(self) -> int:
         return 0xC0 | (self.state.ccr & 0x3F)
 
+    def waiting_bus_state(self) -> dict[str, int | bool | None]:
+        """Return the manufacturer-defined steady bus state after WAI."""
+
+        if not self.state.waiting:
+            raise RuntimeError("processor is not in the WAI state")
+        if self.architecture == "m6800":
+            return {"address": None, "read": False, "valid": False}
+        if self.architecture == "m6801":
+            return {"address": self.state.sp, "read": True, "valid": True}
+        return {"address": 0xFFFF, "read": False, "valid": False}
+
     def reset(self) -> None:
         self.state.a = 0
         self.state.b = 0

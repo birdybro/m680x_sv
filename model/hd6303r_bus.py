@@ -22,6 +22,7 @@ class HD6303RBusInputs:
     standby: bool
     address: int
     sleeping: bool = False
+    waiting: bool = False
     write: bool = False
     data: int = 0
     gpio_port1: int = 0
@@ -56,8 +57,8 @@ def bus_pins(inputs: HD6303RBusInputs) -> HD6303RBusPins:
     e = inputs.phase >= 2 and not stopped
     sc1 = inputs.phase == 0 if multiplexed else True
     sc1_oe = multiplexed
-    address = 0xFFFF if inputs.sleeping else inputs.address & 0xFFFF
-    write = False if inputs.sleeping else inputs.write
+    address = 0xFFFF if (inputs.sleeping or inputs.waiting) else inputs.address & 0xFFFF
+    write = False if (inputs.sleeping or inputs.waiting) else inputs.write
     sc2 = not write
     port1 = inputs.gpio_port1 & 0xFF
     port1_oe = inputs.gpio_port1_oe & 0xFF

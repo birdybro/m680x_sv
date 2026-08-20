@@ -19,6 +19,8 @@ class MC6801BusInputs:
     phase: int
     reset_n: bool
     address: int
+    waiting: bool = False
+    stack_pointer: int = 0
     write: bool = False
     normalized_port3: int = 0
     normalized_port3_oe: int = 0
@@ -52,12 +54,15 @@ def bus_pins(inputs: MC6801BusInputs) -> MC6801BusPins:
     multiplexed = mode in MULTIPLEXED_MODES
     nonmultiplexed = mode == 5
     e = phase >= 2
+    address = inputs.stack_pointer if inputs.waiting else inputs.address
+    write = False if inputs.waiting else inputs.write
 
     port3 = inputs.normalized_port3 & 0xFF
     port3_oe = inputs.normalized_port3_oe & 0xFF
+    port4 = inputs.normalized_port4 & 0xFF
     sc1 = True
     sc1_oe = multiplexed or nonmultiplexed
-    sc2 = inputs.os3_n if not sc1_oe else not inputs.write
+    sc2 = inputs.os3_n if not sc1_oe else not write
 
     if not inputs.reset_n:
         port3_oe = 0
@@ -65,14 +70,18 @@ def bus_pins(inputs: MC6801BusInputs) -> MC6801BusPins:
         sc2 = True
     elif multiplexed:
         sc1 = phase == 0
+        port4 = (address >> 8) & 0xFF
         if phase == 0:
-            port3 = inputs.address & 0xFF
+            port3 = address & 0xFF
             port3_oe = 0xFF
         elif phase == 1:
             port3_oe = 0
+        elif inputs.waiting:
+            port3_oe = 0
     elif nonmultiplexed:
-        sc1 = not (0x0100 <= (inputs.address & 0xFFFF) <= 0x01FF)
-        if not e:
+        port4 = address & 0xFF
+        sc1 = not (0x0100 <= (address & 0xFFFF) <= 0x01FF)
+        if not e or inputs.waiting:
             port3_oe = 0
 
     return MC6801BusPins(
@@ -82,7 +91,7 @@ def bus_pins(inputs: MC6801BusInputs) -> MC6801BusPins:
         sc2=sc2,
         port3=port3,
         port3_oe=port3_oe,
-        port4=inputs.normalized_port4 & 0xFF,
+        port4=port4,
         port4_oe=inputs.normalized_port4_oe & 0xFF,
     )
 

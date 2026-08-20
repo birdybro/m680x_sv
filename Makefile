@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd6303r-bus-wrapper test-hd63701v0 test-hd63701v0-modes test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-wai-bus test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd6303r-bus-wrapper test-hd63701v0 test-hd63701v0-modes test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -19,6 +19,7 @@ help:
 	@echo "  test-m6800  run M6800-lineage model regressions"
 	@echo "  test-m6800-rtl run the compiled M6800 core regression"
 	@echo "  test-m6800-opcodes compare all documented M6800 encodings to the model"
+	@echo "  test-wai-bus verify variant-specific M6800/MC6801/HD6301 WAI buses"
 	@echo "  test-mc6800-wrapper verify HALT, TSC, DBE, WAI, and bus ownership"
 	@echo "  test-m6801  run MC6801/MC6803 model regressions"
 	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
@@ -164,6 +165,27 @@ test-m6800-rtl: test-m6800-opcodes
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv sim/tb_m6800_core.sv
 	build/obj_m6800_core/Vtb_m6800_core
+
+test-wai-bus:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_wait_bus \
+		"-GTEST_ARCHITECTURE=2'b00" -Mdir build/obj_wait_bus_m6800 \
+		-o Vwait_bus_m6800 rtl/common/m680x_alu_pkg.sv \
+		rtl/generated/m680x_decode_pkg.sv rtl/m6800/m6800_core.sv \
+		sim/tb_m6800_wait_bus.sv
+	build/obj_wait_bus_m6800/Vwait_bus_m6800
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_wait_bus \
+		"-GTEST_ARCHITECTURE=2'b01" -Mdir build/obj_wait_bus_m6801 \
+		-o Vwait_bus_m6801 rtl/common/m680x_alu_pkg.sv \
+		rtl/generated/m680x_decode_pkg.sv rtl/m6800/m6800_core.sv \
+		sim/tb_m6800_wait_bus.sv
+	build/obj_wait_bus_m6801/Vwait_bus_m6801
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_m6800_wait_bus \
+		"-GTEST_ARCHITECTURE=2'b10" -Mdir build/obj_wait_bus_hd6301 \
+		-o Vwait_bus_hd6301 rtl/common/m680x_alu_pkg.sv \
+		rtl/generated/m680x_decode_pkg.sv rtl/m6800/m6800_core.sv \
+		sim/tb_m6800_wait_bus.sv
+	build/obj_wait_bus_hd6301/Vwait_bus_hd6301
 
 test-m6800-opcodes:
 	mkdir -p build
@@ -450,9 +472,9 @@ test-alu-rtl:
 		rtl/common/m680x_alu_pkg.sv sim/tb_alu.sv
 	build/obj_alu/Vtb_alu
 
-test-cycle: test-m6800-opcodes test-m6801-opcodes test-hd6301-opcodes test-m6805-opcodes test-hd6305-opcodes
+test-cycle: test-wai-bus test-m6800-opcodes test-m6801-opcodes test-hd6301-opcodes test-m6805-opcodes test-hd6305-opcodes
 
-test-interrupts: test-m6800-rtl test-mc6800-wrapper test-m6805-rtl test-interrupt-delay test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-hd63705v0
+test-interrupts: test-wai-bus test-m6800-rtl test-mc6800-wrapper test-m6805-rtl test-interrupt-delay test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-hd63705v0
 
 test-interrupt-delay:
 	mkdir -p build
@@ -543,6 +565,18 @@ test-random-hd6305:
 
 test-iverilog: spec-check
 	mkdir -p build/iverilog
+	$(IVERILOG) -g2012 -Wall -s tb_m6800_wait_bus \
+		-Ptb_m6800_wait_bus.TEST_ARCHITECTURE=0 -o build/iverilog/wait_bus_m6800 \
+		rtl/generated/yosys_m6800_core.sv sim/tb_m6800_wait_bus.sv
+	$(VVP) build/iverilog/wait_bus_m6800
+	$(IVERILOG) -g2012 -Wall -s tb_m6800_wait_bus \
+		-Ptb_m6800_wait_bus.TEST_ARCHITECTURE=1 -o build/iverilog/wait_bus_m6801 \
+		rtl/generated/yosys_m6800_core.sv sim/tb_m6800_wait_bus.sv
+	$(VVP) build/iverilog/wait_bus_m6801
+	$(IVERILOG) -g2012 -Wall -s tb_m6800_wait_bus \
+		-Ptb_m6800_wait_bus.TEST_ARCHITECTURE=2 -o build/iverilog/wait_bus_hd6301 \
+		rtl/generated/yosys_m6800_core.sv sim/tb_m6800_wait_bus.sv
+	$(VVP) build/iverilog/wait_bus_hd6301
 	$(IVERILOG) -g2012 -Wall -s tb_m6800_core -o build/iverilog/tb_m6800_core \
 		rtl/generated/yosys_m6800_core.sv sim/tb_m6800_core.sv
 	$(VVP) build/iverilog/tb_m6800_core
@@ -741,7 +775,7 @@ synth: spec-check
 
 quick: lint test test-m6800-rtl test-m6805-rtl
 
-ci: lint test test-alu-rtl test-m6800-rtl test-mc6800-wrapper test-m6801-opcodes test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-m6805-rtl test-hd6305-opcodes test-interrupt-delay test-peripherals test-random test-iverilog formal synth
+ci: lint test test-alu-rtl test-wai-bus test-m6800-rtl test-mc6800-wrapper test-m6801-opcodes test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-m6805-rtl test-hd6305-opcodes test-interrupt-delay test-peripherals test-random test-iverilog formal synth
 
 clean:
 	rm -rf build obj_dir

@@ -8,4 +8,6 @@ package mc6801_peripheral_bus_stub_pkg;
   logic stub_opcode_fetch = 1'b0;
   logic stub_interrupt_mask;
   logic stub_sleeping = 1'b0;
+  logic stub_waiting = 1'b0;
+  logic [15:0] stub_sp = 16'h0000;
 endpackage

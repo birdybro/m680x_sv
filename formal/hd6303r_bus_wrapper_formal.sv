@@ -13,6 +13,8 @@ module hd6303r_bus_wrapper_formal;
   logic standby2;
   logic sleeping1;
   logic sleeping2;
+  logic waiting1;
+  logic waiting2;
   logic [7:0] p1_mode1;
   logic [7:0] p1oe_mode1;
   logic [7:0] p3_mode1;
@@ -46,7 +48,7 @@ module hd6303r_bus_wrapper_formal;
     .sc1_oe_o(sc1oe_mode1), .sc2_o(sc2_mode1), .e_o(e1),
     .bus_phase_o(phase1), .standby_active_o(standby1), .sci_tx_o(),
     .sci_clock_o(), .timer_irq_o(), .sci_irq_o(), .opcode_fetch_o(),
-    .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(),
+    .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(waiting1),
     .sleeping_o(sleeping1),
     .interrupt_ack_o(), .debug_address_o(address_mode1), .debug_pc_o(),
     .debug_sp_o(), .debug_a_o(), .debug_b_o(), .debug_x_o(),
@@ -64,7 +66,7 @@ module hd6303r_bus_wrapper_formal;
     .sc1_oe_o(sc1oe_mode2), .sc2_o(sc2_mode2), .e_o(e2),
     .bus_phase_o(phase2), .standby_active_o(standby2), .sci_tx_o(),
     .sci_clock_o(), .timer_irq_o(), .sci_irq_o(), .opcode_fetch_o(),
-    .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(),
+    .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(waiting2),
     .sleeping_o(sleeping2),
     .interrupt_ack_o(), .debug_address_o(address_mode2), .debug_pc_o(),
     .debug_sp_o(), .debug_a_o(), .debug_b_o(), .debug_x_o(),
@@ -88,7 +90,7 @@ module hd6303r_bus_wrapper_formal;
       assert (!sc1oe_mode1);
       assert (p1oe_mode1 == 8'hff);
       assert (p4oe_mode1 == 8'hff);
-      if (sleeping1) begin
+      if (sleeping1 || waiting1) begin
         assert (sc2_mode1);
         assert (p1_mode1 == 8'hff);
         assert (p4_mode1 == 8'hff);
@@ -102,7 +104,7 @@ module hd6303r_bus_wrapper_formal;
       assert (sc1oe_mode2);
       assert (sc1_mode2 == (phase2 == 2'd0));
       assert (p4oe_mode2 == 8'hff);
-      if (sleeping2) begin
+      if (sleeping2 || waiting2) begin
         assert (sc2_mode2);
         assert (p4_mode2 == 8'hff);
       end else begin
@@ -110,7 +112,7 @@ module hd6303r_bus_wrapper_formal;
       end
       if (phase2 == 2'd0) begin
         assert (p3oe_mode2 == 8'hff);
-        if (sleeping2) assert (p3_mode2 == 8'hff);
+        if (sleeping2 || waiting2) assert (p3_mode2 == 8'hff);
         else assert (p3_mode2 == address_mode2[7:0]);
       end
       if (phase2 == 2'd1) assert (p3oe_mode2 == 8'h00);

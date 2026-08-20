@@ -847,6 +847,18 @@ module m6800_core #(
         address_o = vector_address + 16'h0001;
         bus_valid_o = 1'b1;
       end
+      ST_WAITING: begin
+        // Motorola MC6801RM(AD2) section 5.4.2 documents repeated reads at
+        // the post-stack SP. Hitachi #U07 Q&A III.4.5 instead documents FFFF
+        // with read/write strobes inactive. The MC6800 releases its bus and
+        // therefore retains the default invalid state here.
+        if (ARCHITECTURE == 2'd1) begin
+          address_o = stack_pointer;
+          bus_valid_o = 1'b1;
+        end else if (ARCHITECTURE == 2'd2) begin
+          address_o = 16'hffff;
+        end
+      end
       default: ;
     endcase
   end

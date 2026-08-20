@@ -64,6 +64,8 @@ module mc6801_bus_wrapper #(
   logic single_chip;
   logic [15:0] cycle_address;
   logic cycle_write;
+  logic [15:0] pin_address;
+  logic pin_write;
   logic [7:0] raw_port3;
   logic [7:0] raw_port3_oe;
   logic [7:0] raw_port4;
@@ -74,6 +76,8 @@ module mc6801_bus_wrapper #(
     (bus_phase == PHASE_E_FALL);
   assign bus_phase_o = bus_phase;
   assign e_o = phase_reset_n_i && bus_phase[1];
+  assign pin_address = waiting_o ? debug_sp_o : cycle_address;
+  assign pin_write = waiting_o ? 1'b0 : cycle_write;
 
   always_ff @(posedge phase_clk_i or negedge phase_reset_n_i) begin
     if (!phase_reset_n_i) begin
@@ -108,7 +112,7 @@ module mc6801_bus_wrapper #(
     port4_oe_o = raw_port4_oe;
     sc1_o = 1'b1;
     sc1_oe_o = !single_chip;
-    sc2_o = single_chip ? raw_os3_n : !cycle_write;
+    sc2_o = single_chip ? raw_os3_n : !pin_write;
 
     if (!reset_n_i) begin
       // The manual specifies high AS/RW/address pull states and a released
@@ -121,21 +125,23 @@ module mc6801_bus_wrapper #(
       // AS is transparent/high during PHASE_ADDRESS and closes before E rises.
       // Port 3 then remains released until the documented E-high data phase.
       sc1_o = bus_phase == PHASE_ADDRESS;
+      port4_o = pin_address[15:8];
       if (bus_phase == PHASE_ADDRESS) begin
-        port3_o = cycle_address[7:0];
+        port3_o = pin_address[7:0];
         port3_oe_o = 8'hff;
       end else if (bus_phase == PHASE_AS_CLOSE) begin
         port3_oe_o = 8'h00;
       end else begin
         port3_o = raw_port3;
-        port3_oe_o = raw_port3_oe;
+        port3_oe_o = waiting_o ? 8'h00 : raw_port3_oe;
       end
     end else if (expanded_nonmultiplexed) begin
       // IOS is the active-low internal decode of 0100-01FF. Port 3 drives
       // write data only during E, including writes to internal locations.
-      sc1_o = !((cycle_address >= 16'h0100) &&
-                (cycle_address <= 16'h01ff));
-      if (!bus_phase[1]) port3_oe_o = 8'h00;
+      port4_o = pin_address[7:0];
+      sc1_o = !((pin_address >= 16'h0100) &&
+                (pin_address <= 16'h01ff));
+      if (!bus_phase[1] || waiting_o) port3_oe_o = 8'h00;
     end
   end
 

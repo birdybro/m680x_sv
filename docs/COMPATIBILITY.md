@@ -76,8 +76,11 @@ The separate Motorola device-pin wrapper implements the documented digital
 four-subphase E waveform for all eight modes. It covers AS and Port-3
 address/data turnaround in multiplexed Modes 0/1/2/3/6, R/W, Mode-5 IOS and
 E-qualified data drive, reset bus release, single-chip IS3/OS3 roles, and the
-Mode-4-to-5 transition. Manufacturer nanosecond limits, oscillator/pad
-behavior, and electrical pull strength remain outside the claim.
+Mode-4-to-5 transition. During WAI it repeatedly presents the current
+post-stack SP as a read, including Mode-5 IOS decode and Port-3 read release.
+The documented five/six-E-cycle interrupt response is not yet verified.
+Manufacturer nanosecond limits, oscillator/pad behavior, and electrical pull
+strength remain outside the claim.
 
 The MC6803 profile inherits only the manufacturer-stated Modes 2/3 facts and
 rejects other public configurations. Its shared Motorola digital multiplexed
@@ -99,7 +102,9 @@ handshakes remain outside this partial claim. A separate physical wrapper
 implements active Mode-1 dedicated address/data timing and the Mode-2/4
 four-subphase AS/address/data waveform. It also mirrors internal writes onto
 the physical data bus, presents the documented `$ffff` read while SLP leaves E
-active, and stops E while standby is active. The documented
+active, presents `$ffff` with released data during WAI, and stops E while
+standby is active. The normalized WAI transaction is invalid to preserve the
+handbook's inactive-strobe distinction. The documented
 third-reset-cycle bus release, nanosecond limits, and oscillator/pad behavior
 remain unclaimed. The Hitachi SCI table reserves `CC1:CC0=00`, so the wrapper explicitly
 disables Motorola bi-phase rather than leaking that format across variants.

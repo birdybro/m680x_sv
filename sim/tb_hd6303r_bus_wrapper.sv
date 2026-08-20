@@ -108,6 +108,8 @@ module tb_hd6303r_bus_wrapper;
     stub_opcode_fetch = 1'b0;
     stub_interrupt_mask = 1'b1;
     stub_sleeping = 1'b0;
+    stub_waiting = 1'b0;
+    stub_sp = 16'h0000;
     checks = 0;
 
     #1;
@@ -197,6 +199,25 @@ module tb_hd6303r_bus_wrapper;
     advance_phase(2'd3);
     advance_phase(2'd0);
     stub_sleeping = 1'b0;
+
+    // Hitachi #U07 Q&A III.4.5 specifies FFFF, high-Z data, and inactive
+    // RD/WR strobes during WAI; the wrapper represents that as read direction.
+    stub_waiting = 1'b1;
+    set_transaction(16'h1234, 1'b1, 8'hc7);
+    check_value(sc2[0] && sc2[1] && sc2[2], "WAI forces read direction");
+    check_value((port1[0] == 8'hff) && (port4[0] == 8'hff),
+                "mode1 WAI address is FFFF");
+    check_value((port3[1] == 8'hff) && (port3[2] == 8'hff) &&
+                (port4[1] == 8'hff) && (port4[2] == 8'hff),
+                "multiplexed WAI address is FFFF");
+    advance_phase(2'd1);
+    advance_phase(2'd2);
+    check_value(e[0] && e[1] && e[2], "WAI leaves E running");
+    check_value((port3_oe[0] == 8'h00) && (port3_oe[1] == 8'h00) &&
+                (port3_oe[2] == 8'h00), "WAI data phase is released");
+    advance_phase(2'd3);
+    advance_phase(2'd0);
+    stub_waiting = 1'b0;
 
     // Internal writes are still visible physically, as stated by the manual.
     set_transaction(16'h0080, 1'b1, 8'h6d);

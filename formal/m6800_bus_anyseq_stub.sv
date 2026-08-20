@@ -23,6 +23,8 @@ module m6800_core #(
   (* anyseq *) logic any_write;
   (* anyseq *) logic any_valid;
   (* anyseq *) logic any_sleeping;
+  (* anyseq *) logic any_waiting;
+  (* anyseq *) logic [15:0] any_sp;
   logic unused_inputs;
 
   always_comb begin
@@ -37,14 +39,14 @@ module m6800_core #(
     retire_o = 1'b0;
     illegal_o = 1'b0;
     undefined_o = 1'b0;
-    waiting_o = 1'b0;
+    waiting_o = any_waiting;
     sleeping_o = any_sleeping;
     interrupt_ack_o = 1'b0;
     interrupt_vector_o = 2'b00;
     debug_a_o = 8'h00;
     debug_b_o = 8'h00;
     debug_x_o = 16'h0000;
-    debug_sp_o = 16'h0000;
+    debug_sp_o = any_sp;
     debug_pc_o = 16'h0000;
     debug_ccr_o = 6'b010000;
     debug_opcode_o = 8'h00;

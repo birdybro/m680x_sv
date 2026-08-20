@@ -123,6 +123,9 @@ module tb_mc6801_bus_wrapper;
     stub_valid = 1'b1;
     stub_opcode_fetch = 1'b0;
     stub_interrupt_mask = 1'b1;
+    stub_sleeping = 1'b0;
+    stub_waiting = 1'b0;
+    stub_sp = 16'h0000;
     checks = 0;
 
     #1;
@@ -216,6 +219,28 @@ module tb_mc6801_bus_wrapper;
     check_value(active_mode[4] == 3'd5 && sc1_oe[4], "mode4 write enters mode5");
     set_transaction(16'h0100, 1'b0, 8'h00);
     check_value(!sc1[4], "transitioned mode4 emits mode5 IOS");
+
+    // MC6801RM(AD2) 5.4.2 defines WAI as repeated reads at the post-stack SP.
+    set_transaction(16'ha55a, 1'b1, 8'hc7);
+    stub_sp = 16'h1ff8;
+    stub_waiting = 1'b1;
+    #1;
+    check_value(sc2[2] && (port3[2] == 8'hf8) &&
+                (port3_oe[2] == 8'hff) && (port4[2] == 8'h1f),
+                "mode2 WAI repeats the post-stack SP read");
+    check_value(sc2[5] && sc1[5] && (port4[5] == 8'hf8),
+                "mode5 WAI exposes post-stack SP and inactive IOS");
+    stub_sp = 16'h0180;
+    #1;
+    check_value(!sc1[5] && (port4[5] == 8'h80),
+                "mode5 WAI IOS follows the post-stack SP");
+    advance_phase(2'd1);
+    advance_phase(2'd2);
+    check_value((port3_oe[2] == 8'h00) && (port3_oe[5] == 8'h00),
+                "WAI read data phases remain released");
+    advance_phase(2'd3);
+    advance_phase(2'd0);
+    stub_waiting = 1'b0;
 
     // FPGA clock-enable freezes the four-subphase generator and MCU state.
     clock_enable = 1'b0;

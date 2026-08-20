@@ -19,18 +19,18 @@
     {"name": "bus_phase_o", "historical": "verification/integration only", "direction": "output", "fact": "0 address, 1 AS-close/turnaround, 2 E-rise data, and 3 E-fall data"},
     {"name": "sc1_o", "historical": "AS in Modes 2/4; unused in Mode 1", "direction": "output", "fact": "AS is high only in the multiplexed address subphase"},
     {"name": "sc1_oe_o", "historical": "SC1 role selection", "direction": "output", "fact": "enabled for AS in Modes 2/4 and disabled in Mode 1"},
-    {"name": "sc2_o", "historical": "R/W", "direction": "output", "fact": "high for reads and low for writes; forced high in reset, SLP, and standby"},
+    {"name": "sc2_o", "historical": "R/W", "direction": "output", "fact": "high for reads and low for writes; forced high in reset, WAI, SLP, and standby"},
     {"name": "port1_i", "historical": "P10-P17 input in Modes 2/4", "direction": "input", "fact": "GPIO pin samples where Port 1 remains an I/O port"},
-    {"name": "port1_o", "historical": "P10-P17 or A0-A7", "direction": "output", "fact": "dedicated low address in Mode 1 and normalized GPIO latch in Modes 2/4; Mode 1 presents FF during SLP"},
+    {"name": "port1_o", "historical": "P10-P17 or A0-A7", "direction": "output", "fact": "dedicated low address in Mode 1 and normalized GPIO latch in Modes 2/4; Mode 1 presents FF during WAI and SLP"},
     {"name": "port1_oe_o", "historical": "Port 1 direction/address drive", "direction": "output", "fact": "all address bits enabled in active Mode 1; GPIO DDR in Modes 2/4; released in reset/standby"},
     {"name": "port3_i", "historical": "D0-D7 read data", "direction": "input", "fact": "external read byte sampled before the normalized E-fall advancement boundary"},
-    {"name": "port3_o", "historical": "D0-D7 or A0-A7", "direction": "output", "fact": "write data in Mode 1; low address then write data in Modes 2/4; SLP retains the multiplexed FF address phase and releases the read-data phase"},
+    {"name": "port3_o", "historical": "D0-D7 or A0-A7", "direction": "output", "fact": "write data in Mode 1; low address then write data in Modes 2/4; WAI and SLP retain the multiplexed FF address phase and release the data phase"},
     {"name": "port3_oe_o", "historical": "Port 3 data/address direction", "direction": "output", "fact": "writes drive only while E is high; multiplexed low address drives before AS closes"},
-    {"name": "port4_o", "historical": "A8-A15", "direction": "output", "fact": "dedicated upper address in every legal HD6303R mode and presents FF during SLP"},
+    {"name": "port4_o", "historical": "A8-A15", "direction": "output", "fact": "dedicated upper address in every legal HD6303R mode and presents FF during WAI and SLP"},
     {"name": "port4_oe_o", "historical": "upper-address drive", "direction": "output", "fact": "enabled during active operation and released in reset/standby"},
     {"name": "standby_active_o", "historical": "accepted standby state", "direction": "output", "fact": "reports the E-synchronously accepted digital standby state"}
   ],
-  "halt_interrupt_behavior": "HD6303R has no HALT pin; SLP retains active bus-clock behavior while CPU execution stops, whereas accepted STBY enters reset state, releases buses, and stops E",
+  "halt_interrupt_behavior": "HD6303R has no HALT pin; WAI presents FFFF with high-impedance data and inactive read/write strobes while E continues, SLP retains its documented FFFF idle bus while CPU execution stops, and accepted STBY enters reset state, releases buses, and stops E",
   "references": [
     {
       "id": "hitachi-hd6301-hd6303-series-handbook-1989",
@@ -38,6 +38,7 @@
         "HD6303R notice and HD6301V1 sections 2.1 and 2.4, printed pages 126-145",
         "sections 2.8 and 2.12, printed pages 159-164",
         "AC characteristics figures 5-1 and 5-2, printed pages 187-189",
+        "Q&A III.4.5 WAI pin-state table, printed page 493",
         "application section 6.1 and Q&A address-strobe note, printed pages 191-194 and 1252"
       ]
     }
@@ -46,6 +47,7 @@
     "active_mode1_nonmultiplexed_waveform": "COMPLETE",
     "active_mode2_mode4_multiplexed_waveform": "COMPLETE",
     "internal_write_external_bus_mirroring": "COMPLETE",
+    "wai_ffff_idle_bus": "COMPLETE",
     "sleep_idle_ffff_read_bus": "COMPLETE",
     "standby_bus_and_e_behavior": "COMPLETE",
     "three_cycle_reset_bus_release": "NOT_IMPLEMENTED",
