@@ -59,9 +59,14 @@
     "reference": {"id": "motorola-mc6801-reference-1983", "locator": "chapter 6, sections 6.1-6.6, printed pages 6-1 to 6-12"}
   },
   "operating_modes": {
+    "mode0": "multiplexed test mode; normal 2-KiB ROM and RAM are internal, only the first two reset-vector reads are external, and internal reads are visible on Port 3",
+    "mode1": "expanded multiplexed mode with normal or C800/D800/E800 relocated 2-KiB ROM; vectors FFF0-FFFF remain external",
     "mode2": "expanded multiplexed ROMless with internal registers and RAM when RAME=1; Port 3/4 register addresses external",
     "mode3": "expanded multiplexed ROMless/RAMless; RAM and Port 3/4 register addresses external",
-    "other_modes": "documented but outside the first normalized expanded-bus RTL profile",
+    "mode4": "single-chip test mode with ROM disabled and physical 128-byte RAM mirrored in every xx80-xxFF range; writing PCO changes irreversibly to Mode 5 until reset",
+    "mode5": "expanded non-multiplexed mode with internal RAM/ROM and external selection only at 0100-01FF; Port 4 supplies P4DDR-enabled low address bits",
+    "mode6": "expanded multiplexed mode with internal RAM and normal or relocated ROM; Port 4 supplies P4DDR-enabled high address bits",
+    "mode7": "single-chip mode with internal RAM/ROM and all four GPIO ports; no external memory select",
     "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 2.1-2.4 and figure 2-17, printed pages 2-1 to 2-23"}
   },
   "memory_control": {
@@ -80,7 +85,7 @@
     {"source": "sci", "vector": "FFF0:FFF1", "priority": 6}
   ],
   "implementation_scope": {
-    "current_profile": "Normalized mode-2/mode-3 expanded-bus integration. Other modes, physical bus multiplexing, Port 3 handshake, bi-phase SCI, and external-clock SCI remain separate profiles.",
+    "current_profile": "Normalized Mode 0-7 plus 1R/6R decode, internal RAM/ROM selection, Port 3/4 functions, and Mode 4-to-5 transition. Physical bus multiplexing, Port 3 handshake completeness, bi-phase SCI, and external-clock SCI remain separate profiles.",
     "differential_evidence": "Two deterministic seeds compare 768 independent-model E-cycle transactions per mode against internal decode, GPIO, timer, SCI, and interrupt RTL state.",
     "undefined_output_latches": "RTL selects deterministic zero after reset without claiming that manufacturer-undefined silicon latch value.",
     "standby_retention": "RTL exposes standby validity without claiming analog threshold or power-domain retention equivalence.",

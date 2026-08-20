@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "interface": "mc6801-normalized-modes",
+  "device": "mc6801",
+  "clock_model": {
+    "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
+    "historical_boundary": "MC6801 bus and peripheral behavior is specified relative to the internally derived E clock",
+    "status": "PARTIAL",
+    "limitation": "Port 3 address/data half-cycle multiplexing, AS/E waveforms, setup/hold, and electrical timing require a separate physical-pin wrapper"
+  },
+  "signals": [
+    {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
+    {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low preserves synchronous CPU and peripheral state"},
+    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active-low reset restores the hardware-selected OPERATING_MODE and begins reset-vector entry"},
+    {"name": "nmi_n_i", "historical": "NMI", "direction": "input", "fact": "active-low non-maskable interrupt input"},
+    {"name": "irq1_n_i", "historical": "IRQ1", "direction": "input", "fact": "active-low highest-priority maskable external interrupt input"},
+    {"name": "port1_i", "historical": "P10-P17 pin sample", "direction": "input", "fact": "physical pin levels returned by PORT1 reads"},
+    {"name": "port1_o", "historical": "P10-P17 output latch", "direction": "output", "fact": "latched Port 1 output values"},
+    {"name": "port1_oe_o", "historical": "P10-P17 direction", "direction": "output", "fact": "one enables the corresponding output"},
+    {"name": "port2_i", "historical": "P20-P24 pin sample", "direction": "input", "fact": "physical pin input for GPIO, timer capture, and SCI"},
+    {"name": "port2_o", "historical": "P20-P24 output function", "direction": "output", "fact": "GPIO latch with timer and SCI overrides"},
+    {"name": "port2_oe_o", "historical": "P20-P24 direction", "direction": "output", "fact": "GPIO direction with documented timer and SCI overrides"},
+    {"name": "port3_i", "historical": "P30-P37 or multiplexed data input", "direction": "input", "fact": "GPIO sample in Modes 4/7 and external read data in expanded modes"},
+    {"name": "port3_o", "historical": "P30-P37 or multiplexed data output", "direction": "output", "fact": "GPIO latch in Modes 4/7, write data in expanded modes, and internal read data in Mode 0"},
+    {"name": "port3_oe_o", "historical": "Port 3 driver direction", "direction": "output", "fact": "GPIO DDR in Modes 4/7 or full-byte normalized data-bus drive"},
+    {"name": "port4_i", "historical": "P40-P47 pin sample", "direction": "input", "fact": "physical Port 4 input in Modes 4/7"},
+    {"name": "port4_o", "historical": "P40-P47 or address output", "direction": "output", "fact": "GPIO latch in Modes 4/7, low address in Mode 5, and high address in Modes 0-3/6"},
+    {"name": "port4_oe_o", "historical": "Port 4 driver direction", "direction": "output", "fact": "GPIO/address enable follows the mode and P4DDR where documented"},
+    {"name": "program_data_i", "historical": "internal mask-ROM data", "direction": "input", "fact": "integrator-supplied byte for selected normal or relocated 2-KiB ROM windows"},
+    {"name": "program_address_o", "historical": "internal mask-ROM address", "direction": "output", "fact": "full CPU address qualified by program_read_o"},
+    {"name": "program_read_o", "historical": "internal mask-ROM select", "direction": "output", "fact": "active for internal program reads; Mode 0 excludes only its initial two reset-vector bytes"},
+    {"name": "external_data_i", "historical": "external/Port 3 read data", "direction": "input", "fact": "normalized external read byte; also represents sampled unselected Port 3 data in Mode 5"},
+    {"name": "external_address_o", "historical": "external address", "direction": "output", "fact": "full normalized CPU address without half-cycle multiplexing"},
+    {"name": "external_data_o", "historical": "external/Port 3 write data", "direction": "output", "fact": "CPU write byte"},
+    {"name": "external_write_o", "historical": "R/W direction", "direction": "output", "fact": "one denotes a CPU write; qualify selected external storage with external_bus_valid_o"},
+    {"name": "external_bus_valid_o", "historical": "mode-dependent external select", "direction": "output", "fact": "selected external transaction; Mode 5 asserts only from 0100 through 01FF and Modes 4/7 never assert"},
+    {"name": "external_opcode_fetch_o", "historical": "external opcode fetch", "direction": "output", "fact": "qualified external read that fetches an opcode"}
+  ],
+  "halt_interrupt_behavior": "MC6801 has no external HALT input; WAI and interrupt acceptance are implemented in the CPU profile, while this wrapper selects IRQ1, timer, and SCI vectors at the documented priority boundary",
+  "references": [
+    {
+      "id": "motorola-mc6801-reference-1983",
+      "locators": [
+        "sections 2.1-2.4 and figure 2-17, printed pages 2-1 to 2-23",
+        "sections 3.1.5 and 3.1.8-3.2, printed pages 3-11 to 3-26"
+      ]
+    }
+  ],
+  "implementation_status": {
+    "normalized_mode_decode": "COMPLETE",
+    "internal_ram_and_program_selection": "COMPLETE",
+    "normalized_gpio_and_address_outputs": "PARTIAL",
+    "physical_multiplexed_bus_waveform": "NOT_IMPLEMENTED",
+    "electrical_timing": "NOT_IMPLEMENTED",
+    "analog_behavior": "NOT_APPLICABLE"
+  }
+}

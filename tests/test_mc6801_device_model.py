@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 
+from model.common import Memory
 from model.mc6801_device import (
     MC6801CycleInputs,
     MC6801DeviceModel,
@@ -33,12 +34,102 @@ class MC6801DeviceModelTests(unittest.TestCase):
     def idle(model: MC6801DeviceModel, **inputs: int | bool):
         return model.cycle(MC6801CycleInputs(**inputs))
 
-    def test_only_documented_mc6803_operating_modes_are_accepted(self) -> None:
-        self.assertEqual(MC6801DeviceModel(2).operating_mode, 2)
-        self.assertEqual(MC6801DeviceModel(3).operating_mode, 3)
-        for mode in (0, 1, 4, 5, 6, 7):
-            with self.assertRaisesRegex(ValueError, "only Modes 2 and 3"):
+    def test_all_mc6801_modes_and_rom_options_are_validated(self) -> None:
+        self.assertEqual([MC6801DeviceModel(mode).active_mode for mode in range(8)], list(range(8)))
+        for mode in (-1, 8):
+            with self.assertRaisesRegex(ValueError, "range 0-7"):
                 MC6801DeviceModel(mode)
+        for start in (0xC800, 0xD800, 0xE800, 0xF800):
+            self.assertEqual(MC6801DeviceModel(1, rom_start=start).rom_start, start)
+        with self.assertRaisesRegex(ValueError, "ROM start"):
+            MC6801DeviceModel(1, rom_start=0xD000)
+
+    def test_mode_register_exclusions_and_program_windows(self) -> None:
+        for mode in range(4):
+            model = MC6801DeviceModel(mode)
+            for address in (0x0004, 0x0005, 0x0006, 0x0007, 0x000F):
+                self.assertFalse(model.register_is_internal(address))
+
+        for mode in (4, 7):
+            model = MC6801DeviceModel(mode)
+            for address in (0x0004, 0x0005, 0x0006, 0x0007, 0x000F):
+                self.assertTrue(model.register_is_internal(address))
+
+        for mode in (5, 6):
+            model = MC6801DeviceModel(mode)
+            self.assertFalse(model.register_is_internal(0x0004))
+            self.assertTrue(model.register_is_internal(0x0005))
+            self.assertFalse(model.register_is_internal(0x0006))
+            self.assertTrue(model.register_is_internal(0x0007))
+            self.assertFalse(model.register_is_internal(0x000F))
+
+        mode1 = MC6801DeviceModel(1)
+        self.assertTrue(mode1.program_is_internal(0xF800))
+        self.assertTrue(mode1.program_is_internal(0xFFEF))
+        self.assertFalse(mode1.program_is_internal(0xFFF0))
+        mode1r = MC6801DeviceModel(1, rom_start=0xD800)
+        self.assertTrue(mode1r.program_is_internal(0xD800))
+        self.assertFalse(mode1r.program_is_internal(0xF800))
+        mode0 = MC6801DeviceModel(0, rom_start=0xC800)
+        self.assertFalse(mode0.program_is_internal(0xC800))
+        self.assertTrue(mode0.program_is_internal(0xF800))
+        mode6r = MC6801DeviceModel(6, rom_start=0xE800)
+        self.assertTrue(mode6r.program_is_internal(0xE800))
+        self.assertFalse(mode6r.program_is_internal(0xFFFE))
+
+    def test_mode0_reset_vector_is_external_for_two_reads_only(self) -> None:
+        external = Memory()
+        program = Memory()
+        external[0xFFFE] = 0x12
+        external[0xFFFF] = 0x34
+        program[0xFFFE] = 0xAB
+        model = MC6801DeviceModel(0, external_memory=external, program_memory=program)
+
+        first = self.read(model, 0xFFFE)
+        second = self.read(model, 0xFFFF)
+        later = self.read(model, 0xFFFE)
+        self.assertEqual((first.read_data, second.read_data), (0x12, 0x34))
+        self.assertTrue(first.external_bus)
+        self.assertTrue(second.external_bus)
+        self.assertEqual(later.read_data, 0xAB)
+        self.assertTrue(later.program_bus)
+        self.assertFalse(later.external_bus)
+
+    def test_mode4_mirrors_ram_and_switches_irreversibly_to_mode5(self) -> None:
+        model = MC6801DeviceModel(4)
+        self.write(model, 0x1280, 0xA5)
+        self.assertEqual(self.read(model, 0x0080).read_data, 0xA5)
+        self.assertEqual(self.read(model, 0xFF80).read_data, 0xA5)
+        self.write(model, 0xFFFE, 0x56)
+        self.assertEqual(self.read(model, 0x00FE).read_data, 0x56)
+        self.assertFalse(self.read(model, 0x0200).external_bus)
+
+        self.write(model, 0x0003, 0x20)
+        self.assertEqual(model.active_mode, 5)
+        self.assertEqual(self.read(model, 0x0003).read_data >> 5, 5)
+        self.write(model, 0x0003, 0x00)
+        self.assertEqual(model.active_mode, 5)
+        self.assertFalse(model.ram_is_internal(0x1280))
+        self.assertTrue(model.ram_is_internal(0x0080))
+
+    def test_mode5_partial_bus_and_single_chip_unusable_space(self) -> None:
+        external = Memory()
+        program = Memory()
+        external[0x0100] = 0x51
+        external[0x0200] = 0x52
+        program[0xF800] = 0x53
+        mode5 = MC6801DeviceModel(5, external_memory=external, program_memory=program)
+        selected = self.read(mode5, 0x0100)
+        unselected = self.read(mode5, 0x0200)
+        rom = self.read(mode5, 0xF800)
+        self.assertEqual((selected.read_data, unselected.read_data, rom.read_data), (0x51, 0x52, 0x53))
+        self.assertTrue(selected.external_bus)
+        self.assertFalse(unselected.external_bus)
+        self.assertTrue(rom.program_bus)
+
+        mode7 = MC6801DeviceModel(7, external_memory=external, program_memory=program)
+        self.assertEqual(self.read(mode7, 0x0200).read_data, 0xFF)
+        self.assertFalse(self.read(mode7, 0x0200).external_bus)
 
     def test_mode_dependent_ram_and_register_decode(self) -> None:
         mode2 = MC6801DeviceModel(2)

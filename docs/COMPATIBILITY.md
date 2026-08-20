@@ -59,15 +59,20 @@ It does not claim pin-level phi1/phi2 generation, electrical timing, or complete
 external waveforms for cycles whose detailed bus activity is not established by
 the selected manufacturer documentation.
 
-The MC6801/MC6803 device claim currently covers the normalized expanded-bus
-Mode 2 and Mode 3 boundary. Mode 2 has tested RAME-controlled 128-byte RAM;
-Mode 3 keeps that window external. Both profiles implement the common register
-subset, Port 1/2 GPIO and pin overrides, the capture/compare/overflow timer,
-documented interrupt priority/vectors, and internally clocked NRZ SCI. The
-MC6803 profile inherits those facts under the manufacturer's explicit
-functional-identity statement and rejects modes beyond 2/3. MC6801 Modes
-0/1/4/5/6/7, mask ROM, Port 3 handshakes, physical multiplexed-bus waveforms,
-bi-phase SCI, and external-clock SCI remain outside this partial claim.
+The MC6801 device claim covers normalized decode for Modes 0-7 and the 1R/6R
+mask-ROM relocation options. Directed model and RTL tests cover register
+exclusions, RAM availability and Mode-4 mirroring, normal/relocated program
+windows, Mode-0 external-to-internal reset-vector handoff, Mode-5's selected
+`$0100-$01ff` window, Mode-4-to-5 transition, single-chip bus suppression, and
+mode-selected Port 3/4 GPIO/address functions. The complete peripheral suite
+continues to exercise Modes 2/3 and implements Port 1/2 GPIO, the
+capture/compare/overflow timer, documented interrupt priority/vectors, and
+internally clocked NRZ SCI.
+
+The MC6803 profile inherits only the manufacturer-stated Modes 2/3 facts and
+rejects other public configurations. Physical multiplexed-bus waveforms,
+complete Port 3 handshake timing, bi-phase SCI, and external-clock SCI remain
+outside this partial claim.
 For a framing error, MC6801 transfers the misframed byte into RDR while setting
 ORFE without RDRF. This behavior is independently selected and tested rather
 than generalized to Hitachi parts.

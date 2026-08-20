@@ -1,9 +1,9 @@
-"""Independent cycle model for documented MC6801/MC6803 Mode 2/3 devices.
+"""Independent cycle model for documented MC6801 operating modes.
 
 This model is organized around externally presented E-cycle transactions and
-peripheral state, independently of the RTL CPU wrapper.  It implements the
-common digital register, RAM, GPIO, timer, SCI, and interrupt behavior defined
-for MC6801 and for the functionally identical MC6803 expanded modes.
+peripheral state, independently of the RTL CPU wrapper. It implements the
+mode-selected register, RAM, ROM, vector, GPIO, timer, SCI, and interrupt
+behavior defined for MC6801. MC6803 users select its documented Modes 2 or 3.
 """
 
 from __future__ import annotations
@@ -16,6 +16,8 @@ from model.common import Memory
 INTERNAL_REGISTERS = frozenset(
     (*range(0x0000, 0x0004), *range(0x0008, 0x000F), *range(0x0010, 0x0015))
 )
+PORT3_REGISTERS = frozenset({0x0004, 0x0006, 0x000F})
+PORT4_REGISTERS = frozenset({0x0005, 0x0007})
 VECTOR_IRQ1 = 0xFFF8
 VECTOR_INPUT_CAPTURE = 0xFFF6
 VECTOR_OUTPUT_COMPARE = 0xFFF4
@@ -158,26 +160,34 @@ class MC6801PeripheralState:
 
 
 class MC6801DeviceModel:
-    """Specification-derived digital peripheral model for Modes 2 and 3."""
+    """Specification-derived digital device model for MC6801 Modes 0-7."""
 
     def __init__(
         self,
         operating_mode: int = 2,
         *,
         external_memory: Memory | None = None,
+        program_memory: Memory | None = None,
+        rom_start: int = 0xF800,
         transfer_framing_error: bool = True,
         timer_counter_double_write: bool = False,
         timer_overflow_at_zero: bool = False,
         internal_ram_start: int = 0x0080,
         internal_ram_size: int = 128,
     ) -> None:
-        if operating_mode not in {2, 3}:
-            raise ValueError("MC6801/MC6803 device model supports only Modes 2 and 3")
+        if operating_mode not in range(8):
+            raise ValueError("MC6801 operating mode must be in the range 0-7")
+        if rom_start not in {0xC800, 0xD800, 0xE800, 0xF800}:
+            raise ValueError("MC6801 ROM start must be C800, D800, E800, or F800")
         self.operating_mode = operating_mode
+        self.active_mode = operating_mode
         self.external_memory = external_memory if external_memory is not None else Memory()
+        self.program_memory = program_memory if program_memory is not None else Memory()
+        self.rom_start = rom_start
         self.internal_ram_start = internal_ram_start & 0xFFFF
         self.ram = bytearray(internal_ram_size)
         self.state = MC6801PeripheralState()
+        self.mode0_reset_vector_reads_remaining = 2
         self.transfer_framing_error = transfer_framing_error
         self.timer_counter_double_write = timer_counter_double_write
         self.timer_overflow_at_zero = timer_overflow_at_zero
@@ -186,6 +196,8 @@ class MC6801DeviceModel:
         """Reset documented digital state without inventing RAM contents."""
 
         self.state = MC6801PeripheralState()
+        self.active_mode = self.operating_mode
+        self.mode0_reset_vector_reads_remaining = 2
 
     def standby_reset(self, *, retention_power_ok: bool = True) -> None:
         """Enter reset-state operation while preserving the retained domain.
@@ -199,35 +211,79 @@ class MC6801DeviceModel:
         retained_standby_power = self.state.standby_power and retention_power_ok
         self.state = MC6801PeripheralState()
         self.state.standby_power = retained_standby_power
+        self.active_mode = self.operating_mode
+        self.mode0_reset_vector_reads_remaining = 2
 
     def register_is_internal(self, address: int) -> bool:
-        return (address & 0xFFFF) in INTERNAL_REGISTERS
+        address &= 0xFFFF
+        return bool(
+            address in INTERNAL_REGISTERS
+            or (self.active_mode in {4, 7} and address in PORT3_REGISTERS)
+            or (self.active_mode in {4, 5, 6, 7} and address in PORT4_REGISTERS)
+        )
 
     def ram_is_internal(self, address: int) -> bool:
         address &= 0xFFFF
         return (
-            self.operating_mode == 2
+            self.active_mode != 3
             and self.state.rame
-            and self.internal_ram_start
-            <= address
-            < self.internal_ram_start + len(self.ram)
+            and (
+                (self.active_mode == 4 and bool(address & 0x0080))
+                or (
+                    self.active_mode != 4
+                    and self.internal_ram_start
+                    <= address
+                    < self.internal_ram_start + len(self.ram)
+                )
+            )
         )
 
     def ram_index(self, address: int) -> int:
         """Translate a selected internal address to its physical RAM index."""
 
-        return (address & 0xFFFF) - self.internal_ram_start
+        address &= 0xFFFF
+        if self.active_mode == 4:
+            return address & 0x007F
+        return address - self.internal_ram_start
 
-    def read_register(self, address: int, *, port1: int = 0xFF, port2: int = 0x1F) -> int:
+    def program_is_internal(self, address: int) -> bool:
+        """Classify the selected mask-ROM window, excluding external vectors."""
+
+        address &= 0xFFFF
+        if self.active_mode in {2, 3, 4}:
+            return False
+        if self.active_mode == 1:
+            return self.rom_start <= address < self.rom_start + 0x0800 and address < 0xFFF0
+        if self.active_mode == 6 and self.rom_start != 0xF800:
+            return self.rom_start <= address < self.rom_start + 0x0800
+        return 0xF800 <= address <= 0xFFFF
+
+    def read_register(
+        self,
+        address: int,
+        *,
+        port1: int = 0xFF,
+        port2: int = 0x1F,
+        port3: int = 0xFF,
+        port4: int = 0xFF,
+    ) -> int:
         """Return the value driven by an internal register before an E edge."""
 
         s = self.state
         address &= 0xFFFF
+        if address in {0x0004, 0x0006}:
+            return s.port3_input_latch if s.port3_latch_valid else port3 & 0xFF
+        if address == 0x0005:
+            return 0xFF
+        if address == 0x0007:
+            return port4 & 0xFF
+        if address == 0x000F:
+            return int(s.snapshot()["P3CSR"])
         values = {
             0x0000: 0xFF,
             0x0001: 0xFF,
             0x0002: port1,
-            0x0003: (self.operating_mode << 5) | (port2 & 0x1F),
+            0x0003: (self.active_mode << 5) | (port2 & 0x1F),
             0x0008: s.tcsr,
             0x0009: s.timer >> 8,
             0x000A: s.counter_low_latch,
@@ -261,7 +317,7 @@ class MC6801DeviceModel:
 
     def irq_vector(self, irq1_n: bool = True) -> int:
         s = self.state
-        if s.irq1_pending or not irq1_n:
+        if s.irq1_pending or not irq1_n or self.port3_irq:
             return VECTOR_IRQ1
         if (s.tcsr & 0x90) == 0x90:
             return VECTOR_INPUT_CAPTURE
@@ -276,9 +332,18 @@ class MC6801DeviceModel:
         return bool(
             s.irq1_pending
             or not irq1_n
+            or self.port3_irq
             or s.irq2_pending
             or self.timer_irq
             or self.sci_irq
+        )
+
+    @property
+    def port3_irq(self) -> bool:
+        return bool(
+            self.active_mode in {4, 7}
+            and self.state.port3_is3_flag
+            and self.state.port3_is3_enable
         )
 
     def port_outputs(self) -> tuple[int, int, int, int]:
@@ -308,13 +373,47 @@ class MC6801DeviceModel:
         address = inputs.address & 0xFFFF
         register_select = inputs.valid and self.register_is_internal(address)
         ram_select = inputs.valid and self.ram_is_internal(address)
+        mode0_reset_vector = bool(
+            inputs.valid
+            and not inputs.write
+            and self.active_mode == 0
+            and self.mode0_reset_vector_reads_remaining
+            and address in {0xFFFE, 0xFFFF}
+        )
+        program_select = bool(
+            inputs.valid and self.program_is_internal(address) and not mode0_reset_vector
+        )
         internal_read = register_select and not inputs.write
         internal_write = register_select and inputs.write
-        external_bus = bool(inputs.valid and not register_select and not ram_select)
-        if ram_select:
+        if self.active_mode in {4, 7}:
+            external_bus = False
+        elif self.active_mode == 5:
+            external_bus = bool(inputs.valid and 0x0100 <= address <= 0x01FF)
+        else:
+            external_bus = bool(
+                inputs.valid and not register_select and not ram_select and not program_select
+            )
+        unusable = bool(
+            inputs.valid
+            and not register_select
+            and not ram_select
+            and not program_select
+            and not external_bus
+        )
+        if program_select:
+            read_data = self.program_memory[address]
+        elif ram_select:
             read_data = self.ram[self.ram_index(address)]
         elif register_select:
-            read_data = self.read_register(address, port1=inputs.port1, port2=inputs.port2)
+            read_data = self.read_register(
+                address,
+                port1=inputs.port1,
+                port2=inputs.port2,
+                port3=inputs.port3,
+                port4=inputs.port4,
+            )
+        elif unusable and self.active_mode in {4, 7}:
+            read_data = 0xFF
         else:
             read_data = self.external_memory[address]
 
@@ -324,12 +423,18 @@ class MC6801DeviceModel:
             (self.state.port2_latch if self.state.port2_ddr & 1 else inputs.port2) & 1
         )
         self._advance_memory_and_gpio(inputs, address, internal_write, ram_select, external_bus)
+        self._advance_port34(inputs, address, internal_read, internal_write)
         self._advance_timer(inputs, address, internal_read, internal_write, capture_pin)
         self._advance_sci(inputs, address, internal_read, internal_write)
         self._advance_interrupt_latches(
             inputs, timer_irq_before=timer_irq_before, sci_irq_before=sci_irq_before
         )
 
+        if mode0_reset_vector:
+            self.mode0_reset_vector_reads_remaining -= 1
+
+        snapshot = self.state.snapshot()
+        snapshot["active_mode"] = self.active_mode
         return MC6801CycleResult(
             read_data=read_data,
             external_bus=external_bus,
@@ -337,7 +442,8 @@ class MC6801DeviceModel:
             sci_irq=self.sci_irq,
             irq_request=self.irq_request(inputs.irq1_n),
             irq_vector=self.irq_vector(inputs.irq1_n),
-            state=self.state.snapshot(),
+            state=snapshot,
+            program_bus=bool(program_select and not inputs.write),
         )
 
     def _advance_memory_and_gpio(
@@ -372,6 +478,8 @@ class MC6801DeviceModel:
         elif address == 0x0002:
             s.port1_latch = data
         elif address == 0x0003:
+            if self.active_mode == 4 and data & 0x20:
+                self.active_mode = 5
             s.port2_latch = (s.port2_latch & ~0x01) | (data & 0x01)
             if not s.rmcr & 0x08:
                 s.port2_latch = (s.port2_latch & ~0x04) | (data & 0x04)
@@ -389,6 +497,48 @@ class MC6801DeviceModel:
         elif address == 0x0014:
             s.standby_power = bool(data & 0x80 and inputs.standby_power_ok)
             s.rame = bool(data & 0x40)
+
+    def _advance_port34(
+        self,
+        inputs: MC6801CycleInputs,
+        address: int,
+        internal_read: bool,
+        internal_write: bool,
+    ) -> None:
+        """Advance registers available in single-chip/test and partial-bus modes."""
+
+        state = self.state
+        falling_edge = state.is3_sync[1] and not state.is3_sync[0]
+        state.is3_sync = [inputs.is3_n, state.is3_sync[0]]
+
+        if internal_write:
+            if address == 0x0004 and self.active_mode in {4, 7}:
+                state.port3_ddr = inputs.data
+            elif address == 0x0005 and self.active_mode in {4, 5, 6, 7}:
+                state.port4_ddr = inputs.data
+            elif address == 0x0006 and self.active_mode in {4, 7}:
+                state.port3_latch = inputs.data
+            elif address == 0x0007 and self.active_mode in {4, 7}:
+                state.port4_latch = inputs.data
+            elif address == 0x000F and self.active_mode in {4, 7}:
+                state.port3_is3_enable = bool(inputs.data & 0x40)
+                state.port3_output_strobe_select = bool(inputs.data & 0x10)
+                state.port3_latch_enable = bool(inputs.data & 0x08)
+
+        if internal_read and address == 0x000F:
+            state.port3_clear_armed = state.port3_is3_flag
+        if (internal_read or internal_write) and address == 0x0006:
+            if internal_read:
+                state.port3_latch_valid = False
+            if state.port3_clear_armed:
+                state.port3_is3_flag = False
+                state.port3_clear_armed = False
+
+        if falling_edge and self.active_mode in {4, 7}:
+            state.port3_is3_flag = True
+            if state.port3_latch_enable and not state.port3_latch_valid:
+                state.port3_input_latch = inputs.port3 & 0xFF
+                state.port3_latch_valid = True
 
     def _advance_timer(
         self,

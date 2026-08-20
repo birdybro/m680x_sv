@@ -140,21 +140,29 @@ documented Hitachi additions. It does not share the M6800 execution state machin
 The Hitachi profile defers maskable interrupt recognition until the instruction
 following CLI retires, independently of the Motorola profile.
 
-## MC6801/MC6803 expanded-mode integration
+## MC6801 operating modes and MC6803 expanded-mode integration
 
 `rtl/m6801/mc6801_mcu.sv` surrounds the M6801 CPU profile with the normalized
-Mode 2/3 device state specified in `spec/peripherals/mc6801.json`. The MC6803
-profile in `spec/peripherals/mc6803.json` inherits that common behavior and
-restricts the public configuration to Modes 2/3, exactly as section 2.4.2 of
-the manufacturer manual defines it. Its external memory port deliberately
-remains a normalized 16-bit FPGA bus; a later pin wrapper owns Port 3
-multiplexing, AS, E, and electrical timing.
+Mode 0-7 device state specified in `spec/peripherals/mc6801.json`; mask-ROM
+parameters also represent the documented 1R/6R relocation options at `$c800`,
+`$d800`, or `$e800`. The MC6803 profile in `spec/peripherals/mc6803.json`
+inherits the common behavior but restricts public configuration to Modes 2/3,
+exactly as section 2.4.2 of the manufacturer manual defines it.
 
-The current integration implements the mode-dependent exclusion of Port 3/4
-register addresses, RAME-controlled 128-byte RAM in Mode 2, the external RAM
-window in Mode 3, physical-pin reads and DDR/output state for Ports 1/2, and
-the documented P20/P21/P22:P24 timer/SCI overrides. Undefined output-latch
-reset state is assigned deterministic zero only as an FPGA integration choice.
+The mode decoder owns register exclusions, RAME-controlled RAM, normal and
+relocated ROM windows, vector source selection, and external-bus qualification.
+Mode 0 uses the external bus for its two reset-vector reads and then selects
+internal ROM at the same addresses. Mode 4 mirrors each physical RAM byte
+through every `$xx80-$xxff` range and implements the one-way PCO transition to
+Mode 5 until reset. Mode 5 selects external storage only at `$0100-$01ff`;
+Modes 4/7 never assert the external select. Port 4 emits the documented low or
+high partial address in Modes 5/6, while Modes 4/7 expose Port 3/4 GPIO.
+
+The external memory port deliberately remains a normalized 16-bit FPGA bus.
+`spec/interfaces/mc6801_modes.json` defines that boundary; a future physical
+pin wrapper owns the half-cycle Port 3 address/data multiplexing, AS, E,
+setup/hold, and electrical timing. Undefined output-latch reset state is
+assigned deterministic zero only as an FPGA integration choice.
 
 The 16-bit timer implements coherent counter reads, the FFF8 test preset,
 one-cycle compare inhibition, synchronized input capture, output-level

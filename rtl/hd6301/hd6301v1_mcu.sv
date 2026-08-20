@@ -94,7 +94,9 @@ module hd6301v1_mcu (
     .SCI_TRANSFER_FRAMING_ERROR(1'b0),
     .TIMER_COUNTER_DOUBLE_WRITE(1'b1),
     .TIMER_OVERFLOW_AT_ZERO(1'b1),
-    .PORT_DDR_ASYNC_RESET(1'b0)
+    .PORT_DDR_ASYNC_RESET(1'b0),
+    .INTERNAL_PROGRAM_START(16'hf000),
+    .INTERNAL_PROGRAM_BYTES(16'd4096)
   ) device (
     .clk_i(clk_i),
     .reset_n_i(reset_n_i),

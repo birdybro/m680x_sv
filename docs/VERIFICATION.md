@@ -26,10 +26,12 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 98 |
+| Python unit tests | 102 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
+| MC6801 Mode 0-7/1R/6R decode checks | 62 |
+| MC6801 real-core mode boot paths | 2 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
 | HD6301V1 Mode-7 integration checks | 31 |
 | HD6303R Mode-2 integration checks | 18 |
@@ -42,8 +44,8 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 11 at depth 10 |
-| Synthesis tops | 12 |
+| Bounded formal profiles | 12 (11 at depth 10; mode decode at depth 5) |
+| Synthesis tops | 13 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -72,7 +74,13 @@ addresses. Focused model and RTL traces also prove that MC6801 retires the
 instruction following CLI or an I-clearing TAP before accepting IRQ, while
 HD6301 waits the documented two machine cycles.
 
-The MC6801/MC6803 MCU suite runs normalized Mode 2 and Mode 3 separately. The
+The MC6801 mode suite drives all eight hardware modes plus representative 1R
+and 6R relocation options through an independent bus source. Its 62 checks
+cover register/RAM/program/external selection, vectors, Mode-4 aliases and
+transition, Mode-5 external selection, and Port 3/4 functions. Two real-core
+boot paths separately execute the Mode-0 reset-vector handoff and Mode-4
+mirrored RAM fetch/data behavior. The MC6801/MC6803 peripheral suite runs
+normalized Mode 2 and Mode 3 separately. The
 MC6803 applicability is grounded in the manufacturer's explicit functional-
 identity statement and the validated profile inheritance, not an inferred
 similarity. The suite verifies
@@ -86,8 +94,8 @@ and a one-cycle IRQ1 pulse which arrives after IRQ2 entry has started and wins
 the documented late vector-priority selection. It also removes a timer source's
 identity after latching IRQ2 and verifies the documented default SCI vector.
 
-The independent Python device model has eight focused regressions for Mode 2/3
-decode and RAM, physical-pin GPIO behavior and SCI direction overrides,
+The independent Python device model has twelve focused regressions for all-mode
+decode, RAM/ROM/vector behavior, physical-pin GPIO behavior and SCI direction overrides,
 coherent timer reads and ordered status clears, second-cycle input capture,
 overflow/compare events, retained IRQ priority, and internally clocked NRZ
 transmit/receive with unread-data overrun retention. Its cycle/event structure
@@ -190,7 +198,8 @@ edge on resume.
 ## Formal checks
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
-HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration,
+HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration and
+Mode-0/Mode-4 decode,
 MC68705P5, HD6301V1 and HD63701V0 Mode-7 integrations, and the HD63705V0 MCU. At
 depth 10 it proves the committed
 safety properties for all symbolic input sequences:
@@ -208,6 +217,10 @@ safety properties for all symbolic input sequences:
 - MC6801 external fetches are qualified reads, internal register addresses do
   not escape onto the expanded bus, SCI overrides force documented Port 2
   directions, and MCU state is stable while clock enable is inactive.
+- MC6801 Mode 0 never selects program and external storage together and drives
+  internal program data onto Port 3; the Mode-4/5 path never selects program
+  and external storage together and confines external selection to
+  `$0100-$01ff`.
 - MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
   remapping respects secure mode, program reads stay within internal storage,
   VPP qualifies programming controls, and disabled-cycle state stalls.
@@ -227,7 +240,7 @@ Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
 delay traces, the MC68705P5, HD6301V1, HD6303R, HD63701V0, and HD63705V0
 device suites, both MC6801/MC6803 peripheral differential profiles, and the
-MC68705P5 and HD63705V0 peripheral differential corpora from generated
+MC6801 all-mode/direct-boot suites plus the MC68705P5 and HD63705V0 peripheral differential corpora from generated
 package-flattened views. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
 hide it.
@@ -239,11 +252,12 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 10,741 | 1,422 |
+| MC6801 Mode 2 integration | 11,044 | 1,432 |
+| MC6801 Mode 4/5 integration | 10,993 | 1,471 |
 | HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 7 integration | 12,104 | 1,481 |
-| HD6303R Mode 2 integration | 11,849 | 1,433 |
-| HD63701V0 Mode 7 integration | 13,870 | 1,992 |
+| HD6301V1 Mode 7 integration | 12,056 | 1,481 |
+| HD6303R Mode 2 integration | 12,163 | 1,443 |
+| HD63701V0 Mode 7 integration | 13,862 | 1,992 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

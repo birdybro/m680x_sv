@@ -46,14 +46,15 @@ The default five-bit stack window wraps within `$0060`–`$007f`, matching the
 concrete MC68705P5 behavior; other family members can select their documented
 stack width explicitly.
 
-`mc6801_device.py` is a cycle-stepped peripheral path for the normalized
-MC6801/MC6803 expanded modes. It is organized around register transactions and
-E-cycle events rather than either CPU execution state machine. It models Mode
-2/3 internal decode, RAME-controlled RAM, physical-pin GPIO reads and pin
-overrides, the capture/compare/overflow timer and ordered flag protocols,
-internally clocked NRZ SCI framing/status, and the retained IRQ1/IRQ2 request
-and late vector-priority behavior. Manufacturer-undefined modes are rejected
-instead of being assigned invented behavior.
+`mc6801_device.py` is a cycle-stepped path for MC6801 Modes 0-7 and the normal
+or relocated 2-KiB mask-ROM options. It is organized around register
+transactions and E-cycle events rather than either CPU execution state machine.
+It models mode-selected registers, RAM/ROM/vector sources, Mode-4 RAM aliases
+and one-way Mode-5 transition, normalized external selection, GPIO/address
+functions, the capture/compare/overflow timer and ordered flag protocols,
+internally clocked NRZ SCI framing/status, and retained IRQ1/IRQ2 requests.
+MC6803 users select only its documented Modes 2/3; no behavior is assigned to
+the modes which that device's manual leaves undefined.
 
 `hd6301v1_device.py` and `hd6303r_device.py` specialize only documented device
 differences. In particular, both select Hitachi's rule that a framing-error

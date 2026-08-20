@@ -89,6 +89,8 @@ module hd63701v0_mcu (
     .PORT_DDR_ASYNC_RESET(1'b1),
     .INTERNAL_RAM_START(16'h0040),
     .INTERNAL_RAM_BYTES(16'd192),
+    .INTERNAL_PROGRAM_START(16'hf000),
+    .INTERNAL_PROGRAM_BYTES(16'd4096),
     .MODE7_ADDRESS_TRAP_LOW_END(16'h003f)
   ) device (
     .clk_i(clk_i), .reset_n_i(reset_n_i),
