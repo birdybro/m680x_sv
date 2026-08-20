@@ -537,6 +537,7 @@ test-hd63705v0:
 		rtl/m6805/m6805_core.sv rtl/hd6305/hd63705v0_mcu.sv \
 		sim/tb_hd63705v0_mcu.sv
 	build/obj_hd63705v0_mcu/Vtb_hd63705v0_mcu
+	$(PYTHON) -m unittest tests.test_hd63705v0_device_model -v
 
 test-hd63705-peripheral-diff:
 	mkdir -p build

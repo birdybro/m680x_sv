@@ -60,7 +60,7 @@
     "wait": "WAIT stops the CPU while timer and SCI continue; an enabled request vectors, with the timer-specific wait vector.",
     "stop": "STOP halts oscillator, CPU, and peripherals; TDR becomes F0, timer/SCI request flags clear, their masks set, and only INT or enabled INT2 wakes the core.",
     "standby": "STBY low asynchronously resets internal registers and makes I/O high impedance while retaining RAM; normalized standby_n_i represents the digital boundary.",
-    "eprom": "The digital programming interface maps twelve external EPROM addresses to 1000-1FFF and exposes VPP/OE-qualified verify data and CE/OE/VPP-qualified program strobes.",
+    "eprom": "The digital programming interface maps twelve external EPROM addresses to 1000-1FFF and implements all five table-2-9 states: ordinary +5-V read, output disable, VPP programming, VPP verification with CE don't-care, and program/verify disable.",
     "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.9 and 2.10 and tables 2-5 through 2-9, printed pages 125-136"}
   },
   "memory_control": {
@@ -71,8 +71,8 @@
   },
   "implementation_scope": {
     "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, documented low-power transitions, and normalized EPROM programming pins.",
-    "model": "model/hd63705v0_device.py independently models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, and STOP state changes per E cycle.",
-    "verification": "Model and RTL suites cover both RAM boundaries, register reset/readback, GPIO, timer sources and wait vector, external interrupt priority, eight-bit serial transfer, STOP/STBY, and EPROM verify/program controls.",
+    "model": "model/hd63705v0_device.py independently models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, STOP state changes per E cycle, and the combinational EPROM table.",
+    "verification": "Model and RTL suites cover both RAM boundaries, register reset/readback, GPIO, timer sources and wait vector, external interrupt priority, eight-bit serial transfer, STOP/STBY, and all five table-2-9 EPROM states.",
     "undefined_policy": "Unmapped MCU-mode read values and SDR reset data are deterministic FPGA normalizations, not silicon-equivalence claims.",
     "analog_exclusions": ["oscillator startup and duty cycle", "EPROM charge programming, voltage margins, and retention", "pad drive strength", "metastability"]
   }

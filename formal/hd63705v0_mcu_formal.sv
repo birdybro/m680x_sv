@@ -18,6 +18,7 @@ module hd63705v0_mcu_formal;
   (* anyseq *) logic [7:0] eprom_data_in;
   (* anyseq *) logic eprom_ce_n;
   (* anyseq *) logic eprom_oe_n;
+  (* anyseq *) logic eprom_read_voltage;
   (* anyseq *) logic eprom_vpp;
   logic [7:0] port_a_out;
   logic [7:0] port_b_out;
@@ -51,6 +52,10 @@ module hd63705v0_mcu_formal;
   logic stopped_state;
   logic sci_clock;
   logic sci_tx;
+  logic eprom_storage_read;
+
+  assign eprom_storage_read = eprom_mode && !eprom_oe_n &&
+    (eprom_vpp || (eprom_read_voltage && !eprom_ce_n));
 
   assign reset_n = past_valid;
   always @(posedge clk) past_valid <= 1'b1;
@@ -69,6 +74,7 @@ module hd63705v0_mcu_formal;
     .eprom_address_i(eprom_address), .eprom_data_i(eprom_data_in),
     .eprom_chip_enable_n_i(eprom_ce_n),
     .eprom_output_enable_n_i(eprom_oe_n),
+    .eprom_read_voltage_i(eprom_read_voltage),
     .eprom_program_voltage_i(eprom_vpp), .eprom_data_o(eprom_data_out),
     .eprom_data_oe_o(eprom_data_oe),
     .eprom_program_data_o(eprom_program_data), .eprom_program_o(eprom_program),
@@ -96,10 +102,12 @@ module hd63705v0_mcu_formal;
     assert (debug_ssr[3:0] == 4'h7);
     assert (irq_vector == 16'h1ffa || irq_vector == 16'h1ff8 ||
             irq_vector == 16'h1ff6 || irq_vector == 16'h1ff4);
+    assert (eprom_program == (eprom_mode && eprom_vpp && !eprom_ce_n &&
+                              eprom_oe_n));
     if (eprom_mode) begin
-      assert (program_address[13:12] == 2'b01);
-      assert (program_read == (eprom_vpp && !eprom_oe_n));
-      assert (eprom_data_oe == (eprom_vpp && !eprom_oe_n));
+      assert (program_address == {2'b01, eprom_address});
+      assert (program_read == eprom_storage_read);
+      assert (eprom_data_oe == eprom_storage_read);
       assert ({port_a_oe, port_b_oe, port_c_oe, port_d_oe} == '0);
     end else if (program_read) begin
       assert (program_address >= 14'h1000 && program_address <= 14'h1fff);
@@ -108,7 +116,6 @@ module hd63705v0_mcu_formal;
       assert ({port_a_oe, port_b_oe, port_c_oe, port_d_oe} == '0);
     end
     if (eprom_program) begin
-      assert (eprom_mode && eprom_vpp && !eprom_ce_n && eprom_oe_n);
       assert (eprom_program_data == eprom_data_in);
     end
     assert (eprom_data_out == program_data);

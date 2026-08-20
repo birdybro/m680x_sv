@@ -65,6 +65,18 @@ REQUIRED_SIGNALS = {
         "prom_program_o", "program_address_o", "program_read_o",
         "program_data_i",
     },
+    "hd63705v0-normalized-digital": {
+        "clk_i", "clock_enable_i", "reset_n_i", "standby_n_i", "int_n_i",
+        "int2_n_i", "timer_i", "port_a_i", "port_a_o", "port_a_oe_o",
+        "port_b_i", "port_b_o", "port_b_oe_o", "port_c_i", "port_c_o",
+        "port_c_oe_o", "port_d_i", "port_d_o", "port_d_oe_o",
+        "program_address_o", "program_read_o", "program_data_i",
+        "eprom_mode_i", "eprom_address_i", "eprom_data_i", "eprom_data_o",
+        "eprom_data_oe_o", "eprom_chip_enable_n_i",
+        "eprom_output_enable_n_i", "eprom_read_voltage_i",
+        "eprom_program_voltage_i", "eprom_program_data_o", "eprom_program_o",
+        "sci_tx_o", "sci_clock_o",
+    },
 }
 
 

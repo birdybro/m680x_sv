@@ -27,6 +27,7 @@ module tb_hd63705v0_mcu;
   logic [7:0] eprom_data_in;
   logic eprom_ce_n;
   logic eprom_oe_n;
+  logic eprom_read_voltage;
   logic eprom_vpp;
   logic [7:0] eprom_data_out;
   logic eprom_data_oe;
@@ -80,6 +81,7 @@ module tb_hd63705v0_mcu;
     .eprom_address_i(eprom_address), .eprom_data_i(eprom_data_in),
     .eprom_chip_enable_n_i(eprom_ce_n),
     .eprom_output_enable_n_i(eprom_oe_n),
+    .eprom_read_voltage_i(eprom_read_voltage),
     .eprom_program_voltage_i(eprom_vpp), .eprom_data_o(eprom_data_out),
     .eprom_data_oe_o(eprom_data_oe),
     .eprom_program_data_o(eprom_program_data), .eprom_program_o(eprom_program),
@@ -185,6 +187,7 @@ module tb_hd63705v0_mcu;
     eprom_data_in = 8'h00;
     eprom_ce_n = 1'b1;
     eprom_oe_n = 1'b1;
+    eprom_read_voltage = 1'b0;
     eprom_vpp = 1'b0;
     checks = 0;
     receive_pattern = 8'h3c;
@@ -357,11 +360,13 @@ module tb_hd63705v0_mcu;
     checks = checks + 1;
 
     // Normalized EPROM mode maps the twelve physical address pins onto the
-    // internal 1000-1FFF image and exposes verify/program controls.
+    // internal 1000-1FFF image and implements every Table 2-9 digital state.
     firmware[14'h1123] = 8'h5a;
     eprom_address = 12'h123;
     eprom_mode = 1'b1;
+    eprom_read_voltage = 1'b0;
     eprom_vpp = 1'b1;
+    eprom_ce_n = 1'b1;
     eprom_oe_n = 1'b0;
     #1;
     if (program_address != 14'h1123 || !program_read || !eprom_data_oe ||
@@ -369,14 +374,74 @@ module tb_hd63705v0_mcu;
       $fatal(1, "HD63705V0 EPROM verify address=%04x read=%b oe=%b data=%02x",
              program_address, program_read, eprom_data_oe, eprom_data_out);
     end
+    checks = checks + 1;
+
+    // Verification explicitly treats CE as don't-care.
+    eprom_ce_n = 1'b0;
+    #1;
+    if (!program_read || !eprom_data_oe || eprom_program) begin
+      $fatal(1, "HD63705V0 EPROM verify CE-don't-care");
+    end
+    checks = checks + 1;
+
+    // Programming: VPP, CE low, and OE high.
     eprom_oe_n = 1'b1;
     eprom_ce_n = 1'b0;
-    eprom_vpp = 1'b1;
     eprom_data_in = 8'hc3;
     #1;
     if (!eprom_program || eprom_program_data != 8'hc3 || program_read ||
         eprom_data_oe) begin
       $fatal(1, "HD63705V0 EPROM program control");
+    end
+    checks = checks + 1;
+
+    // Program/verify disable: VPP with both controls high.
+    eprom_ce_n = 1'b1;
+    #1;
+    if (eprom_program || program_read || eprom_data_oe) begin
+      $fatal(1, "HD63705V0 EPROM program/verify disable");
+    end
+    checks = checks + 1;
+
+    // Ordinary read: +5 V, CE low, and OE low.
+    eprom_vpp = 1'b0;
+    eprom_read_voltage = 1'b1;
+    eprom_ce_n = 1'b0;
+    eprom_oe_n = 1'b0;
+    #1;
+    if (!program_read || !eprom_data_oe || eprom_program ||
+        eprom_data_out != 8'h5a) begin
+      $fatal(1, "HD63705V0 EPROM ordinary read");
+    end
+    checks = checks + 1;
+
+    // Output disable: +5 V, CE low, and OE high.
+    eprom_oe_n = 1'b1;
+    #1;
+    if (eprom_program || program_read || eprom_data_oe) begin
+      $fatal(1, "HD63705V0 EPROM output disable");
+    end
+    checks = checks + 1;
+
+    // No qualified TIMER/VPP level is a safe inactive normalization.
+    eprom_read_voltage = 1'b0;
+    eprom_ce_n = 1'b0;
+    eprom_oe_n = 1'b0;
+    #1;
+    if (eprom_program || program_read || eprom_data_oe) begin
+      $fatal(1, "HD63705V0 EPROM unqualified voltage");
+    end
+    checks = checks + 1;
+
+    eprom_address = 12'h000;
+    #1;
+    if (program_address != 14'h1000) begin
+      $fatal(1, "HD63705V0 EPROM low address boundary");
+    end
+    eprom_address = 12'hfff;
+    #1;
+    if (program_address != 14'h1fff) begin
+      $fatal(1, "HD63705V0 EPROM high address boundary");
     end
     checks = checks + 2;
     eprom_mode = 1'b0;

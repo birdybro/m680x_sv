@@ -19,6 +19,76 @@ VECTOR_TIMER_INT2 = 0x1FF8
 VECTOR_INT = 0x1FFA
 VECTOR_SWI = 0x1FFC
 VECTOR_RESET = 0x1FFE
+EPROM_BASE = 0x1000
+EPROM_BYTES = 0x1000
+EPROM_DEFINED_STATES = frozenset(
+    {"read", "output_disable", "program", "verify", "program_verify_disable"}
+)
+
+
+@dataclass(frozen=True)
+class HD63705V0EPROMInputs:
+    """Digital EPROM-mode pins and integration-owned storage byte."""
+
+    eprom_mode: bool
+    read_voltage: bool
+    program_voltage: bool
+    ce_n: bool
+    oe_n: bool
+    address: int
+    input_data: int
+    stored_data: int
+
+
+@dataclass(frozen=True)
+class HD63705V0EPROMCycle:
+    """One combinational projection of Hitachi table 2-9."""
+
+    state: str
+    storage_address: int
+    storage_read: bool
+    output_data: int
+    data_oe: bool
+    program_data: int
+    program_request: bool
+    mcu_stopped: bool
+
+
+def eprom_cycle(inputs: HD63705V0EPROMInputs) -> HD63705V0EPROMCycle:
+    """Project the five documented EPROM states without analog assumptions."""
+
+    if not 0 <= inputs.address < EPROM_BYTES:
+        raise ValueError("EPROM address must be twelve-bit")
+    if not 0 <= inputs.input_data <= 0xFF or not 0 <= inputs.stored_data <= 0xFF:
+        raise ValueError("EPROM data must be eight-bit")
+
+    if not inputs.eprom_mode:
+        state = "mcu"
+    elif inputs.program_voltage and not inputs.oe_n:
+        # Table 2-9 marks CE as don't-care during verification.
+        state = "verify"
+    elif inputs.program_voltage and not inputs.ce_n and inputs.oe_n:
+        state = "program"
+    elif inputs.program_voltage and inputs.ce_n and inputs.oe_n:
+        state = "program_verify_disable"
+    elif inputs.read_voltage and not inputs.ce_n and not inputs.oe_n:
+        state = "read"
+    elif inputs.read_voltage and not inputs.ce_n and inputs.oe_n:
+        state = "output_disable"
+    else:
+        state = "undefined_by_documentation"
+
+    storage_read = state in {"read", "verify"}
+    return HD63705V0EPROMCycle(
+        state=state,
+        storage_address=EPROM_BASE | inputs.address,
+        storage_read=storage_read,
+        output_data=inputs.stored_data,
+        data_oe=storage_read,
+        program_data=inputs.input_data,
+        program_request=state == "program",
+        mcu_stopped=inputs.eprom_mode,
+    )
 
 
 @dataclass(frozen=True)

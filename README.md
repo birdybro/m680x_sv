@@ -67,7 +67,7 @@ with device wrappers kept at separate integration boundaries:
   WAI/SLP, and standby digital pin behavior;
 - `hd63705v0_mcu`: 14-bit HD63705V0 integration with 192-byte RAM, 31 GPIO,
   an eight-bit timer, synchronous SCI/Timer2, INT/INT2 priority, WAIT/STOP/STBY,
-  and normalized digital EPROM verify/program controls; and
+  and all five normalized digital EPROM read/programming states; and
 - `mc68705p5_mcu`: an 11-bit device integration with RAM and register decode,
   GPIO, every programmable and MOR-fixed timer source/prescaler selection,
   interrupt priority/vectors, bootstrap-vector selection, and separate FPGA
@@ -149,6 +149,10 @@ verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by
 the integrator; their externally described vector and programming controls are
 implemented without redistributing the firmware image.
+The HD63705V0 digital programming boundary does implement all five documented
+read/output-disable/program/verify/disable states; separate +5-V-read and VPP
+qualifiers avoid conflating voltage states while leaving their analog
+thresholds to the integrator.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
 silicon behavior. These limitations are tracked as `PARTIAL`,

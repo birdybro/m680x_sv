@@ -4,12 +4,15 @@ import unittest
 
 from model.common import Memory
 from model.hd63705v0_device import (
+    EPROM_DEFINED_STATES,
     HD63705V0CycleInputs,
     HD63705V0DeviceModel,
+    HD63705V0EPROMInputs,
     VECTOR_INT,
     VECTOR_SCI_TIMER2,
     VECTOR_TIMER_INT2,
     VECTOR_WAIT_TIMER,
+    eprom_cycle,
 )
 
 
@@ -25,6 +28,76 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
     @classmethod
     def read(cls, model: HD63705V0DeviceModel, address: int, **values):
         return cls.cycle(model, address=address, valid=True, write=False, **values)
+
+    @staticmethod
+    def eprom(**values: int | bool):
+        inputs: dict[str, int | bool] = {
+            "eprom_mode": True,
+            "read_voltage": False,
+            "program_voltage": False,
+            "ce_n": True,
+            "oe_n": True,
+            "address": 0x123,
+            "input_data": 0xC3,
+            "stored_data": 0x5A,
+        }
+        inputs.update(values)
+        return eprom_cycle(HD63705V0EPROMInputs(**inputs))
+
+    def test_eprom_table_2_9_states_are_exact(self) -> None:
+        states = {
+            (True, False, False, False): "read",
+            (True, False, False, True): "output_disable",
+            (False, True, False, True): "program",
+            (False, True, True, False): "verify",
+            (False, True, True, True): "program_verify_disable",
+        }
+        self.assertEqual(set(states.values()), set(EPROM_DEFINED_STATES))
+        for (read_voltage, vpp, ce_n, oe_n), expected in states.items():
+            cycle = self.eprom(
+                read_voltage=read_voltage,
+                program_voltage=vpp,
+                ce_n=ce_n,
+                oe_n=oe_n,
+            )
+            self.assertEqual(cycle.state, expected)
+            self.assertEqual(cycle.storage_read, expected in {"read", "verify"})
+            self.assertEqual(cycle.data_oe, expected in {"read", "verify"})
+            self.assertEqual(cycle.program_request, expected == "program")
+            self.assertEqual(cycle.output_data, 0x5A)
+            self.assertEqual(cycle.program_data, 0xC3)
+
+        # CE is explicitly don't-care for VPP verification.
+        verify_ce_low = self.eprom(program_voltage=True, ce_n=False, oe_n=False)
+        self.assertEqual(verify_ce_low.state, "verify")
+        self.assertTrue(verify_ce_low.storage_read)
+
+    def test_eprom_address_map_is_exhaustive(self) -> None:
+        for address in range(0x1000):
+            cycle = self.eprom(
+                read_voltage=True,
+                ce_n=False,
+                oe_n=False,
+                address=address,
+            )
+            self.assertEqual(cycle.storage_address, 0x1000 | address)
+            self.assertTrue(cycle.storage_read)
+            self.assertTrue(cycle.mcu_stopped)
+
+    def test_unlisted_eprom_controls_are_safe_and_explicit(self) -> None:
+        for values in (
+            {"read_voltage": False, "program_voltage": False,
+             "ce_n": False, "oe_n": False},
+            {"read_voltage": True, "program_voltage": False,
+             "ce_n": True, "oe_n": False},
+            {"read_voltage": True, "program_voltage": False,
+             "ce_n": True, "oe_n": True},
+        ):
+            cycle = self.eprom(**values)
+            self.assertEqual(cycle.state, "undefined_by_documentation")
+            self.assertFalse(cycle.storage_read)
+            self.assertFalse(cycle.data_oe)
+            self.assertFalse(cycle.program_request)
 
     def test_memory_map_reset_registers_and_gpio(self) -> None:
         program = Memory()

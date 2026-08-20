@@ -52,7 +52,7 @@ The committed tests cover:
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
 | HD63701V0 four-subphase bus-wrapper checks | 496 |
 | HD63701V0 digital PROM checks | 28 |
-| HD63705V0 integration checks | 27 |
+| HD63705V0 integration checks | 34 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 21 |
@@ -279,6 +279,15 @@ addresses. A symbolic proof covers every address, data byte, voltage
 qualification, CE, and OE combination. The tests deliberately do not claim
 programming voltage magnitude, pulse duration, erasure, or retention physics.
 
+The 34-check HD63705V0 integration suite includes every digital row of table
+2-9: ordinary +5-V read, output disable, VPP programming, VPP verification
+with both CE values, and program/verify disable. It also checks the exact
+`$1000`/`$1fff` storage endpoints and safe inactivity without a qualified
+TIMER/VPP level. The independent model projects all 4,096 programmer
+addresses and separately classifies the five documented control states; the
+formal profile proves the same read, output-enable, program, and address
+equations for arbitrary inputs.
+
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction
 release, NMI retention on the exact HALT-entry boundary, RTI/re-halt behavior,
@@ -305,13 +314,14 @@ of memory decode, GPIO, timer, interrupts, bootstrap selection, and programming
 controls without sharing the RTL control structure.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
-boundaries and the complete register map. Its 27 checks cover reset/vector
+boundaries and the complete register map. Its 34 checks cover reset/vector
 fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
 eight-bit external-clock synchronous Tx/Rx, documented STOP field changes and
-external wake, STBY high impedance with RAM retention, and normalized EPROM
-verify/program controls. Five independent model tests exercise the same factual
-areas without sharing RTL control structure.
+external wake, STBY high impedance with RAM retention, and all five normalized
+EPROM control states. Eight independent model tests exercise the same factual
+areas and exhaustively project the EPROM address space without sharing RTL
+control structure.
 
 Seed `0x63705000` adds 768 normalized E-cycle comparisons. A directed prefix
 precedes deterministic register, pin, memory, interrupt, and low-power traffic;
@@ -395,8 +405,9 @@ within those bounds:
   the array, and issues a program request only for the documented qualified
   state within the array.
 - HD63705V0 PC/SP and physical-address geometry remain legal, interrupt vectors
-  stay in the documented set, EPROM verify/program qualification is coherent,
-  standby/EPROM mode disables GPIO drive, and disabled-cycle state stalls.
+  stay in the documented set, all five table-2-9 EPROM states use exact
+  ordinary-read/VPP/CE/OE qualification, standby/EPROM mode disables GPIO
+  drive, and disabled-cycle state stalls.
 
 These bounded safety proofs complement simulation; they are not a liveness or
 full instruction-correctness proof.
@@ -448,7 +459,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |
-| HD63705V0 integration | 9,969 | 1,858 |
+| HD63705V0 integration | 9,988 | 1,858 |
 
 Sequential counts include every synthesized DFF primitive and inferred memory
 bit. Cell counts are tool/version/technology dependent and are smoke-test

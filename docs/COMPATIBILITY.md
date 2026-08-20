@@ -204,10 +204,17 @@ The HD63705V0 claim covers its distinct 14-bit CPU/device boundary, physical
 31 GPIO lines, all four primary-timer clock selections and eight prescalers,
 INT/INT2 sensing and documented vector priority, synchronous SCI/Timer2,
 WAIT/STOP/STBY digital state changes, and normalized EPROM verify/program
-controls. Directed integration checks and 768 independent model/RTL E-cycle
-comparisons cover these features. Oscillator/STOP recovery time, electrical
-pin timing, EPROM voltage/pulse/retention physics, and silicon values on unused
-memory reads remain outside the partial digital claim.
+controls. The programming boundary distinguishes ordinary +5-V reads from
+VPP operations and implements all five digital states in table 2-9, including
+CE-don't-care verification. Directed integration checks, an exhaustive
+4,096-address programming model, formal control proofs, and 768 independent
+model/RTL E-cycle comparisons cover these features. Oscillator/STOP recovery
+time, electrical pin timing, EPROM voltage/pulse/retention physics, and silicon
+values on unused memory reads remain outside the partial digital claim. The
+manual's `$0000`-`$00ff` programming-range sentence conflicts with its 4-KiB,
+twelve-address-input, and `$1000`-`$1fff` memory-map facts; the interface uses
+the mutually consistent `$0000`-`$0fff` programmer range and preserves the
+discrepancy in `spec/devices.yml`.
 
 The manufacturer manual is internally inconsistent for Mode-5 and Mode-7
 instruction fetches at `$0040`-`$007f`: every mode's memory map and the

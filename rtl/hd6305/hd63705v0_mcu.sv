@@ -33,6 +33,7 @@ module hd63705v0_mcu (
   input  logic [7:0]  eprom_data_i,
   input  logic        eprom_chip_enable_n_i,
   input  logic        eprom_output_enable_n_i,
+  input  logic        eprom_read_voltage_i,
   input  logic        eprom_program_voltage_i,
   output logic [7:0]  eprom_data_o,
   output logic        eprom_data_oe_o,
@@ -139,6 +140,7 @@ module hd63705v0_mcu (
   logic core_bus_valid;
   logic device_reset_n;
   logic program_select;
+  logic eprom_storage_read;
 
   function automatic logic [6:0] prescale_mask(input logic [2:0] selection);
     case (selection)
@@ -177,6 +179,12 @@ module hd63705v0_mcu (
   assign device_reset_n = reset_n_i && standby_n_i && !eprom_mode_i;
   assign program_select = (core_address[13:0] >= 14'h1000) &&
                           (core_address[13:0] <= 14'h1fff);
+  // Table 2-9 distinguishes ordinary +5-V reads from VPP-qualified
+  // verification/programming.  Verification ignores CE, whereas the
+  // ordinary read state requires both CE and OE low.
+  assign eprom_storage_read = eprom_mode_i && !eprom_output_enable_n_i &&
+    (eprom_program_voltage_i ||
+     (eprom_read_voltage_i && !eprom_chip_enable_n_i));
 
   always_comb begin
     timer_rising = !timer_previous && timer_i;
@@ -460,7 +468,7 @@ module hd63705v0_mcu (
 
     if (eprom_mode_i) begin
       program_address_o = {2'b01, eprom_address_i};
-      program_read_o = eprom_program_voltage_i && !eprom_output_enable_n_i;
+      program_read_o = eprom_storage_read;
     end else begin
       program_address_o = core_address[13:0];
       program_read_o = core_bus_valid && !core_write && program_select;
@@ -468,8 +476,7 @@ module hd63705v0_mcu (
   end
 
   assign eprom_data_o = program_data_i;
-  assign eprom_data_oe_o = eprom_mode_i && eprom_program_voltage_i &&
-                           !eprom_output_enable_n_i;
+  assign eprom_data_oe_o = eprom_storage_read;
   assign eprom_program_data_o = eprom_data_i;
   assign eprom_program_o = eprom_mode_i && eprom_program_voltage_i &&
                            !eprom_chip_enable_n_i && eprom_output_enable_n_i;

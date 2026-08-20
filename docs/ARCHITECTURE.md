@@ -489,9 +489,17 @@ the wrapper resets only the documented TDR, timer request/mask, and SCI/Timer2
 request/mask state, then permits only INT or enabled INT2 to wake the core.
 `standby_n_i` provides the documented register-reset, RAM-retention, and GPIO
 high-impedance digital boundary. EPROM mode holds the MCU reset and exposes the
-twelve-bit programming address, verify data/output enable, input data, and the
-CE/OE/VPP-qualified program request. Voltage, pulse width, charge retention,
-and oscillator recovery remain analog exclusions.
+twelve-bit programming address, input data, separate ordinary +5-V and VPP
+qualifiers, CE/OE-qualified read/verify data, and the CE/OE/VPP-qualified
+program request. The interface implements all five rows of handbook table 2-9.
+Voltage thresholds, pulse width, charge retention, and oscillator recovery
+remain analog exclusions.
+
+Section 2.10(3) prints a `$0000`-`$00ff` programmer range while identifying the
+same array as 4 KiB; table 2-7 exposes twelve address inputs and figure 2-24
+maps MCU EPROM at `$1000`-`$1fff`. The implementation follows the mutually
+consistent twelve-bit/4-KiB facts and records the conflicting prose in the
+structured device specification.
 
 ## Generated synthesis views
 

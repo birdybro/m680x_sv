@@ -33,6 +33,9 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.hd63701v0_prom_spec = json.loads(
             (ROOT / "spec/interfaces/hd63701v0_prom.json").read_text()
         )
+        self.hd63705v0_spec = json.loads(
+            (ROOT / "spec/interfaces/hd63705v0_mcu.json").read_text()
+        )
         self.hd6303r_modes_spec = json.loads(
             (ROOT / "spec/interfaces/hd6303r_modes.json").read_text()
         )
@@ -108,6 +111,15 @@ class InterfaceSpecificationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
             validate_interfaces.validate_interface(broken, self.devices, self.references)
 
+    def test_hd63705v0_requires_ordinary_read_voltage_qualification(self) -> None:
+        broken = deepcopy(self.hd63705v0_spec)
+        broken["signals"] = [
+            signal for signal in broken["signals"]
+            if signal["name"] != "eprom_read_voltage_i"
+        ]
+        with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
+            validate_interfaces.validate_interface(broken, self.devices, self.references)
+
     def test_documented_phased_bus_timing_claims_are_complete(self) -> None:
         self.assertEqual(
             self.mc6801_bus_spec["implementation_status"][
@@ -142,6 +154,12 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.assertEqual(
             self.hd63701v0_prom_spec["implementation_status"][
                 "table_3_1_digital_states"
+            ],
+            "COMPLETE",
+        )
+        self.assertEqual(
+            self.hd63705v0_spec["implementation_status"][
+                "eprom_programming_digital_controls"
             ],
             "COMPLETE",
         )
