@@ -122,6 +122,25 @@ class MC68705P5DeviceModelTests(unittest.TestCase):
             counts, {"io": 16, "ram": 112, "program": 1920, "storage_read": 1919}
         )
 
+    def test_every_gpio_bit_truth_table(self) -> None:
+        for width in (8, 8, 4):
+            mask = (1 << width) - 1
+            for bit in range(width):
+                bit_mask = 1 << bit
+                for latch in (0, 1):
+                    for ddr in (0, 1):
+                        for pin in (0, 1):
+                            value = MC68705P5DeviceModel._port_read(
+                                bit_mask if latch else 0,
+                                bit_mask if ddr else 0,
+                                bit_mask if pin else 0,
+                                mask,
+                            )
+                            expected = latch if ddr else pin
+                            self.assertEqual((value >> bit) & 1, expected)
+                            if width == 4:
+                                self.assertEqual(value & 0xF0, 0xF0)
+
     def test_memory_gpio_and_reset_preserve_ram(self) -> None:
         program = Memory()
         program[0x080] = 0xA5

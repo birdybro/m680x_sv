@@ -55,10 +55,15 @@ combination is unreachable, and all 2,048 programming addresses are classified.
 The internal-memory dimension is `COMPLETE`: independent classification and
 direct RTL checks account for all 2,048 normal-mode addresses, all 112 RAM bytes
 are checked before and after reset, and the program/MOR/bootstrap/vector regions
-are individually selected. A 768-cycle independent peripheral model/RTL
-comparison covers the normalized boundary. EPROM voltage/pulse/retention physics
-and the copyrighted factory bootstrap-ROM image remain outside the distributable
-implementation.
+are individually selected. Per-bit latch/direction/pin truth tables exercise all
+20 GPIO lines in 160 states, with four reset/normalized-DDR checks and five INT
+edge/rearm checks. GPIO remains `PARTIAL` because the manufacturer's
+printed-page-13 DDR-read caution conflicts with the all-one values in figures 4
+and 16. The wrapper deterministically returns `$ff` but classifies silicon
+equivalence for those reads as `UNDEFINED_BY_DOCUMENTATION`. A 768-cycle
+independent peripheral model/RTL comparison covers the normalized boundary.
+EPROM voltage/pulse/retention physics and the copyrighted factory bootstrap-ROM
+image remain outside the distributable implementation.
 
 The MC6800 device-wrapper claim covers normalized digital HALT/TSC/DBE/VMA/BA
 and three-state ownership behavior, including interrupt retention while halted.

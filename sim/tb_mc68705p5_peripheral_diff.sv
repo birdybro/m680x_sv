@@ -35,6 +35,10 @@ module tb_mc68705p5_peripheral_diff;
   logic [7:0] debug_pcr;
   mc68705p5_peripheral_vector_t expected;
   integer cycle_index;
+  integer gpio_bit;
+  integer gpio_checks;
+  integer gpio_truth;
+  integer interrupt_checks;
   integer memory_index;
   integer memory_checks;
   integer pcr_checks;
@@ -122,6 +126,8 @@ module tb_mc68705p5_peripheral_diff;
     stub_write = 1'b0;
     stub_valid = 1'b0;
     stub_interrupt_mask = 1'b1;
+    gpio_checks = 0;
+    interrupt_checks = 0;
     memory_checks = 0;
     pcr_checks = 0;
     #1;
@@ -287,9 +293,138 @@ module tb_mc68705p5_peripheral_diff;
       memory_checks = memory_checks + 1;
     end
 
-    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d PCR states=%0d memory checks=%0d",
+    // Figure 15 is separable per pin. Exhaust all latch/DDR/pin truth-table
+    // combinations for every implemented bit and verify whole-port values so
+    // that a neighboring-bit alias cannot pass unnoticed.
+    for (gpio_bit = 0; gpio_bit < 8; gpio_bit = gpio_bit + 1) begin
+      for (gpio_truth = 0; gpio_truth < 8; gpio_truth = gpio_truth + 1) begin
+        stub_address = 16'h0000;
+        stub_data = gpio_truth[2] ? (8'h01 << gpio_bit) : 8'h00;
+        stub_write = 1'b1;
+        tick();
+        stub_address = 16'h0004;
+        stub_data = gpio_truth[1] ? (8'h01 << gpio_bit) : 8'h00;
+        tick();
+        port_a_in = gpio_truth[0] ? (8'h01 << gpio_bit) : 8'h00;
+        stub_address = 16'h0000;
+        stub_write = 1'b0;
+        #1;
+        if (port_a_out !== (gpio_truth[2] ? (8'h01 << gpio_bit) : 8'h00) ||
+            port_a_oe !== (gpio_truth[1] ? (8'h01 << gpio_bit) : 8'h00) ||
+            dut.core_data_in !== ((gpio_truth[1] ? gpio_truth[2] : gpio_truth[0]) ?
+                                  (8'h01 << gpio_bit) : 8'h00)) begin
+          $fatal(1, "MC68705P5 Port A truth bit=%0d state=%03b out=%02x oe=%02x read=%02x",
+                 gpio_bit, gpio_truth[2:0], port_a_out, port_a_oe,
+                 dut.core_data_in);
+        end
+        gpio_checks = gpio_checks + 1;
+      end
+    end
+    for (gpio_bit = 0; gpio_bit < 8; gpio_bit = gpio_bit + 1) begin
+      for (gpio_truth = 0; gpio_truth < 8; gpio_truth = gpio_truth + 1) begin
+        stub_address = 16'h0001;
+        stub_data = gpio_truth[2] ? (8'h01 << gpio_bit) : 8'h00;
+        stub_write = 1'b1;
+        tick();
+        stub_address = 16'h0005;
+        stub_data = gpio_truth[1] ? (8'h01 << gpio_bit) : 8'h00;
+        tick();
+        port_b_in = gpio_truth[0] ? (8'h01 << gpio_bit) : 8'h00;
+        stub_address = 16'h0001;
+        stub_write = 1'b0;
+        #1;
+        if (port_b_out !== (gpio_truth[2] ? (8'h01 << gpio_bit) : 8'h00) ||
+            port_b_oe !== (gpio_truth[1] ? (8'h01 << gpio_bit) : 8'h00) ||
+            dut.core_data_in !== ((gpio_truth[1] ? gpio_truth[2] : gpio_truth[0]) ?
+                                  (8'h01 << gpio_bit) : 8'h00)) begin
+          $fatal(1, "MC68705P5 Port B truth bit=%0d state=%03b out=%02x oe=%02x read=%02x",
+                 gpio_bit, gpio_truth[2:0], port_b_out, port_b_oe,
+                 dut.core_data_in);
+        end
+        gpio_checks = gpio_checks + 1;
+      end
+    end
+    for (gpio_bit = 0; gpio_bit < 4; gpio_bit = gpio_bit + 1) begin
+      for (gpio_truth = 0; gpio_truth < 8; gpio_truth = gpio_truth + 1) begin
+        stub_address = 16'h0002;
+        stub_data = {4'hf, gpio_truth[2] ? (4'h1 << gpio_bit) : 4'h0};
+        stub_write = 1'b1;
+        tick();
+        stub_address = 16'h0006;
+        stub_data = {4'hf, gpio_truth[1] ? (4'h1 << gpio_bit) : 4'h0};
+        tick();
+        port_c_in = gpio_truth[0] ? (4'h1 << gpio_bit) : 4'h0;
+        stub_address = 16'h0002;
+        stub_write = 1'b0;
+        #1;
+        if (port_c_out !== (gpio_truth[2] ? (4'h1 << gpio_bit) : 4'h0) ||
+            port_c_oe !== (gpio_truth[1] ? (4'h1 << gpio_bit) : 4'h0) ||
+            dut.core_data_in !== {4'hf,
+              (gpio_truth[1] ? gpio_truth[2] : gpio_truth[0]) ?
+                (4'h1 << gpio_bit) : 4'h0}) begin
+          $fatal(1, "MC68705P5 Port C truth bit=%0d state=%03b out=%x oe=%x read=%02x",
+                 gpio_bit, gpio_truth[2:0], port_c_out, port_c_oe,
+                 dut.core_data_in);
+        end
+        gpio_checks = gpio_checks + 1;
+      end
+    end
+    // The normalized wrapper follows the all-one DDR values in figures 4 and
+    // 16. The conflicting printed-page-13 prose is tracked as undefined by
+    // documentation; this check is an interface normalization, not a silicon
+    // equivalence claim.
+    for (gpio_bit = 4; gpio_bit <= 6; gpio_bit = gpio_bit + 1) begin
+      stub_address = gpio_bit[15:0];
+      #1;
+      if (dut.core_data_in !== 8'hff) begin
+        $fatal(1, "MC68705P5 DDR read address=%03x data=%02x",
+               gpio_bit[10:0], dut.core_data_in);
+      end
+      gpio_checks = gpio_checks + 1;
+    end
+    stub_valid = 1'b0;
+    reset_n = 1'b0;
+    #1;
+    if (port_a_oe !== 8'h00 || port_b_oe !== 8'h00 || port_c_oe !== 4'h0) begin
+      $fatal(1, "MC68705P5 GPIO reset direction A=%02x B=%02x C=%x",
+             port_a_oe, port_b_oe, port_c_oe);
+    end
+    gpio_checks = gpio_checks + 1;
+
+    // INT is synchronized into a falling-edge request latch. Vector access
+    // clears it even while the pin remains low; a recognized high level is
+    // required before another falling edge can set it.
+    reset_n = 1'b1;
+    int_n = 1'b1;
+    tick();
+    if (external_irq) $fatal(1, "MC68705P5 INT idle request");
+    interrupt_checks = interrupt_checks + 1;
+    int_n = 1'b0;
+    tick();
+    if (!external_irq || dut.core_irq_vector !== 16'h07fa) begin
+      $fatal(1, "MC68705P5 INT falling edge request/vector");
+    end
+    interrupt_checks = interrupt_checks + 1;
+    stub_address = 16'h07fa;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    tick();
+    if (external_irq) $fatal(1, "MC68705P5 INT vector acknowledge");
+    interrupt_checks = interrupt_checks + 1;
+    stub_valid = 1'b0;
+    tick();
+    if (external_irq) $fatal(1, "MC68705P5 held-low INT retriggered");
+    interrupt_checks = interrupt_checks + 1;
+    int_n = 1'b1;
+    tick();
+    int_n = 1'b0;
+    tick();
+    if (!external_irq) $fatal(1, "MC68705P5 INT did not rearm");
+    interrupt_checks = interrupt_checks + 1;
+
+    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d PCR states=%0d memory checks=%0d GPIO checks=%0d INT checks=%0d",
              32'h68705a05, MC68705P5_PERIPHERAL_VECTOR_COUNT, pcr_checks,
-             memory_checks);
+             memory_checks, gpio_checks, interrupt_checks);
     $finish;
   end
 endmodule

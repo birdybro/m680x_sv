@@ -461,8 +461,13 @@ to `PGE=1`, as required by the register description.
 GPIO, timer, and interrupt state. The normal memory map partitions all 2,048
 addresses into 16 I/O, 112 RAM, and 1,920 program/MOR locations without a hole
 or overlap; the RTL separately sweeps every address and reads all RAM bytes on
-both sides of reset. A generated 768-cycle corpus compares every exposed state
-boundary. The interface contract is
+both sides of reset. Separate directed checks exhaust every per-bit
+latch/direction/pin combination on all 20 GPIO lines and exercise INT assertion,
+vector acknowledgement, held-low suppression, and rearming. DDR reads are
+normalized to `$ff`, following figures 4 and 16; conflicting printed-page-13
+prose makes their silicon-equivalent value `UNDEFINED_BY_DOCUMENTATION`. A
+generated 768-cycle corpus compares every exposed state boundary. The interface
+contract is
 [spec/interfaces/mc68705p5_mcu.json](../spec/interfaces/mc68705p5_mcu.json).
 
 ## HD63705V0 integration

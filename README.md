@@ -155,7 +155,11 @@ boundary covers all eight documented PCR/VPP table rows, prevents software from
 entering either invalid PGE/PLE encoding, and exposes latch/program
 requests while leaving voltage and pulse physics to the integrator. Its complete
 11-bit memory partition and all 112 RAM bytes are exhaustively checked, including
-RAM retention across reset.
+RAM retention across reset. All 20 GPIO pin truth tables and INT edge/rearm
+behavior are also exhaustively directed-tested. The wrapper's deterministic
+`$ff` DDR-read value follows two manufacturer figures, but conflicting prose in
+the same manual leaves silicon-equivalent DDR read data undefined; GPIO status
+therefore remains `PARTIAL`.
 The HD63705V0 digital programming boundary does implement all five documented
 read/output-disable/program/verify/disable states; separate +5-V-read and VPP
 qualifiers avoid conflating voltage states while leaving their analog

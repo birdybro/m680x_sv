@@ -59,6 +59,8 @@ The committed tests cover:
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
 | MC68705P5 PCR/VPP table checks | 8 |
 | MC68705P5 exhaustive memory-map/RAM checks | 2,272 |
+| MC68705P5 GPIO truth/reset/normalized-DDR checks | 164 |
+| MC68705P5 INT pin checks | 5 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
@@ -310,7 +312,7 @@ after the instruction following CLI. The MC68705P5 suites add register/RAM
 decode, DDR behavior, mixed-direction GPIO reads, all four timer sources and
 all prescalers, TOPT/MOR-fixed timer behavior, timer request clearing,
 simultaneous external/timer priority, distinct vectors, secure-qualified
-bootstrap selection, and PCR/VPP address/data/program sequencing. Nine focused
+bootstrap selection, and PCR/VPP address/data/program sequencing. Ten focused
 Python model tests classify every manufacturer PCR-table row, exhaustively
 project both normal and programming address partitions, and cover memory, GPIO,
 timer, interrupt, and bootstrap behavior. Seed `0x68705a05` provides 768
@@ -318,7 +320,12 @@ cycle-by-cycle comparisons without sharing the RTL control structure; eight
 additional direct RTL checks exercise every software PCR encoding both with and
 without VPP. A 2,048-address RTL sweep proves program-memory selection and data
 source at every location, then 224 checks read every RAM byte before and after
-reset to prove decode and retention.
+reset to prove decode and retention. An additional 164 GPIO checks exhaust each
+pin's latch/direction/input truth table, reset direction, and the declared `$ff`
+DDR-read normalization; five INT checks cover falling-edge assertion, vector
+acknowledgement, held-low suppression, and high-to-low rearming. Because the
+manual's DDR-read prose conflicts with two of its figures, the normalized read
+value is tested without claiming documented silicon equivalence.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
 boundaries and the complete register map. Its 34 checks cover reset/vector
