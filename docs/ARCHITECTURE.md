@@ -156,7 +156,11 @@ following CLI retires, independently of the Motorola profile.
 The Motorola profile implements the eight-cycle reset response in the M6805
 Family User's Manual table G2: six reads at the high reset-vector address, one
 low-vector read, and a final read at address `$0000` whose input data is not
-used. The Hitachi profile retains its separately selected reset sequencing;
+used. The same table drives explicit Motorola-only states for inherent and
+relative repeated reads, BSR target prefetch and stack writes, and the dummy
+reads before and after RTS/RTI pulls. These are real bus cycles rather than
+unqualified timing padding. The Hitachi profile retains its separately selected
+reset and instruction sequencing;
 Motorola timing is not projected onto it without a Hitachi primary-source
 basis.
 

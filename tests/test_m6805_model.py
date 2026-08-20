@@ -194,6 +194,30 @@ class M6805ModelTests(unittest.TestCase):
         )
         self.assertFalse(model.bus_accesses[-1].data_defined)
 
+    def test_m6805_table_g2_inherent_relative_and_return_traces(self) -> None:
+        expected = {
+            0x9D: [0x1000, 0x1001],  # NOP
+            0x40: [0x1000, 0x1001, 0x1002, 0x1002],  # NEGA
+            0x20: [0x1000, 0x1001, 0x1002, 0x1002],  # BRA
+            0xAD: [0x1000, 0x1001, 0x1002, 0x1002, 0x1012, 0x0070, 0x006F, 0x006E],  # BSR
+            0x81: [0x1000, 0x1001, 0x0070, 0x0071, 0x0072, 0x0073],  # RTS
+            0x80: [0x1000, 0x1001, 0x0070, 0x0071, 0x0072, 0x0073, 0x0074, 0x0075, 0x0076],  # RTI
+        }
+        for opcode, addresses in expected.items():
+            with self.subTest(opcode=f"{opcode:02X}"):
+                model = _fixture("m6805", opcode)
+                trace = model.step()
+                self.assertEqual(len(trace.accesses), trace.documented_cycles)
+                self.assertEqual([access.address for access in trace.accesses], addresses)
+
+        bsr = _fixture("m6805", 0xAD)
+        trace = bsr.step()
+        self.assertEqual(
+            [access.kind for access in trace.accesses],
+            ["read"] * 5 + ["write", "write", "read"],
+        )
+        self.assertEqual(bsr.state.pc, 0x1012)
+
     def test_hd6305_low_power_and_irq_entry(self) -> None:
         for opcode, state_name in ((0x8E, "stopped"), (0x8F, "waiting")):
             model = _fixture("hd6305", opcode)

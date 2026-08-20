@@ -65,17 +65,24 @@ module m6805_core #(
     ST_BIT_DISPLACEMENT,
     ST_BIT_READ,
     ST_BIT_WRITE,
+    ST_BSR_NEXT_READ,
+    ST_CALL_TARGET_READ,
     ST_PUSH_RETURN_LOW,
     ST_PUSH_RETURN_HIGH,
+    ST_CALL_TRAILING_READ,
+    ST_RTS_DUMMY_READ,
     ST_PULL_PC_HIGH,
     ST_PULL_PC_LOW,
+    ST_RTS_TRAILING_READ,
     ST_INTERRUPT_DELAY,
     ST_INTERRUPT_PUSH,
     ST_INTERRUPT_DUMMY_READ,
     ST_INTERRUPT_VECTOR_HIGH,
     ST_INTERRUPT_VECTOR_LOW,
     ST_INTERRUPT_TRAILING_READ,
+    ST_RTI_DUMMY_READ,
     ST_RTI_PULL,
+    ST_RTI_TRAILING_READ,
     ST_PADDING,
     ST_WAITING,
     ST_STOPPED,
@@ -95,12 +102,15 @@ module m6805_core #(
   logic [3:0] cycles_left;
   logic [15:0] effective_address;
   logic [15:0] control_target;
+  logic [15:0] padding_address;
   logic [15:0] vector_address;
   logic [7:0] temporary_high;
   logic [7:0] write_data;
   logic [7:0] branch_displacement;
   logic [2:0] phase;
   logic external_interrupt;
+  logic padding_bus_valid;
+  logic call_trailing_read;
   logic decoded_sane;
   logic interrupt_enable_delay;
 
@@ -379,10 +389,10 @@ module m6805_core #(
             finish_to(ST_WAITING);
           end
         end
-        OP_RTS: state <= ST_PULL_PC_HIGH;
+        OP_RTS: state <= HITACHI_PROFILE ? ST_PULL_PC_HIGH : ST_RTS_DUMMY_READ;
         OP_RTI: begin
           phase <= 3'd0;
-          state <= ST_RTI_PULL;
+          state <= HITACHI_PROFILE ? ST_RTI_PULL : ST_RTI_DUMMY_READ;
         end
         OP_SWI: begin
           vector_address <= SWI_VECTOR;
@@ -443,7 +453,7 @@ module m6805_core #(
         bus_valid_o = 1'b1;
       end
       ST_EXECUTE: begin
-        if (!HITACHI_PROFILE && (decoded.operation == OP_SWI)) begin
+        if (!HITACHI_PROFILE) begin
           address_o = program_counter;
           bus_valid_o = 1'b1;
         end
@@ -458,6 +468,14 @@ module m6805_core #(
         write_o = 1'b1;
         bus_valid_o = 1'b1;
       end
+      ST_BSR_NEXT_READ: begin
+        address_o = program_counter;
+        bus_valid_o = 1'b1;
+      end
+      ST_CALL_TARGET_READ: begin
+        address_o = control_target;
+        bus_valid_o = 1'b1;
+      end
       ST_PUSH_RETURN_LOW: begin
         address_o = stack_pointer;
         data_o = program_counter[7:0];
@@ -470,7 +488,19 @@ module m6805_core #(
         write_o = 1'b1;
         bus_valid_o = 1'b1;
       end
+      ST_CALL_TRAILING_READ: begin
+        address_o = stack_pointer;
+        bus_valid_o = 1'b1;
+      end
+      ST_RTS_DUMMY_READ, ST_RTI_DUMMY_READ: begin
+        address_o = stack_pointer;
+        bus_valid_o = 1'b1;
+      end
       ST_PULL_PC_HIGH, ST_PULL_PC_LOW, ST_RTI_PULL: begin
+        address_o = stack_advance(stack_pointer, 1'b0);
+        bus_valid_o = 1'b1;
+      end
+      ST_RTS_TRAILING_READ, ST_RTI_TRAILING_READ: begin
         address_o = stack_advance(stack_pointer, 1'b0);
         bus_valid_o = 1'b1;
       end
@@ -497,6 +527,12 @@ module m6805_core #(
                     (vector_address + 16'h0002) : program_counter;
         bus_valid_o = 1'b1;
       end
+      ST_PADDING: begin
+        if (!HITACHI_PROFILE && padding_bus_valid) begin
+          address_o = padding_address;
+          bus_valid_o = 1'b1;
+        end
+      end
       default: ;
     endcase
   end
@@ -516,12 +552,15 @@ module m6805_core #(
       cycles_left <= 4'd0;
       effective_address <= 16'h0000;
       control_target <= 16'h0000;
+      padding_address <= 16'h0000;
       vector_address <= SWI_VECTOR;
       temporary_high <= 8'h00;
       write_data <= 8'h00;
       branch_displacement <= 8'h00;
       phase <= 3'd0;
       external_interrupt <= 1'b0;
+      padding_bus_valid <= 1'b0;
+      call_trailing_read <= 1'b0;
       interrupt_enable_delay <= 1'b0;
       retire_o <= 1'b0;
       illegal_o <= 1'b0;
@@ -555,6 +594,8 @@ module m6805_core #(
           state <= ST_FETCH;
         end
         ST_FETCH: begin
+          padding_bus_valid <= 1'b0;
+          call_trailing_read <= 1'b0;
           if (!irq_n_i && !condition_codes[CCR_I] && !interrupt_enable_delay) begin
             vector_address <= irq_vector_i;
             external_interrupt <= 1'b1;
@@ -579,6 +620,12 @@ module m6805_core #(
               state <= ST_ILLEGAL;
             end else begin
               cycles_left <= fetched_decode.cycles - 4'd1;
+              if (!HITACHI_PROFILE && is_rmw(fetched_decode.operation) &&
+                  ((fetched_decode.mode == AM_ACCUMULATOR_A) ||
+                   (fetched_decode.mode == AM_INDEX_REGISTER_X))) begin
+                padding_address <= pc_value(program_counter + 16'h0002);
+                padding_bus_valid <= 1'b1;
+              end
               if (HITACHI_PROFILE && (fetched_decode.cycles == 4'd1)) begin
                 execute_single_cycle(fetched_decode.operation);
               end else begin
@@ -604,8 +651,18 @@ module m6805_core #(
           program_counter <= pc_value(program_counter + 16'h0001);
           if (decoded.operation == OP_BSR) begin
             control_target <= pc_value(program_counter + 16'h0001 + {{8{data_i[7]}}, data_i});
-            state <= ST_PUSH_RETURN_LOW;
+            if (HITACHI_PROFILE) begin
+              state <= ST_PUSH_RETURN_LOW;
+            end else begin
+              phase <= 3'd0;
+              call_trailing_read <= 1'b1;
+              state <= ST_BSR_NEXT_READ;
+            end
           end else begin
+            if (!HITACHI_PROFILE) begin
+              padding_address <= pc_value(program_counter + 16'h0001);
+              padding_bus_valid <= 1'b1;
+            end
             if (branch_condition(decoded.operation)) begin
               program_counter <= pc_value(program_counter + 16'h0001 + {{8{data_i[7]}}, data_i});
             end
@@ -674,6 +731,15 @@ module m6805_core #(
           end
         end
         ST_BIT_WRITE: finish_to(ST_FETCH);
+        ST_BSR_NEXT_READ: begin
+          if (phase == 3'd1) begin
+            phase <= 3'd0;
+            state <= ST_CALL_TARGET_READ;
+          end else begin
+            phase <= phase + 3'd1;
+          end
+        end
+        ST_CALL_TARGET_READ: state <= ST_PUSH_RETURN_LOW;
         ST_PUSH_RETURN_LOW: begin
           stack_pointer <= stack_advance(stack_pointer, 1'b1);
           state <= ST_PUSH_RETURN_HIGH;
@@ -681,8 +747,11 @@ module m6805_core #(
         ST_PUSH_RETURN_HIGH: begin
           stack_pointer <= stack_advance(stack_pointer, 1'b1);
           program_counter <= control_target;
-          finish_to(ST_FETCH);
+          if (call_trailing_read) state <= ST_CALL_TRAILING_READ;
+          else finish_to(ST_FETCH);
         end
+        ST_CALL_TRAILING_READ: finish_to(ST_FETCH);
+        ST_RTS_DUMMY_READ: state <= ST_PULL_PC_HIGH;
         ST_PULL_PC_HIGH: begin
           stack_pointer <= stack_advance(stack_pointer, 1'b0);
           temporary_high <= data_i;
@@ -691,8 +760,13 @@ module m6805_core #(
         ST_PULL_PC_LOW: begin
           stack_pointer <= stack_advance(stack_pointer, 1'b0);
           program_counter <= pc_value({temporary_high, data_i});
-          finish_to(ST_FETCH);
+          if (!HITACHI_PROFILE && (decoded.operation == OP_RTS)) begin
+            state <= ST_RTS_TRAILING_READ;
+          end else begin
+            finish_to(ST_FETCH);
+          end
         end
+        ST_RTS_TRAILING_READ: finish_to(ST_FETCH);
         ST_INTERRUPT_DELAY: begin
           state <= ST_INTERRUPT_PUSH;
         end
@@ -734,6 +808,7 @@ module m6805_core #(
             finish_to(ST_FETCH);
           end
         end
+        ST_RTI_DUMMY_READ: state <= ST_RTI_PULL;
         ST_RTI_PULL: begin
           stack_pointer <= stack_advance(stack_pointer, 1'b0);
           case (phase)
@@ -743,9 +818,13 @@ module m6805_core #(
             3'd3: temporary_high <= data_i;
             default: program_counter <= pc_value({temporary_high, data_i});
           endcase
-          if (phase == 3'd4) finish_to(ST_FETCH);
+          if (phase == 3'd4) begin
+            if (HITACHI_PROFILE) finish_to(ST_FETCH);
+            else state <= ST_RTI_TRAILING_READ;
+          end
           else phase <= phase + 3'd1;
         end
+        ST_RTI_TRAILING_READ: finish_to(ST_FETCH);
         ST_PADDING: begin
           if (cycles_left <= 4'd1) begin
             retire_o <= 1'b1;

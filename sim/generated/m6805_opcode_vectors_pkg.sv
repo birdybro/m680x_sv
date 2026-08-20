@@ -454,7 +454,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         33: begin // 21 BRN
           m6805_vector.opcode = 8'h21;
@@ -467,7 +467,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         34: begin // 22 BHI
           m6805_vector.opcode = 8'h22;
@@ -480,7 +480,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         35: begin // 23 BLS
           m6805_vector.opcode = 8'h23;
@@ -493,7 +493,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         36: begin // 24 BCC
           m6805_vector.opcode = 8'h24;
@@ -506,7 +506,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         37: begin // 25 BCS
           m6805_vector.opcode = 8'h25;
@@ -519,7 +519,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         38: begin // 26 BNE
           m6805_vector.opcode = 8'h26;
@@ -532,7 +532,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         39: begin // 27 BEQ
           m6805_vector.opcode = 8'h27;
@@ -545,7 +545,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         40: begin // 28 BHCC
           m6805_vector.opcode = 8'h28;
@@ -558,7 +558,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         41: begin // 29 BHCS
           m6805_vector.opcode = 8'h29;
@@ -571,7 +571,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         42: begin // 2A BPL
           m6805_vector.opcode = 8'h2a;
@@ -584,7 +584,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         43: begin // 2B BMI
           m6805_vector.opcode = 8'h2b;
@@ -597,7 +597,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         44: begin // 2C BMC
           m6805_vector.opcode = 8'h2c;
@@ -610,7 +610,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         45: begin // 2D BMS
           m6805_vector.opcode = 8'h2d;
@@ -623,7 +623,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         46: begin // 2E BIL
           m6805_vector.opcode = 8'h2e;
@@ -636,7 +636,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         47: begin // 2F BIH
           m6805_vector.opcode = 8'h2f;
@@ -649,7 +649,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd2;
+          m6805_vector.access_count = 4'd4;
         end
         48: begin // 30 NEG
           m6805_vector.opcode = 8'h30;
@@ -805,7 +805,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         60: begin // 43 COMA
           m6805_vector.opcode = 8'h43;
@@ -818,7 +818,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         61: begin // 44 LSRA
           m6805_vector.opcode = 8'h44;
@@ -831,7 +831,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         62: begin // 46 RORA
           m6805_vector.opcode = 8'h46;
@@ -844,7 +844,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         63: begin // 47 ASRA
           m6805_vector.opcode = 8'h47;
@@ -857,7 +857,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         64: begin // 48 ASLA
           m6805_vector.opcode = 8'h48;
@@ -870,7 +870,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         65: begin // 49 ROLA
           m6805_vector.opcode = 8'h49;
@@ -883,7 +883,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         66: begin // 4A DECA
           m6805_vector.opcode = 8'h4a;
@@ -896,7 +896,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         67: begin // 4C INCA
           m6805_vector.opcode = 8'h4c;
@@ -909,7 +909,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         68: begin // 4D TSTA
           m6805_vector.opcode = 8'h4d;
@@ -922,7 +922,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         69: begin // 4F CLRA
           m6805_vector.opcode = 8'h4f;
@@ -935,7 +935,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         70: begin // 50 NEGX
           m6805_vector.opcode = 8'h50;
@@ -948,7 +948,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         71: begin // 53 COMX
           m6805_vector.opcode = 8'h53;
@@ -961,7 +961,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         72: begin // 54 LSRX
           m6805_vector.opcode = 8'h54;
@@ -974,7 +974,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         73: begin // 56 RORX
           m6805_vector.opcode = 8'h56;
@@ -987,7 +987,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         74: begin // 57 ASRX
           m6805_vector.opcode = 8'h57;
@@ -1000,7 +1000,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         75: begin // 58 ASLX
           m6805_vector.opcode = 8'h58;
@@ -1013,7 +1013,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         76: begin // 59 ROLX
           m6805_vector.opcode = 8'h59;
@@ -1026,7 +1026,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         77: begin // 5A DECX
           m6805_vector.opcode = 8'h5a;
@@ -1039,7 +1039,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         78: begin // 5C INCX
           m6805_vector.opcode = 8'h5c;
@@ -1052,7 +1052,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         79: begin // 5D TSTX
           m6805_vector.opcode = 8'h5d;
@@ -1065,7 +1065,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         80: begin // 5F CLRX
           m6805_vector.opcode = 8'h5f;
@@ -1078,7 +1078,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd4;
         end
         81: begin // 60 NEG
           m6805_vector.opcode = 8'h60;
@@ -1377,7 +1377,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd6;
+          m6805_vector.access_count = 4'd9;
         end
         104: begin // 81 RTS
           m6805_vector.opcode = 8'h81;
@@ -1390,7 +1390,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd3;
+          m6805_vector.access_count = 4'd6;
         end
         105: begin // 83 SWI
           m6805_vector.opcode = 8'h83;
@@ -1416,7 +1416,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         107: begin // 98 CLC
           m6805_vector.opcode = 8'h98;
@@ -1429,7 +1429,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         108: begin // 99 SEC
           m6805_vector.opcode = 8'h99;
@@ -1442,7 +1442,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         109: begin // 9A CLI
           m6805_vector.opcode = 8'h9a;
@@ -1455,7 +1455,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         110: begin // 9B SEI
           m6805_vector.opcode = 8'h9b;
@@ -1468,7 +1468,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         111: begin // 9C RSP
           m6805_vector.opcode = 8'h9c;
@@ -1481,7 +1481,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         112: begin // 9D NOP
           m6805_vector.opcode = 8'h9d;
@@ -1494,7 +1494,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         113: begin // 9F TXA
           m6805_vector.opcode = 8'h9f;
@@ -1507,7 +1507,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd1;
+          m6805_vector.access_count = 4'd2;
         end
         114: begin // A0 SUB
           m6805_vector.opcode = 8'ha0;
@@ -1663,7 +1663,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd8;
         end
         126: begin // AE LDX
           m6805_vector.opcode = 8'hae;
@@ -3380,6 +3380,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2002: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2003: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2100: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3389,6 +3399,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2102: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2103: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h2200: begin
           m6805_access.write_enable = 1'b0;
@@ -3400,6 +3420,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2202: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2203: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2300: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3409,6 +3439,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2302: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2303: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h2400: begin
           m6805_access.write_enable = 1'b0;
@@ -3420,6 +3460,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2402: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2403: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2500: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3429,6 +3479,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2502: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2503: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h2600: begin
           m6805_access.write_enable = 1'b0;
@@ -3440,6 +3500,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2602: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2603: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2700: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3449,6 +3519,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2702: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2703: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h2800: begin
           m6805_access.write_enable = 1'b0;
@@ -3460,6 +3540,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2802: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2803: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2900: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3469,6 +3559,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2902: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2903: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h2a00: begin
           m6805_access.write_enable = 1'b0;
@@ -3480,6 +3580,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2a02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2a03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2b00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3489,6 +3599,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2b02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2b03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h2c00: begin
           m6805_access.write_enable = 1'b0;
@@ -3500,6 +3620,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2c02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2c03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2d00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3509,6 +3639,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2d02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2d03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h2e00: begin
           m6805_access.write_enable = 1'b0;
@@ -3520,6 +3660,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
+        16'h2e02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2e03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h2f00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
@@ -3529,6 +3679,16 @@ package m6805_opcode_vectors_pkg;
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
+        end
+        16'h2f02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h2f03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h3000: begin
           m6805_access.write_enable = 1'b0;
@@ -3745,110 +3905,440 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h40;
         end
+        16'h3b01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h3b02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h3b03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h3c00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h43;
+        end
+        16'h3c01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h3c02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h3c03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h3d00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h44;
         end
+        16'h3d01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h3d02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h3d03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h3e00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h46;
+        end
+        16'h3e01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h3e02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h3e03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h3f00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h47;
         end
+        16'h3f01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h3f02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h3f03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4000: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h48;
+        end
+        16'h4001: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4002: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4003: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4100: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h49;
         end
+        16'h4101: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4102: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4103: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4200: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4a;
+        end
+        16'h4201: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4202: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4203: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4300: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4c;
         end
+        16'h4301: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4302: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4303: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4400: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4d;
+        end
+        16'h4401: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4402: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4403: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4500: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4f;
         end
+        16'h4501: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4502: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4503: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4600: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h50;
+        end
+        16'h4601: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4602: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4603: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4700: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h53;
         end
+        16'h4701: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4702: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4703: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4800: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h54;
+        end
+        16'h4801: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4802: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4803: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4900: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h56;
         end
+        16'h4901: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4902: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4903: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4a00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h57;
+        end
+        16'h4a01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4a02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4a03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4b00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h58;
         end
+        16'h4b01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4b02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4b03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4c00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h59;
+        end
+        16'h4c01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4c02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4c03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4d00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5a;
         end
+        16'h4d01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4d02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4d03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h4e00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5c;
+        end
+        16'h4e01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4e02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4e03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h4f00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5d;
         end
+        16'h4f01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h4f02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h4f03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
         16'h5000: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5f;
+        end
+        16'h5001: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h5002: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h5003: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
         end
         16'h5100: begin
           m6805_access.write_enable = 1'b0;
@@ -4222,28 +4712,43 @@ package m6805_opcode_vectors_pkg;
         end
         16'h6701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
+        16'h6702: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h007f;
+          m6805_access.data = 8'h00;
+        end
+        16'h6703: begin
+          m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h0060;
           m6805_access.data = 8'he0;
         end
-        16'h6702: begin
+        16'h6704: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h0061;
           m6805_access.data = 8'h12;
         end
-        16'h6703: begin
+        16'h6705: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h0062;
           m6805_access.data = 8'h20;
         end
-        16'h6704: begin
+        16'h6706: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h0063;
           m6805_access.data = 8'h10;
         end
-        16'h6705: begin
+        16'h6707: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h0064;
           m6805_access.data = 8'h09;
+        end
+        16'h6708: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h0065;
+          m6805_access.data = 8'h00;
         end
         16'h6800: begin
           m6805_access.write_enable = 1'b0;
@@ -4252,13 +4757,28 @@ package m6805_opcode_vectors_pkg;
         end
         16'h6801: begin
           m6805_access.write_enable = 1'b0;
-          m6805_access.address = 16'h0060;
-          m6805_access.data = 8'he0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
         end
         16'h6802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h007f;
+          m6805_access.data = 8'h00;
+        end
+        16'h6803: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h0060;
+          m6805_access.data = 8'he0;
+        end
+        16'h6804: begin
+          m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h0061;
           m6805_access.data = 8'h12;
+        end
+        16'h6805: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h0062;
+          m6805_access.data = 8'h20;
         end
         16'h6900: begin
           m6805_access.write_enable = 1'b0;
@@ -4320,40 +4840,80 @@ package m6805_opcode_vectors_pkg;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h97;
         end
+        16'h6a01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
         16'h6b00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h98;
+        end
+        16'h6b01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
         end
         16'h6c00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h99;
         end
+        16'h6c01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
         16'h6d00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9a;
+        end
+        16'h6d01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
         end
         16'h6e00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9b;
         end
+        16'h6e01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
         16'h6f00: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9c;
+        end
+        16'h6f01: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
         end
         16'h7000: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9d;
         end
+        16'h7001: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
+        end
         16'h7100: begin
           m6805_access.write_enable = 1'b0;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9f;
+        end
+        16'h7101: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1006;
+          m6805_access.data = 8'h10;
         end
         16'h7200: begin
           m6805_access.write_enable = 1'b0;
@@ -4476,14 +5036,34 @@ package m6805_opcode_vectors_pkg;
           m6805_access.data = 8'h10;
         end
         16'h7d02: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h7d03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1007;
+          m6805_access.data = 8'h20;
+        end
+        16'h7d04: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h1017;
+          m6805_access.data = 8'h00;
+        end
+        16'h7d05: begin
           m6805_access.write_enable = 1'b1;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h07;
         end
-        16'h7d03: begin
+        16'h7d06: begin
           m6805_access.write_enable = 1'b1;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
+        end
+        16'h7d07: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address = 16'h007d;
+          m6805_access.data = 8'h00;
         end
         16'h7e00: begin
           m6805_access.write_enable = 1'b0;

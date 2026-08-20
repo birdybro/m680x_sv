@@ -196,6 +196,43 @@ class OpcodeSpecificationTests(unittest.TestCase):
             self.hd6305["opcodes"][0x83]["memory_operations"],
         )
 
+    def test_m6805_table_g2_complete_bus_traces_are_structured(self) -> None:
+        complete = [
+            record
+            for record in self.m6805["opcodes"]
+            if record["bus_trace_status"] == "COMPLETE"
+        ]
+        self.assertEqual(len(complete), 62)
+        for record in complete:
+            self.assertEqual(len(record["documented_bus_cycles"]), record["cycles"])
+            self.assertEqual(
+                [cycle["cycle"] for cycle in record["documented_bus_cycles"]],
+                list(range(1, record["cycles"] + 1)),
+            )
+            self.assertIn("table G2", record["primary_reference"]["locator"])
+        self.assertEqual(
+            self.m6805["opcodes"][0xAD]["documented_bus_cycles"][4],
+            {
+                "cycle": 5,
+                "address": "subroutine_start",
+                "direction": "read",
+                "data": "first_subroutine_opcode",
+            },
+        )
+        self.assertTrue(
+            all(
+                record["bus_trace_status"] == "PARTIAL"
+                for record in self.hd6305["opcodes"]
+                if record["classification"] == "documented_instruction"
+            )
+        )
+
+    def test_complete_bus_trace_length_mismatch_is_rejected(self) -> None:
+        broken = deepcopy(self.m6805)
+        broken["opcodes"][0x9D]["documented_bus_cycles"].pop()
+        with self.assertRaisesRegex(validate_opcodes.OpcodeSpecError, "trace length mismatch"):
+            validate_opcodes.validate_opcode_spec(broken, self.known_references)
+
     def test_hd6305_cycle_adjustments_match_operation_map(self) -> None:
         expected = {
             0x3D: 4,

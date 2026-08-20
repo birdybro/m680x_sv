@@ -168,15 +168,41 @@ module tb_m6805_core;
     end
     run_instruction(8, 8'had);
     if (debug_pc != 16'h100b || debug_sp != 16'h007d ||
-        memory[16'h007f] != 8'h09 || memory[16'h007e] != 8'h10) begin
+        memory[16'h007f] != 8'h09 || memory[16'h007e] != 8'h10 ||
+        !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h1007 ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] || trace_address[1] != 16'h1008 ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h1009 ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h1009 ||
+        !trace_valid[4] || trace_write[4] || trace_address[4] != 16'h100b || trace_data[4] != 8'h4c ||
+        !trace_valid[5] || !trace_write[5] || trace_address[5] != 16'h007f || trace_data[5] != 8'h09 ||
+        !trace_valid[6] || !trace_write[6] || trace_address[6] != 16'h007e || trace_data[6] != 8'h10 ||
+        !trace_valid[7] || trace_write[7] || trace_address[7] != 16'h007d) begin
       $fatal(1, "M6805 BSR stack order");
     end
     run_instruction(4, 8'h4c);
+    if (!trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100b ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] || trace_address[1] != 16'h100c ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h100d ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h100d) begin
+      $fatal(1, "M6805 accumulator inherent trace");
+    end
     run_instruction(6, 8'h81);
     if (debug_pc != 16'h1009 || debug_sp != 16'h007f || debug_a != 8'h81) begin
       $fatal(1, "M6805 RTS restore");
     end
+    if (!trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100c ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] || trace_address[1] != 16'h100d ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h007d ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h007e || trace_data[3] != 8'h10 ||
+        !trace_valid[4] || trace_write[4] || trace_address[4] != 16'h007f || trace_data[4] != 8'h09 ||
+        !trace_valid[5] || trace_write[5] || trace_address[5] != 16'h0060) begin
+      $fatal(1, "M6805 RTS exact trace");
+    end
     run_instruction(2, 8'h9d);
+    if (!trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h1009 ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] || trace_address[1] != 16'h100a) begin
+      $fatal(1, "M6805 simple inherent trace");
+    end
 
     irq_n = 1'b0;
     run_interrupt();
@@ -203,15 +229,37 @@ module tb_m6805_core;
         waiting_state || stopped_state) begin
       $fatal(1, "M6805 RTI state restore");
     end
+    if (!trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h1200 ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] || trace_address[1] != 16'h1201 ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h007a ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h007b || trace_data[3] != 8'hf4 ||
+        !trace_valid[4] || trace_write[4] || trace_address[4] != 16'h007c || trace_data[4] != 8'h81 ||
+        !trace_valid[5] || trace_write[5] || trace_address[5] != 16'h007d || trace_data[5] != 8'h00 ||
+        !trace_valid[6] || trace_write[6] || trace_address[6] != 16'h007e || trace_data[6] != 8'h10 ||
+        !trace_valid[7] || trace_write[7] || trace_address[7] != 16'h007f || trace_data[7] != 8'h0a ||
+        !trace_valid[8] || trace_write[8] || trace_address[8] != 16'h0060) begin
+      $fatal(1, "M6805 RTI exact trace");
+    end
 
-    memory[16'h100a] = 8'h83; // SWI
+    memory[16'h100a] = 8'h20; // BRA $100c
+    memory[16'h100b] = 8'h00;
+    run_instruction(4, 8'h20);
+    if (debug_pc != 16'h100c ||
+        !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] || trace_address[0] != 16'h100a ||
+        !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] || trace_address[1] != 16'h100b ||
+        !trace_valid[2] || trace_write[2] || trace_address[2] != 16'h100c ||
+        !trace_valid[3] || trace_write[3] || trace_address[3] != 16'h100c) begin
+      $fatal(1, "M6805 relative branch exact trace");
+    end
+
+    memory[16'h100c] = 8'h83; // SWI
     run_instruction(11, 8'h83);
     if (debug_pc != 16'h1300 || debug_sp != 16'h007a ||
         !trace_valid[0] || trace_write[0] || !trace_opcode_fetch[0] ||
-        trace_address[0] != 16'h100a ||
+        trace_address[0] != 16'h100c ||
         !trace_valid[1] || trace_write[1] || trace_opcode_fetch[1] ||
-        trace_address[1] != 16'h100b ||
-        !trace_valid[2] || !trace_write[2] || trace_address[2] != 16'h007f || trace_data[2] != 8'h0b ||
+        trace_address[1] != 16'h100d ||
+        !trace_valid[2] || !trace_write[2] || trace_address[2] != 16'h007f || trace_data[2] != 8'h0d ||
         !trace_valid[3] || !trace_write[3] || trace_address[3] != 16'h007e || trace_data[3] != 8'h10 ||
         !trace_valid[4] || !trace_write[4] || trace_address[4] != 16'h007d || trace_data[4] != 8'h00 ||
         !trace_valid[5] || !trace_write[5] || trace_address[5] != 16'h007c || trace_data[5] != 8'h81 ||

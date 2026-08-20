@@ -35,13 +35,14 @@
     {"name": "eprom_program_data_o", "historical": "EPROM data latch", "direction": "output", "fact": "latched byte to be programmed"}
   ],
   "halt_interrupt_behavior": "The MC68705P5 has no documented WAIT or STOP instruction; external and timer requests are retained until instruction-boundary service or software clearing, and accepted hardware-interrupt entry takes exactly 11 processor cycles",
-  "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locators": ["memory, timer, reset, interrupt, mask-option, on-chip programming, and programming-firmware sections, printed pages 5-17"]}, {"id": "motorola-m6805-family-users-manual-1983", "locators": ["Appendix G, table G2, printed page 243"]}],
+  "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locators": ["memory, timer, reset, interrupt, mask-option, on-chip programming, and programming-firmware sections, printed pages 5-17"]}, {"id": "motorola-m6805-family-users-manual-1983", "locators": ["Appendix G, table G2, printed pages 239-243"]}],
   "implementation_status": {
     "normalized_digital_interface": "PARTIAL",
     "single_chip_memory": "COMPLETE",
     "gpio_and_interrupt_pins": "PARTIAL",
     "timer_function": "COMPLETE",
     "interrupt_controller": "COMPLETE",
+    "inherent_immediate_relative_bus_traces": "COMPLETE",
     "software_interrupt_bus_trace": "COMPLETE",
     "reset_response_bus_trace": "COMPLETE",
     "bootstrap_and_programming_controls": "COMPLETE",

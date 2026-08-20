@@ -19,7 +19,8 @@ RECORD_FIELDS = {
     "architectural_applicability", "addressing_mode", "length", "cycles",
     "conditional_cycles", "registers_read", "registers_written", "flags_read",
     "flags_affected", "flags_undefined", "flag_semantics", "memory_operations",
-    "stack_effects", "branch_behavior", "vector_behavior", "primary_reference", "notes",
+    "bus_trace_status", "documented_bus_cycles", "stack_effects", "branch_behavior",
+    "vector_behavior", "primary_reference", "notes",
 }
 CLASSIFICATIONS = {
     "documented_instruction",
@@ -28,6 +29,7 @@ CLASSIFICATIONS = {
     "undefined_behavior",
 }
 FLAGS = {"H", "I", "N", "Z", "V", "C"}
+BUS_TRACE_STATUSES = {"COMPLETE", "PARTIAL", "NOT_APPLICABLE"}
 
 
 class OpcodeSpecError(RuntimeError):
@@ -86,6 +88,23 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
             raise OpcodeSpecError(f"{architecture}: affected/undefined flag conflict for {opcode:02X}")
         if set(record["flag_semantics"]) != set(record["flags_affected"] + record["flags_undefined"]):
             raise OpcodeSpecError(f"{architecture}: flag semantics mismatch for {opcode:02X}")
+        if record["bus_trace_status"] not in BUS_TRACE_STATUSES:
+            raise OpcodeSpecError(f"{architecture}: invalid bus trace status for {opcode:02X}")
+        bus_cycles = record["documented_bus_cycles"]
+        if not isinstance(bus_cycles, list):
+            raise OpcodeSpecError(f"{architecture}: documented bus cycles must be a list for {opcode:02X}")
+        for cycle_number, bus_cycle in enumerate(bus_cycles, start=1):
+            if (
+                not isinstance(bus_cycle, dict)
+                or set(bus_cycle) != {"cycle", "address", "direction", "data"}
+                or bus_cycle["cycle"] != cycle_number
+                or bus_cycle["direction"] not in {"read", "write"}
+                or not isinstance(bus_cycle["address"], str)
+                or not bus_cycle["address"]
+                or not isinstance(bus_cycle["data"], str)
+                or not bus_cycle["data"]
+            ):
+                raise OpcodeSpecError(f"{architecture}: invalid documented bus cycle for {opcode:02X}")
         reference = record["primary_reference"]
         if (
             not isinstance(reference, dict)
@@ -114,10 +133,16 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
                 and record["memory_operations"][0] != "read opcode at PC"
             ):
                 raise OpcodeSpecError(f"{architecture}: instruction {opcode:02X} needs opcode fetch")
+            if record["bus_trace_status"] == "COMPLETE" and len(bus_cycles) != record["cycles"]:
+                raise OpcodeSpecError(f"{architecture}: complete bus trace length mismatch for {opcode:02X}")
+            if record["bus_trace_status"] == "NOT_APPLICABLE":
+                raise OpcodeSpecError(f"{architecture}: defined behavior {opcode:02X} needs bus trace status")
         else:
             for field in ("mnemonic", "addressing_mode", "length", "cycles"):
                 if record[field] is not None:
                     raise OpcodeSpecError(f"{architecture}: undefined {opcode:02X} assigns {field}")
+            if record["bus_trace_status"] != "NOT_APPLICABLE" or bus_cycles:
+                raise OpcodeSpecError(f"{architecture}: undefined {opcode:02X} assigns bus cycles")
 
     if seen != set(range(256)):
         raise OpcodeSpecError(f"{architecture}: opcode values are not exactly 00-FF")

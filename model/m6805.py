@@ -268,6 +268,15 @@ class M6805Model:
             if mnemonic[-1:] in {"A", "X"} and mnemonic[:-1] in RMW_OPS
             else mnemonic
         )
+        if self.architecture == "m6805" and record["addressing_mode"] in {
+            "inherent",
+            "accumulator-a",
+            "index-register-x",
+        }:
+            self._read8(self.state.pc, "next opcode")
+            if rmw in RMW_OPS and record["addressing_mode"] != "inherent":
+                self._read8(self.state.pc + 1, "byte following next opcode")
+                self._read8(self.state.pc + 1, "repeated byte following next opcode")
         if mnemonic.startswith(("BRSET", "BRCLR")):
             assert operand is not None and displacement is not None
             bit = int(mnemonic[-1])
@@ -365,22 +374,41 @@ class M6805Model:
 
         if mnemonic in {"BRA", "BRN", "BHI", "BLS", "BCC", "BCS", "BNE", "BEQ", "BHCC", "BHCS", "BPL", "BMI", "BMC", "BMS", "BIL", "BIH"}:
             assert displacement is not None
+            sequential_pc = self.state.pc
             if self._branch_taken(mnemonic):
                 self.state.pc = (self.state.pc + displacement) & 0xFFFF
+            if self.architecture == "m6805":
+                self._read8(sequential_pc, "next opcode after relative branch")
+                self._read8(sequential_pc, "repeated next opcode after relative branch")
         elif mnemonic == "BSR":
             assert displacement is not None
+            target = (self.state.pc + displacement) & 0xFFFF
+            if self.architecture == "m6805":
+                self._read8(self.state.pc, "next opcode after BSR")
+                self._read8(self.state.pc, "repeated next opcode after BSR")
+                self._read8(target, "first subroutine opcode")
             self._push_return_pc()
-            self.state.pc = (self.state.pc + displacement) & 0xFFFF
+            self.state.pc = target
+            if self.architecture == "m6805":
+                self._read8(self.state.sp, "BSR trailing stack read")
         elif mnemonic == "RTS":
+            if self.architecture == "m6805":
+                self._read8(self.state.sp, "RTS initial stack read")
             self._pull_pc()
+            if self.architecture == "m6805":
+                next_stack = self.stack_base | ((self.state.sp + 1) & self.stack_mask)
+                self._read8(next_stack, "RTS trailing stack read")
         elif mnemonic == "RTI":
+            if self.architecture == "m6805":
+                self._read8(self.state.sp, "RTI initial stack read")
             self.state.ccr = self._pull8("stacked CCR") & 0x1F
             self.state.a = self._pull8("stacked A")
             self.state.x = self._pull8("stacked X")
             self._pull_pc()
-        elif mnemonic == "SWI":
             if self.architecture == "m6805":
-                self._read8(self.state.pc, "SWI next opcode")
+                next_stack = self.stack_base | ((self.state.sp + 1) & self.stack_mask)
+                self._read8(next_stack, "RTI trailing stack read")
+        elif mnemonic == "SWI":
             self._stack_complete_state()
             self.set_flag("I", True)
             if self.architecture == "m6805":

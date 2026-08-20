@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 188 |
+| Python unit tests | 191 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -65,7 +65,8 @@ The committed tests cover:
 | HD63705V0 SCI Tx/Rx byte checks | 4,096 |
 | HD63705V0 SCI status/rate/protocol checks | 549 |
 | HD63705V0 MR/interrupt priority/protocol checks | 611 |
-| M6805 directed core checks | 14 |
+| M6805 table-G2 opcode encodings with complete structured bus traces | 62 |
+| M6805 directed core checks | 15 |
 | MC68705P5 integration checks | 19 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
 | MC68705P5 PCR/VPP table checks | 8 |
@@ -334,7 +335,12 @@ an 11-bit return PC stacks the unused upper five PCH bits as ones. This audit
 marks only the trailing cycle's manufacturer-labelled unusable input data as
 non-comparable for hardware IRQ while still checking its address and direction.
 SWI has a separate 11-cycle directed trace whose final cycle compares the
-defined first handler opcode at the resolved vector address. This audit found
+defined first handler opcode at the resolved vector address. Sixty-two opcode
+records now carry complete machine-readable table-G2 traces, and focused model
+and RTL assertions check the exact cycles for inherent/accumulator, immediate,
+relative, BSR, RTS, RTI, and SWI forms. The checks include both repeated
+next-instruction reads, subroutine-target prefetch, ordered stack direction and
+data, and irrelevant pre/post-stack reads. This audit found
 and fixed the prior two-cycle reset response, bootstrap remap drop after the first
 high-vector cycle, eight-cycle interrupt response, zero-filled PCH, and the
 incorrect reuse of the hardware-IRQ trailing address for SWI. The
@@ -577,10 +583,10 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD63701V0 Mode 6 integration | 14,051 | 1,957 |
 | HD63701V0 Mode 7 integration | 14,079 | 1,996 |
 | HD63701V0 four-subphase bus wrapper | 14,218 | 1,960 |
-| M6805 | 3,734 | 169 |
-| HD6305 | 3,803 | 170 |
-| MC68705P5 integration | 7,055 | 1,144 |
-| HD63705V0 integration | 10,088 | 1,860 |
+| M6805 | 3,933 | 187 |
+| HD6305 | 3,918 | 170 |
+| MC68705P5 integration | 7,244 | 1,157 |
+| HD63705V0 integration | 10,177 | 1,860 |
 
 Sequential counts include every synthesized DFF primitive and inferred memory
 bit. Cell counts are tool/version/technology dependent and are smoke-test

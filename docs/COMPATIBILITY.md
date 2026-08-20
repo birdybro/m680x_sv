@@ -44,8 +44,10 @@ profiles for the Motorola and Hitachi 6805-derived lineages.
 `PARTIAL` CPU status means every documented opcode encoding has architectural,
 cycle-total, and ordered semantic-bus comparison against the independent model,
 while the HD6301 profile also implements every documented opcode-error TRAP map
-value. Detailed manufacturer bus-waveform coverage and remaining device-specific
-interrupt sources are not yet complete. The MC68705P5 wrapper additionally has
+value. The Motorola M6805 profile additionally has complete structured and RTL
+bus traces for 62 table-G2 inherent, accumulator, immediate, and relative
+encodings, including BSR/RTS/RTI/SWI; the remaining addressing-mode rows and
+device-specific interrupt sources are not yet complete. The MC68705P5 wrapper additionally has
 tested RAM/register decode, GPIO, every timer input/prescaler mode in both
 software-controlled and fixed-MOR configurations, interrupt priority, the
 secure-qualified bootstrap vector, and digital PCR address/data/program

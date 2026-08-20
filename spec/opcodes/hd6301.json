@@ -54,6 +54,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -91,6 +93,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -142,6 +146,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -195,6 +201,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -246,6 +254,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -297,6 +307,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -348,6 +360,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -385,6 +399,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -426,6 +442,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -467,6 +485,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -506,6 +526,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -545,6 +567,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -584,6 +608,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -623,6 +649,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -662,6 +690,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -701,6 +731,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -749,6 +781,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -796,6 +830,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -847,6 +883,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -900,6 +938,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -953,6 +993,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -1006,6 +1048,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -1053,6 +1097,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -1098,6 +1144,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -1139,6 +1187,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -1187,6 +1237,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -1222,6 +1274,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -1272,6 +1326,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -1323,6 +1379,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -1376,6 +1434,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -1429,6 +1489,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -1482,6 +1544,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -1520,6 +1584,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when always",
       "vector_behavior": null,
@@ -1556,6 +1622,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "never changes PC beyond normal two-byte instruction advance",
       "vector_behavior": null,
@@ -1595,6 +1663,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when C=0 and Z=0",
       "vector_behavior": null,
@@ -1634,6 +1704,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when C=1 or Z=1",
       "vector_behavior": null,
@@ -1674,6 +1746,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when C=0",
       "vector_behavior": null,
@@ -1714,6 +1788,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when C=1",
       "vector_behavior": null,
@@ -1752,6 +1828,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when Z=0",
       "vector_behavior": null,
@@ -1790,6 +1868,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when Z=1",
       "vector_behavior": null,
@@ -1828,6 +1908,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when V=0",
       "vector_behavior": null,
@@ -1866,6 +1948,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when V=1",
       "vector_behavior": null,
@@ -1904,6 +1988,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when N=0",
       "vector_behavior": null,
@@ -1942,6 +2028,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when N=1",
       "vector_behavior": null,
@@ -1981,6 +2069,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when N xor V=0",
       "vector_behavior": null,
@@ -2020,6 +2110,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when N xor V=1",
       "vector_behavior": null,
@@ -2060,6 +2152,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when Z=0 and (N xor V)=0",
       "vector_behavior": null,
@@ -2100,6 +2194,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "add signed 8-bit displacement to post-instruction PC when Z=1 or (N xor V)=1",
       "vector_behavior": null,
@@ -2137,6 +2233,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -2174,6 +2272,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "increment SP by one without accessing stack memory"
       ],
@@ -2215,6 +2315,8 @@
         "read opcode at PC",
         "read register byte from stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "increment SP, then load A from stack"
       ],
@@ -2256,6 +2358,8 @@
         "read opcode at PC",
         "read register byte from stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "increment SP, then load B from stack"
       ],
@@ -2295,6 +2399,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "decrement SP by one without accessing stack memory"
       ],
@@ -2334,6 +2440,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "replace SP with X minus one"
       ],
@@ -2375,6 +2483,8 @@
         "read opcode at PC",
         "write register byte to stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "store A at SP, then decrement SP"
       ],
@@ -2416,6 +2526,8 @@
         "read opcode at PC",
         "write register byte to stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "store B at SP, then decrement SP"
       ],
@@ -2457,6 +2569,8 @@
         "read opcode at PC",
         "read two X bytes from stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "increment SP and pull X high, then increment SP and pull X low"
       ],
@@ -2497,6 +2611,8 @@
         "read opcode at PC",
         "read two return-PC bytes from stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "increment SP and pull PCH, then increment SP and pull PCL"
       ],
@@ -2537,6 +2653,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -2593,6 +2711,8 @@
         "read opcode at PC",
         "read CCR, B, A, X, and PC bytes from stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "pull CCR, B, A, X high, X low, PC high, and PC low in documented order"
       ],
@@ -2634,6 +2754,8 @@
         "read opcode at PC",
         "write two X bytes to stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push X low, then X high; decrement SP after each byte"
       ],
@@ -2679,6 +2801,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -2722,6 +2846,8 @@
         "write PC, X, A, B, and CCR bytes to stack",
         "present FFFF with read/write strobes inactive while waiting"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push PCL, PCH, X low, X high, A, B, and CCR once, then wait"
       ],
@@ -2772,6 +2898,8 @@
         "write PC, X, A, B, and CCR bytes to stack",
         "read SWI vector at FFFA:FFFB"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push PCL, PCH, X low, X high, A, B, and CCR; decrement SP after each byte"
       ],
@@ -2821,6 +2949,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -2872,6 +3002,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -2925,6 +3057,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -2974,6 +3108,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3021,6 +3157,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3072,6 +3210,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -3123,6 +3263,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3170,6 +3312,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3219,6 +3363,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3268,6 +3414,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3313,6 +3461,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3364,6 +3514,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -3411,6 +3563,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3457,6 +3611,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3508,6 +3664,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -3556,6 +3714,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3603,6 +3763,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3654,6 +3816,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -3707,6 +3871,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -3756,6 +3922,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3803,6 +3971,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3854,6 +4024,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -3905,6 +4077,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -3952,6 +4126,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4001,6 +4177,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4050,6 +4228,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4095,6 +4275,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4146,6 +4328,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -4193,6 +4377,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4239,6 +4425,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4290,6 +4478,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -4338,6 +4528,8 @@
       "memory_operations": [
         "read opcode at PC"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4387,6 +4579,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4434,6 +4628,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4481,6 +4677,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4530,6 +4728,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4579,6 +4779,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4626,6 +4828,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4677,6 +4881,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4726,6 +4932,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4777,6 +4985,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4828,6 +5038,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4875,6 +5087,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4921,6 +5135,8 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -4968,6 +5184,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5016,6 +5234,8 @@
         "read 1 instruction operand byte(s)",
         "read effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5053,6 +5273,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "load PC with the effective address",
       "vector_behavior": null,
@@ -5101,6 +5323,8 @@
         "read 1 instruction operand byte(s)",
         "write zero to effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5149,6 +5373,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5195,6 +5421,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5241,6 +5469,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5289,6 +5519,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5337,6 +5569,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5383,6 +5617,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5433,6 +5669,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5481,6 +5719,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5531,6 +5771,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5581,6 +5823,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5627,6 +5871,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5672,6 +5918,8 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5718,6 +5966,8 @@
         "read effective-address byte",
         "write modified effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5765,6 +6015,8 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5801,6 +6053,8 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": "load PC with the effective address",
       "vector_behavior": null,
@@ -5848,6 +6102,8 @@
         "read 2 instruction operand byte(s)",
         "write zero to effective-address byte"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5896,6 +6152,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5943,6 +6201,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -5993,6 +6253,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6043,6 +6305,8 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6089,6 +6353,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6134,6 +6400,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6179,6 +6447,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6230,6 +6500,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -6278,6 +6550,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6330,6 +6604,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6376,6 +6652,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6426,6 +6704,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6473,6 +6753,8 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6513,6 +6795,8 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
       ],
@@ -6560,6 +6844,8 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "replace SP with the 16-bit operand"
       ],
@@ -6613,6 +6899,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -6664,6 +6952,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6712,6 +7002,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6763,6 +7055,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6814,6 +7108,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6861,6 +7157,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6907,6 +7205,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6953,6 +7253,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -6999,6 +7301,8 @@
         "read 1 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7046,6 +7350,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7099,6 +7405,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7146,6 +7454,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7197,6 +7507,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7245,6 +7557,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7285,6 +7599,8 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
       ],
@@ -7333,6 +7649,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "replace SP with the 16-bit operand"
       ],
@@ -7381,6 +7699,8 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7431,6 +7751,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7480,6 +7802,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7532,6 +7856,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7584,6 +7910,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7632,6 +7960,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7679,6 +8009,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7726,6 +8058,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7773,6 +8107,8 @@
         "read 1 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7821,6 +8157,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7875,6 +8213,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7923,6 +8263,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -7975,6 +8317,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8023,6 +8367,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8064,6 +8410,8 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
       ],
@@ -8113,6 +8461,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "replace SP with the 16-bit operand"
       ],
@@ -8162,6 +8512,8 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8211,6 +8563,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8259,6 +8613,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8310,6 +8666,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8361,6 +8719,8 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8408,6 +8768,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8454,6 +8816,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8500,6 +8864,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8546,6 +8912,8 @@
         "read 2 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8593,6 +8961,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8646,6 +9016,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8693,6 +9065,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8744,6 +9118,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8792,6 +9168,8 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8832,6 +9210,8 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
       ],
@@ -8880,6 +9260,8 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "replace SP with the 16-bit operand"
       ],
@@ -8928,6 +9310,8 @@
         "read 2 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -8976,6 +9360,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9023,6 +9409,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9073,6 +9461,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9123,6 +9513,8 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9169,6 +9561,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9214,6 +9608,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9259,6 +9655,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9310,6 +9708,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -9358,6 +9758,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9410,6 +9812,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9456,6 +9860,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9506,6 +9912,8 @@
         "read opcode at PC",
         "read 1 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9552,6 +9960,8 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9603,6 +10013,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -9650,6 +10062,8 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9701,6 +10115,8 @@
         "write seven-byte complete processor state to stack",
         "read trap vector at FFEE:FFEF"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [
         "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR"
       ],
@@ -9752,6 +10168,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9800,6 +10218,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9851,6 +10271,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9902,6 +10324,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9949,6 +10373,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -9995,6 +10421,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10041,6 +10469,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10087,6 +10517,8 @@
         "read 1 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10134,6 +10566,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10187,6 +10621,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10234,6 +10670,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10285,6 +10723,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10332,6 +10772,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10379,6 +10821,8 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10425,6 +10869,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10471,6 +10917,8 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10521,6 +10969,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10570,6 +11020,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10622,6 +11074,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10674,6 +11128,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10722,6 +11178,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10769,6 +11227,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10816,6 +11276,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10863,6 +11325,8 @@
         "read 1 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10911,6 +11375,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -10965,6 +11431,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11013,6 +11481,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11065,6 +11535,8 @@
         "read 1 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11113,6 +11585,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11161,6 +11635,8 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11208,6 +11684,8 @@
         "read 1 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11254,6 +11732,8 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11303,6 +11783,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11351,6 +11833,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11402,6 +11886,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11453,6 +11939,8 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11500,6 +11988,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11546,6 +12036,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11592,6 +12084,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11638,6 +12132,8 @@
         "read 2 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11685,6 +12181,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11738,6 +12236,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11785,6 +12285,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11836,6 +12338,8 @@
         "read 2 instruction operand byte(s)",
         "read 1 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11883,6 +12387,8 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11930,6 +12436,8 @@
         "read 2 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -11976,6 +12484,8 @@
         "read 2 instruction operand byte(s)",
         "read 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
@@ -12022,6 +12532,8 @@
         "read 2 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
+      "bus_trace_status": "PARTIAL",
+      "documented_bus_cycles": [],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,

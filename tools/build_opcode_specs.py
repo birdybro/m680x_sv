@@ -88,6 +88,8 @@ def _undefined(opcode: int, architecture: str, reference_id: str, locator: str) 
         "flags_undefined": [],
         "flag_semantics": {},
         "memory_operations": [],
+        "bus_trace_status": "NOT_APPLICABLE",
+        "documented_bus_cycles": [],
         "stack_effects": [],
         "branch_behavior": None,
         "vector_behavior": None,
@@ -122,6 +124,8 @@ def _opcode_trap(opcode: int, architecture: str, reference_id: str) -> dict:
             "write seven-byte complete processor state to stack",
             "read trap vector at FFEE:FFEF",
         ],
+        "bus_trace_status": "PARTIAL",
+        "documented_bus_cycles": [],
         "stack_effects": [
             "push retry PC low, retry PC high, X low, X high, A, B, then pre-trap CCR",
         ],
@@ -582,6 +586,8 @@ def _instruction(
         "flags_undefined": flags_undefined,
         "flag_semantics": flag_semantics,
         "memory_operations": memory_operations,
+        "bus_trace_status": "PARTIAL",
+        "documented_bus_cycles": [],
         "stack_effects": stack_effects,
         "branch_behavior": branch_behavior,
         "vector_behavior": vector_behavior,
@@ -1200,6 +1206,81 @@ def _m6805_control_facts(mnemonic: str, condition: str | None) -> tuple[list[str
     return stack, branch, vector
 
 
+def _m6805_table_g2_trace(mnemonic: str, mode: str) -> list[dict]:
+    def read(cycle: int, address: str, data: str) -> dict:
+        return {"cycle": cycle, "address": address, "direction": "read", "data": data}
+
+    def write(cycle: int, address: str, data: str) -> dict:
+        return {"cycle": cycle, "address": address, "direction": "write", "data": data}
+
+    opcode = read(1, "opcode_address", "opcode")
+    if mode == "immediate-8":
+        return [opcode, read(2, "opcode_address+1", "operand")]
+    if mode in {"accumulator-a", "index-register-x"}:
+        return [
+            opcode,
+            read(2, "opcode_address+1", "next_opcode"),
+            read(3, "opcode_address+2", "byte_following_next_opcode"),
+            read(4, "opcode_address+2", "byte_following_next_opcode"),
+        ]
+    if mode == "relative" and mnemonic != "BSR":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "branch_offset"),
+            read(3, "opcode_address+2", "next_opcode"),
+            read(4, "opcode_address+2", "next_opcode"),
+        ]
+    if mnemonic == "BSR":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "branch_offset"),
+            read(3, "opcode_address+2", "next_opcode"),
+            read(4, "opcode_address+2", "next_opcode"),
+            read(5, "subroutine_start", "first_subroutine_opcode"),
+            write(6, "stack_pointer", "return_address_low"),
+            write(7, "stack_pointer-1", "return_address_high"),
+            read(8, "stack_pointer-2", "irrelevant"),
+        ]
+    if mnemonic == "RTS":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "next_opcode"),
+            read(3, "stack_pointer", "irrelevant"),
+            read(4, "stack_pointer+1", "return_address_high"),
+            read(5, "stack_pointer+2", "return_address_low"),
+            read(6, "stack_pointer+3", "irrelevant"),
+        ]
+    if mnemonic == "RTI":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "next_opcode"),
+            read(3, "stack_pointer", "irrelevant"),
+            read(4, "stack_pointer+1", "condition_codes"),
+            read(5, "stack_pointer+2", "accumulator"),
+            read(6, "stack_pointer+3", "index_register"),
+            read(7, "stack_pointer+4", "return_address_high"),
+            read(8, "stack_pointer+5", "return_address_low"),
+            read(9, "stack_pointer+6", "irrelevant"),
+        ]
+    if mnemonic == "SWI":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "next_opcode"),
+            write(3, "stack_pointer", "return_address_low"),
+            write(4, "stack_pointer-1", "return_address_high"),
+            write(5, "stack_pointer-2", "index_register"),
+            write(6, "stack_pointer-3", "accumulator"),
+            write(7, "stack_pointer-4", "condition_codes"),
+            read(8, "stack_pointer-5", "irrelevant"),
+            read(9, "software_interrupt_vector_high", "handler_address_high"),
+            read(10, "software_interrupt_vector_low", "handler_address_low"),
+            read(11, "resolved_handler_address", "first_handler_opcode"),
+        ]
+    if mode == "inherent":
+        return [opcode, read(2, "opcode_address+1", "next_opcode")]
+    return []
+
+
 def _m6805_instruction(
     opcode: int,
     architecture: str,
@@ -1223,6 +1304,15 @@ def _m6805_instruction(
         aliases = ["LSLA"]
     elif mnemonic == "ASLX":
         aliases = ["LSLX"]
+    documented_bus_cycles = (
+        _m6805_table_g2_trace(mnemonic, mode) if architecture == "m6805" else []
+    )
+    if documented_bus_cycles:
+        locator = (
+            "appendix G table G2, printed page 240"
+            if mode == "relative"
+            else "appendix G table G2, printed page 239"
+        )
     return {
         "opcode": opcode,
         "opcode_hex": f"{opcode:02X}",
@@ -1241,6 +1331,8 @@ def _m6805_instruction(
         "flags_undefined": flags_undefined,
         "flag_semantics": flag_semantics,
         "memory_operations": _m6805_memory_facts(architecture, mnemonic, mode, length),
+        "bus_trace_status": "COMPLETE" if documented_bus_cycles else "PARTIAL",
+        "documented_bus_cycles": documented_bus_cycles,
         "stack_effects": stack_effects,
         "branch_behavior": branch_behavior,
         "vector_behavior": vector_behavior,
