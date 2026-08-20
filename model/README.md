@@ -65,7 +65,7 @@ differences. In particular, both select Hitachi's rule that a framing-error
 byte is not transferred into RDR, while the MC6801 model selects Motorola's
 documented transfer behavior. The HD6301V1 model accepts every legal Mode
 0/1/2/4/5/6/7 profile and owns its 4-KiB mask-ROM selection, mode maps, Port
-3/4, strobe, IS3, and Mode-7 address-error facts.
+3/4, strobe, IS3, and per-mode address-error facts.
 The HD6303R model accepts exactly Modes 1, 2, and 4 and independently preserves
 the new non-multiplexed Mode-1 map and Mode-2-equivalent Hitachi Mode 4.
 The same profiles select Hitachi's two-byte FRC write and TOF-at-zero behavior;
@@ -74,11 +74,12 @@ Their independent `standby_reset` transition resets active peripheral state,
 preserves physical RAM without inventing lost-supply values, and retains
 STBY_PWR only while the modeled standby supply remains valid.
 
-`hd63701v0_device.py` selects the EPROM device's 192-byte `$0040-$00ff` RAM
-window and its documented transfer of a misframed receive byte into RDR. For
-the manual's contradictory `$0040-$007f` address-error statements, the model
-permits execution from physical RAM and reports that policy separately from
-verified behavior.
+`hd63701v0_device.py` accepts every legal Mode 0/1/2/5/6/7 profile and selects
+the EPROM device's 192-byte `$0040-$00ff` RAM window, mode-dependent EPROM and
+external-memory sources, per-mode address errors, and documented transfer of a
+misframed receive byte into RDR. For the manual's contradictory Mode-5/7
+`$0040-$007f` address-error statements, the model permits execution from
+physical RAM and reports that policy separately from verified behavior.
 
 `hd63705v0_device.py` is a separate E-cycle device model for the 14-bit
 HD63705V0 boundary. It owns the 192-byte RAM/4-KiB EPROM partition, four GPIO

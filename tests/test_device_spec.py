@@ -83,7 +83,7 @@ class DeviceSpecificationTests(unittest.TestCase):
             "spec/peripherals/hd63701v0.json",
             "spec/peripherals/hd63705v0.json",
             "spec/interfaces/hd6301v1_mode7.json",
-            "spec/interfaces/hd63701v0_mode7.json",
+            "spec/interfaces/hd63701v0_modes.json",
             "spec/interfaces/hd63705v0_mcu.json",
         ):
             self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)

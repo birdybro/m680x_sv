@@ -12,6 +12,11 @@ module tb_hd63701v0_mcu;
   logic [15:0] program_address;
   logic program_read;
   logic [7:0] program_data;
+  logic [15:0] external_address;
+  logic [7:0] external_data_out;
+  logic external_write;
+  logic external_valid;
+  logic external_fetch;
   logic [7:0] port1_out;
   logic [7:0] port1_oe;
   logic [4:0] port2_out;
@@ -59,7 +64,11 @@ module tb_hd63701v0_mcu;
     .port1_i(8'h3c), .port2_i(port2_in), .port3_i(port3_in),
     .port4_i(port4_in), .is3_n_i(is3_n),
     .program_address_o(program_address), .program_read_o(program_read),
-    .program_data_i(program_data), .port1_o(port1_out), .port1_oe_o(port1_oe),
+    .program_data_i(program_data), .external_address_o(external_address),
+    .external_data_o(external_data_out), .external_write_o(external_write),
+    .external_bus_valid_o(external_valid),
+    .external_opcode_fetch_o(external_fetch), .external_data_i(8'hff),
+    .port1_o(port1_out), .port1_oe_o(port1_oe),
     .port2_o(port2_out), .port2_oe_o(port2_oe), .port3_o(port3_out),
     .port3_oe_o(port3_oe), .port4_o(port4_out), .port4_oe_o(port4_oe),
     .os3_n_o(os3_n), .sci_tx_o(sci_tx), .sci_clock_o(sci_clock),
@@ -291,6 +300,7 @@ module tb_hd63701v0_mcu;
     #1;
     if (port1_oe != 8'h00 || port2_oe != 5'h00 ||
         port3_oe != 8'h00 || port4_oe != 8'h00 || program_read ||
+        external_valid || external_fetch ||
         debug_timer != 16'h0000) begin
       $fatal(1, "HD63701V0 asynchronous standby reset/high impedance");
     end
@@ -309,6 +319,10 @@ module tb_hd63701v0_mcu;
     checks = checks + 6;
 
     if (waiting_state || sleeping_state || undefined_value || timer_irq || sci_irq ||
+        external_address != debug_address || external_valid ||
+        ((external_fetch !== 1'b0) && (external_fetch !== 1'b1)) ||
+        ((external_write !== 1'b0) && (external_write !== 1'b1)) ||
+        (^external_data_out === 1'bx) ||
         ((sci_tx !== 1'b0) && (sci_tx !== 1'b1)) ||
         ((sci_clock !== 1'b0) && (sci_clock !== 1'b1)) ||
         ((os3_n !== 1'b0) && (os3_n !== 1'b1)) ||

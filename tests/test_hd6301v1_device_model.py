@@ -196,6 +196,32 @@ class HD6301V1LegalModeModelTests(unittest.TestCase):
         mode7 = HD6301V1DeviceModel(7)
         self.assertFalse(self.read(mode7, 0x0100).external_bus)
 
+        for mode in (0, 1, 2, 4, 6):
+            model = HD6301V1DeviceModel(mode)
+            self.assertTrue(
+                model.cycle(
+                    MC6801CycleInputs(
+                        address=0x001F, valid=True, opcode_fetch=True
+                    )
+                ).address_error
+            )
+            self.assertFalse(
+                model.cycle(
+                    MC6801CycleInputs(
+                        address=0x0020, valid=True, opcode_fetch=True
+                    )
+                ).address_error
+            )
+        for mode, trapped_address in ((5, 0x0200), (7, 0x0100)):
+            model = HD6301V1DeviceModel(mode)
+            self.assertTrue(
+                model.cycle(
+                    MC6801CycleInputs(
+                        address=trapped_address, valid=True, opcode_fetch=True
+                    )
+                ).address_error
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

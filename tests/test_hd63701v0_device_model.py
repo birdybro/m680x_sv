@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 from model.common import Memory
-from model.hd63701v0_device import HD63701V0Mode7Model
+from model.hd63701v0_device import HD63701V0DeviceModel, HD63701V0Mode7Model
 from model.mc6801_device import MC6801CycleInputs
 
 
@@ -94,6 +94,55 @@ class HD63701V0Mode7ModelTests(unittest.TestCase):
         self.assertTrue(model.state.standby_power)
         self.assertEqual(model.port34_outputs()[1], 0)
         self.assertEqual(model.state.timer, 0)
+
+
+class HD63701V0LegalModeModelTests(unittest.TestCase):
+    @staticmethod
+    def read(model: HD63701V0DeviceModel, address: int, *, fetch: bool = False):
+        return model.cycle(
+            MC6801CycleInputs(address=address, valid=True, opcode_fetch=fetch)
+        )
+
+    def test_every_legal_mode_map_and_address_error_region(self) -> None:
+        for unavailable in (3, 4):
+            with self.assertRaises(ValueError):
+                HD63701V0DeviceModel(unavailable)
+
+        for mode in (0, 1, 2, 5, 6, 7):
+            external = Memory()
+            program = Memory()
+            external[0xF000] = 0x5A
+            program[0xF000] = 0xA5
+            model = HD63701V0DeviceModel(
+                mode, external_memory=external, program_memory=program
+            )
+            self.assertTrue(model.ram_is_internal(0x0040))
+            result = self.read(model, 0xF000)
+            if mode in {0, 5, 6, 7}:
+                self.assertEqual(result.read_data, 0xA5)
+                self.assertTrue(result.program_bus)
+            else:
+                self.assertEqual(result.read_data, 0x5A)
+                self.assertTrue(result.external_bus)
+            self.assertTrue(self.read(model, 0x001F, fetch=True).address_error)
+            self.assertFalse(self.read(model, 0x0040, fetch=True).address_error)
+
+        mode0 = HD63701V0DeviceModel(0)
+        self.assertTrue(self.read(mode0, 0xFFFE).external_bus)
+        self.assertTrue(self.read(mode0, 0xFFFF).external_bus)
+        self.assertTrue(self.read(mode0, 0xFFFE).program_bus)
+
+        mode1 = HD63701V0DeviceModel(1)
+        self.assertFalse(mode1.register_is_internal(0x0000))
+        self.assertFalse(mode1.register_is_internal(0x0002))
+
+        mode5 = HD63701V0DeviceModel(5)
+        self.assertTrue(self.read(mode5, 0x0100).external_bus)
+        self.assertTrue(self.read(mode5, 0x0200, fetch=True).address_error)
+        self.assertFalse(self.read(mode5, 0x0040, fetch=True).address_error)
+
+        mode7 = HD63701V0DeviceModel(7)
+        self.assertTrue(self.read(mode7, 0x0100, fetch=True).address_error)
 
 
 if __name__ == "__main__":

@@ -43,7 +43,8 @@ module m6800_core #(
     data_o = stub_data;
     write_o = stub_write;
     bus_valid_o = stub_valid;
-    opcode_fetch_o = 1'b0 & unused_inputs;
+    opcode_fetch_o = (stub_opcode_fetch && stub_valid && !stub_write) |
+      (1'b0 & unused_inputs);
     retire_o = 1'b0;
     illegal_o = 1'b0;
     undefined_o = 1'b0;

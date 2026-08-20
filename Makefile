@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd63701v0 test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd63701v0 test-hd63701v0-modes test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -36,7 +36,7 @@ help:
 	@echo "  test-hd6301-trap verify opcode/address TRAP retry and exact entry trace"
 	@echo "  test-hd6301v1 verify all legal HD6301V1 Mode-0/1/2/4/5/6/7 profiles"
 	@echo "  test-hd6303r verify all legal ROMless HD6303R Mode-1/2/4 profiles"
-	@echo "  test-hd63701v0 verify the EPROM HD63701V0 Mode-7 MCU profile"
+	@echo "  test-hd63701v0 verify all legal HD63701V0 Mode-0/1/2/5/6/7 profiles"
 	@echo "  test-hd6305-opcodes compare all documented HD6305 encodings to the model"
 	@echo "  test-hd63705v0 verify HD63705V0 memory, GPIO, timer, SCI, interrupts, and modes"
 	@echo "  test-hd63705-peripheral-diff compare 768 independent model/RTL E-cycles"
@@ -349,7 +349,7 @@ test-hd6303r-modes:
 		sim/tb_hd6303r_modes.sv
 	build/obj_hd6303r_modes/Vtb_hd6303r_modes
 
-test-hd63701v0:
+test-hd63701v0: test-hd63701v0-modes
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_hd63701v0_mcu \
 		-Mdir build/obj_hd63701v0_mcu -o Vtb_hd63701v0_mcu \
@@ -357,6 +357,23 @@ test-hd63701v0:
 		rtl/m6800/m6800_core.sv rtl/m6801/mc6801_mcu.sv \
 		rtl/hd6301/hd63701v0_mcu.sv sim/tb_hd63701v0_mcu.sv
 	build/obj_hd63701v0_mcu/Vtb_hd63701v0_mcu
+	$(PYTHON) -m unittest tests.test_hd63701v0_device_model -v
+
+test-hd63701v0-modes:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_hd63701v0_modes \
+		-Mdir build/obj_hd63701v0_modes -o Vtb_hd63701v0_modes \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv rtl/hd6301/hd63701v0_mcu.sv \
+		sim/tb_hd63701v0_modes.sv
+	build/obj_hd63701v0_modes/Vtb_hd63701v0_modes
+	$(VERILATOR) --binary --timing --assert -Wall \
+		--top-module tb_hd63701v0_mode_exec \
+		-Mdir build/obj_hd63701v0_mode_exec -o Vtb_hd63701v0_mode_exec \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv rtl/m6801/mc6801_mcu.sv \
+		rtl/hd6301/hd63701v0_mcu.sv sim/tb_hd63701v0_mode_exec.sv
+	build/obj_hd63701v0_mode_exec/Vtb_hd63701v0_mode_exec
 
 test-hd6305-opcodes:
 	mkdir -p build
@@ -598,6 +615,16 @@ test-iverilog: spec-check
 		rtl/generated/yosys_m6800_core.sv rtl/m6801/mc6801_mcu.sv \
 		rtl/hd6301/hd6301v1_mcu.sv sim/tb_hd6301v1_mcu.sv
 	$(VVP) build/iverilog/tb_hd6301v1_mcu
+	$(IVERILOG) -g2012 -Wall -s tb_hd63701v0_modes -o build/iverilog/tb_hd63701v0_modes \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv rtl/hd6301/hd63701v0_mcu.sv \
+		sim/tb_hd63701v0_modes.sv
+	$(VVP) build/iverilog/tb_hd63701v0_modes
+	$(IVERILOG) -g2012 -Wall -s tb_hd63701v0_mode_exec \
+		-o build/iverilog/tb_hd63701v0_mode_exec \
+		rtl/generated/yosys_m6800_core.sv rtl/m6801/mc6801_mcu.sv \
+		rtl/hd6301/hd63701v0_mcu.sv sim/tb_hd63701v0_mode_exec.sv
+	$(VVP) build/iverilog/tb_hd63701v0_mode_exec
 	$(IVERILOG) -g2012 -Wall -s tb_hd63701v0_mcu -o build/iverilog/tb_hd63701v0_mcu \
 		rtl/generated/yosys_m6800_core.sv rtl/m6801/mc6801_mcu.sv \
 		rtl/hd6301/hd63701v0_mcu.sv sim/tb_hd63701v0_mcu.sv
@@ -628,6 +655,7 @@ formal: spec-check
 	$(YOSYS) -ql build/formal_hd6301v1_mcu.log -s formal/prove_hd6301v1_mcu.ys
 	$(YOSYS) -ql build/formal_hd6301v1_modes.log -s formal/prove_hd6301v1_modes.ys
 	$(YOSYS) -ql build/formal_hd63701v0_mcu.log -s formal/prove_hd63701v0_mcu.ys
+	$(YOSYS) -ql build/formal_hd63701v0_modes.log -s formal/prove_hd63701v0_modes.ys
 	$(YOSYS) -ql build/formal_hd63705v0_mcu.log -s formal/prove_hd63705v0_mcu.ys
 
 synth: spec-check
@@ -651,6 +679,11 @@ synth: spec-check
 	$(YOSYS) -ql build/synth_hd6301v1_mode5_mcu.log -s synth/hd6301v1_mode5_mcu.ys
 	$(YOSYS) -ql build/synth_hd6301v1_mode6_mcu.log -s synth/hd6301v1_mode6_mcu.ys
 	$(YOSYS) -ql build/synth_hd63701v0_mcu.log -s synth/hd63701v0_mcu.ys
+	$(YOSYS) -ql build/synth_hd63701v0_mode0_mcu.log -s synth/hd63701v0_mode0_mcu.ys
+	$(YOSYS) -ql build/synth_hd63701v0_mode1_mcu.log -s synth/hd63701v0_mode1_mcu.ys
+	$(YOSYS) -ql build/synth_hd63701v0_mode2_mcu.log -s synth/hd63701v0_mode2_mcu.ys
+	$(YOSYS) -ql build/synth_hd63701v0_mode5_mcu.log -s synth/hd63701v0_mode5_mcu.ys
+	$(YOSYS) -ql build/synth_hd63701v0_mode6_mcu.log -s synth/hd63701v0_mode6_mcu.ys
 	$(YOSYS) -ql build/synth_hd63705v0_mcu.log -s synth/hd63705v0_mcu.ys
 
 quick: lint test test-m6800-rtl test-m6805-rtl

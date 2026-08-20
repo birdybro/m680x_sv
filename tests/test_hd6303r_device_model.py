@@ -69,6 +69,16 @@ class HD6303RDeviceModelTests(unittest.TestCase):
             vector = self.cycle(model, address=0xFFFE, valid=True)
             self.assertTrue(vector.external_bus)
             self.assertFalse(vector.program_bus)
+            self.assertTrue(
+                self.cycle(
+                    model, address=0x001F, valid=True, opcode_fetch=True
+                ).address_error
+            )
+            self.assertFalse(
+                self.cycle(
+                    model, address=0x0020, valid=True, opcode_fetch=True
+                ).address_error
+            )
 
         mode1 = HD6303RDeviceModel(1)
         self.assertFalse(mode1.register_is_internal(0x0000))

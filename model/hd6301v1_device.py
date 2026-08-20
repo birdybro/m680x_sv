@@ -2,7 +2,7 @@
 
 The model extends the documented HD6801-compatible peripheral behavior with
 the independently specified Hitachi mode maps, Port 3/4 registers, strobes,
-IS3 latch/interrupt, and Mode-7 instruction-address error classification. It
+IS3 latch/interrupt, and per-mode instruction-address error classification. It
 models E-cycle transactions rather than the RTL state machine.
 """
 
@@ -40,10 +40,11 @@ class HD6301V1DeviceModel(MC6801DeviceModel):
             transfer_framing_error=False,
             sci_biphase_supported=False,
             hitachi_new_modes=True,
+            hitachi_address_trap=True,
             timer_counter_double_write=True,
             timer_overflow_at_zero=True,
         )
-        self.instruction_address_trap_low_end = 0x007F
+        self.mode57_address_trap_low_end = 0x007F
 
     def register_is_internal(self, address: int) -> bool:
         if self.active_mode == 7:
@@ -61,13 +62,6 @@ class HD6301V1DeviceModel(MC6801DeviceModel):
 
     def program_is_internal(self, address: int) -> bool:
         return self.active_mode in {0, 5, 6, 7} and (address & 0xFFFF) >= 0xF000
-
-    def instruction_address_error(self, address: int) -> bool:
-        address &= 0xFFFF
-        return self.active_mode == 7 and (
-            address <= self.instruction_address_trap_low_end
-            or 0x0100 <= address <= 0xEFFF
-        )
 
     def read_register(
         self,

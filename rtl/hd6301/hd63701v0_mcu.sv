@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
-// HD63701V0 normalized single-chip Mode-7 digital integration.
+// HD63701V0 normalized Mode-0/1/2/5/6/7 digital integration.
 //
 // The 4-KiB EPROM image is supplied by the FPGA integration. Analog EPROM
 // programming voltages and algorithms are intentionally outside this digital
 // module. The manual contradicts itself about address-error behavior in the
 // executable 0040-007F RAM range; this wrapper permits execution throughout
 // RAM and confines the low address trap to 0000-003F.
-module hd63701v0_mcu (
+module hd63701v0_mcu #(
+  parameter logic [2:0] OPERATING_MODE = 3'd7
+) (
   input  logic        clk_i,
   input  logic        reset_n_i,
   input  logic        standby_n_i,
@@ -22,6 +24,12 @@ module hd63701v0_mcu (
   output logic [15:0] program_address_o,
   output logic        program_read_o,
   input  logic [7:0]  program_data_i,
+  output logic [15:0] external_address_o,
+  output logic [7:0]  external_data_o,
+  output logic        external_write_o,
+  output logic        external_bus_valid_o,
+  output logic        external_opcode_fetch_o,
+  input  logic [7:0]  external_data_i,
   output logic [7:0]  port1_o,
   output logic [7:0]  port1_oe_o,
   output logic [4:0]  port2_o,
@@ -58,6 +66,8 @@ module hd63701v0_mcu (
   output logic [7:0]  debug_opcode_o
 );
   logic program_read_internal;
+  logic external_bus_valid_internal;
+  logic external_opcode_fetch_internal;
   logic [7:0] port1_oe_internal;
   logic [4:0] port2_oe_internal;
   logic [7:0] port3_oe_internal;
@@ -70,6 +80,8 @@ module hd63701v0_mcu (
   // the resulting reset state and high-impedance ports; oscillator start-up
   // delay and standby voltage thresholds remain electrical integration facts.
   assign program_read_o = program_read_internal && standby_n_i;
+  assign external_bus_valid_o = external_bus_valid_internal && standby_n_i;
+  assign external_opcode_fetch_o = external_opcode_fetch_internal && standby_n_i;
   assign port1_oe_o = port1_oe_internal & {8{standby_n_i}};
   assign port2_oe_o = port2_oe_internal & {5{standby_n_i}};
   assign port3_oe_o = port3_oe_internal & {8{standby_n_i}};
@@ -80,9 +92,11 @@ module hd63701v0_mcu (
 
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
-    .OPERATING_MODE(3'd7),
+    .OPERATING_MODE(OPERATING_MODE),
     .HITACHI_CPU(1'b1),
     .HD6301_MODE7(1'b1),
+    .HITACHI_NEW_MODES(1'b1),
+    .HITACHI_ADDRESS_TRAP(1'b1),
     .SCI_TRANSFER_FRAMING_ERROR(1'b1),
     .SCI_BIPHASE_SUPPORTED(1'b0),
     .TIMER_COUNTER_DOUBLE_WRITE(1'b1),
@@ -92,7 +106,7 @@ module hd63701v0_mcu (
     .INTERNAL_RAM_BYTES(16'd192),
     .INTERNAL_PROGRAM_START(16'hf000),
     .INTERNAL_PROGRAM_BYTES(16'd4096),
-    .MODE7_ADDRESS_TRAP_LOW_END(16'h003f)
+    .MODE57_ADDRESS_TRAP_LOW_END(16'h003f)
   ) device (
     .clk_i(clk_i), .reset_n_i(reset_n_i),
     .standby_reset_n_i(standby_n_i), .clock_enable_i(clock_enable_i),
@@ -100,10 +114,13 @@ module hd63701v0_mcu (
     .standby_power_ok_i(standby_power_ok_i), .port1_i(port1_i),
     .port2_i(port2_i), .port3_i(port3_i), .port4_i(port4_i),
     .is3_n_i(is3_n_i), .program_data_i(program_data_i),
-    .external_data_i(8'hff), .program_address_o(program_address_o),
-    .program_read_o(program_read_internal), .external_address_o(),
-    .external_data_o(), .external_write_o(), .external_bus_valid_o(),
-    .external_opcode_fetch_o(), .port1_o(port1_o),
+    .external_data_i(external_data_i), .program_address_o(program_address_o),
+    .program_read_o(program_read_internal),
+    .external_address_o(external_address_o),
+    .external_data_o(external_data_o), .external_write_o(external_write_o),
+    .external_bus_valid_o(external_bus_valid_internal),
+    .external_opcode_fetch_o(external_opcode_fetch_internal),
+    .port1_o(port1_o),
     .port1_oe_o(port1_oe_internal), .port2_o(port2_o),
     .port2_oe_o(port2_oe_internal), .port3_o(port3_o),
     .port3_oe_o(port3_oe_internal), .port4_o(port4_o),

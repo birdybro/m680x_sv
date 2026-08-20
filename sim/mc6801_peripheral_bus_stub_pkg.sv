@@ -5,5 +5,6 @@ package mc6801_peripheral_bus_stub_pkg;
   logic [7:0] stub_data;
   logic stub_write;
   logic stub_valid;
+  logic stub_opcode_fetch = 1'b0;
   logic stub_interrupt_mask;
 endpackage

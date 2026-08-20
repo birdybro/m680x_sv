@@ -10,6 +10,7 @@ module tb_hd6303r_modes;
   logic external_valid [0:2];
   logic [7:0] port1_out [0:2];
   logic [7:0] port1_oe [0:2];
+  logic address_error [0:2];
   integer checks;
 
   generate
@@ -35,6 +36,7 @@ module tb_hd6303r_modes;
         .debug_output_compare_o(), .debug_input_capture_o(), .debug_tcsr_o(),
         .debug_trcsr_o(), .debug_receive_data_o(), .debug_opcode_o()
       );
+      assign address_error[device_index] = dut.device.instruction_address_error;
       /* verilator lint_on PINCONNECTEMPTY */
     end
   endgenerate
@@ -81,6 +83,21 @@ module tb_hd6303r_modes;
     end
   endtask
 
+  task automatic expect_address_error(
+    input integer device_index,
+    input logic expected,
+    input string label_value
+  );
+    begin
+      if (address_error[device_index] !== expected) begin
+        $fatal(1, "%0s device=%0d address=%04x address_error=%0b",
+               label_value, device_index, stub_address,
+               address_error[device_index]);
+      end
+      checks = checks + 1;
+    end
+  endtask
+
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
@@ -88,6 +105,7 @@ module tb_hd6303r_modes;
     stub_data = 8'h00;
     stub_write = 1'b0;
     stub_valid = 1'b0;
+    stub_opcode_fetch = 1'b0;
     stub_interrupt_mask = 1'b1;
     checks = 0;
 
@@ -162,7 +180,16 @@ module tb_hd6303r_modes;
       $fatal(1, "Hitachi expanded Mode 4 leaked Motorola Mode-5 transition");
     checks = checks + 1;
 
-    $display("HD6303R MODES PASS: %0d Mode-1/2/4 decode, ROMless, RAM, and port checks",
+    stub_opcode_fetch = 1'b1;
+    present(16'h001f, 1'b0, 8'h00);
+    for (integer index = 0; index < 3; index = index + 1)
+      expect_address_error(index, 1'b1, "register-window instruction fetch");
+    present(16'h0020, 1'b0, 8'h00);
+    for (integer index = 0; index < 3; index = index + 1)
+      expect_address_error(index, 1'b0, "external instruction fetch");
+    stub_opcode_fetch = 1'b0;
+
+    $display("HD6303R MODES PASS: %0d Mode-1/2/4 decode, ROMless, RAM, port, and TRAP checks",
              checks);
     $finish;
   end

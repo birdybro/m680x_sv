@@ -29,6 +29,7 @@ class HD6303RDeviceModel(MC6801DeviceModel):
             transfer_framing_error=False,
             sci_biphase_supported=False,
             hitachi_new_modes=True,
+            hitachi_address_trap=True,
             timer_counter_double_write=True,
             timer_overflow_at_zero=True,
         )

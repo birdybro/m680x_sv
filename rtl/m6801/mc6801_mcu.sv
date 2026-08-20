@@ -6,8 +6,9 @@
 // clk_i/clock_enable_i step represents one complete E-cycle. Physical Port 3
 // address/data multiplexing and the E/AS waveform belong in a pin wrapper.
 // HD6301_MODE7 enables the separately documented Hitachi single-chip decode,
-// Port 3/4 registers, handshake, and internal program-memory interface. The
-// RAM and address-error parameters distinguish the V1 and 63701V0 maps.
+// Port 3/4 registers, handshake, and internal program-memory interface.
+// HITACHI_ADDRESS_TRAP enables the per-mode instruction-address classifier;
+// the low-limit parameter distinguishes the V1 and 63701V0 RAM maps.
 // HITACHI_NEW_MODES selects the V1/R meanings of Mode 1 and Mode 4, which are
 // not interchangeable with the same-numbered Motorola MC6801 configurations.
 module mc6801_mcu #(
@@ -15,6 +16,7 @@ module mc6801_mcu #(
   parameter logic       HITACHI_CPU = 1'b0,
   parameter logic       HD6301_MODE7 = 1'b0,
   parameter logic       HITACHI_NEW_MODES = 1'b0,
+  parameter logic       HITACHI_ADDRESS_TRAP = 1'b0,
   parameter logic       SCI_TRANSFER_FRAMING_ERROR = 1'b1,
   parameter logic       SCI_BIPHASE_SUPPORTED = 1'b1,
   parameter logic       TIMER_COUNTER_DOUBLE_WRITE = 1'b0,
@@ -24,7 +26,7 @@ module mc6801_mcu #(
   parameter logic [15:0] INTERNAL_RAM_BYTES = 16'd128,
   parameter logic [15:0] INTERNAL_PROGRAM_START = 16'hf800,
   parameter logic [15:0] INTERNAL_PROGRAM_BYTES = 16'd2048,
-  parameter logic [15:0] MODE7_ADDRESS_TRAP_LOW_END = 16'h007f
+  parameter logic [15:0] MODE57_ADDRESS_TRAP_LOW_END = 16'h007f
 ) (
   input  logic        clk_i,
   input  logic        reset_n_i,
@@ -284,6 +286,29 @@ module mc6801_mcu #(
     end
   endfunction
 
+  function automatic logic hitachi_address_error_for_mode(
+    input logic [2:0] mode_value,
+    input logic [15:0] address_value
+  );
+    begin
+      case (mode_value)
+        // Hitachi table 2-13-1 omits Mode 2; sections 2.1/2.2 explicitly
+        // define it as equivalent to Mode 4, so both use the Mode-4 row.
+        3'd0, 3'd1, 3'd2, 3'd4, 3'd6:
+          hitachi_address_error_for_mode = address_value <= 16'h001f;
+        3'd5:
+          hitachi_address_error_for_mode =
+            (address_value <= MODE57_ADDRESS_TRAP_LOW_END) ||
+            ((address_value >= 16'h0200) && (address_value <= 16'hefff));
+        3'd7:
+          hitachi_address_error_for_mode =
+            (address_value <= MODE57_ADDRESS_TRAP_LOW_END) ||
+            ((address_value >= 16'h0100) && (address_value <= 16'hefff));
+        default: hitachi_address_error_for_mode = 1'b0;
+      endcase
+    end
+  endfunction
+
   always_comb begin
     port1_ddr_next = port1_ddr;
     port2_ddr_next = port2_ddr;
@@ -391,9 +416,9 @@ module mc6801_mcu #(
     capture_high_read = internal_read && (core_address == 16'h000d);
     port3_access = clock_enable_i && internal_register_select &&
       (core_address == 16'h0006);
-    instruction_address_error = HITACHI_MODE7 && core_opcode_fetch &&
-      ((core_address <= MODE7_ADDRESS_TRAP_LOW_END) ||
-       ((core_address >= 16'h0100) && (core_address <= 16'hefff)));
+    instruction_address_error = HITACHI_CPU && HITACHI_ADDRESS_TRAP &&
+      core_opcode_fetch &&
+      hitachi_address_error_for_mode(active_mode, core_address);
 
     core_data_in = external_data_i;
     if (internal_program_select) begin

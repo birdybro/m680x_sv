@@ -98,6 +98,11 @@ its normalized external-memory boundary. Modes 2 and 4 are equivalent expanded
 multiplexed RAM modes; the implementation explicitly prevents Motorola Mode-4
 RAM mirroring and the Mode-4-to-5 transition from leaking into this Hitachi
 profile.
+Every legal mode also invokes address TRAP for opcode fetches in
+`$0000`-`$001f`, even where a mode-specific register exclusion sources the
+underlying byte from external memory; normal data accesses do not trap. The
+handbook omits Mode 2 from table 2-13-1, so that mode follows its explicitly
+documented Mode-4-equivalent classification.
 HD6303R follows the HD6301V1-specific framing-error rule: the shift-register
 byte is not transferred to RDR when the stop bit is missing.
 Both parts also implement Hitachi's writable 16-bit FRC sequence and assert
@@ -111,6 +116,10 @@ address function, mode-specific register exclusions, and common internal RAM.
 A seven-core integration bench executes the same program from the correct
 internal or external source in every mode and compares its architectural
 result. The program image remains an integration input.
+Mode-directed address checks cover `$0000`-`$001f` in Modes 0/1/2/4/6, the
+two Mode-5 non-memory spans, and both Mode-7 spans. Mode 2 again follows the
+manual's explicit Mode-2/Mode-4 equivalence because the address-error table
+omits a separate Mode-2 row.
 
 Mode 7 additionally covers all four GPIO ports, the IS3 input latch and IRQ1
 source, read/write-selected OS3, common timer/SCI functions, and SLP behavior.
@@ -125,18 +134,24 @@ The Mode-7 timer regression verifies full-counter double-byte writes and the
 documented Hitachi TOF boundary. It also verifies that V1 DDR clearing waits
 for the next E edge.
 
-The HD63701V0 claim covers its single-chip Mode 7 digital boundary: the
-`$0000`-`$0014` register block, RAME-controlled 192-byte RAM at
-`$0040`-`$00ff`, four GPIO ports with IS3/OS3, common Hitachi timer and
-interrupts, the V0-specific framing-error transfer, SLP, and a separately
+The HD63701V0 claim covers every legal Mode 0, 1, 2, 5, 6, and 7 at the
+normalized digital boundary. Mode-directed tests cover internal EPROM in Modes
+0/5/6/7, external program memory in Modes 1/2, Mode-0 external reset-vector
+handoff, Mode-5 partial decode, mode-specific register and Port-1/3/4 roles,
+RAME-controlled 192-byte RAM at `$0040`-`$00ff`, and every unambiguous
+per-mode address-error span. A six-core bench executes the same RAM-using
+program from the selected program source, enters address TRAP at `$001f`, and
+fetches the handler from the correct vector source in all six modes.
+
+Mode 7 additionally covers four GPIO ports with IS3/OS3, the common Hitachi
+timer and interrupts, V0-specific framing-error transfer, SLP, and a separately
 supplied `$f000`-`$ffff` EPROM image. The RTL and model execute from both RAM
-boundaries and trap representative fetches in the unambiguous non-memory
-range. Asynchronous STBY entry, retained RAM/STBY_PWR, high-impedance ports,
-and reset-vector recovery are tested. Expanded modes, physical timing, and
-EPROM programming mode remain outside the claim. Its `CC1:CC0=00` selection is
-likewise reserved and does not enable the Motorola bi-phase engine.
-The V0 regression verifies its distinct asynchronous DDR reset at the digital
-boundary.
+boundaries and enter the exact 13-cycle address TRAP from unambiguous
+non-memory space. Asynchronous STBY entry, retained RAM/STBY_PWR,
+high-impedance ports and buses, and reset-vector recovery are tested. Physical
+bus waveforms and analog EPROM programming remain outside the claim. The
+reserved `CC1:CC0=00` selection does not enable Motorola bi-phase. The V0
+regression also verifies its distinct asynchronous DDR reset.
 
 The HD63705V0 claim covers its distinct 14-bit CPU/device boundary, physical
 `$00c0`-`$00ff` stack window, `$0040`-`$00ff` RAM, `$1000`-`$1fff` EPROM,
@@ -148,9 +163,10 @@ comparisons cover these features. Oscillator/STOP recovery time, electrical
 pin timing, EPROM voltage/pulse/retention physics, and silicon values on unused
 memory reads remain outside the partial digital claim.
 
-The manufacturer manual is internally inconsistent for Mode-7 instruction
-fetches at `$0040`-`$007f`: the memory map and address-error prose identify the
-range as internal RAM, but table 2-13-1 includes it in an address-error span.
+The manufacturer manual is internally inconsistent for Mode-5 and Mode-7
+instruction fetches at `$0040`-`$007f`: every mode's memory map and the
+address-error prose identify the range as internal RAM, but table 2-13-1
+includes it in both modes' address-error spans.
 The normalized implementation permits execution throughout physical RAM,
 consistent with the memory map, and classifies silicon TRAP behavior for this
 range as `UNDEFINED_BY_DOCUMENTATION`. No verified bus-trace claim depends on
@@ -181,13 +197,13 @@ The normalized HD6301 CPU accepts a wrapper-generated instruction-address-error
 request and implements the documented 13-cycle TRAP entry, complete state
 stack, `$ffee:$ffef` vector, and retry PC. A full MCU claim still requires each
 device wrapper to decode its own non-memory space and generate that request.
-The HD6301V1 Mode-7 wrapper now performs this decode for `$0000`-`$007f` and
-`$0100`-`$efff` and keeps its vector reads on the internal program interface.
-The HD63701V0 wrapper uses `$0000`-`$003f` plus `$0100`-`$efff`, while the
-conflicting `$0040`-`$007f` range is explicitly unverified as described above.
-Every legal HD6303R mode spans external memory around the internal register/RAM
-windows, so the manufacturer's address-error table defines no non-memory fetch
-region for these profiles; opcode-error TRAP remains active.
+The HD6301V1 wrapper implements its table-defined per-mode regions and keeps
+Mode-7 vector reads on the internal program interface. HD63701V0 uses
+`$0000`-`$003f` plus `$0100`-`$efff` in Mode 7, and `$0000`-`$003f` plus
+`$0200`-`$efff` in Mode 5; the conflicting physical-RAM range is explicitly
+unverified as described above. Modes 0/1/2/6 on both V0 and V1, Mode 4 on V1,
+and all HD6303R modes trap opcode fetches in `$0000`-`$001f`. Opcode-error TRAP
+remains independently active in every Hitachi CPU profile.
 
 ## Deferred documented variants
 

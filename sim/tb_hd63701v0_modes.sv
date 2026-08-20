@@ -1,33 +1,32 @@
 // SPDX-License-Identifier: MIT
-module tb_hd6301v1_modes;
+module tb_hd63701v0_modes;
   import mc6801_peripheral_bus_stub_pkg::*;
 
   logic clk;
   logic reset_n;
-  logic [15:0] external_address [0:6];
-  logic [7:0] external_data [0:6];
-  logic external_write [0:6];
-  logic external_valid [0:6];
-  logic [15:0] program_address [0:6];
-  logic program_read [0:6];
-  logic [7:0] port1_out [0:6];
-  logic [7:0] port1_oe [0:6];
-  logic [7:0] port4_out [0:6];
-  logic [7:0] port4_oe [0:6];
-  logic address_error [0:6];
+  logic [15:0] external_address [0:5];
+  logic [7:0] external_data [0:5];
+  logic external_write [0:5];
+  logic external_valid [0:5];
+  logic [15:0] program_address [0:5];
+  logic program_read [0:5];
+  logic [7:0] port1_out [0:5];
+  logic [7:0] port1_oe [0:5];
+  logic [7:0] port4_out [0:5];
+  logic [7:0] port4_oe [0:5];
+  logic address_error [0:5];
   integer checks;
 
   generate
-    for (genvar device_index = 0; device_index < 7; device_index = device_index + 1) begin : mode_devices
+    for (genvar device_index = 0; device_index < 6; device_index = device_index + 1) begin : mode_devices
       localparam logic [2:0] DEVICE_MODE =
         (device_index == 0) ? 3'd0 :
         (device_index == 1) ? 3'd1 :
         (device_index == 2) ? 3'd2 :
-        (device_index == 3) ? 3'd4 :
-        (device_index == 4) ? 3'd5 :
-        (device_index == 5) ? 3'd6 : 3'd7;
+        (device_index == 3) ? 3'd5 :
+        (device_index == 4) ? 3'd6 : 3'd7;
       /* verilator lint_off PINCONNECTEMPTY */
-      hd6301v1_mcu #(.OPERATING_MODE(DEVICE_MODE)) dut (
+      hd63701v0_mcu #(.OPERATING_MODE(DEVICE_MODE)) dut (
         .clk_i(clk), .reset_n_i(reset_n), .standby_n_i(1'b1),
         .clock_enable_i(1'b1), .nmi_n_i(1'b1), .irq1_n_i(1'b1),
         .standby_power_ok_i(1'b1), .port1_i(8'h3c), .port2_i(5'h1f),
@@ -133,98 +132,86 @@ module tb_hd6301v1_modes;
     if ((mode_devices[0].dut.device.active_mode !== 3'd0) ||
         (mode_devices[1].dut.device.active_mode !== 3'd1) ||
         (mode_devices[2].dut.device.active_mode !== 3'd2) ||
-        (mode_devices[3].dut.device.active_mode !== 3'd4) ||
-        (mode_devices[4].dut.device.active_mode !== 3'd5) ||
-        (mode_devices[5].dut.device.active_mode !== 3'd6) ||
-        (mode_devices[6].dut.device.active_mode !== 3'd7)) begin
-      $fatal(1, "HD6301V1 legal mode did not latch at reset");
+        (mode_devices[3].dut.device.active_mode !== 3'd5) ||
+        (mode_devices[4].dut.device.active_mode !== 3'd6) ||
+        (mode_devices[5].dut.device.active_mode !== 3'd7)) begin
+      $fatal(1, "HD63701V0 legal mode did not latch at reset");
     end
-    checks = checks + 7;
+    checks = checks + 6;
 
-    // Mode 0 alone begins with external reset-vector reads. Modes 1/2/4 have
-    // no internal ROM, while Modes 5/6/7 use the internal vector image.
     present(16'hfffe, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_source(index, index <= 3, index >= 4, "reset vector high");
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_source(index, index <= 2, index >= 3, "reset vector high");
     present(16'hffff, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_source(index, index <= 3, index >= 4, "reset vector low");
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_source(index, index <= 2, index >= 3, "reset vector low");
     advance();
     if (external_valid[0] || !program_read[0])
-      $fatal(1, "HD6301V1 Mode-0 reset-vector handoff");
+      $fatal(1, "HD63701V0 Mode-0 reset-vector handoff");
     checks = checks + 1;
 
     present(16'hf000, 1'b0, 8'h00);
-    expect_source(0, 1'b0, 1'b1, "Mode 0 internal ROM");
-    expect_source(1, 1'b1, 1'b0, "Mode 1 external program");
-    expect_source(2, 1'b1, 1'b0, "Mode 2 external program");
-    expect_source(3, 1'b1, 1'b0, "Mode 4 external program");
-    expect_source(4, 1'b0, 1'b1, "Mode 5 internal ROM");
-    expect_source(5, 1'b0, 1'b1, "Mode 6 internal ROM");
-    expect_source(6, 1'b0, 1'b1, "Mode 7 internal ROM");
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_source(index, (index == 1) || (index == 2),
+                    (index == 0) || (index >= 3), "EPROM selection");
 
-    present(16'h0080, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
+    present(16'h0040, 1'b0, 8'h00);
+    for (integer index = 0; index < 6; index = index + 1)
       expect_source(index, 1'b0, 1'b0, "internal RAM base");
 
     present(16'h0000, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
+    for (integer index = 0; index < 6; index = index + 1)
       expect_source(index, index == 1, 1'b0, "Mode-1 Port-1 exclusion");
 
     present(16'h0004, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_source(index, (index <= 3) || (index == 5), 1'b0,
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_source(index, (index <= 2) || (index == 4), 1'b0,
                     "Port-3 register map");
 
     present(16'h0005, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_source(index, index <= 3, 1'b0, "Port-4 register map");
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_source(index, index <= 2, 1'b0, "Port-4 register map");
 
     present(16'h0100, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_source(index, index < 6, 1'b0, "partial external window");
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_source(index, index < 5, 1'b0, "partial external window");
 
     present(16'h0200, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_source(index, (index <= 3) || (index == 5), 1'b0,
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_source(index, (index <= 2) || (index == 4), 1'b0,
                     "expanded external space");
 
     present(16'ha55a, 1'b0, 8'h00);
     if ((port1_out[1] !== 8'h5a) || (port1_oe[1] !== 8'hff))
-      $fatal(1, "HD6301V1 Mode-1 lower-address function");
-    for (integer index = 0; index < 4; index = index + 1) begin
+      $fatal(1, "HD63701V0 Mode-1 lower-address function");
+    for (integer index = 0; index < 3; index = index + 1) begin
       if ((port4_out[index] !== 8'ha5) || (port4_oe[index] !== 8'hff))
-        $fatal(1, "HD6301V1 full-address Port-4 function device=%0d", index);
+        $fatal(1, "HD63701V0 full-address Port-4 function device=%0d", index);
     end
-    checks = checks + 5;
+    checks = checks + 4;
 
-    present(16'h0003, 1'b1, 8'h20);
-    advance();
-    if (mode_devices[3].dut.device.active_mode !== 3'd4)
-      $fatal(1, "Hitachi Mode 4 leaked Motorola Mode-5 transition");
-    checks = checks + 1;
-
-    // Table 2-13-1 classifies instruction-address errors per mode. Mode 2
-    // follows the manual's separately documented equivalence to Mode 4.
     stub_opcode_fetch = 1'b1;
     present(16'h001f, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
+    for (integer index = 0; index < 6; index = index + 1)
       expect_address_error(index, 1'b1, "register-window instruction fetch");
     present(16'h0020, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_address_error(index, (index == 4) || (index == 6),
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_address_error(index, (index == 3) || (index == 5),
                            "low non-memory instruction fetch");
+    present(16'h0040, 1'b0, 8'h00);
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_address_error(index, 1'b0, "physical RAM instruction fetch");
     present(16'h0100, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_address_error(index, index == 6,
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_address_error(index, index == 5,
                            "Mode-7 non-memory instruction fetch");
     present(16'h0200, 1'b0, 8'h00);
-    for (integer index = 0; index < 7; index = index + 1)
-      expect_address_error(index, (index == 4) || (index == 6),
+    for (integer index = 0; index < 6; index = index + 1)
+      expect_address_error(index, (index == 3) || (index == 5),
                            "partial-decode instruction fetch");
     stub_opcode_fetch = 1'b0;
 
-    $display("HD6301V1 MODES PASS: %0d legal-mode ROM, RAM, register, bus, and TRAP checks",
+    $display("HD63701V0 MODES PASS: %0d legal-mode EPROM, RAM, register, bus, and TRAP checks",
              checks);
     $finish;
   end

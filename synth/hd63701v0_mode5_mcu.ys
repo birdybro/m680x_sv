@@ -1,0 +1,5 @@
+read_verilog -sv rtl/generated/yosys_m6800_core.sv rtl/m6801/mc6801_mcu.sv rtl/hd6301/hd63701v0_mcu.sv
+chparam -set OPERATING_MODE 5 hd63701v0_mcu
+synth -top hd63701v0_mcu
+check -assert
+tee -o build/synth_hd63701v0_mode5_mcu.json stat -json

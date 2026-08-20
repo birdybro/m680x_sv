@@ -222,8 +222,9 @@ the normalized digital boundary.
 paths in the common HD6801-compatible device block for every legal operating
 mode. The sharing is based on Hitachi's compatibility statement and is limited
 by explicit parameters. `HITACHI_NEW_MODES` selects Hitachi's non-multiplexed
-Mode 1 and Mode-2-equivalent Mode 4 meanings, while the distinct Mode-7 Port
-3/4, strobe, and address-error behavior remains separately guarded.
+Mode 1 and Mode-2-equivalent Mode 4 meanings. Distinct Mode-7 Port 3/4 and
+strobe behavior remains separately guarded, while another explicit parameter
+enables the manufacturer's per-mode instruction-address classifier.
 
 Modes 0, 5, 6, and 7 select the 4-KiB `$f000`-`$ffff` internal mask-ROM image.
 Mode 0 initially obtains its two reset-vector bytes from the external boundary
@@ -239,6 +240,10 @@ Mode 7 decodes registers at `$0000`-`$001f`, RAME-controlled executable RAM at
 fetches from `$0000`-`$007f` or `$0100`-`$efff` assert the HD6301 address-error
 input and enter the unmaskable TRAP sequence. Ordinary data accesses to those
 unusable regions neither trap nor escape onto an invented external bus.
+Modes 0/1/4/6 trap opcode fetches in `$0000`-`$001f`, and Mode 5 traps
+`$0000`-`$007f` plus `$0200`-`$efff`; Mode 2 uses the Mode-4 classifier because
+the handbook explicitly calls those expanded multiplexed RAM modes equivalent
+but omits a separate Mode-2 row from address-error table 2-13-1.
 
 `program_address_o`, `program_read_o`, and `program_data_i` connect the
 documented 4-KiB internal mask-ROM window to an integration-owned FPGA image,
@@ -275,36 +280,49 @@ pin-interface tasks. The exact boundary is recorded in
 The wrapper keeps all vectors external, decodes the common internal register
 window and RAME-controlled 128-byte RAM, and leaves all program space external.
 Its CPU profile adds AIM/OIM/EIM/TIM, XGDX, SLP, Hitachi timing, and
-opcode-error TRAP. During SLP the CPU state stops while the timer and SCI remain
+opcode-error TRAP. Opcode fetches in `$0000`-`$001f` also invoke address TRAP
+in every legal mode; ordinary accesses still use each address's documented
+internal/external selection. Mode 2 follows Mode 4 for this classification by
+the same documented equivalence noted above. During SLP the CPU state stops
+while the timer and SCI remain
 clocked. An enabled request vectors normally; a masked request releases sleep
 at the following instruction without stacking, as the manufacturer specifies.
 The wrapper also presents the shared E-synchronous STBY boundary, suppressing
 the external transaction qualifier and GPIO drive during reset-state standby
 while retaining supplied RAM and STBY_PWR state.
 
-## HD63701V0 single-chip Mode-7 integration
+## HD63701V0 Mode-0/1/2/5/6/7 integration
 
 `rtl/hd6301/hd63701v0_mcu.sv` selects the documented Hitachi CPU/timer lineage
-while independently configuring the V0's `$0040`-`$00ff` 192-byte RAM, V0 SCI
-framing-error transfer, and 4-KiB EPROM interface. The common shell reserves
+while independently configuring every legal Mode 0, 1, 2, 5, 6, and 7, the
+V0's `$0040`-`$00ff` 192-byte RAM, V0 SCI framing-error transfer, and 4-KiB
+EPROM interface. Modes 3 and 4 are marked not used. The common shell reserves
 one 256-byte FPGA RAM page; device decode exposes exactly 128 or 192 bytes as
 appropriate, and address subtraction maps the selected physical window without
 leaking one variant's address range into another wrapper.
 
-The program-image signals represent normal read-only MCU accesses to
-`$f000`-`$ffff`. They do not model the separate 27256-style analog programming
-mode, VPP, programming margins, or retention. Reset and interrupt vectors are
-included in this image as normal internal EPROM reads.
+Modes 0/5/6/7 select the program-image signals for normal read-only MCU accesses
+to `$f000`-`$ffff`; Modes 1/2 expose that range externally. Mode 0 obtains the
+initial reset-vector pair externally, then selects EPROM for later reads of the
+same addresses. Mode 5 limits external memory to `$0100`-`$01ff`; Modes 0/1/2/6
+provide their documented expanded selections. The `external_*` interface is a
+normalized full-address transaction and does not claim historical pin phases.
+The program port does not model the separate 27256-style analog programming
+mode, VPP, programming margins, or retention.
 
 The handbook's memory map and prose make `$0040`-`$007f` physical internal RAM,
-while its Mode-7 address-error table contradictorily lists the range as a TRAP
-source. The wrapper permits execution from the whole RAM window and traps
-`$0000`-`$003f` and `$0100`-`$efff`. This is an explicit normalized integration
-policy, not a silicon-equivalence claim for the disputed range; the structured
-device and peripheral specifications preserve the discrepancy.
+while its Mode-5 and Mode-7 address-error rows contradictorily list the range
+as a TRAP source. The wrapper permits execution from the whole RAM window.
+Modes 0/1/2/6 trap `$0000`-`$001f`; Mode 5 traps `$0000`-`$003f` and
+`$0200`-`$efff`; Mode 7 traps `$0000`-`$003f` and `$0100`-`$efff`. The RAM
+choice is an explicit normalized integration policy, not a silicon-equivalence
+claim for the disputed range; the structured specifications preserve the
+discrepancy.
 The V0-specific wrapper accepts `standby_n_i` asynchronously, immediately
-removes GPIO/program activity, retains supplied RAM/STBY_PWR, and performs the
-documented reset-vector restart when standby is released.
+removes GPIO/program/external-bus activity, retains supplied RAM/STBY_PWR, and
+performs the mode-selected reset-vector restart when standby is released. The
+complete normalized interface is recorded in
+`../spec/interfaces/hd63701v0_modes.json`.
 
 ## MC68705P5 integration
 

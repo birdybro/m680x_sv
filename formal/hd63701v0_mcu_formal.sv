@@ -14,8 +14,10 @@ module hd63701v0_mcu_formal;
   (* anyseq *) logic [7:0] port4_in;
   (* anyseq *) logic is3_n;
   (* anyseq *) logic [7:0] program_data;
+  (* anyseq *) logic [7:0] external_data;
   logic [15:0] program_address;
   logic program_read;
+  logic external_valid;
   logic [7:0] port1_out;
   logic [7:0] port1_oe;
   logic [4:0] port2_out;
@@ -54,6 +56,9 @@ module hd63701v0_mcu_formal;
     .port2_i(port2_in), .port3_i(port3_in), .port4_i(port4_in),
     .is3_n_i(is3_n), .program_address_o(program_address),
     .program_read_o(program_read), .program_data_i(program_data),
+    .external_address_o(), .external_data_o(), .external_write_o(),
+    .external_bus_valid_o(external_valid), .external_opcode_fetch_o(),
+    .external_data_i(external_data),
     .port1_o(port1_out), .port1_oe_o(port1_oe), .port2_o(port2_out),
     .port2_oe_o(port2_oe), .port3_o(port3_out), .port3_oe_o(port3_oe),
     .port4_o(port4_out), .port4_oe_o(port4_oe), .os3_n_o(os3_n),
@@ -72,6 +77,7 @@ module hd63701v0_mcu_formal;
 
   always @* begin
     assert (program_address == debug_address);
+    assert (!external_valid);
     if (program_read) assert (program_address >= 16'hf000);
     if (opcode_fetch && ((debug_address <= 16'h003f) ||
         ((debug_address >= 16'h0100) && (debug_address <= 16'hefff)))) begin

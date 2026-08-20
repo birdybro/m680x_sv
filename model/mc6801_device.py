@@ -184,6 +184,8 @@ class MC6801DeviceModel:
         transfer_framing_error: bool = True,
         sci_biphase_supported: bool = True,
         hitachi_new_modes: bool = False,
+        hitachi_address_trap: bool = False,
+        mode57_address_trap_low_end: int = 0x007F,
         timer_counter_double_write: bool = False,
         timer_overflow_at_zero: bool = False,
         internal_ram_start: int = 0x0080,
@@ -205,6 +207,8 @@ class MC6801DeviceModel:
         self.transfer_framing_error = transfer_framing_error
         self.sci_biphase_supported = sci_biphase_supported
         self.hitachi_new_modes = hitachi_new_modes
+        self.hitachi_address_trap = hitachi_address_trap
+        self.mode57_address_trap_low_end = mode57_address_trap_low_end & 0xFFFF
         self.timer_counter_double_write = timer_counter_double_write
         self.timer_overflow_at_zero = timer_overflow_at_zero
 
@@ -297,6 +301,26 @@ class MC6801DeviceModel:
         if self.active_mode == 6 and self.rom_start != 0xF800:
             return self.rom_start <= address < self.rom_start + 0x0800
         return 0xF800 <= address <= 0xFFFF
+
+    def instruction_address_error(self, address: int) -> bool:
+        """Classify manufacturer-defined Hitachi non-memory fetch ranges."""
+
+        if not self.hitachi_address_trap:
+            return False
+        address &= 0xFFFF
+        # The table omits Mode 2; the same manual explicitly defines it as
+        # equivalent to Mode 4, so the independent model uses that row.
+        if self.active_mode in {0, 1, 2, 4, 6}:
+            return address <= 0x001F
+        if self.active_mode == 5:
+            return address <= self.mode57_address_trap_low_end or (
+                0x0200 <= address <= 0xEFFF
+            )
+        if self.active_mode == 7:
+            return address <= self.mode57_address_trap_low_end or (
+                0x0100 <= address <= 0xEFFF
+            )
+        return False
 
     def read_register(
         self,
@@ -484,6 +508,11 @@ class MC6801DeviceModel:
             irq_vector=self.irq_vector(inputs.irq1_n),
             state=snapshot,
             program_bus=bool(program_select and not inputs.write),
+            address_error=bool(
+                inputs.valid
+                and inputs.opcode_fetch
+                and self.instruction_address_error(address)
+            ),
         )
 
     def _advance_memory_and_gpio(

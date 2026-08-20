@@ -5,7 +5,7 @@ the documented Motorola M6800, MC6801/MC6803, M6805/MC68705 and related Hitachi
 HD6301/HD6303/HD6305 processor families. It provides synthesizable FPGA RTL,
 machine-readable architecture facts, a structurally independent Python model,
 and deterministic verification. The model includes separate CPU-instruction,
-MC6801/MC6803 device-cycle, all-legal-mode HD6301V1, HD63701V0 Mode-7, and
+MC6801/MC6803 device-cycle, all-legal-mode HD6301V1/HD63701V0, and
 HD63705V0 transaction paths.
 
 The project is under active development. Every current implementation claim is
@@ -40,13 +40,14 @@ with device wrappers kept at separate integration boundaries:
 - `hd6301v1_mcu`: every legal HD6301V1 Mode 0/1/2/4/5/6/7 integration with a
   separate 4-KiB FPGA mask-ROM image port, normalized expanded-memory bus,
   executable RAM, mode-dependent ports/strobes, timer/SCI, SLP,
-  E-synchronous STBY retention, and Mode-7 address/opcode TRAP;
+  E-synchronous STBY retention, and per-mode address/opcode TRAP;
 - `hd6303r_mcu`: HD6303R legal Mode-1/2/4 ROMless integration with the HD6301
   ISA, opcode TRAP, SLP/STBY behavior, RAM, mode-dependent Port 1, timer, and
   SCI;
-- `hd63701v0_mcu`: HD63701V0 Mode-7 integration with 192-byte RAM, four GPIO
-  ports, timer/SCI, asynchronous STBY retention, address TRAP, and a separate
-  4-KiB EPROM-image port;
+- `hd63701v0_mcu`: every legal HD63701V0 Mode 0/1/2/5/6/7 integration with
+  192-byte RAM, mode-selected ports and normalized external bus, timer/SCI,
+  asynchronous STBY retention, per-mode address TRAP, and a separate 4-KiB
+  EPROM-image port;
 - `hd63705v0_mcu`: 14-bit HD63705V0 integration with 192-byte RAM, 31 GPIO,
   an eight-bit timer, synchronous SCI/Timer2, INT/INT2 priority, WAIT/STOP/STBY,
   and normalized digital EPROM verify/program controls; and
@@ -103,9 +104,8 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
-across two simulators, fourteen bounded formal profiles, and twenty synthesis
-tops.
-Detailed counts,
+across two simulators, fifteen bounded formal profiles, and twenty-five
+synthesis tops. Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
 
@@ -118,10 +118,10 @@ cycle boundaries being checked.
 ## Known limitations
 
 Pin-level MC6800 phase generation/electrical timing, physical MC6801/MC6803
-bus multiplexing and complete Port 3 handshake timing, HD63701V0 MCU modes
-outside Mode 7, analog EPROM
-programming physics, SCI clock-skew/electrical tolerance, and complete
-manufacturer bus waveforms outside the specifically verified traces remain
+and Hitachi multiplexed/non-multiplexed bus waveforms, complete Port 3
+handshake timing, analog EPROM programming physics, SCI clock-skew/electrical
+tolerance, and complete manufacturer bus waveforms outside the specifically
+verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by
 the integrator; their externally described vector and programming controls are
 implemented without redistributing the firmware image.

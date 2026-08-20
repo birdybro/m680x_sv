@@ -115,8 +115,8 @@
   },
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd6303r_mcu.sv binds the HD6301 CPU profile to every legal HD6303R Mode-1/2/4 peripheral, RAM, and external-memory configuration",
-    "verification": "Directed execution repeats external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, opcode TRAP, E-synchronous STBY, external-bus suppression, reset-vector recovery, and retained RAM/STBY_PWR in Modes 1, 2, and 4; a separate decode suite checks all mode-specific register, ROMless, RAM, and Port-1 facts",
-    "address_error": "All legal modes span external memory around the internal register/RAM windows, so the address-error table defines no non-memory fetch region; opcode error still invokes TRAP",
+    "verification": "Directed execution repeats external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, opcode TRAP, E-synchronous STBY, external-bus suppression, reset-vector recovery, and retained RAM/STBY_PWR in Modes 1, 2, and 4; a separate 47-check decode suite checks all mode-specific register, ROMless, RAM, Port-1, and address-error facts",
+    "address_error": "Every legal Mode-1/2/4 profile invokes unmaskable TRAP for an opcode fetch at 0000-001F even when a register-excluded location selects external data memory; ordinary data accesses remain external or internal according to the mode map. Mode 2 follows the manual's explicit equivalence with Mode 4 because table 2-13-1 omits a separate Mode-2 row.",
     "excluded_modes": "Port 3 physical data/address multiplexing, AS/RW half-cycle waveforms, and oscillator recovery delay remain unclaimed",
     "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }

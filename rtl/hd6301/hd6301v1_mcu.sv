@@ -98,14 +98,15 @@ module hd6301v1_mcu #(
   assign sci_irq_o = sci_irq_internal && !standby_active;
 
   // HITACHI_NEW_MODES prevents numeric Mode 1/4 values from importing the
-  // different Motorola MC6801 maps. HD6301_MODE7 enables address TRAP only
-  // when the configured mode is actually Mode 7.
+  // different Motorola MC6801 maps. Address TRAP follows the manufacturer
+  // table in every legal mode; HD6301_MODE7 guards the Mode-7-only ports.
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
     .OPERATING_MODE(OPERATING_MODE),
     .HITACHI_CPU(1'b1),
     .HD6301_MODE7(1'b1),
     .HITACHI_NEW_MODES(1'b1),
+    .HITACHI_ADDRESS_TRAP(1'b1),
     .SCI_TRANSFER_FRAMING_ERROR(1'b0),
     .SCI_BIPHASE_SUPPORTED(1'b0),
     .TIMER_COUNTER_DOUBLE_WRITE(1'b1),

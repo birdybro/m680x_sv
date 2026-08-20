@@ -75,7 +75,7 @@
   "memory_control": {
     "RAME": "bit 6 resets set and enables the 0080-00FF internal RAM; clearing it disables that physical RAM and exposes the selected mode's documented external or unusable behavior",
     "STBY_PWR": "read/write retained-supply validity bit; FPGA profile deterministically initializes it to zero on external reset, preserves it through STBY while standby_power_ok_i remains true, and clears it when that input is false",
-    "address_trap": "in Mode 7, instruction fetches from 0000-007F or 0100-EFFF invoke unmaskable TRAP; normal data accesses do not",
+    "address_trap": "Modes 0/1/2/4/6 trap instruction fetches from 0000-001F; Mode 5 traps 0000-007F and 0200-EFFF; Mode 7 traps 0000-007F and 0100-EFFF. Normal data accesses do not trap. Table 2-13-1 omits Mode 2; its classifier is inferred from the manual's explicit Mode-2/Mode-4 equivalence.",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.11 and 2.13, table 2-13-1, printed pages 161-162 and 166-167"}
   },
   "interrupts": [
@@ -92,7 +92,7 @@
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd6301v1_mcu.sv implements every legal Mode-0/1/2/4/5/6/7 digital memory and port selection and accepts a separate 4-KiB FPGA mask-ROM image",
     "model": "model/hd6301v1_device.py independently classifies all legal-mode E-cycle transactions, program/external memory, Mode-7 GPIO/handshake state, and address errors",
-    "verification": "A 77-check decode suite covers all legal mode maps and a seven-core bench executes from every program source; Mode-7 directed execution additionally covers internal reset/vector fetch, executable RAM, address TRAP, Port 3/4 GPIO, IS3/OS3, SLP, STBY, and retention",
+    "verification": "A 105-check decode suite covers all legal mode maps and address-error regions, and a seven-core bench executes from every program source; Mode-7 directed execution additionally covers internal reset/vector fetch, executable RAM, exact 13-cycle address TRAP, Port 3/4 GPIO, IS3/OS3, SLP, STBY, and retention",
     "excluded_modes": "Mode 3 is not defined; physical multiplexed/non-multiplexed half-cycle bus waveforms and oscillator recovery delay remain unclaimed",
     "analog_exclusions": ["mask-ROM contents", "oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
