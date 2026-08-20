@@ -79,19 +79,25 @@ For a framing error, MC6801 transfers the misframed byte into RDR while setting
 ORFE without RDRF. This behavior is independently selected and tested rather
 than generalized to Hitachi parts.
 
-The HD6303R claim currently binds the HD6301 instruction profile to the
-manufacturer-compatible register, 128-byte RAM, Port 1/2, timer, SCI, and
-interrupt integration in expanded multiplexed Mode 2. Directed integration
-tests cover HD6301-only instructions, opcode TRAP, continued timer operation in
-SLP, masked-request wake without vectoring, and simultaneous NMI/IRQ priority.
+The HD6303R claim binds the HD6301 instruction profile to the
+manufacturer-compatible register, 128-byte RAM, mode-dependent Port 1/2,
+timer, SCI, and interrupt integration in every available Mode 1, 2, and 4.
+Directed integration tests repeat HD6301-only instructions, opcode TRAP,
+continued timer operation in SLP, masked-request wake without vectoring, and
+simultaneous NMI/IRQ priority in all three modes.
 They also cover E-synchronous STBY entry, high-impedance GPIO/external-bus
 qualification, retained RAM/STBY_PWR, and reset-vector recovery. Port 3
 handshakes and the physical multiplexed waveform remain outside this partial
 claim. The Hitachi SCI table reserves `CC1:CC0=00`, so the wrapper explicitly
 disables Motorola bi-phase rather than leaking that format across variants.
-The primary mode table makes Modes 1, 2, and 4 available on
-HD6303R; Modes 0, 5, 6, and 7 require the disabled mask ROM. Only Mode 2 is
-currently exposed by the wrapper.
+The primary mode table makes Modes 1, 2, and 4 available on HD6303R; Modes 0,
+5, 6, and 7 require the disabled mask ROM. Mode 1 exposes the full
+non-multiplexed address/data bus on the physical device and makes
+`$0000`/`$0002` external while Port 1 drives A0-A7. The RTL exposes that mode at
+its normalized external-memory boundary. Modes 2 and 4 are equivalent expanded
+multiplexed RAM modes; the implementation explicitly prevents Motorola Mode-4
+RAM mirroring and the Mode-4-to-5 transition from leaking into this Hitachi
+profile.
 HD6303R follows the HD6301V1-specific framing-error rule: the shift-register
 byte is not transferred to RDR when the stop bit is missing.
 Both parts also implement Hitachi's writable 16-bit FRC sequence and assert
@@ -172,9 +178,9 @@ The HD6301V1 Mode-7 wrapper now performs this decode for `$0000`-`$007f` and
 `$0100`-`$efff` and keeps its vector reads on the internal program interface.
 The HD63701V0 wrapper uses `$0000`-`$003f` plus `$0100`-`$efff`, while the
 conflicting `$0040`-`$007f` range is explicitly unverified as described above.
-HD6303R Mode 2 spans external memory around the internal register/RAM windows,
-so the manufacturer's address-error table defines no non-memory fetch region
-for that implemented profile; opcode-error TRAP remains active.
+Every legal HD6303R mode spans external memory around the internal register/RAM
+windows, so the manufacturer's address-error table defines no non-memory fetch
+region for these profiles; opcode-error TRAP remains active.
 
 ## Deferred documented variants
 

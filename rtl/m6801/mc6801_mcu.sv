@@ -8,10 +8,13 @@
 // HD6301_MODE7 enables the separately documented Hitachi single-chip decode,
 // Port 3/4 registers, handshake, and internal program-memory interface. The
 // RAM and address-error parameters distinguish the V1 and 63701V0 maps.
+// HITACHI_NEW_MODES selects the V1/R meanings of Mode 1 and Mode 4, which are
+// not interchangeable with the same-numbered Motorola MC6801 configurations.
 module mc6801_mcu #(
   parameter logic [2:0] OPERATING_MODE = 3'd2,
   parameter logic       HITACHI_CPU = 1'b0,
   parameter logic       HD6301_MODE7 = 1'b0,
+  parameter logic       HITACHI_NEW_MODES = 1'b0,
   parameter logic       SCI_TRANSFER_FRAMING_ERROR = 1'b1,
   parameter logic       SCI_BIPHASE_SUPPORTED = 1'b1,
   parameter logic       TIMER_COUNTER_DOUBLE_WRITE = 1'b0,
@@ -207,6 +210,8 @@ module mc6801_mcu #(
   logic port3_irq;
   logic device_reset_n;
   logic [2:0] active_mode;
+  logic hitachi_mode1_nonmultiplexed;
+  logic hitachi_mode4_expanded;
   logic single_chip_ports;
   logic port4_registers;
   logic mode0_reset_vector_pending;
@@ -215,8 +220,14 @@ module mc6801_mcu #(
   logic mode5_external_select;
 
   assign device_reset_n = reset_n_i && standby_reset_n_i;
-  assign single_chip_ports = (active_mode == 3'd4) || (active_mode == 3'd7);
-  assign port4_registers = active_mode[2];
+  assign hitachi_mode1_nonmultiplexed = HITACHI_NEW_MODES &&
+    (active_mode == 3'd1);
+  assign hitachi_mode4_expanded = HITACHI_NEW_MODES &&
+    (active_mode == 3'd4);
+  assign single_chip_ports =
+    ((active_mode == 3'd4) && !hitachi_mode4_expanded) ||
+    (active_mode == 3'd7);
+  assign port4_registers = active_mode[2] && !hitachi_mode4_expanded;
 
   // The mode is hardware-latched at reset. Mode 4 has the documented single
   // write-only escape to Mode 5; no other software mode transition exists.
@@ -225,6 +236,7 @@ module mc6801_mcu #(
       active_mode <= OPERATING_MODE;
     end else if (clock_enable_i && internal_write &&
                  (core_address == 16'h0003) && (active_mode == 3'd4) &&
+                 !hitachi_mode4_expanded &&
                  core_data_out[5]) begin
       active_mode <= 3'd5;
     end
@@ -244,17 +256,22 @@ module mc6801_mcu #(
 
   function automatic logic register_is_internal(input logic [15:0] address_value);
     begin
-      case (address_value)
-        16'h0000, 16'h0001, 16'h0002, 16'h0003,
-        16'h0008, 16'h0009, 16'h000a, 16'h000b,
-        16'h000c, 16'h000d, 16'h000e,
-        16'h0010, 16'h0011, 16'h0012, 16'h0013,
-        16'h0014: register_is_internal = 1'b1;
-        16'h0004, 16'h0006, 16'h000f:
-          register_is_internal = single_chip_ports;
-        16'h0005, 16'h0007: register_is_internal = port4_registers;
-        default: register_is_internal = 1'b0;
-      endcase
+      if (hitachi_mode1_nonmultiplexed &&
+          ((address_value == 16'h0000) || (address_value == 16'h0002))) begin
+        register_is_internal = 1'b0;
+      end else begin
+        case (address_value)
+          16'h0000, 16'h0001, 16'h0002, 16'h0003,
+          16'h0008, 16'h0009, 16'h000a, 16'h000b,
+          16'h000c, 16'h000d, 16'h000e,
+          16'h0010, 16'h0011, 16'h0012, 16'h0013,
+          16'h0014: register_is_internal = 1'b1;
+          16'h0004, 16'h0006, 16'h000f:
+            register_is_internal = single_chip_ports;
+          16'h0005, 16'h0007: register_is_internal = port4_registers;
+          default: register_is_internal = 1'b0;
+        endcase
+      end
     end
   endfunction
 
@@ -334,11 +351,13 @@ module mc6801_mcu #(
 
   always_comb begin
     internal_register_select = core_bus_valid && register_is_internal(core_address);
-    internal_ram_index = (active_mode == 3'd4) ? {1'b0, core_address[6:0]} :
+    internal_ram_index = ((active_mode == 3'd4) && !hitachi_mode4_expanded) ?
+      {1'b0, core_address[6:0]} :
       core_address[7:0] - INTERNAL_RAM_START[7:0];
     internal_ram_select = core_bus_valid && rame && (active_mode != 3'd3) &&
-      (((active_mode == 3'd4) && core_address[7]) ||
-       ((active_mode != 3'd4) && (core_address >= INTERNAL_RAM_START) &&
+      (((active_mode == 3'd4) && !hitachi_mode4_expanded && core_address[7]) ||
+       (((active_mode != 3'd4) || hitachi_mode4_expanded) &&
+        (core_address >= INTERNAL_RAM_START) &&
         (core_address <= INTERNAL_RAM_END)));
 
     program_address_select = 1'b0;
@@ -348,8 +367,8 @@ module mc6801_mcu #(
       case (active_mode)
         3'd0, 3'd5, 3'd7:
           program_address_select = core_address >= 16'hf800;
-        3'd1: program_address_select = program_address_in_range(core_address) &&
-          (core_address < 16'hfff0);
+        3'd1: program_address_select = !hitachi_mode1_nonmultiplexed &&
+          program_address_in_range(core_address) && (core_address < 16'hfff0);
         3'd6: program_address_select = program_address_in_range(core_address);
         default: program_address_select = 1'b0;
       endcase
@@ -941,6 +960,10 @@ module mc6801_mcu #(
     sci_clock_o = sci_clock_level;
     port1_o = port1_latch;
     port1_oe_o = port1_ddr;
+    if (hitachi_mode1_nonmultiplexed && device_reset_n) begin
+      port1_o = core_address[7:0];
+      port1_oe_o = 8'hff;
+    end
     port2_o = port2_latch;
     port2_oe_o = port2_ddr;
     port3_o = port3_latch;
@@ -965,7 +988,7 @@ module mc6801_mcu #(
     end else if (active_mode == 3'd6) begin
       port4_o = core_address[15:8];
       port4_oe_o = port4_ddr;
-    end else if (!active_mode[2] && device_reset_n) begin
+    end else if ((!active_mode[2] || hitachi_mode4_expanded) && device_reset_n) begin
       port4_o = core_address[15:8];
       port4_oe_o = 8'hff;
     end

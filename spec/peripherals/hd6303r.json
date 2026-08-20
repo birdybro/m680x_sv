@@ -7,10 +7,10 @@
     "sections": ["memory_control"],
     "scope": "The HD6303R uses the documented HD6801-compatible timer, GPIO, register, and RAM-control functions on the same die as the HD6301V1, with mask ROM disabled; its SCI framing-error rule is specified here because it differs from MC6801.",
     "restrictions": [
-      "The current RTL profile implements expanded multiplexed Mode 2 only.",
-      "Modes 0, 5, 6, and 7 are unavailable on the HD6303R; documented Modes 1 and 4 remain outside the current normalized wrapper.",
+      "The RTL profile implements every available HD6303R operating mode: non-multiplexed Mode 1 and multiplexed Modes 2 and 4.",
+      "Modes 0, 5, 6, and 7 are unavailable on the HD6303R because its mask ROM is disabled.",
       "Physical Port 3 address/data multiplexing, address strobe, and electrical timing are not claimed by the normalized external-memory interface.",
-      "Standby entry and analog RAM-retention thresholds remain outside this digital profile."
+      "Oscillator recovery and analog RAM-retention thresholds remain outside this digital profile."
     ],
     "reference": {
       "id": "hitachi-hd6301-hd6303-series-handbook-1989",
@@ -22,7 +22,7 @@
       "start": "0000",
       "end": "001F",
       "kind": "internal-register-window",
-      "access": "Mode 2 keeps 0004-0007 and 000F external; the implemented common registers remain internal and 0015-001F are reserved"
+      "access": "Modes 2/4 keep 0004-0007 and 000F external; Mode 1 additionally keeps 0000 and 0002 external because Port 1 is A0-A7; the remaining implemented common registers are internal and 0015-001F are reserved"
     },
     {
       "start": "0020",
@@ -40,18 +40,18 @@
       "start": "0100",
       "end": "FFFF",
       "kind": "external-memory",
-      "access": "read-write; all interrupt and reset vectors are external in Mode 2"
+      "access": "read-write; all interrupt and reset vectors are external in Modes 1, 2, and 4"
     }
   ],
   "registers": [
-    {"address": "0000", "name": "P1DDR", "read": "FF", "write": "one selects output", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 142"}},
+    {"address": "0000", "name": "P1DDR", "read": "FF in Modes 2/4; external memory in Mode 1", "write": "one selects output in Modes 2/4; external memory in Mode 1", "reset": "00 where present", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 note 1 and section 2.4, printed pages 136-142"}},
     {"address": "0001", "name": "P2DDR", "read": "FF", "write": "one selects output subject to timer and SCI overrides", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 143"}},
-    {"address": "0002", "name": "PORT1", "read": "physical pin levels", "write": "output latch", "reset": "output latch undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 and section 2.4, printed pages 136 and 142"}},
+    {"address": "0002", "name": "PORT1", "read": "physical pin levels in Modes 2/4; external memory in Mode 1", "write": "output latch in Modes 2/4; external memory in Mode 1", "reset": "output latch undefined where present; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 note 1 and section 2.4, printed pages 136-142"}},
     {"address": "0003", "name": "PORT2_MODE", "read": "latched PC2:PC0 in bits 7:5 and physical P24:P20 in bits 4:0", "write": "output latch subject to timer and SCI overrides", "reset": "DDR 00; output latch undefined", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1 and 2.4, printed pages 128-134 and 143"}},
-    {"address": "0004", "name": "P3DDR", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
-    {"address": "0005", "name": "P4DDR", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
-    {"address": "0006", "name": "PORT3", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
-    {"address": "0007", "name": "PORT4", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
+    {"address": "0004", "name": "P3DDR", "read": "external memory in every legal mode", "write": "external memory in every legal mode", "reset": "not an internal HD6303R register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 note 2 and Mode-1/2/4 maps, printed pages 136-139"}},
+    {"address": "0005", "name": "P4DDR", "read": "external memory in every legal mode", "write": "external memory in every legal mode", "reset": "not an internal HD6303R register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 note 3 and Mode-1/2/4 maps, printed pages 136-139"}},
+    {"address": "0006", "name": "PORT3", "read": "external memory in every legal mode", "write": "external memory in every legal mode", "reset": "not an internal HD6303R register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 note 2 and Mode-1/2/4 maps, printed pages 136-139"}},
+    {"address": "0007", "name": "PORT4", "read": "external memory in every legal mode", "write": "external memory in every legal mode", "reset": "not an internal HD6303R register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 note 3 and Mode-1/2/4 maps, printed pages 136-139"}},
     {"address": "0008", "name": "TCSR", "read": "ICF OCF TOF EICI EOCI ETOI IEDG OLVL", "write": "control bits 4:0", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 145-150"}},
     {"address": "0009", "name": "FRC_MSB", "read": "counter high and latch low", "write": "preset counter to FFF8 and save the written byte for a following low-byte write", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5 and figure 2-5-2, printed pages 146-147"}},
     {"address": "000A", "name": "FRC_LSB", "read": "latched counter low", "write": "after an FRC_MSB write, completes a 16-bit counter write using the saved high-byte data", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5 and figure 2-5-2, printed pages 146-147"}},
@@ -59,7 +59,7 @@
     {"address": "000C", "name": "OCR_LSB", "read": "output compare low", "write": "output compare low", "reset": "FF", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 147-150"}},
     {"address": "000D", "name": "ICR_MSB", "read": "input capture high", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 147-150"}},
     {"address": "000E", "name": "ICR_LSB", "read": "input capture low", "write": "no documented effect", "reset": "00", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.5, printed pages 147-150"}},
-    {"address": "000F", "name": "P3CSR", "read": "external memory in Mode 2", "write": "external memory in Mode 2", "reset": "not an internal Mode-2 register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 notes and Mode-2 map, printed pages 136-139"}},
+    {"address": "000F", "name": "P3CSR", "read": "external memory in every legal mode", "write": "external memory in every legal mode", "reset": "not an internal HD6303R register", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-2-1 note 2 and Mode-1/2/4 maps, printed pages 136-139"}},
     {"address": "0010", "name": "RMCR", "read": "FF", "write": "SCI clock/mode low nibble", "reset": "0", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 150-156"}},
     {"address": "0011", "name": "TRCSR", "read": "RDRF ORFE TDRE RIE RE TIE TE WU", "write": "control bits 4:0", "reset": "20", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 150-156"}},
     {"address": "0012", "name": "RDR", "read": "received byte", "write": "no documented effect", "reset": "data undefined; FPGA profile selects zero", "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.6, printed pages 150-156"}},
@@ -88,9 +88,9 @@
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD6301V1/HD6303R section 2.5, figures 2-5-1 and 2-5-2, printed pages 145-150"}
   },
   "gpio": {
-    "port1": "eight expanded-mode GPIO pins",
+    "port1": "eight GPIO pins in Modes 2/4; forced lower address outputs A0-A7 in non-multiplexed Mode 1",
     "port2": "five GPIO pins with timer and SCI overrides",
-    "port3_port4": "dedicated external bus in implemented Mode 2 rather than internal GPIO registers",
+    "port3_port4": "dedicated external bus in every legal mode rather than internal GPIO registers",
     "reset": "port DDRs clear synchronously with E",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.1 and 2.4 plus comparison table, printed pages 128-145 and 348"}
   },
@@ -102,9 +102,9 @@
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD6301V1 table 2-6-2 and sections 2.6(5)-(7), printed pages 153-154; HD6303R common-die statement, printed page 126"}
   },
   "operating_modes": {
-    "mode2": "expanded multiplexed ROMless operation with internal registers and RAME-controlled 128-byte RAM; implemented by the current wrapper",
-    "mode1": "expanded non-multiplexed ROMless operation; outside the current profile",
-    "mode4": "expanded multiplexed RAM operation documented as equivalent to Mode 2 on HD6301V1; available on HD6303R but outside the current wrapper",
+    "mode2": "expanded multiplexed ROMless operation with internal registers and RAME-controlled 128-byte RAM; implemented",
+    "mode1": "expanded non-multiplexed ROMless operation with Port 1 as A0-A7, Port 3 as D0-D7, and Port 4 as A8-A15; implemented at the normalized bus boundary",
+    "mode4": "expanded multiplexed RAM operation documented as equivalent to Mode 2; implemented without Motorola Mode-4 RAM mirroring or Mode-5 transition leakage",
     "unavailable": "Modes 0, 5, 6, and 7 are not available on HD6303R because its mask ROM is disabled",
     "sleep": "SLP stops CPU execution while peripherals continue; an enabled interrupt vectors, while a masked interrupt request resumes at the following instruction",
     "standby": "standby_n_i is sampled at the normalized E boundary; accepted STBY resets active state, suppresses the external bus and GPIO drive, retains RAM/STBY_PWR with valid supply, and restarts through the external reset vector",
@@ -114,10 +114,10 @@
     }
   },
   "implementation_scope": {
-    "rtl": "rtl/hd6301/hd6303r_mcu.sv binds the HD6301 CPU profile to the manufacturer-compatible Mode-2 peripheral and RAM integration",
-    "verification": "Directed execution covers external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, opcode TRAP, E-synchronous STBY, external-bus suppression, reset-vector recovery, and retained RAM/STBY_PWR",
-    "address_error": "Mode 2 defines no non-memory instruction-fetch region, so the wrapper does not assert an instruction-address-error input; opcode error still invokes TRAP",
-    "excluded_modes": "Available Modes 1 and 4, Port 3 handshake, physical multiplexed-bus waveforms, and oscillator recovery delay remain unclaimed",
+    "rtl": "rtl/hd6301/hd6303r_mcu.sv binds the HD6301 CPU profile to every legal HD6303R Mode-1/2/4 peripheral, RAM, and external-memory configuration",
+    "verification": "Directed execution repeats external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, opcode TRAP, E-synchronous STBY, external-bus suppression, reset-vector recovery, and retained RAM/STBY_PWR in Modes 1, 2, and 4; a separate decode suite checks all mode-specific register, ROMless, RAM, and Port-1 facts",
+    "address_error": "All legal modes span external memory around the internal register/RAM windows, so the address-error table defines no non-memory fetch region; opcode error still invokes TRAP",
+    "excluded_modes": "Port 3 physical data/address multiplexing, AS/RW half-cycle waveforms, and oscillator recovery delay remain unclaimed",
     "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

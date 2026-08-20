@@ -65,6 +65,8 @@ differences. In particular, both select Hitachi's rule that a framing-error
 byte is not transferred into RDR, while the MC6801 model selects Motorola's
 documented transfer behavior. The Mode-7 model additionally owns the HD6301V1
 memory, Port 3/4, strobe, IS3, and address-error facts.
+The HD6303R model accepts exactly Modes 1, 2, and 4 and independently preserves
+the new non-multiplexed Mode-1 map and Mode-2-equivalent Hitachi Mode 4.
 The same profiles select Hitachi's two-byte FRC write and TOF-at-zero behavior;
 the base MC6801 profile retains its read-only low byte and TOF-at-`$ffff` rule.
 Their independent `standby_reset` transition resets active peripheral state,

@@ -183,6 +183,7 @@ class MC6801DeviceModel:
         rom_start: int = 0xF800,
         transfer_framing_error: bool = True,
         sci_biphase_supported: bool = True,
+        hitachi_new_modes: bool = False,
         timer_counter_double_write: bool = False,
         timer_overflow_at_zero: bool = False,
         internal_ram_start: int = 0x0080,
@@ -203,6 +204,7 @@ class MC6801DeviceModel:
         self.mode0_reset_vector_reads_remaining = 2
         self.transfer_framing_error = transfer_framing_error
         self.sci_biphase_supported = sci_biphase_supported
+        self.hitachi_new_modes = hitachi_new_modes
         self.timer_counter_double_write = timer_counter_double_write
         self.timer_overflow_at_zero = timer_overflow_at_zero
 
@@ -230,10 +232,28 @@ class MC6801DeviceModel:
 
     def register_is_internal(self, address: int) -> bool:
         address &= 0xFFFF
+        if (
+            self.hitachi_new_modes
+            and self.active_mode == 1
+            and address in {0x0000, 0x0002}
+        ):
+            return False
         return bool(
             address in INTERNAL_REGISTERS
-            or (self.active_mode in {4, 7} and address in PORT3_REGISTERS)
-            or (self.active_mode in {4, 5, 6, 7} and address in PORT4_REGISTERS)
+            or (self.single_chip_ports and address in PORT3_REGISTERS)
+            or (self.port4_registers and address in PORT4_REGISTERS)
+        )
+
+    @property
+    def single_chip_ports(self) -> bool:
+        return self.active_mode == 7 or (
+            self.active_mode == 4 and not self.hitachi_new_modes
+        )
+
+    @property
+    def port4_registers(self) -> bool:
+        return self.active_mode in {4, 5, 6, 7} and not (
+            self.hitachi_new_modes and self.active_mode == 4
         )
 
     def ram_is_internal(self, address: int) -> bool:
@@ -242,9 +262,13 @@ class MC6801DeviceModel:
             self.active_mode != 3
             and self.state.rame
             and (
-                (self.active_mode == 4 and bool(address & 0x0080))
+                (
+                    self.active_mode == 4
+                    and not self.hitachi_new_modes
+                    and bool(address & 0x0080)
+                )
                 or (
-                    self.active_mode != 4
+                    (self.active_mode != 4 or self.hitachi_new_modes)
                     and self.internal_ram_start
                     <= address
                     < self.internal_ram_start + len(self.ram)
@@ -256,7 +280,7 @@ class MC6801DeviceModel:
         """Translate a selected internal address to its physical RAM index."""
 
         address &= 0xFFFF
-        if self.active_mode == 4:
+        if self.active_mode == 4 and not self.hitachi_new_modes:
             return address & 0x007F
         return address - self.internal_ram_start
 
@@ -265,6 +289,8 @@ class MC6801DeviceModel:
 
         address &= 0xFFFF
         if self.active_mode in {2, 3, 4}:
+            return False
+        if self.active_mode == 1 and self.hitachi_new_modes:
             return False
         if self.active_mode == 1:
             return self.rom_start <= address < self.rom_start + 0x0800 and address < 0xFFF0
@@ -355,7 +381,7 @@ class MC6801DeviceModel:
     @property
     def port3_irq(self) -> bool:
         return bool(
-            self.active_mode in {4, 7}
+            self.single_chip_ports
             and self.state.port3_is3_flag
             and self.state.port3_is3_enable
         )
@@ -399,7 +425,7 @@ class MC6801DeviceModel:
         )
         internal_read = register_select and not inputs.write
         internal_write = register_select and inputs.write
-        if self.active_mode in {4, 7}:
+        if self.single_chip_ports:
             external_bus = False
         elif self.active_mode == 5:
             external_bus = bool(inputs.valid and 0x0100 <= address <= 0x01FF)
@@ -426,7 +452,7 @@ class MC6801DeviceModel:
                 port3=inputs.port3,
                 port4=inputs.port4,
             )
-        elif unusable and self.active_mode in {4, 7}:
+        elif unusable and self.single_chip_ports:
             read_data = 0xFF
         else:
             read_data = self.external_memory[address]
@@ -492,7 +518,7 @@ class MC6801DeviceModel:
         elif address == 0x0002:
             s.port1_latch = data
         elif address == 0x0003:
-            if self.active_mode == 4 and data & 0x20:
+            if self.active_mode == 4 and not self.hitachi_new_modes and data & 0x20:
                 self.active_mode = 5
             s.port2_latch = (s.port2_latch & ~0x01) | (data & 0x01)
             if not s.rmcr & 0x08:
@@ -526,15 +552,15 @@ class MC6801DeviceModel:
         state.is3_sync = [inputs.is3_n, state.is3_sync[0]]
 
         if internal_write:
-            if address == 0x0004 and self.active_mode in {4, 7}:
+            if address == 0x0004 and self.single_chip_ports:
                 state.port3_ddr = inputs.data
-            elif address == 0x0005 and self.active_mode in {4, 5, 6, 7}:
+            elif address == 0x0005 and self.port4_registers:
                 state.port4_ddr = inputs.data
-            elif address == 0x0006 and self.active_mode in {4, 7}:
+            elif address == 0x0006 and self.single_chip_ports:
                 state.port3_latch = inputs.data
-            elif address == 0x0007 and self.active_mode in {4, 7}:
+            elif address == 0x0007 and self.single_chip_ports:
                 state.port4_latch = inputs.data
-            elif address == 0x000F and self.active_mode in {4, 7}:
+            elif address == 0x000F and self.single_chip_ports:
                 state.port3_is3_enable = bool(inputs.data & 0x40)
                 state.port3_output_strobe_select = bool(inputs.data & 0x10)
                 state.port3_latch_enable = bool(inputs.data & 0x08)
@@ -548,7 +574,7 @@ class MC6801DeviceModel:
                 state.port3_is3_flag = False
                 state.port3_clear_armed = False
 
-        if falling_edge and self.active_mode in {4, 7}:
+        if falling_edge and self.single_chip_ports:
             state.port3_is3_flag = True
             if state.port3_latch_enable and not state.port3_latch_valid:
                 state.port3_input_latch = inputs.port3 & 0xFF

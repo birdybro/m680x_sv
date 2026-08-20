@@ -41,8 +41,9 @@ with device wrappers kept at separate integration boundaries:
   4-KiB FPGA program-image port, executable RAM, four GPIO ports, IS3/OS3,
   timer/SCI, SLP, E-synchronous STBY retention, and device-generated
   address/opcode TRAP;
-- `hd6303r_mcu`: HD6303R Mode-2 ROMless integration with the HD6301 ISA,
-  opcode TRAP, SLP/STBY behavior, RAM, GPIO, timer, and SCI;
+- `hd6303r_mcu`: HD6303R legal Mode-1/2/4 ROMless integration with the HD6301
+  ISA, opcode TRAP, SLP/STBY behavior, RAM, mode-dependent Port 1, timer, and
+  SCI;
 - `hd63701v0_mcu`: HD63701V0 Mode-7 integration with 192-byte RAM, four GPIO
   ports, timer/SCI, asynchronous STBY retention, address TRAP, and a separate
   4-KiB EPROM-image port;
@@ -117,8 +118,8 @@ cycle boundaries being checked.
 ## Known limitations
 
 Pin-level MC6800 phase generation/electrical timing, physical MC6801/MC6803
-bus multiplexing and complete Port 3 handshake timing, Hitachi
-MCU modes outside HD6301V1/HD63701V0 Mode 7 and HD6303R Mode 2, analog EPROM
+bus multiplexing and complete Port 3 handshake timing, HD6301V1/HD63701V0
+MCU modes outside Mode 7, analog EPROM
 programming physics, SCI clock-skew/electrical tolerance, and complete
 manufacturer bus waveforms outside the specifically verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by

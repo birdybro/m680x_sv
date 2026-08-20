@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 105 |
+| Python unit tests | 106 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
@@ -36,7 +36,8 @@ The committed tests cover:
 | MC6801 bi-phase SCI checks | 24 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
 | HD6301V1 Mode-7 integration checks | 32 |
-| HD6303R Mode-2 integration checks | 19 |
+| HD6303R Mode-1/2/4 integration checks | 57 |
+| HD6303R legal-mode decode checks | 41 |
 | HD63701V0 Mode-7 integration checks | 30 |
 | HD63705V0 integration checks | 27 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
@@ -46,8 +47,8 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 12 (11 at depth 10; mode decode at depth 5) |
-| Synthesis tops | 13 |
+| Bounded formal profiles | 13 (11 at depth 10; 2 mode-decode profiles at depth 5) |
+| Synthesis tops | 15 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -129,12 +130,18 @@ two `$ffff` reads, seven stack writes, and `$ffee:$ffef` vector reads. It checks
 the complete stacked state, unmaskable I-bit update, RTI restoration of the
 faulting PC, and immediate retrap when the invalid opcode remains present.
 
-The HD6303R Mode-2 suite executes through the integrated device wrapper. It
-checks external reset vectors, internal RAM exclusion from the external bus,
-AIM and XGDX, timer continuity while sleeping, masked IRQ release from SLP
-without stacking or vectoring, simultaneous NMI/IRQ priority, and opcode-error
-TRAP through the external `$ffee:$ffef` vector. It also verifies that a framing
-error leaves RDR unchanged, with a separate HD6303R peripheral-model regression.
+The HD6303R suite executes through the integrated device wrapper separately in
+each legal Mode 1, 2, and 4. Every profile checks external reset vectors,
+internal RAM exclusion from the external bus, AIM and XGDX, timer continuity
+while sleeping, masked IRQ release from SLP without stacking or vectoring,
+simultaneous NMI/IRQ priority, and opcode-error TRAP through the external
+`$ffee:$ffef` vector. It also verifies that a framing error leaves RDR unchanged,
+with a separate HD6303R peripheral-model regression.
+An additional 41-check bus-source suite verifies the mode-specific register
+exclusions, internal RAM, external program/vector space, Mode-1 Port-1 address
+function, mode-latch readback, and lack of Motorola Mode-4 RAM mirroring or
+Mode-5 transition behavior. The independent model rejects every unavailable
+mode and checks the same memory partition independently.
 RTL and model tests cover the Hitachi full-counter write sequence and TOF at
 rollover to `$0000`. The instruction model has a matching regression for the
 masked-request SLP rule. Model and RTL tests additionally cover E-synchronous
@@ -215,7 +222,7 @@ edge on resume.
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
 HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration and
-Mode-0/Mode-4 decode,
+Mode-0/Mode-4 decode, HD6303R legal-mode decode,
 MC68705P5, HD6301V1 and HD63701V0 Mode-7 integrations, and the HD63705V0 MCU. At
 depth 10 it proves the committed
 safety properties for all symbolic input sequences:
@@ -268,18 +275,22 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 11,346 | 1,457 |
-| MC6801 Mode 4/5 integration | 11,421 | 1,493 |
+| MC6801 Mode 2 integration | 11,348 | 1,454 |
+| MC6801 Mode 4/5 integration | 11,401 | 1,493 |
 | HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 7 integration | 12,187 | 1,456 |
-| HD6303R Mode 2 integration | 12,255 | 1,434 |
-| HD63701V0 Mode 7 integration | 13,968 | 1,996 |
+| HD6301V1 Mode 7 integration | 12,156 | 1,485 |
+| HD6303R Mode 1 integration | 12,025 | 1,421 |
+| HD6303R Mode 2 integration | 12,232 | 1,447 |
+| HD6303R Mode 4 integration | 12,100 | 1,437 |
+| HD63701V0 Mode 7 integration | 13,934 | 1,996 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |
 | HD63705V0 integration | 9,969 | 1,858 |
 
-Cell counts are tool/version/technology dependent and are smoke-test evidence,
+Sequential counts include every synthesized DFF primitive and inferred memory
+bit. Cell counts are tool/version/technology dependent and are smoke-test
+evidence,
 not optimization guarantees. Each synthesis script runs structural `check
 -assert`; the recorded run reports no latches, combinational-loop errors, or
 structural problems. The P5 RAM has no invented reset and is written in a

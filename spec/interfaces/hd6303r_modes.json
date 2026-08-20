@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "interface": "hd6303r-normalized-modes",
+  "device": "hd6303r",
+  "clock_model": {
+    "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
+    "historical_boundary": "HD6303R derives E from its oscillator and defines memory/peripheral activity relative to E",
+    "status": "PARTIAL",
+    "limitation": "Mode-1 dedicated address/data pins and Mode-2/4 Port-3 address/data multiplexing are represented by a normalized full-address transaction; AS, R/W, E half-cycle waveforms, setup/hold, and electrical timing remain outside this interface"
+  },
+  "signals": [
+    {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
+    {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low preserves synchronous CPU and peripheral state"},
+    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active-low reset latches the configured legal operating mode and begins an external reset-vector fetch"},
+    {"name": "standby_n_i", "historical": "STBY", "direction": "input", "fact": "active low and accepted at an enabled E boundary; suppresses external transactions and output enables while retained RAM remains supplied"},
+    {"name": "standby_power_ok_i", "historical": "standby RAM supply validity", "direction": "input", "fact": "digital validity indication only; no analog threshold is modeled"},
+    {"name": "nmi_n_i", "historical": "NMI", "direction": "input", "fact": "active-low non-maskable interrupt"},
+    {"name": "irq1_n_i", "historical": "IRQ1", "direction": "input", "fact": "active-low highest-priority maskable external interrupt"},
+    {"name": "port1_i", "historical": "P10-P17 pin sample in Modes 2/4", "direction": "input", "fact": "physical GPIO levels returned by PORT1 reads where that register exists"},
+    {"name": "port1_o", "historical": "P10-P17 or A0-A7", "direction": "output", "fact": "GPIO latch in Modes 2/4 and the low eight address bits in Mode 1"},
+    {"name": "port1_oe_o", "historical": "P10-P17 direction or address enable", "direction": "output", "fact": "GPIO DDR in Modes 2/4 and all ones for the Mode-1 lower-address bus outside reset/standby"},
+    {"name": "port2_i", "historical": "P20-P24 pin sample", "direction": "input", "fact": "GPIO, timer-capture, SCI-clock, and SCI-receive input levels"},
+    {"name": "port2_o", "historical": "P20-P24 output function", "direction": "output", "fact": "GPIO latch with timer and SCI overrides"},
+    {"name": "port2_oe_o", "historical": "P20-P24 direction", "direction": "output", "fact": "GPIO direction with documented timer and SCI overrides"},
+    {"name": "external_data_i", "historical": "Port-3 or dedicated external data input", "direction": "input", "fact": "normalized external read byte"},
+    {"name": "external_address_o", "historical": "Port-1/Port-4 or multiplexed external address", "direction": "output", "fact": "full sixteen-bit CPU address without half-cycle multiplexing"},
+    {"name": "external_data_o", "historical": "Port-3 or dedicated external write data", "direction": "output", "fact": "CPU write byte"},
+    {"name": "external_write_o", "historical": "R/W direction", "direction": "output", "fact": "one denotes a CPU write; qualify it with external_bus_valid_o"},
+    {"name": "external_bus_valid_o", "historical": "expanded external-memory cycle", "direction": "output", "fact": "selected external transaction in every legal Mode 1, 2, or 4 configuration"},
+    {"name": "external_opcode_fetch_o", "historical": "external opcode fetch", "direction": "output", "fact": "qualified external read that fetches an opcode"},
+    {"name": "sci_tx_o", "historical": "P24/TXD", "direction": "output", "fact": "normalized asynchronous serial transmit level"},
+    {"name": "sci_clock_o", "historical": "P22/SCK", "direction": "output", "fact": "normalized internal serial clock output for a supported selection"}
+  ],
+  "halt_interrupt_behavior": "HD6303R has no HALT input; SLP stops CPU execution while peripherals continue, enabled requests vector, masked requests resume at the following instruction, and STBY instead enters reset-state operation before an external reset-vector restart",
+  "references": [
+    {
+      "id": "hitachi-hd6301-hd6303-series-handbook-1989",
+      "locators": [
+        "HD6303R notice and HD6301V1 sections 2.1-2.4 and 2.12, tables 2-1-1 and 2-2-1, printed pages 126-145 and 162-166"
+      ]
+    }
+  ],
+  "implementation_status": {
+    "legal_mode_decode": "COMPLETE",
+    "normalized_external_memory": "COMPLETE",
+    "internal_register_and_ram_selection": "COMPLETE",
+    "sleep_and_standby_digital": "COMPLETE",
+    "physical_mode1_bus_waveform": "NOT_IMPLEMENTED",
+    "physical_multiplexed_bus_waveform": "NOT_IMPLEMENTED",
+    "electrical_timing": "NOT_IMPLEMENTED",
+    "analog_behavior": "NOT_APPLICABLE"
+  }
+}

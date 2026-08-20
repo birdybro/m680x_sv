@@ -244,18 +244,24 @@ P3CSR-selected PORT3 read or write E-cycle. The exact interface contract and
 electrical exclusions are recorded in
 `../spec/interfaces/hd6301v1_mode7.json`.
 
-## HD6303R Mode-2 integration
+## HD6303R Mode-1/2/4 integration
 
 `rtl/hd6301/hd6303r_mcu.sv` selects the HD6301 CPU profile around the common
-HD6801-compatible device block in expanded multiplexed Mode 2. This sharing is
+HD6801-compatible device block in each documented legal mode. This sharing is
 grounded in the Hitachi handbook's same-die statement for HD6301V1/HD6303R and
-its explicit compatibility claim, rather than device-number similarity. The
-wrapper exposes the normalized external-memory boundary; the physical Port 3
-address/data and AS waveform remains a separate pin-interface task.
+its explicit compatibility claim, rather than device-number similarity.
+`HITACHI_NEW_MODES` prevents equal numeric mode values from importing Motorola
+behavior: Hitachi Mode 1 disables Port-1 registers and internal ROM while
+driving Port 1 as A0-A7, and Hitachi Mode 4 remains an expanded multiplexed RAM
+mode equivalent to Mode 2 rather than mirroring RAM or switching to Mode 5.
+The wrapper exposes the normalized external-memory boundary; physical Mode-1
+data/address pins and Mode-2/4 Port-3 multiplexing and AS timing remain separate
+pin-interface tasks. The exact boundary is recorded in
+`../spec/interfaces/hd6303r_modes.json`.
 
 The wrapper keeps all vectors external, decodes the common internal register
-window and RAME-controlled 128-byte RAM, and leaves Mode-2 program space
-external. Its CPU profile adds AIM/OIM/EIM/TIM, XGDX, SLP, Hitachi timing, and
+window and RAME-controlled 128-byte RAM, and leaves all program space external.
+Its CPU profile adds AIM/OIM/EIM/TIM, XGDX, SLP, Hitachi timing, and
 opcode-error TRAP. During SLP the CPU state stops while the timer and SCI remain
 clocked. An enabled request vectors normally; a masked request releases sleep
 at the following instruction without stacking, as the manufacturer specifies.

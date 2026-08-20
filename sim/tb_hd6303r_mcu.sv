@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
-module tb_hd6303r_mcu;
+module tb_hd6303r_mcu #(
+  parameter logic [2:0] TEST_MODE = 3'd2
+);
   logic clk;
   logic reset_n;
   logic standby_n;
@@ -47,7 +49,7 @@ module tb_hd6303r_mcu;
   integer checks;
   logic [15:0] sleeping_timer;
 
-  hd6303r_mcu dut (
+  hd6303r_mcu #(.OPERATING_MODE(TEST_MODE)) dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
     .standby_n_i(standby_n),
     .nmi_n_i(nmi_n), .irq1_n_i(irq1_n), .standby_power_ok_i(1'b1),
@@ -148,6 +150,8 @@ module tb_hd6303r_mcu;
     if (debug_pc != 16'h0200 || !debug_ccr[4] || external_address != 16'h0200) begin
       $fatal(1, "HD6303R reset/external vector state");
     end
+    if (dut.device.active_mode != TEST_MODE)
+      $fatal(1, "HD6303R selected mode mismatch");
     checks = checks + 1;
 
     run_instruction(8'h8e);
@@ -312,7 +316,8 @@ module tb_hd6303r_mcu;
     if (debug_a != 8'ha5) $fatal(1, "HD6303R standby RAM retention %02x", debug_a);
     checks = checks + 6;
 
-    if (waiting_state || undefined_value || port1_oe != 8'h00 ||
+    if (waiting_state || undefined_value ||
+        port1_oe != ((TEST_MODE == 3'd1) ? 8'hff : 8'h00) ||
         port2_oe != 5'h00 || debug_address != external_address ||
         ((external_fetch !== 1'b0) && (external_fetch !== 1'b1)) ||
         ((opcode_fetch !== 1'b0) && (opcode_fetch !== 1'b1)) ||
@@ -324,7 +329,8 @@ module tb_hd6303r_mcu;
         debug_tcsr === 8'hxx || debug_trcsr === 8'hxx || debug_receive === 8'hxx) begin
       $fatal(1, "HD6303R deterministic device outputs");
     end
-    $display("HD6303R MODE 2 PASS: %0d ISA, RAM, low-power, timer, SCI, and TRAP checks", checks);
+    $display("HD6303R MODE %0d PASS: %0d ISA, RAM, low-power, timer, SCI, and TRAP checks",
+             TEST_MODE, checks);
     $finish;
   end
 endmodule

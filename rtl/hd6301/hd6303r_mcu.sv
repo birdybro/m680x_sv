@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: MIT
-// HD6303R normalized expanded-multiplexed Mode-2 integration.
+// HD6303R normalized Mode-1/2/4 ROMless integration.
 //
 // The Hitachi HD6301V1/HD6303R handbook identifies the HD6303R as the same
 // die with mask ROM disabled and states that HD6301V1 information otherwise
-// applies. Mode 2 supplies the documented internal register block and 128-byte
-// RAM while leaving program memory and all vectors on the external bus.
-module hd6303r_mcu (
+// applies. Legal OPERATING_MODE values are the documented Mode 1
+// non-multiplexed bus and equivalent Mode 2/4 multiplexed RAM configurations.
+// All leave program memory and interrupt vectors on the external bus.
+module hd6303r_mcu #(
+  parameter logic [2:0] OPERATING_MODE = 3'd2
+) (
   input  logic        clk_i,
   input  logic        reset_n_i,
   input  logic        standby_n_i,
@@ -73,11 +76,14 @@ module hd6303r_mcu (
   assign timer_irq_o = timer_irq_internal && !standby_active;
   assign sci_irq_o = sci_irq_internal && !standby_active;
 
-  // HD6303R Mode 2 has neither on-chip program ROM nor Port 3/4 GPIO.
+  // HD6303R has neither on-chip program ROM nor Port 3/4 GPIO in its legal
+  // expanded modes. HITACHI_NEW_MODES distinguishes its Mode 1 and Mode 4
+  // meanings from the same-numbered Motorola MC6801 configurations.
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
-    .OPERATING_MODE(3'd2),
+    .OPERATING_MODE(OPERATING_MODE),
     .HITACHI_CPU(1'b1),
+    .HITACHI_NEW_MODES(1'b1),
     .SCI_TRANSFER_FRAMING_ERROR(1'b0),
     .SCI_BIPHASE_SUPPORTED(1'b0),
     .TIMER_COUNTER_DOUBLE_WRITE(1'b1),
