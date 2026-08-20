@@ -11,7 +11,8 @@ HD63705V0 transaction paths.
 The project is under active development. Every processor and whole-MCU support
 row remains `PARTIAL`; narrowly scoped dimensions become `COMPLETE` only after
 exhaustive evidence. MC68705P5 and HD63705V0 internal-memory decode and
-normalized digital timer functions are the first such closed dimensions. The
+normalized digital timer functions, plus HD63705V0 GPIO and synchronous
+SCI/Timer2, are the first such closed dimensions. The
 evidence-backed target matrix is in
 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and its authoritative structured
 form is [spec/devices.yml](spec/devices.yml).
@@ -189,6 +190,18 @@ reset, WAIT/STOP retention, and standby high impedance are directly checked.
 This regression exposed and fixed a prior bug where SCI changed the output
 enable but did not update the stored DDRD bits required by Hitachi QA635-302A.
 Pad drive and electrical timing remain outside the digital claim.
+Its normalized synchronous-SCI/Timer2 dimension is `COMPLETE`: direct RTL and
+independent model tests exhaust all 256 transmit bytes and all 256 receive
+bytes, all 256 SSR writes, all 16 transfer-clock widths under both serial-clock
+source selections, exact eighth-rising-edge completion, falling-edge transmit,
+post-completion holdoff, common-clock simultaneous transfer, SDR prescaler
+initialization, and the documented access protocol. The regression exposed and
+fixed receive rearming after completion, missing external-mode prescaler reset,
+and failure to latch the Q&A-defined mid-transfer access disable until reset.
+QA635-308A does not guarantee partially shifted data after that prohibited
+access; cancelling the partial transfer is therefore a deterministic FPGA
+normalization, not a silicon-data claim. Oscillator, CK-pad, and electrical
+timing remain excluded.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
 silicon behavior. These limitations are tracked as `PARTIAL`,

@@ -412,6 +412,119 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
         self.assertTrue(model.state.timer2_request)
         self.assertEqual(model.port_outputs()[7] & 0x20, 0x20)
 
+    def test_all_sci_status_writes_preserve_only_one_bits(self) -> None:
+        model = HD63705V0DeviceModel()
+        for value in range(0x100):
+            model.state.sci_request = True
+            model.state.timer2_request = True
+            model.state.sci_divider = 0x1234
+            result = self.write(model, 0x11, value)
+            self.assertEqual(result.state["SSR"], (value & 0xF0) | 0x07)
+            self.assertEqual(
+                model.state.sci_divider, 0 if value & 0x08 else 0x1234
+            )
+
+    def test_all_external_sci_transmit_bytes_and_completion_edge(self) -> None:
+        for value in range(0x100):
+            model = HD63705V0DeviceModel()
+            self.write(model, 0x10, 0xB0, port_d=0x20)
+            self.write(model, 0x12, value, port_d=0x20)
+            for bit in range(8):
+                result = self.cycle(model, port_d=0x00)
+                self.assertEqual(result.state["sci_tx"], (value >> bit) & 1)
+                self.assertFalse(result.state["SSR"] & 0x80)
+                result = self.cycle(model, port_d=0x20)
+                self.assertEqual(bool(result.state["SSR"] & 0x80), bit == 7)
+            held = model.state.transmit_output
+            self.cycle(model, port_d=0x00)
+            result = self.cycle(model, port_d=0x20)
+            self.assertEqual(result.state["sci_tx"], held)
+            self.assertTrue(result.state["SSR"] & 0x80)
+
+    def test_all_external_sci_receive_bytes_and_completion_holdoff(self) -> None:
+        for value in range(0x100):
+            model = HD63705V0DeviceModel()
+            self.write(model, 0x10, 0x70, port_d=0x20)
+            self.read(model, 0x12, port_d=0x20)
+            for bit in range(8):
+                receive_bit = ((value >> bit) & 1) << 4
+                self.cycle(model, port_d=receive_bit)
+                result = self.cycle(model, port_d=receive_bit | 0x20)
+                self.assertEqual(bool(result.state["SSR"] & 0x80), bit == 7)
+            self.assertEqual(model.state.sci_data, value)
+            self.assertFalse(model.state.receive_armed)
+            self.cycle(model, port_d=0x10)
+            self.cycle(model, port_d=0x30)
+            self.assertEqual(model.state.sci_data, value)
+            self.assertTrue(model.state.sci_request)
+
+    def test_all_internal_sci_timer2_rates_and_sources(self) -> None:
+        for external_serial_clock in (False, True):
+            for rate in range(16):
+                model = HD63705V0DeviceModel()
+                source = 0x30 if external_serial_clock else 0x20
+                self.write(model, 0x10, source | rate)
+                self.write(model, 0x11, 0x38)
+                initial_clock = model.state.sci_clock
+                interval = 1 << rate
+                for _ in range(interval - 1):
+                    self.cycle(model)
+                    self.assertEqual(model.state.sci_clock, initial_clock)
+                self.cycle(model)
+                self.assertNotEqual(model.state.sci_clock, initial_clock)
+                for _ in range(interval - 1):
+                    self.cycle(model)
+                    self.assertNotEqual(model.state.sci_clock, initial_clock)
+                result = self.cycle(model)
+                self.assertEqual(model.state.sci_clock, initial_clock)
+                self.assertTrue(result.state["SSR"] & 0x40)
+
+    def test_sci_access_protocol_general_register_and_fault_latch(self) -> None:
+        for value in range(0x100):
+            model = HD63705V0DeviceModel()
+            self.write(model, 0x12, value)
+            result = self.read(model, 0x12)
+            self.assertEqual(result.read_data, value)
+            self.assertFalse(model.state.transmit_active)
+            self.assertFalse(model.state.receive_armed)
+
+        model = HD63705V0DeviceModel()
+        self.write(model, 0x10, 0xF0, port_d=0x20)
+        for _ in range(10):
+            self.cycle(model, port_d=0x00)
+            self.cycle(model, port_d=0x20)
+        self.assertFalse(model.state.sci_request)
+        self.assertFalse(model.state.transmit_active)
+        self.assertFalse(model.state.receive_armed)
+
+        self.read(model, 0x12, port_d=0x20)
+        self.cycle(model, port_d=0x00)
+        self.cycle(model, port_d=0x30)
+        self.read(model, 0x12, port_d=0x20)
+        self.assertTrue(model.state.sci_disabled)
+        self.assertFalse(model.state.receive_armed)
+        for _ in range(10):
+            self.cycle(model, port_d=0x10)
+            self.cycle(model, port_d=0x30)
+        self.assertFalse(model.state.sci_request)
+        model.reset()
+        self.assertFalse(model.state.sci_disabled)
+
+        model = HD63705V0DeviceModel()
+        self.write(model, 0x10, 0x70, port_d=0x20)
+        self.read(model, 0x12, port_d=0x20)
+        for bit in range(8):
+            self.cycle(model, port_d=0x00)
+            self.cycle(model, port_d=0x20)
+        self.assertTrue(model.state.sci_request)
+        self.assertFalse(model.state.receive_armed)
+        self.write(model, 0x11, 0x30, port_d=0x20)
+        for _ in range(8):
+            self.cycle(model, port_d=0x10)
+            self.cycle(model, port_d=0x30)
+        self.assertFalse(model.state.sci_request)
+        self.assertEqual(model.state.sci_data, 0x00)
+
     def test_stop_follows_figure_2_18_normalization_and_only_external_sources_wake(self) -> None:
         model = HD63705V0DeviceModel()
         model.state.timer_data = 0x12

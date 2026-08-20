@@ -106,6 +106,7 @@ module hd63705v0_mcu (
   logic [6:0] receive_shift;
   logic [3:0] receive_bits;
   logic receive_armed;
+  logic sci_disabled;
   logic stopped_previous;
 
   logic timer_input_event;
@@ -293,6 +294,7 @@ module hd63705v0_mcu (
       receive_shift <= 7'h00;
       receive_bits <= 4'd0;
       receive_armed <= 1'b0;
+      sci_disabled <= 1'b0;
       stopped_previous <= 1'b0;
     end else if (clock_enable_i) begin
       timer_previous <= timer_i;
@@ -332,14 +334,14 @@ module hd63705v0_mcu (
         end
         if (sci_serial_selected && sci_internal_falling) sci_status[6] <= 1'b1;
 
-        if (sci_serial_selected && sci_serial_falling && transmit_active &&
+        if (sci_serial_selected && !sci_disabled && sci_serial_falling && transmit_active &&
             sci_control[7]) begin
           transmit_output <= transmit_shift[0];
           transmit_shift <= {1'b0, transmit_shift[7:1]};
           transmit_bits <= transmit_bits + 4'd1;
           if (transmit_bits == 4'd7) transmit_active <= 1'b0;
         end
-        if (sci_serial_selected && sci_serial_rising) begin
+        if (sci_serial_selected && !sci_disabled && sci_serial_rising) begin
           if (!transmit_active && (transmit_bits == 4'd8)) begin
             sci_status[7] <= 1'b1;
             transmit_bits <= 4'd0;
@@ -351,6 +353,7 @@ module hd63705v0_mcu (
               sci_status[7] <= 1'b1;
               receive_shift <= 7'h00;
               receive_bits <= 4'd0;
+              receive_armed <= 1'b0;
             end else begin
               receive_shift[receive_bits[2:0]] <= port_d_i[4];
             end
@@ -397,11 +400,23 @@ module hd63705v0_mcu (
             sci_data <= core_data_out;
             if (sci_control[5]) begin
               sci_status[7] <= 1'b0;
-              receive_armed <= 1'b1;
-              transmit_shift <= core_data_out;
-              transmit_bits <= 4'd0;
-              transmit_active <= 1'b1;
-              if (!sci_control[4]) sci_divider <= 15'h0000;
+              sci_divider <= 15'h0000;
+              if (!sci_disabled &&
+                  (transmit_active || (receive_armed && sci_control[6]))) begin
+                // QA635-308A: an SDR access during transfer disables SCI
+                // until reset. Partial shift data is a deterministic policy.
+                sci_disabled <= 1'b1;
+                transmit_active <= 1'b0;
+                receive_armed <= 1'b0;
+                transmit_bits <= 4'd0;
+                receive_bits <= 4'd0;
+              end else if (!sci_disabled) begin
+                receive_armed <= sci_control[6];
+                receive_bits <= 4'd0;
+                transmit_shift <= core_data_out;
+                transmit_bits <= 4'd0;
+                transmit_active <= sci_control[7];
+              end
             end
           end
           default: ;
@@ -409,8 +424,18 @@ module hd63705v0_mcu (
       end else if (core_bus_valid && !core_write &&
                    (core_address[13:0] == 14'h0012) && sci_control[5]) begin
         sci_status[7] <= 1'b0;
-        receive_armed <= 1'b1;
-        if (!sci_control[4]) sci_divider <= 15'h0000;
+        sci_divider <= 15'h0000;
+        if (!sci_disabled &&
+            (transmit_active || (receive_armed && sci_control[6]))) begin
+          sci_disabled <= 1'b1;
+          transmit_active <= 1'b0;
+          receive_armed <= 1'b0;
+          transmit_bits <= 4'd0;
+          receive_bits <= 4'd0;
+        end else if (!sci_disabled) begin
+          receive_armed <= sci_control[6];
+          receive_bits <= 4'd0;
+        end
       end
     end
   end

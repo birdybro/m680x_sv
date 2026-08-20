@@ -54,8 +54,11 @@
     "format": "Eight-bit synchronous transfer, least-significant bit first; transmit changes on negative CK edges and receive samples positive CK edges.",
     "clock": "SCR5:SCR4 selects disabled GPIO, internal clock/output, or external clock/input. Sixteen documented clock widths are powers of two from 1 us through 32768 us at a 4-MHz oscillator.",
     "timer2": "The internal 15-bit transfer-clock generator sets SSR6 on each negative edge even while the serial shifter uses external CK.",
-    "completion": "SSR7 sets on completion of either eight-bit transmit or receive; an SDR access with SCR5 one clears it, starts transmission for a write, and arms initial reception.",
-    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.4 and figures 2-6 through 2-8, printed pages 113-117"}
+    "completion": "SSR7 sets on the eighth positive CK edge after transmit or receive starts. The completed receive byte is retained and later clocks are ignored until an SDR access starts another transfer; the final transmitted bit remains on Tx.",
+    "access_protocol": "With SCR5 one, every SDR access clears SSR7 and initializes the transfer-clock prescaler. A write starts transmission only when SCR7 is one; an access arms reception only when SCR6 is one. Clearing SSR7 directly through SSR does not start another transfer. With SCR5 zero, SDR is an ordinary eight-bit register.",
+    "fault_protocol": "An SDR access during an active transfer disables the serial shifters until MCU reset. The manufacturer does not guarantee partial shift data after this prohibited access; the model and RTL deterministically cancel the partial transfer without claiming silicon equivalence.",
+    "simultaneous_transfer": "Transmit and receive may run simultaneously from the common clock.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 section 2.4 and figures 2-6 through 2-8, printed pages 113-117; Q&A QA635-305A through QA635-313A, handbook printed pages 893-901"}
   },
   "operating_modes": {
     "mcu": "NUM low selects single-chip execution from the internal 1000-1FFF EPROM and 0040-00FF RAM.",
@@ -74,8 +77,8 @@
   "implementation_scope": {
     "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, a stated figure-2-18 STOP normalization, and normalized EPROM programming pins.",
     "model": "model/hd63705v0_device.py independently classifies every physical address and models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, normalized STOP state changes per E cycle, and the combinational EPROM table.",
-    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes; all 256 TCR writes, 2048 counter/divider pairs, all 32 source/divider combinations, request/mask/TDR access, reset and wait-vector behavior; all 248 GPIO bit truth-table combinations plus fixed Port-D readback, WAIT/STOP retention, and all 512 SCR/initial-DDR combinations; and cover external interrupt priority, eight-bit serial transfer, normalized STOP/STBY, and all five table-2-9 EPROM states.",
-    "undefined_policy": "IC-test-area and unused read values, SDR reset data, and the STOP register state disputed by section 2.9/table 2-5 versus figure 2-18 are deterministic FPGA normalizations, not silicon-equivalence claims.",
+    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes; all 256 TCR writes, 2048 counter/divider pairs, all 32 source/divider combinations, request/mask/TDR access, reset and wait-vector behavior; all 248 GPIO bit truth-table combinations plus fixed Port-D readback, WAIT/STOP retention, and all 512 SCR/initial-DDR combinations; all 256 synchronous transmit bytes, all 256 receive bytes, all 256 SSR values, all 32 Timer2 source/rate combinations, and 261 SDR protocol cases; and cover external interrupt priority, normalized STOP/STBY, and all five table-2-9 EPROM states.",
+    "undefined_policy": "IC-test-area and unused read values, SDR reset data, partial data following a prohibited mid-transfer SDR access, and the STOP register state disputed by section 2.9/table 2-5 versus figure 2-18 are deterministic FPGA normalizations, not silicon-equivalence claims.",
     "analog_exclusions": ["oscillator startup and duty cycle", "EPROM charge programming, voltage margins, and retention", "pad drive strength", "metastability"]
   }
 }

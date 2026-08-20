@@ -250,6 +250,16 @@ value from both all-input and all-output initial directions plus active override
 cases. The independent model repeats the same factual state space. QA635-302A's requirement that SCI
 selection writes and later retains D3-D5's DDR values is implemented; D0-D2/D6
 remain independent as QA635-303A requires. Analog pad behavior remains excluded.
+The normalized synchronous-SCI/Timer2 dimension is `COMPLETE`: direct RTL and
+independent model tests exhaust all 256 Tx bytes, all 256 Rx bytes, every SSR
+value, and every one of the 16 internal widths under both serial source
+selections. They verify falling-edge Tx, rising-edge Rx and eighth-edge request,
+final-bit/data retention, post-completion clock holdoff, simultaneous transfer,
+SDR/SSR access rules, Timer2 request timing, and the reset-only recovery from a
+prohibited mid-transfer SDR access specified by QA635-305A through QA635-313A.
+The undefined partial-data result of that prohibited access is deterministically
+cancelled without a silicon-equivalence claim. Oscillator, CK-pad, and
+electrical timing remain excluded.
 The manual's `$0000`-`$00ff` programming-range sentence conflicts with its 4-KiB,
 twelve-address-input, and `$1000`-`$1fff` memory-map facts; the interface uses
 the mutually consistent `$0000`-`$0fff` programmer range and preserves the

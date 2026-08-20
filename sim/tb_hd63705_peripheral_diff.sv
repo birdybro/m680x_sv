@@ -65,10 +65,22 @@ module tb_hd63705_peripheral_diff;
   integer sci_value;
   integer sci_initial;
   integer sci_ddr_checks;
+  integer sci_byte;
+  integer sci_bit;
+  integer sci_rate;
+  integer sci_source;
+  integer sci_phase_index;
+  integer sci_tx_checks;
+  integer sci_rx_checks;
+  integer sci_ssr_checks;
+  integer sci_rate_checks;
+  integer sci_protocol_checks;
   logic expected_program_read;
   logic [7:0] expected_timer;
   logic [7:0] expected_tcr;
   logic [7:0] expected_ddr;
+  logic [7:0] expected_ssr;
+  logic expected_sci_clock;
 
   /* verilator lint_off PINCONNECTEMPTY */
   hd63705v0_mcu dut (
@@ -175,6 +187,11 @@ module tb_hd63705_peripheral_diff;
     timer_access_checks = 0;
     gpio_checks = 0;
     sci_ddr_checks = 0;
+    sci_tx_checks = 0;
+    sci_rx_checks = 0;
+    sci_ssr_checks = 0;
+    sci_rate_checks = 0;
+    sci_protocol_checks = 0;
     #1;
     reset_n = 1'b0;
     #1;
@@ -598,10 +615,282 @@ module tb_hd63705_peripheral_diff;
     stub_stopped = 1'b0;
     tick();
 
+    // Sections 2.4(4)-(5) and QA635-306A put Tx changes on falling CK
+    // edges, Rx samples and SSR7 completion on the eighth rising edge.
+    for (sci_byte = 0; sci_byte < 256; sci_byte = sci_byte + 1) begin
+      stub_valid = 1'b0;
+      stub_write = 1'b0;
+      reset_n = 1'b0;
+      #1;
+      reset_n = 1'b1;
+      port_d_in = 7'h20;
+      bus_write(14'h0010, 8'hb0);
+      bus_write(14'h0012, sci_byte[7:0]);
+      stub_valid = 1'b0;
+      stub_write = 1'b0;
+      for (sci_bit = 0; sci_bit < 8; sci_bit = sci_bit + 1) begin
+        port_d_in = 7'h00;
+        tick();
+        if (sci_tx !== sci_byte[sci_bit] || port_d_out[3] !== sci_byte[sci_bit] ||
+            debug_ssr[7]) begin
+          $fatal(1, "HD63705 SCI Tx falling byte=%02x bit=%0d tx=%b/%b SSR=%02x",
+                 sci_byte[7:0], sci_bit, sci_tx, sci_byte[sci_bit], debug_ssr);
+        end
+        port_d_in = 7'h20;
+        tick();
+        if (debug_ssr[7] !== (sci_bit == 7)) begin
+          $fatal(1, "HD63705 SCI Tx completion byte=%02x bit=%0d SSR=%02x",
+                 sci_byte[7:0], sci_bit, debug_ssr);
+        end
+        sci_tx_checks = sci_tx_checks + 1;
+      end
+      port_d_in = 7'h00;
+      tick();
+      port_d_in = 7'h20;
+      tick();
+      if (sci_tx !== sci_byte[7] || !debug_ssr[7]) begin
+        $fatal(1, "HD63705 SCI Tx completion hold byte=%02x tx=%b SSR=%02x",
+               sci_byte[7:0], sci_tx, debug_ssr);
+      end
+    end
+
+    for (sci_byte = 0; sci_byte < 256; sci_byte = sci_byte + 1) begin
+      stub_valid = 1'b0;
+      stub_write = 1'b0;
+      reset_n = 1'b0;
+      #1;
+      reset_n = 1'b1;
+      port_d_in = 7'h20;
+      bus_write(14'h0010, 8'h70);
+      stub_address = 16'h0012;
+      stub_valid = 1'b1;
+      stub_write = 1'b0;
+      tick();
+      stub_valid = 1'b0;
+      for (sci_bit = 0; sci_bit < 8; sci_bit = sci_bit + 1) begin
+        port_d_in = sci_byte[sci_bit] ? 7'h10 : 7'h00;
+        tick();
+        port_d_in[5] = 1'b1;
+        tick();
+        if (debug_ssr[7] !== (sci_bit == 7)) begin
+          $fatal(1, "HD63705 SCI Rx completion byte=%02x bit=%0d SSR=%02x",
+                 sci_byte[7:0], sci_bit, debug_ssr);
+        end
+        sci_rx_checks = sci_rx_checks + 1;
+      end
+      if (debug_sdr !== sci_byte[7:0] || dut.receive_armed) begin
+        $fatal(1, "HD63705 SCI Rx byte=%02x SDR=%02x armed=%b",
+               sci_byte[7:0], debug_sdr, dut.receive_armed);
+      end
+      port_d_in = 7'h10;
+      tick();
+      port_d_in = 7'h30;
+      tick();
+      if (debug_sdr !== sci_byte[7:0] || !debug_ssr[7]) begin
+        $fatal(1, "HD63705 SCI Rx post-completion clock byte=%02x SDR=%02x SSR=%02x",
+               sci_byte[7:0], debug_sdr, debug_ssr);
+      end
+    end
+
+    // Every SSR write starts with both request flags set. Write-one preserves
+    // each request, write-zero clears it, masks are direct, and SSR3 reads zero.
+    for (sci_byte = 0; sci_byte < 256; sci_byte = sci_byte + 1) begin
+      stub_valid = 1'b0;
+      reset_n = 1'b0;
+      #1;
+      reset_n = 1'b1;
+      port_d_in = 7'h20;
+      bus_write(14'h0010, 8'h70);
+      stub_address = 16'h0012;
+      stub_valid = 1'b1;
+      stub_write = 1'b0;
+      tick();
+      stub_valid = 1'b0;
+      for (sci_bit = 0; sci_bit < 8; sci_bit = sci_bit + 1) begin
+        port_d_in = 7'h00;
+        tick();
+        port_d_in = 7'h20;
+        tick();
+      end
+      if (debug_ssr[7:6] !== 2'b11) begin
+        $fatal(1, "HD63705 SCI SSR request setup value=%02x SSR=%02x",
+               sci_byte[7:0], debug_ssr);
+      end
+      bus_write(14'h0011, sci_byte[7:0]);
+      expected_ssr = (sci_byte[7:0] & 8'hf0) | 8'h07;
+      if (debug_ssr !== expected_ssr ||
+          (sci_byte[3] && dut.sci_divider !== 15'h0000)) begin
+        $fatal(1, "HD63705 SCI SSR write value=%02x SSR=%02x/%02x divider=%04x",
+               sci_byte[7:0], debug_ssr, expected_ssr, dut.sci_divider);
+      end
+      sci_ssr_checks = sci_ssr_checks + 1;
+    end
+
+    // Timer2's internal generator runs for both internal and external serial
+    // source selections. All sixteen rates must preserve the exact 2^n width.
+    for (sci_source = 0; sci_source < 2; sci_source = sci_source + 1) begin
+      for (sci_rate = 0; sci_rate < 16; sci_rate = sci_rate + 1) begin
+        stub_valid = 1'b0;
+        reset_n = 1'b0;
+        #1;
+        reset_n = 1'b1;
+        port_d_in = 7'h20;
+        bus_write(14'h0010, (sci_source[0] ? 8'h30 : 8'h20) |
+                            sci_rate[7:0]);
+        bus_write(14'h0011, 8'h38);
+        expected_sci_clock = sci_clock;
+        stub_valid = 1'b0;
+        stub_write = 1'b0;
+        for (sci_phase_index = 1; sci_phase_index < (1 << sci_rate);
+             sci_phase_index = sci_phase_index + 1) begin
+          tick();
+          if (sci_clock !== expected_sci_clock) begin
+            $fatal(1, "HD63705 SCI early first phase source=%0d rate=%0d index=%0d",
+                   sci_source, sci_rate, sci_phase_index);
+          end
+        end
+        tick();
+        if (sci_clock === expected_sci_clock) begin
+          $fatal(1, "HD63705 SCI missing first phase source=%0d rate=%0d",
+                 sci_source, sci_rate);
+        end
+        for (sci_phase_index = 1; sci_phase_index < (1 << sci_rate);
+             sci_phase_index = sci_phase_index + 1) begin
+          tick();
+          if (sci_clock === expected_sci_clock) begin
+            $fatal(1, "HD63705 SCI early second phase source=%0d rate=%0d index=%0d",
+                   sci_source, sci_rate, sci_phase_index);
+          end
+        end
+        tick();
+        if (sci_clock !== expected_sci_clock || !debug_ssr[6]) begin
+          $fatal(1, "HD63705 SCI Timer2 phase source=%0d rate=%0d clock=%b/%b SSR=%02x",
+                 sci_source, sci_rate, sci_clock, expected_sci_clock, debug_ssr);
+        end
+        sci_rate_checks = sci_rate_checks + 1;
+      end
+    end
+
+    // QA635-305A/307A/308A/311A/312A protocol corner cases.
+    stub_valid = 1'b0;
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    for (sci_byte = 0; sci_byte < 256; sci_byte = sci_byte + 1) begin
+      bus_write(14'h0012, sci_byte[7:0]);
+      stub_address = 16'h0012;
+      stub_valid = 1'b1;
+      stub_write = 1'b0;
+      #1;
+      if (dut.core_data_in !== sci_byte[7:0]) begin
+        $fatal(1, "HD63705 SDR general register value=%02x data=%02x",
+               sci_byte[7:0], dut.core_data_in);
+      end
+      tick();
+      if (dut.transmit_active || dut.receive_armed || dut.sci_disabled) begin
+        $fatal(1, "HD63705 SDR general register activated SCI value=%02x",
+               sci_byte[7:0]);
+      end
+      sci_protocol_checks = sci_protocol_checks + 1;
+    end
+
+    port_d_in = 7'h20;
+    bus_write(14'h0010, 8'hf0);
+    stub_valid = 1'b0;
+    repeat (10) begin
+      port_d_in = 7'h00;
+      tick();
+      port_d_in = 7'h20;
+      tick();
+    end
+    if (debug_ssr[7] || dut.transmit_active || dut.receive_armed) begin
+      $fatal(1, "HD63705 SCI pre-access clocks were not ignored");
+    end
+    sci_protocol_checks = sci_protocol_checks + 1;
+
+    stub_address = 16'h0012;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    tick();
+    stub_valid = 1'b0;
+    port_d_in = 7'h00;
+    tick();
+    port_d_in = 7'h30;
+    tick();
+    stub_address = 16'h0012;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    tick();
+    if (!dut.sci_disabled || dut.transmit_active || dut.receive_armed) begin
+      $fatal(1, "HD63705 SCI mid-transfer access did not disable shifters");
+    end
+    stub_valid = 1'b0;
+    repeat (10) begin
+      port_d_in = 7'h10;
+      tick();
+      port_d_in = 7'h30;
+      tick();
+    end
+    if (debug_ssr[7]) begin
+      $fatal(1, "HD63705 disabled SCI completed a transfer SSR=%02x", debug_ssr);
+    end
+    sci_protocol_checks = sci_protocol_checks + 1;
+
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    if (dut.sci_disabled) $fatal(1, "HD63705 reset retained SCI disable latch");
+    sci_protocol_checks = sci_protocol_checks + 1;
+
+    port_d_in = 7'h20;
+    bus_write(14'h0010, 8'h70);
+    stub_address = 16'h0012;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    tick();
+    stub_valid = 1'b0;
+    repeat (8) begin
+      port_d_in = 7'h00;
+      tick();
+      port_d_in = 7'h20;
+      tick();
+    end
+    bus_write(14'h0011, 8'h30);
+    stub_valid = 1'b0;
+    repeat (8) begin
+      port_d_in = 7'h10;
+      tick();
+      port_d_in = 7'h30;
+      tick();
+    end
+    if (debug_ssr[7] || debug_sdr !== 8'h00 || dut.receive_armed) begin
+      $fatal(1, "HD63705 SSR clear incorrectly rearmed receive SDR=%02x SSR=%02x armed=%b",
+             debug_sdr, debug_ssr, dut.receive_armed);
+    end
+    sci_protocol_checks = sci_protocol_checks + 1;
+
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    port_d_in = 7'h20;
+    bus_write(14'h0010, 8'h3f);
+    stub_valid = 1'b0;
+    repeat (17) tick();
+    stub_address = 16'h0012;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    tick();
+    if (dut.sci_divider !== 15'h0000 || dut.receive_armed ||
+        dut.transmit_active) begin
+      $fatal(1, "HD63705 external SDR prescaler reset divider=%04x", dut.sci_divider);
+    end
+    sci_protocol_checks = sci_protocol_checks + 1;
+
     for (map_address = 'h0004; map_address <= 'h0007;
          map_address = map_address + 1) begin
       bus_write(map_address[13:0], 8'hff);
     end
+    bus_write(14'h0010, 8'h00);
     if (port_a_oe !== 8'hff || port_b_oe !== 8'hff ||
         port_c_oe !== 8'hff || port_d_oe !== 7'h7f) begin
       $fatal(1, "HD63705 pre-standby GPIO direction");
@@ -633,11 +922,12 @@ module tb_hd63705_peripheral_diff;
       ram_checks = ram_checks + 1;
     end
 
-    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d TCR checks=%0d timer counter checks=%0d source/divider checks=%0d timer access checks=%0d GPIO checks=%0d SCI DDR checks=%0d",
+    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d TCR checks=%0d timer counter checks=%0d source/divider checks=%0d timer access checks=%0d GPIO checks=%0d SCI DDR checks=%0d SCI Tx checks=%0d SCI Rx checks=%0d SCI SSR checks=%0d SCI rate checks=%0d SCI protocol checks=%0d",
              32'h63705000, HD63705_PERIPHERAL_VECTOR_COUNT,
              map_checks, ram_checks, timer_tcr_checks, timer_counter_checks,
              timer_source_checks, timer_access_checks, gpio_checks,
-             sci_ddr_checks);
+             sci_ddr_checks, sci_tx_checks, sci_rx_checks, sci_ssr_checks,
+             sci_rate_checks, sci_protocol_checks);
     $finish;
   end
 endmodule

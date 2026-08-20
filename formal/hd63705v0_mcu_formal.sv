@@ -53,6 +53,7 @@ module hd63705v0_mcu_formal;
   logic sci_clock;
   logic sci_tx;
   logic timer_irq;
+  logic sci_irq;
   logic eprom_storage_read;
 
   assign eprom_storage_read = eprom_mode && !eprom_oe_n &&
@@ -80,7 +81,7 @@ module hd63705v0_mcu_formal;
     .eprom_data_oe_o(eprom_data_oe),
     .eprom_program_data_o(eprom_program_data), .eprom_program_o(eprom_program),
     .sci_tx_o(sci_tx), .sci_clock_o(sci_clock), .timer_irq_o(timer_irq),
-    .sci_irq_o(), .int_irq_o(), .int2_irq_o(), .irq_vector_o(irq_vector),
+    .sci_irq_o(sci_irq), .int_irq_o(), .int2_irq_o(), .irq_vector_o(irq_vector),
     .opcode_fetch_o(), .retire_o(), .illegal_o(), .undefined_o(),
     .waiting_o(waiting_state), .stopped_o(stopped_state),
     .interrupt_ack_o(), .debug_address_o(debug_address),
@@ -102,6 +103,8 @@ module hd63705v0_mcu_formal;
     assert (timer_irq == (debug_tcr[7] && !debug_tcr[6]));
     assert (debug_mr[4:0] == 5'h1f);
     assert (debug_ssr[3:0] == 4'h7);
+    assert (sci_irq == ((debug_ssr[7] && !debug_ssr[5]) ||
+                        (debug_ssr[6] && !debug_ssr[4])));
     assert (irq_vector == 16'h1ffa || irq_vector == 16'h1ff8 ||
             irq_vector == 16'h1ff6 || irq_vector == 16'h1ff4);
     assert (eprom_program == (eprom_mode && eprom_vpp && !eprom_ce_n &&
@@ -118,6 +121,8 @@ module hd63705v0_mcu_formal;
       assert ({port_a_oe, port_b_oe, port_c_oe, port_d_oe} == '0);
       assert (debug_timer == 8'hf0);
       assert (debug_tcr == 8'h50);
+      assert (debug_scr == 8'h00);
+      assert (debug_ssr == 8'h37);
     end else if (!eprom_mode) begin
       if (debug_scr[7]) assert (port_d_oe[3]);
       if (debug_scr[6]) assert (!port_d_oe[4]);
@@ -136,12 +141,13 @@ module hd63705v0_mcu_formal;
       assert ({port_a_out, port_b_out, port_c_out, port_d_out,
                debug_pc, debug_sp, debug_a, debug_x, debug_ccr, debug_opcode,
                debug_timer, debug_tcr, debug_mr, debug_scr, debug_ssr,
-               debug_sdr, waiting_state, stopped_state, sci_clock, sci_tx} ==
+               debug_sdr, waiting_state, stopped_state, sci_clock, sci_tx,
+               sci_irq} ==
               $past({port_a_out, port_b_out, port_c_out, port_d_out,
                      debug_pc, debug_sp, debug_a, debug_x, debug_ccr,
                      debug_opcode, debug_timer, debug_tcr, debug_mr,
                      debug_scr, debug_ssr, debug_sdr, waiting_state,
-                     stopped_state, sci_clock, sci_tx}));
+                     stopped_state, sci_clock, sci_tx, sci_irq}));
     end
   end
 endmodule

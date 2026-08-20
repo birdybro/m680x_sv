@@ -351,7 +351,7 @@ fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
 eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field
 changes and external wake, STBY high impedance with RAM retention, and all five normalized
-EPROM control states. Fourteen independent model tests exercise the same factual
+EPROM control states. Nineteen independent model tests exercise the same factual
 areas and exhaustively project the EPROM address space without sharing RTL
 control structure. A direct extension classifies all 16,384 physical addresses
 and performs 576 checks over every RAM byte after fill, reset, and standby. It
@@ -379,6 +379,21 @@ external clock overrides are checked separately. This found and regresses a
 real implementation defect: SCI had overridden output enables without writing
 the D3-D5 DDRD bits mandated by QA635-302A. Formal checks independently require
 the active Tx/Rx/CK output-enable relationships and reset/standby high impedance.
+
+The synchronous-SCI extension directly verifies 2,048 falling-edge Tx bit
+positions across every byte, 2,048 rising-edge Rx bit positions across every
+byte, all 256 SSR writes, all 32 Timer2 source/rate combinations, and 261 SDR
+protocol cases. It checks exact eighth-rising-edge request assertion, final-bit
+and receive-data retention, post-completion clock holdoff, disabled-mode general
+register behavior, simultaneous transfer, prescaler initialization even with
+external CK selected, SSR-clear-without-rearm, and reset-only recovery after a
+prohibited mid-transfer SDR access. This regression found and permanently fixes
+three implementation defects: automatic Rx rearming after completion, failure
+to reset the Timer2 prescaler on external-mode SDR access, and failure to latch
+the documented transfer-fault disable. QA635-308A leaves partial shifted data
+undefined after the prohibited access, so deterministic cancellation is tested
+without a silicon-data claim. Both Verilator and Icarus run the same direct
+matrix.
 
 Seed `0x63705000` adds 768 normalized E-cycle comparisons. A directed prefix
 precedes deterministic register, pin, memory, interrupt, and low-power traffic;
@@ -466,7 +481,8 @@ within those bounds:
 - HD63705V0 PC/SP and physical-address geometry remain legal, interrupt vectors
   stay in the documented set, all five table-2-9 EPROM states use exact
   ordinary-read/VPP/CE/OE qualification, standby/EPROM mode disables GPIO
-  drive, and disabled-cycle state stalls.
+  drive, disabled-cycle state stalls, SCI/Timer2 interrupt output is exactly
+  its two request/mask equations, and SCI control/status reset values are exact.
 
 These bounded safety proofs complement simulation; they are not a liveness or
 full instruction-correctness proof.
@@ -518,7 +534,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |
-| HD63705V0 integration | 9,988 | 1,858 |
+| HD63705V0 integration | 9,984 | 1,859 |
 
 Sequential counts include every synthesized DFF primitive and inferred memory
 bit. Cell counts are tool/version/technology dependent and are smoke-test

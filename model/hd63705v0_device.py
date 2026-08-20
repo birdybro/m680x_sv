@@ -165,6 +165,7 @@ class HD63705V0PeripheralState:
     receive_shift: int = 0
     receive_bits: int = 0
     receive_armed: bool = False
+    sci_disabled: bool = False
     stop_initialized: bool = False
 
     @property
@@ -214,6 +215,7 @@ class HD63705V0PeripheralState:
             "SDR": self.sci_data,
             "sci_clock": self.sci_clock,
             "sci_tx": self.transmit_output,
+            "sci_disabled": self.sci_disabled,
             "int_latch": self.int_latch,
             "stop_initialized": self.stop_initialized,
         }
@@ -469,6 +471,8 @@ class HD63705V0DeviceModel:
 
         if internal_falling:
             s.timer2_request = True
+        if s.sci_disabled:
+            return
         if s.scr & 0x10:
             rising, falling = external_rising, external_falling
         else:
@@ -493,13 +497,30 @@ class HD63705V0DeviceModel:
                     s.sci_request = True
                     s.receive_shift = 0
                     s.receive_bits = 0
+                    s.receive_armed = False
 
-    def _access_sdr(self) -> None:
+    def _access_sdr(self) -> bool:
         s = self.state
         s.sci_request = False
-        s.receive_armed = True
-        if (s.scr & 0x30) == 0x20:
-            s.sci_divider = 0
+        # QA635-312A/313A initialize the transfer-clock prescaler on every
+        # selected-SCI SDR access, including external-clock mode (Timer2 still
+        # uses the internal generator there).
+        s.sci_divider = 0
+        if s.sci_disabled:
+            return False
+        if s.transmit_active or (s.receive_armed and s.scr & 0x40):
+            # QA635-308A says an access during transfer disables the SCI until
+            # reset. Shift/count state is normalized deterministically here;
+            # the manufacturer does not guarantee the partial data result.
+            s.sci_disabled = True
+            s.transmit_active = False
+            s.receive_armed = False
+            s.transmit_bits = 0
+            s.receive_bits = 0
+            return False
+        s.receive_armed = bool(s.scr & 0x40)
+        s.receive_bits = 0
+        return True
 
     def _write_register(self, address: int, data: int) -> None:
         s = self.state
@@ -560,7 +581,7 @@ class HD63705V0DeviceModel:
         elif address == 0x12:
             s.sci_data = data
             if s.scr & 0x20:
-                self._access_sdr()
-                s.transmit_shift = data
-                s.transmit_bits = 0
-                s.transmit_active = True
+                if self._access_sdr():
+                    s.transmit_shift = data
+                    s.transmit_bits = 0
+                    s.transmit_active = bool(s.scr & 0x80)

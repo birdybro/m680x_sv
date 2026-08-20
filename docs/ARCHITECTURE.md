@@ -506,12 +506,20 @@ software-cleared. The priority encoder selects INT, timer/INT2, the separate
 timer-from-WAIT vector, and SCI/Timer2 without conflating their status flags.
 
 The synchronous SCI changes LSB-first transmit data on CK falling edges and
-samples receive data on rising edges. A 15-bit interval counter plus clock
-phase generates all sixteen documented internal widths; Timer2 sets its request
-on each internal negative edge even when serial shifting selects external CK.
-SDR access implements request clearing, transmitter load, and initial receive
-arming. `model/hd63705v0_device.py` uses a separate transaction/event structure,
-and a generated 768-cycle corpus compares every visible state boundary.
+samples receive data on rising edges. The eighth rising edge sets the SCI
+request, after which the final Tx bit or received byte is held and further
+external clocks are ignored until another SDR access. A 15-bit interval counter
+plus clock phase generates all sixteen documented internal widths; Timer2 sets
+its request on each internal negative edge even when serial shifting selects
+external CK. Every selected-SCI SDR access clears the SCI request and initializes
+that prescaler. A write starts Tx only when SCR7 is selected and an access arms
+Rx only when SCR6 is selected; clearing SSR7 itself does not rearm either path.
+An SDR access during an active transfer latches the Q&A-defined SCI-disable
+state until reset and deterministically cancels the partial shift because the
+manufacturer leaves the partial data result undefined. `model/hd63705v0_device.py`
+uses a separate transaction/event structure, and a generated 768-cycle corpus
+compares every visible state boundary. Exhaustive direct cases cover all byte,
+status, rate/source, and access-protocol combinations.
 
 WAIT stops only CPU execution and preserves timer/SCI operation. On STOP entry,
 the wrapper follows figure 2-18 by resetting TDR, timer request/mask, and
