@@ -148,7 +148,10 @@ tolerance, and complete manufacturer bus waveforms outside the specifically
 verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by
 the integrator; their externally described vector and programming controls are
-implemented without redistributing the firmware image.
+implemented without redistributing the firmware image. Its normalized digital
+boundary covers all eight documented PCR/VPP table rows, prevents software from
+entering either invalid PGE/PLE encoding, and exposes latch/program
+requests while leaving voltage and pulse physics to the integrator.
 The HD63705V0 digital programming boundary does implement all five documented
 read/output-disable/program/verify/disable states; separate +5-V-read and VPP
 qualifiers avoid conflating voltage states while leaving their analog

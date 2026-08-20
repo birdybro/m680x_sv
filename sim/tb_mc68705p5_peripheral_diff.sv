@@ -35,6 +35,7 @@ module tb_mc68705p5_peripheral_diff;
   logic [7:0] debug_pcr;
   mc68705p5_peripheral_vector_t expected;
   integer cycle_index;
+  integer pcr_checks;
 
   /* verilator lint_off PINCONNECTEMPTY */
   mc68705p5_mcu dut (
@@ -69,6 +70,39 @@ module tb_mc68705p5_peripheral_diff;
     end
   endtask
 
+  task automatic check_pcr_write(
+    input logic       test_vpp,
+    input logic [1:0] write_value,
+    input logic [7:0] expected_pcr,
+    input logic       expected_latch,
+    input logic       expected_program,
+    input logic       expected_read
+  );
+    begin
+      vpp_present = test_vpp;
+      stub_address = 16'h000b;
+      stub_data = {6'h00, write_value};
+      stub_write = 1'b1;
+      stub_valid = 1'b1;
+      tick();
+      stub_address = 16'h0080;
+      stub_write = 1'b0;
+      program_data = 8'ha5;
+      #1;
+      if (debug_pcr !== expected_pcr ||
+          eprom_latch_enable !== expected_latch ||
+          eprom_program_enable !== expected_program ||
+          program_read !== expected_read ||
+          dut.core_data_in !== (expected_read ? 8'ha5 : 8'hff)) begin
+        $fatal(1, "MC68705P5 PCR table VPP=%b write=%02x PCR=%02x/%02x latch=%b/%b program=%b/%b read=%b/%b data=%02x",
+               test_vpp, {6'h00, write_value}, debug_pcr, expected_pcr,
+               eprom_latch_enable, expected_latch, eprom_program_enable,
+               expected_program, program_read, expected_read, dut.core_data_in);
+      end
+      pcr_checks = pcr_checks + 1;
+    end
+  endtask
+
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
@@ -85,6 +119,7 @@ module tb_mc68705p5_peripheral_diff;
     stub_write = 1'b0;
     stub_valid = 1'b0;
     stub_interrupt_mask = 1'b1;
+    pcr_checks = 0;
     #1;
     reset_n = 1'b0;
     #1;
@@ -148,8 +183,25 @@ module tb_mc68705p5_peripheral_diff;
                expected.eprom_program_data);
       end
     end
-    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d",
-             32'h68705a05, MC68705P5_PERIPHERAL_VECTOR_COUNT);
+
+    // Exercise all four software encodings with and without VPP. Writes of
+    // PGE=0,PLE=1 are coerced to PGE=1, so neither invalid table row is
+    // reachable through the PCR programming interface.
+    stub_valid = 1'b0;
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    check_pcr_write(1'b0, 2'b00, 8'hfc, 1'b0, 1'b0, 1'b1);
+    check_pcr_write(1'b0, 2'b01, 8'hff, 1'b0, 1'b0, 1'b1);
+    check_pcr_write(1'b0, 2'b10, 8'hfe, 1'b0, 1'b0, 1'b1);
+    check_pcr_write(1'b0, 2'b11, 8'hff, 1'b0, 1'b0, 1'b1);
+    check_pcr_write(1'b1, 2'b00, 8'hf8, 1'b1, 1'b1, 1'b0);
+    check_pcr_write(1'b1, 2'b01, 8'hfb, 1'b0, 1'b0, 1'b1);
+    check_pcr_write(1'b1, 2'b10, 8'hfa, 1'b1, 1'b0, 1'b0);
+    check_pcr_write(1'b1, 2'b11, 8'hfb, 1'b0, 1'b0, 1'b1);
+
+    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d PCR states=%0d",
+             32'h68705a05, MC68705P5_PERIPHERAL_VECTOR_COUNT, pcr_checks);
     $finish;
   end
 endmodule

@@ -4,12 +4,15 @@ import unittest
 
 from model.common import Memory
 from model.mc68705p5_device import (
+    EPROM_CONTROL_DEFINED_STATES,
     MC68705P5CycleInputs,
     MC68705P5DeviceModel,
+    MC68705P5EPROMControlInputs,
     VECTOR_BOOTSTRAP,
     VECTOR_EXTERNAL,
     VECTOR_RESET,
     VECTOR_TIMER,
+    eprom_control,
 )
 
 
@@ -25,6 +28,75 @@ class MC68705P5DeviceModelTests(unittest.TestCase):
     @classmethod
     def read(cls, model: MC68705P5DeviceModel, address: int, **values):
         return cls.cycle(model, address=address, valid=True, write=False, **values)
+
+    def test_pcr_programming_table_is_exact(self) -> None:
+        states = {
+            (True, False, False): "program",
+            (False, False, False): "controls_disconnected",
+            (True, True, False): "latch_address_data",
+            (False, True, False): "controls_disconnected",
+            (True, False, True): "invalid",
+            (False, False, True): "invalid",
+            (True, True, True): "high_voltage_on_vpp",
+            (False, True, True): "operating",
+        }
+        self.assertEqual(set(states.values()), set(EPROM_CONTROL_DEFINED_STATES))
+        for (vpp, pge, ple), expected in states.items():
+            control = eprom_control(
+                MC68705P5EPROMControlInputs(vpp_present=vpp, pge=pge, ple=ple)
+            )
+            self.assertEqual(control.state, expected)
+            if expected == "invalid":
+                self.assertIsNone(control.read_enabled)
+                self.assertIsNone(control.latch_enabled)
+                self.assertIsNone(control.program_enabled)
+            else:
+                self.assertEqual(control.read_enabled, not vpp or ple)
+                self.assertEqual(control.latch_enabled, vpp and not ple)
+                self.assertEqual(
+                    control.program_enabled, vpp and not ple and not pge
+                )
+
+    def test_all_software_pcr_writes_obey_interlock(self) -> None:
+        for vpp in (False, True):
+            for data in range(4):
+                program = Memory()
+                program[0x080] = 0xA5
+                model = MC68705P5DeviceModel(program_memory=program)
+                result = self.write(model, 0x00B, data, vpp_present=vpp)
+                ple = bool(data & 0x01)
+                pge = bool(data & 0x02) or ple
+                control = eprom_control(
+                    MC68705P5EPROMControlInputs(
+                        vpp_present=vpp, pge=pge, ple=ple
+                    )
+                )
+                self.assertNotEqual(control.state, "invalid")
+                self.assertEqual(result.eprom_latch_enable, control.latch_enabled)
+                self.assertEqual(result.eprom_program_enable, control.program_enabled)
+                self.assertEqual(
+                    self.read(model, 0x00B, vpp_present=vpp).read_data,
+                    0xF8 | (int(not vpp) << 2) | (int(pge) << 1) | int(ple),
+                )
+                read = self.read(model, 0x080, vpp_present=vpp)
+                self.assertEqual(read.program_read, control.read_enabled)
+                self.assertEqual(read.read_data, 0xA5 if control.read_enabled else 0xFF)
+
+    def test_programming_address_decode_is_exhaustive(self) -> None:
+        programmable = 0
+        for address in range(0x800):
+            model = MC68705P5DeviceModel()
+            self.write(model, 0x00B, 0x02, vpp_present=True)
+            result = self.write(model, address, 0x5A, vpp_present=True)
+            if model.eprom_is_programmable(address):
+                programmable += 1
+                self.assertEqual(result.state["EPROM_ADDRESS"], address)
+                self.assertEqual(result.state["EPROM_DATA"], 0x5A)
+            else:
+                self.assertEqual(result.state["EPROM_ADDRESS"], 0)
+                self.assertEqual(result.state["EPROM_DATA"], 0)
+        # 1804 user bytes plus the separately addressed mask-option byte.
+        self.assertEqual(programmable, 1805)
 
     def test_memory_gpio_and_reset_preserve_ram(self) -> None:
         program = Memory()

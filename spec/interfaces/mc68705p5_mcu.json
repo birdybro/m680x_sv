@@ -40,7 +40,7 @@
     "normalized_digital_interface": "PARTIAL",
     "single_chip_memory": "PARTIAL",
     "gpio_and_interrupt_pins": "PARTIAL",
-    "bootstrap_and_programming_controls": "PARTIAL",
+    "bootstrap_and_programming_controls": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"
   }

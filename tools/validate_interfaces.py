@@ -77,6 +77,15 @@ REQUIRED_SIGNALS = {
         "eprom_program_voltage_i", "eprom_program_data_o", "eprom_program_o",
         "sci_tx_o", "sci_clock_o",
     },
+    "mc68705p5-normalized-digital": {
+        "clk_i", "clock_enable_i", "reset_n_i", "int_n_i", "timer_i",
+        "port_a_i", "port_a_o", "port_a_oe_o", "port_b_i", "port_b_o",
+        "port_b_oe_o", "port_c_i", "port_c_o", "port_c_oe_o",
+        "program_address_o", "program_read_o", "program_data_i",
+        "vpp_present_i", "bootstrap_voltage_i", "bootstrap_mode_o",
+        "eprom_latch_enable_o", "eprom_program_enable_o",
+        "eprom_program_address_o", "eprom_program_data_o",
+    },
 }
 
 

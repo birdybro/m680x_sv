@@ -452,10 +452,15 @@ choose its ROM initialization mechanism. Analog VPP/EPROM programming physics
 are excluded. `bootstrap_voltage_i` selects the documented `$07f6:$07f7`
 bootstrap vector unless MOR secure mode is set. The PCR/VPP-qualified latch and
 program outputs carry a stable user-EPROM/MOR/vector address and byte to an
-integration-owned storage programmer. `model/mc68705p5_device.py` independently
-models these transactions, memory, GPIO, timer, and interrupt state; a generated
-768-cycle corpus compares every exposed state boundary. The interface contract
-is [spec/interfaces/mc68705p5_mcu.json](../spec/interfaces/mc68705p5_mcu.json).
+integration-owned storage programmer. The complete printed-page-17 PCR table is
+represented: absent VPP disconnects the PCR from the array, `PLE=0,PGE=1`
+latches address/data, `PLE=0,PGE=0` requests programming, and `PLE=1` permits
+reads. Software writes attempting either invalid `PGE=0,PLE=1` row are coerced
+to `PGE=1`, as required by the register description.
+`model/mc68705p5_device.py` independently models these transactions, memory,
+GPIO, timer, and interrupt state; a generated 768-cycle corpus compares every
+exposed state boundary. The interface contract is
+[spec/interfaces/mc68705p5_mcu.json](../spec/interfaces/mc68705p5_mcu.json).
 
 ## HD63705V0 integration
 

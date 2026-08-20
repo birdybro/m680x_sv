@@ -70,6 +70,11 @@ module mc68705p5_mcu_formal;
     assert (debug_sp[6:5] == 2'b11);
     assert (debug_tcr[3] == 1'b0);
     assert (debug_pcr[7:3] == 5'h1f);
+    assert (debug_pcr[2] == !vpp_present);
+    if (past_valid) assert (debug_pcr[1] || !debug_pcr[0]);
+    assert (eprom_latch_enable == (vpp_present && !debug_pcr[0]));
+    assert (eprom_program_enable ==
+            (vpp_present && !debug_pcr[1] && !debug_pcr[0]));
     if (program_address != debug_address[10:0]) begin
       assert (bootstrap_mode);
       assert ((debug_address[10:0] == 11'h7fe &&
@@ -81,12 +86,9 @@ module mc68705p5_mcu_formal;
       assert ((program_address >= 11'h080 && program_address <= 11'h783) ||
               (program_address >= 11'h785));
     end
-    if (!vpp_present) begin
-      assert (!eprom_latch_enable && !eprom_program_enable);
-      assert (debug_pcr[2]);
-    end
-    if (eprom_program_enable) begin
-      assert (vpp_present && eprom_latch_enable);
+    if (program_read && vpp_present &&
+        !((program_address >= 11'h785) && (program_address <= 11'h7f7))) begin
+      assert (debug_pcr[0]);
     end
   end
 

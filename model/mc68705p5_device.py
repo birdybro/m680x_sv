@@ -17,6 +17,52 @@ VECTOR_TIMER = 0x7F8
 VECTOR_EXTERNAL = 0x7FA
 VECTOR_SWI = 0x7FC
 VECTOR_RESET = 0x7FE
+EPROM_CONTROL_DEFINED_STATES = frozenset(
+    {
+        "program",
+        "controls_disconnected",
+        "latch_address_data",
+        "invalid",
+        "high_voltage_on_vpp",
+        "operating",
+    }
+)
+
+
+@dataclass(frozen=True)
+class MC68705P5EPROMControlInputs:
+    """The three factual columns of Motorola's PCR programming table."""
+
+    vpp_present: bool
+    pge: bool
+    ple: bool
+
+
+@dataclass(frozen=True)
+class MC68705P5EPROMControl:
+    """Digital effects of one PCR/VPP state; ``None`` denotes an invalid row."""
+
+    state: str
+    read_enabled: bool | None
+    latch_enabled: bool | None
+    program_enabled: bool | None
+
+
+def eprom_control(
+    inputs: MC68705P5EPROMControlInputs,
+) -> MC68705P5EPROMControl:
+    """Project the complete printed-page-17 PCR table without analog physics."""
+
+    if inputs.ple and not inputs.pge:
+        return MC68705P5EPROMControl("invalid", None, None, None)
+    if not inputs.vpp_present:
+        state = "operating" if inputs.ple else "controls_disconnected"
+        return MC68705P5EPROMControl(state, True, False, False)
+    if inputs.ple:
+        return MC68705P5EPROMControl("high_voltage_on_vpp", True, False, False)
+    if inputs.pge:
+        return MC68705P5EPROMControl("latch_address_data", False, True, False)
+    return MC68705P5EPROMControl("program", False, True, True)
 
 
 @dataclass(frozen=True)

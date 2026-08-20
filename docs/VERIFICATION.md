@@ -57,6 +57,7 @@ The committed tests cover:
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 21 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
+| MC68705P5 PCR/VPP table checks | 8 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
@@ -308,10 +309,12 @@ after the instruction following CLI. The MC68705P5 suites add register/RAM
 decode, DDR behavior, mixed-direction GPIO reads, all four timer sources and
 all prescalers, TOPT/MOR-fixed timer behavior, timer request clearing,
 simultaneous external/timer priority, distinct vectors, secure-qualified
-bootstrap selection, and PCR/VPP address/data/program sequencing. Five focused
-Python model tests and seed `0x68705a05` provide 768 cycle-by-cycle comparisons
-of memory decode, GPIO, timer, interrupts, bootstrap selection, and programming
-controls without sharing the RTL control structure.
+bootstrap selection, and PCR/VPP address/data/program sequencing. Eight focused
+Python model tests classify every manufacturer PCR-table row, exhaustively
+project the 11-bit programming address decode, and cover memory, GPIO, timer,
+interrupt, and bootstrap behavior. Seed `0x68705a05` provides 768 cycle-by-cycle
+comparisons without sharing the RTL control structure; eight additional direct
+RTL checks exercise every software PCR encoding both with and without VPP.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
 boundaries and the complete register map. Its 34 checks cover reset/vector
@@ -383,7 +386,9 @@ within those bounds:
   changes only at positive E edges.
 - MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
   remapping respects secure mode, program reads stay within internal storage,
-  VPP qualifies programming controls, and disabled-cycle state stalls.
+  the PCR never reaches either manufacturer-invalid `PGE=0,PLE=1` row, VPP and
+  PCR bits exactly qualify latch/program outputs, and disabled-cycle state
+  stalls.
 - HD6301V1 program reads occur only in `$f000`-`$ffff`, Mode 1 never selects
   program memory and drives its full address, Mode-5 external selection remains
   in `$0100`-`$01ff`, expanded selections do not overlap the mask-ROM port,
