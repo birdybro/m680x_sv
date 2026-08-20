@@ -136,6 +136,54 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
         self.assertTrue(model.state.int_previous)
         self.assertTrue(model.state.int2_previous)
 
+    def test_normal_memory_map_and_ram_retention_are_exhaustive(self) -> None:
+        program = Memory()
+        for address in range(0x1000, 0x2000):
+            program[address] = (address ^ 0xA6) & 0xFF
+        model = HD63705V0DeviceModel(program_memory=program)
+        counts = {
+            "register": 0,
+            "ic_test_reserved": 0,
+            "ram": 0,
+            "eprom": 0,
+            "unused": 0,
+        }
+
+        for address in range(0x4000):
+            region = model.memory_region(address)
+            counts[region] += 1
+            result = self.read(model, address)
+            self.assertEqual(result.program_bus, region == "eprom")
+            if region == "eprom":
+                self.assertEqual(result.read_data, (address ^ 0xA6) & 0xFF)
+            elif region in {"unused", "ic_test_reserved"}:
+                # This is a deterministic FPGA normalization, not a claim
+                # about the manufacturer-prohibited IC-test range.
+                self.assertEqual(result.read_data, 0xFF)
+
+        self.assertEqual(
+            counts,
+            {
+                "register": 19,
+                "ic_test_reserved": 13,
+                "ram": 192,
+                "eprom": 4096,
+                "unused": 12064,
+            },
+        )
+        for address in range(0x4000):
+            self.assertEqual(
+                model.memory_region(address), model.memory_region(address + 0x4000)
+            )
+
+        for address in range(0x0040, 0x0100):
+            self.write(model, address, (address ^ 0x5A) & 0xFF)
+        for address in range(0x0040, 0x0100):
+            self.assertEqual(self.read(model, address).read_data, (address ^ 0x5A) & 0xFF)
+        model.reset()
+        for address in range(0x0040, 0x0100):
+            self.assertEqual(self.read(model, address).read_data, (address ^ 0x5A) & 0xFF)
+
     def test_timer_clock_modes_prescaler_and_rising_external_edge(self) -> None:
         model = HD63705V0DeviceModel()
         self.write(model, 0x08, 0x01)
@@ -222,7 +270,7 @@ class HD63705V0DeviceModelTests(unittest.TestCase):
         self.assertTrue(model.state.timer2_request)
         self.assertEqual(model.port_outputs()[7] & 0x20, 0x20)
 
-    def test_stop_resets_documented_subsystem_state_and_only_external_sources_wake(self) -> None:
+    def test_stop_follows_figure_2_18_normalization_and_only_external_sources_wake(self) -> None:
         model = HD63705V0DeviceModel()
         model.state.timer_data = 0x12
         model.state.timer_request = True

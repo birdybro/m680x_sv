@@ -308,6 +308,8 @@ module hd63705v0_mcu (
       end
 
       if (stopped_o && !stopped_previous) begin
+        // Normalized to figure 2-18. Section 2.9 prose/table 2-5 conflicts by
+        // saying registers are retained except TCR6/TCR7; see the device spec.
         timer_data <= 8'hf0;
         timer_control_high[7] <= 1'b0;
         timer_control_high[6] <= 1'b1;

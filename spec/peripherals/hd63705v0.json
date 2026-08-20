@@ -4,7 +4,8 @@
   "address_width": 14,
   "memory_regions": [
     {"start": "0000", "end": "0012", "kind": "internal-registers", "access": "device-register-dependent"},
-    {"start": "0013", "end": "003F", "kind": "unused", "access": "normalized FF reads; writes ignored"},
+    {"start": "0013", "end": "001F", "kind": "ic-test-reserved", "access": "manufacturer prohibits access; normalized FF reads and ignored writes provide deterministic FPGA behavior without a silicon-equivalence claim"},
+    {"start": "0020", "end": "003F", "kind": "unused", "access": "normalized FF reads; writes ignored"},
     {"start": "0040", "end": "00FF", "kind": "internal-ram", "access": "192-byte read-write RAM retained through reset and standby"},
     {"start": "0100", "end": "0FFF", "kind": "unused", "access": "normalized FF reads; writes ignored"},
     {"start": "1000", "end": "1FFF", "kind": "internal-eprom", "access": "4-KiB read-only MCU image including vectors; supplied through the FPGA program-memory port"},
@@ -58,7 +59,7 @@
   "operating_modes": {
     "mcu": "NUM low selects single-chip execution from the internal 1000-1FFF EPROM and 0040-00FF RAM.",
     "wait": "WAIT stops the CPU while timer and SCI continue; an enabled request vectors, with the timer-specific wait vector.",
-    "stop": "STOP halts oscillator, CPU, and peripherals; TDR becomes F0, timer/SCI request flags clear, their masks set, and only INT or enabled INT2 wakes the core.",
+    "stop": "STOP halts oscillator, CPU, and peripherals and only INT or enabled INT2 wakes the core. The normalized implementation follows figure 2-18 by setting TDR to F0, clearing timer/SCI request flags, and setting their masks. Section 2.9 prose and table 2-5 instead say registers are retained except TCR6/TCR7, so exact silicon STOP register state is UNDEFINED_BY_DOCUMENTATION.",
     "standby": "STBY low asynchronously resets internal registers and makes I/O high impedance while retaining RAM; normalized standby_n_i represents the digital boundary.",
     "eprom": "The digital programming interface maps twelve external EPROM addresses to 1000-1FFF and implements all five table-2-9 states: ordinary +5-V read, output disable, VPP programming, VPP verification with CE don't-care, and program/verify disable.",
     "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.9 and 2.10 and tables 2-5 through 2-9, printed pages 125-136"}
@@ -66,14 +67,14 @@
   "memory_control": {
     "pc": "The CPU masks every program-counter result to fourteen bits.",
     "stack": "The physical stack wraps in 00C0-00FF and resets to 00FF; documented nesting leaves 00C0 as the wrap boundary.",
-    "unmapped": "The handbook defines no external MCU-mode memory bus. The FPGA wrapper returns FF and ignores writes outside registers, RAM, and EPROM without claiming an undocumented silicon read value.",
-    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.1 and 2.2 and figures 2-1 through 2-3, printed pages 107-109"}
+    "unmapped": "The handbook defines no external MCU-mode memory bus. Q&A QA635-338A prohibits access to the IC-test area at 0013-001F but does not define a stable result; other unused ranges likewise have no specified read data. The FPGA wrapper returns FF and ignores writes in both classes without claiming an undocumented silicon read value.",
+    "reference": {"id": "hitachi-hd6305-series-handbook-1988", "locator": "HD63705V0 sections 2.1 and 2.2 and figures 2-1 through 2-3, printed pages 107-109; Q&A QA635-338A, handbook printed page 926"}
   },
   "implementation_scope": {
-    "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, documented low-power transitions, and normalized EPROM programming pins.",
-    "model": "model/hd63705v0_device.py independently models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, STOP state changes per E cycle, and the combinational EPROM table.",
-    "verification": "Model and RTL suites cover both RAM boundaries, register reset/readback, GPIO, timer sources and wait vector, external interrupt priority, eight-bit serial transfer, STOP/STBY, and all five table-2-9 EPROM states.",
-    "undefined_policy": "Unmapped MCU-mode read values and SDR reset data are deterministic FPGA normalizations, not silicon-equivalence claims.",
+    "rtl": "rtl/hd6305/hd63705v0_mcu.sv implements the single-chip digital MCU boundary, a stated figure-2-18 STOP normalization, and normalized EPROM programming pins.",
+    "model": "model/hd63705v0_device.py independently classifies every physical address and models memory, GPIO, timer, interrupts, synchronous SCI/Timer2, normalized STOP state changes per E cycle, and the combinational EPROM table.",
+    "verification": "Model and RTL suites exhaust all 16384 physical addresses and all 192 retained RAM bytes and cover register reset/readback, GPIO, timer sources and wait vector, external interrupt priority, eight-bit serial transfer, normalized STOP/STBY, and all five table-2-9 EPROM states.",
+    "undefined_policy": "IC-test-area and unused read values, SDR reset data, and the STOP register state disputed by section 2.9/table 2-5 versus figure 2-18 are deterministic FPGA normalizations, not silicon-equivalence claims.",
     "analog_exclusions": ["oscillator startup and duty cycle", "EPROM charge programming, voltage margins, and retention", "pad drive strength", "metastability"]
   }
 }

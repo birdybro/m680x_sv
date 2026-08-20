@@ -244,6 +244,21 @@ class HD63705V0DeviceModel:
     def program_is_internal(address: int) -> bool:
         return 0x1000 <= (address & 0x3FFF) <= 0x1FFF
 
+    @classmethod
+    def memory_region(cls, address: int) -> str:
+        """Classify every physical address without assigning test-area behavior."""
+
+        address &= 0x3FFF
+        if cls.register_is_internal(address):
+            return "register"
+        if 0x0013 <= address <= 0x001F:
+            return "ic_test_reserved"
+        if cls.ram_is_internal(address):
+            return "ram"
+        if cls.program_is_internal(address):
+            return "eprom"
+        return "unused"
+
     @staticmethod
     def _port_read(latch: int, ddr: int, pins: int, mask: int = 0xFF) -> int:
         return ((latch & ddr) | (pins & ~ddr) | ~mask) & 0xFF
@@ -388,6 +403,9 @@ class HD63705V0DeviceModel:
         )
 
     def _enter_stop(self) -> None:
+        # Figure 2-18 explicitly gives these STOP values. Section 2.9 prose
+        # and table 2-5 instead say registers are retained except TCR6/TCR7;
+        # this normalized choice is therefore not a silicon-equivalence claim.
         s = self.state
         s.timer_data = 0xF0
         s.timer_request = False

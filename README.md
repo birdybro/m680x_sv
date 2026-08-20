@@ -11,7 +11,8 @@ HD63705V0 transaction paths.
 The project is under active development. Every processor and whole-MCU support
 row remains `PARTIAL`; narrowly scoped dimensions become `COMPLETE` only after
 exhaustive evidence. MC68705P5 internal-memory decode and normalized digital
-timer function are the first such closed dimensions. The evidence-backed target matrix is in
+timer function and HD63705V0 internal memory are the first such closed
+dimensions. The evidence-backed target matrix is in
 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and its authoritative structured
 form is [spec/devices.yml](spec/devices.yml).
 
@@ -168,6 +169,14 @@ The HD63705V0 digital programming boundary does implement all five documented
 read/output-disable/program/verify/disable states; separate +5-V-read and VPP
 qualifiers avoid conflating voltage states while leaving their analog
 thresholds to the integrator.
+Its internal-memory dimension is `COMPLETE`: all 16,384 physical addresses and
+all 192 RAM bytes are directly checked, including RAM retention across reset
+and standby. The manufacturer-prohibited `$0013`-`$001f` IC-test range and all
+other unused ranges receive deterministic `$ff` reads and ignored writes only
+as an FPGA normalization, not as a silicon-equivalence claim. Figure 2-18's
+STOP register values conflict with section 2.9 prose and table 2-5 retention
+language; the implementation follows the figure, records the discrepancy, and
+keeps low-power status `PARTIAL`.
 Manufacturer-undefined reset values, reserved opcodes, analog oscillators,
 EPROM voltage physics, pad strength, and metastability are not assigned invented
 silicon behavior. These limitations are tracked as `PARTIAL`,

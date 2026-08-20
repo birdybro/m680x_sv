@@ -54,6 +54,8 @@ The committed tests cover:
 | HD63701V0 digital PROM checks | 28 |
 | HD63705V0 integration checks | 34 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
+| HD63705V0 exhaustive memory-map checks | 16,384 |
+| HD63705V0 RAM fill/reset/standby checks | 576 |
 | M6805 directed core checks | 13 |
 | MC68705P5 integration checks | 16 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
@@ -341,11 +343,16 @@ The HD63705V0 directed suite executes real CPU transactions through both RAM
 boundaries and the complete register map. Its 34 checks cover reset/vector
 fetch, readable DDRs, mixed GPIO reads, the rising-edge primary timer and its
 dedicated WAIT vector, simultaneous INT/INT2 priority and software clearing,
-eight-bit external-clock synchronous Tx/Rx, documented STOP field changes and
+eight-bit external-clock synchronous Tx/Rx, normalized figure-2-18 STOP field changes and
 external wake, STBY high impedance with RAM retention, and all five normalized
-EPROM control states. Eight independent model tests exercise the same factual
+EPROM control states. Nine independent model tests exercise the same factual
 areas and exhaustively project the EPROM address space without sharing RTL
-control structure.
+control structure. A direct extension classifies all 16,384 physical addresses
+and performs 576 checks over every RAM byte after fill, reset, and standby. It
+treats `$0013`-`$001f` as manufacturer-prohibited IC-test space and tests `$ff`
+only as the deterministic FPGA normalization. The STOP expectation follows
+figure 2-18; the conflicting section 2.9/table 2-5 retention language is
+preserved as an unresolved primary-document discrepancy.
 
 Seed `0x63705000` adds 768 normalized E-cycle comparisons. A directed prefix
 precedes deterministic register, pin, memory, interrupt, and low-power traffic;

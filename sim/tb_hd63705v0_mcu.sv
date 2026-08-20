@@ -317,7 +317,8 @@ module tb_hd63705v0_mcu;
     end
     checks = checks + 2;
 
-    // STOP initializes only the documented timer/SCI fields and INT wakes it.
+    // The normalized wrapper follows figure 2-18 for timer/SCI STOP fields;
+    // section 2.9 prose/table 2-5 conflicts and is tracked in the device spec.
     firmware[14'h1800] = 8'ha6; firmware[14'h1801] = 8'h00;
     firmware[14'h1802] = 8'hb7; firmware[14'h1803] = 8'h09;
     firmware[14'h1804] = 8'ha6; firmware[14'h1805] = 8'h00;

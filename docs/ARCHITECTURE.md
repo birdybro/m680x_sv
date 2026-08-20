@@ -482,7 +482,12 @@ for Hitachi decoding, a 14-bit PC/address boundary, stack window
 at `$0000`-`$0012`, 192 bytes of retained RAM at `$0040`-`$00ff`, and the
 integration-owned 4-KiB EPROM image at `$1000`-`$1fff`. Sixteen-bit effective
 addresses produced inside the generic core are deliberately truncated to the
-fourteen physical address bits at this device boundary.
+fourteen physical address bits at this device boundary. Direct regressions
+classify all 16,384 physical addresses and check every RAM byte after fill,
+reset, and standby. Q&A QA635-338A reserves `$0013`-`$001f` for IC test and
+prohibits software access without defining a stable result; deterministic
+`$ff` reads and ignored writes in that and other unused regions are explicitly
+an FPGA normalization.
 
 Ports A-C have eight latch/direction bits and Port D has seven. D3/D4/D5 are
 overridden by synchronous Tx/Rx/CK when SCR enables them, while the separately
@@ -502,8 +507,11 @@ arming. `model/hd63705v0_device.py` uses a separate transaction/event structure,
 and a generated 768-cycle corpus compares every visible state boundary.
 
 WAIT stops only CPU execution and preserves timer/SCI operation. On STOP entry,
-the wrapper resets only the documented TDR, timer request/mask, and SCI/Timer2
-request/mask state, then permits only INT or enabled INT2 to wake the core.
+the wrapper follows figure 2-18 by resetting TDR, timer request/mask, and
+SCI/Timer2 request/mask state, then permits only INT or enabled INT2 to wake the
+core. Section 2.9 prose and table 2-5 instead say registers are retained except
+TCR6/TCR7, so this explicit normalization is not a claim about the disputed
+silicon register state.
 `standby_n_i` provides the documented register-reset, RAM-retention, and GPIO
 high-impedance digital boundary. EPROM mode holds the MCU reset and exposes the
 twelve-bit programming address, input data, separate ordinary +5-V and VPP

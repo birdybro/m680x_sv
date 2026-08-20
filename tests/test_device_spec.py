@@ -29,14 +29,22 @@ class DeviceSpecificationTests(unittest.TestCase):
         }
         self.assertEqual(
             complete,
-            {("mc68705p5", "internal_memory"), ("mc68705p5", "timer")},
+            {
+                ("mc68705p5", "internal_memory"),
+                ("mc68705p5", "timer"),
+                ("hd63705v0", "internal_memory"),
+            },
         )
         for evidence_path in (
             "model/mc68705p5_device.py",
+            "model/hd63705v0_device.py",
             "sim/tb_mc68705p5_peripheral_diff.sv",
             "sim/tb_mc68705p5_mask_timer.sv",
+            "sim/tb_hd63705_peripheral_diff.sv",
             "spec/peripherals/mc68705p5.json",
             "spec/interfaces/mc68705p5_mcu.json",
+            "spec/peripherals/hd63705v0.json",
+            "spec/interfaces/hd63705v0_mcu.json",
         ):
             self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)
 
@@ -76,9 +84,10 @@ class DeviceSpecificationTests(unittest.TestCase):
             self.assertEqual(hd63701v0[dimension], "PARTIAL")
         hd63705v0 = devices["hd63705v0"]["status"]
         for dimension in (
-            "device_wrapper", "internal_memory", "gpio", "timer", "serial"
+            "device_wrapper", "gpio", "timer", "serial"
         ):
             self.assertEqual(hd63705v0[dimension], "PARTIAL")
+        self.assertEqual(hd63705v0["internal_memory"], "COMPLETE")
         for evidence_path in (
             "rtl/m6801/mc6801_mcu.sv",
             "rtl/m6801/mc6801_bus_wrapper.sv",

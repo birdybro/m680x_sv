@@ -228,7 +228,16 @@ CE-don't-care verification. Directed integration checks, an exhaustive
 4,096-address programming model, formal control proofs, and 768 independent
 model/RTL E-cycle comparisons cover these features. Oscillator/STOP recovery
 time, electrical pin timing, EPROM voltage/pulse/retention physics, and silicon
-values on unused memory reads remain outside the partial digital claim. The
+values on unused memory reads remain outside the partial digital claim. Its
+internal-memory dimension is separately `COMPLETE`: the regression classifies
+all 16,384 physical addresses and performs 576 read checks across every one of
+the 192 RAM bytes after fill, reset, and standby. Q&A QA635-338A identifies
+`$0013`-`$001f` as manufacturer-prohibited IC-test space without defining a
+stable result; `$ff` reads and ignored writes there and in unused space are a
+deterministic FPGA policy only. Figure 2-18 resets TDR and selected TCR/SSR
+fields on STOP, while section 2.9 prose and table 2-5 say registers are retained
+except TCR6/TCR7. The implementation follows figure 2-18, records the conflict
+as `UNDEFINED_BY_DOCUMENTATION`, and keeps low-power status `PARTIAL`. The
 manual's `$0000`-`$00ff` programming-range sentence conflicts with its 4-KiB,
 twelve-address-input, and `$1000`-`$1fff` memory-map facts; the interface uses
 the mutually consistent `$0000`-`$0fff` programmer range and preserves the

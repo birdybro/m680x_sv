@@ -9,6 +9,7 @@ module tb_hd63705_peripheral_diff;
   /* verilator lint_off SYNCASYNCNET */
   logic reset_n;
   /* verilator lint_on SYNCASYNCNET */
+  logic standby_n;
   logic int_n;
   logic int2_n;
   logic timer_pin;
@@ -44,11 +45,15 @@ module tb_hd63705_peripheral_diff;
   logic [7:0] debug_sdr;
   hd63705_peripheral_vector_t expected;
   integer cycle_index;
+  integer map_address;
+  integer map_checks;
+  integer ram_checks;
+  logic expected_program_read;
 
   /* verilator lint_off PINCONNECTEMPTY */
   hd63705v0_mcu dut (
     .clk_i(clk), .reset_n_i(reset_n), .clock_enable_i(1'b1),
-    .standby_n_i(1'b1), .int_n_i(int_n), .int2_n_i(int2_n),
+    .standby_n_i(standby_n), .int_n_i(int_n), .int2_n_i(int2_n),
     .timer_i(timer_pin), .port_a_i(port_a_in), .port_b_i(port_b_in),
     .port_c_i(port_c_in), .port_d_i(port_d_in), .port_a_o(port_a_out),
     .port_b_o(port_b_out), .port_c_o(port_c_out), .port_d_o(port_d_out),
@@ -85,6 +90,7 @@ module tb_hd63705_peripheral_diff;
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
+    standby_n = 1'b1;
     int_n = 1'b1;
     int2_n = 1'b1;
     timer_pin = 1'b0;
@@ -100,6 +106,8 @@ module tb_hd63705_peripheral_diff;
     stub_interrupt_mask = 1'b1;
     stub_waiting = 1'b0;
     stub_stopped = 1'b0;
+    map_checks = 0;
+    ram_checks = 0;
     #1;
     reset_n = 1'b0;
     #1;
@@ -162,8 +170,128 @@ module tb_hd63705_peripheral_diff;
                expected.ssr, irq_vector, expected.irq_vector);
       end
     end
-    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d",
-             32'h63705000, HD63705_PERIPHERAL_VECTOR_COUNT);
+
+    // Figure 2-1 accounts for all 14 physical address bits. QA635-338A
+    // separately prohibits $0013-$001f as IC-test space; the deterministic
+    // $ff read below is therefore checked only as the normalized FPGA policy.
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    standby_n = 1'b1;
+    stub_waiting = 1'b0;
+    stub_stopped = 1'b0;
+    int_n = 1'b1;
+    int2_n = 1'b1;
+    timer_pin = 1'b0;
+    port_a_in = 8'hff;
+    port_b_in = 8'hff;
+    port_c_in = 8'hff;
+    port_d_in = 7'h7f;
+    stub_valid = 1'b1;
+    stub_write = 1'b0;
+    for (map_address = 0; map_address < 16384;
+         map_address = map_address + 1) begin
+      stub_address = map_address[15:0];
+      program_data = map_address[7:0] ^ 8'ha6;
+      expected_program_read =
+        (map_address >= 'h1000) && (map_address <= 'h1fff);
+      #1;
+      if (program_address !== map_address[13:0] ||
+          program_read !== expected_program_read) begin
+        $fatal(1, "HD63705 memory select address=%04x program_address=%04x read=%b/%b",
+               map_address[13:0], program_address, program_read,
+               expected_program_read);
+      end
+      if (expected_program_read && dut.core_data_in !== program_data) begin
+        $fatal(1, "HD63705 EPROM read address=%04x data=%02x/%02x",
+               map_address[13:0], dut.core_data_in, program_data);
+      end else if (!(map_address <= 'h0012) &&
+                   !((map_address >= 'h0040) && (map_address <= 'h00ff)) &&
+                   !expected_program_read && dut.core_data_in !== 8'hff) begin
+        $fatal(1, "HD63705 normalized unused/test read address=%04x data=%02x",
+               map_address[13:0], dut.core_data_in);
+      end
+      map_checks = map_checks + 1;
+    end
+
+    // Fill and read all 192 bytes, then prove retention through both RES and
+    // STBY. The latter is entered with nonzero DDRs so high impedance is also
+    // observed independently of the register reset values.
+    for (map_address = 'h0040; map_address <= 'h00ff;
+         map_address = map_address + 1) begin
+      stub_address = map_address[15:0];
+      stub_data = map_address[7:0] ^ 8'h5a;
+      stub_write = 1'b1;
+      tick();
+    end
+    stub_write = 1'b0;
+    for (map_address = 'h0040; map_address <= 'h00ff;
+         map_address = map_address + 1) begin
+      stub_address = map_address[15:0];
+      #1;
+      if (dut.core_data_in !== (map_address[7:0] ^ 8'h5a)) begin
+        $fatal(1, "HD63705 RAM read address=%04x data=%02x",
+               map_address[13:0], dut.core_data_in);
+      end
+      ram_checks = ram_checks + 1;
+    end
+    stub_valid = 1'b0;
+    reset_n = 1'b0;
+    #1;
+    reset_n = 1'b1;
+    stub_valid = 1'b1;
+    for (map_address = 'h0040; map_address <= 'h00ff;
+         map_address = map_address + 1) begin
+      stub_address = map_address[15:0];
+      #1;
+      if (dut.core_data_in !== (map_address[7:0] ^ 8'h5a)) begin
+        $fatal(1, "HD63705 RAM reset retention address=%04x data=%02x",
+               map_address[13:0], dut.core_data_in);
+      end
+      ram_checks = ram_checks + 1;
+    end
+
+    for (map_address = 'h0004; map_address <= 'h0007;
+         map_address = map_address + 1) begin
+      stub_address = map_address[15:0];
+      stub_data = 8'hff;
+      stub_write = 1'b1;
+      tick();
+    end
+    if (port_a_oe !== 8'hff || port_b_oe !== 8'hff ||
+        port_c_oe !== 8'hff || port_d_oe !== 7'h7f) begin
+      $fatal(1, "HD63705 pre-standby GPIO direction");
+    end
+    stub_valid = 1'b0;
+    stub_write = 1'b0;
+    standby_n = 1'b0;
+    #1;
+    if (port_a_oe !== 8'h00 || port_b_oe !== 8'h00 ||
+        port_c_oe !== 8'h00 || port_d_oe !== 7'h00 ||
+        debug_tcr !== 8'h50 || debug_mr !== 8'h5f ||
+        debug_scr !== 8'h00 || debug_ssr !== 8'h37) begin
+      $fatal(1, "HD63705 standby reset/high impedance TCR=%02x MR=%02x SCR=%02x SSR=%02x",
+             debug_tcr, debug_mr, debug_scr, debug_ssr);
+    end
+    reset_n = 1'b0;
+    standby_n = 1'b1;
+    #1;
+    reset_n = 1'b1;
+    stub_valid = 1'b1;
+    for (map_address = 'h0040; map_address <= 'h00ff;
+         map_address = map_address + 1) begin
+      stub_address = map_address[15:0];
+      #1;
+      if (dut.core_data_in !== (map_address[7:0] ^ 8'h5a)) begin
+        $fatal(1, "HD63705 RAM standby retention address=%04x data=%02x",
+               map_address[13:0], dut.core_data_in);
+      end
+      ram_checks = ram_checks + 1;
+    end
+
+    $display("HD63705V0 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d map checks=%0d RAM checks=%0d",
+             32'h63705000, HD63705_PERIPHERAL_VECTOR_COUNT,
+             map_checks, ram_checks);
     $finish;
   end
 endmodule
