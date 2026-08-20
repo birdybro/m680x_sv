@@ -10,8 +10,8 @@ HD63705V0 transaction paths.
 
 The project is under active development. Every processor and whole-MCU support
 row remains `PARTIAL`; narrowly scoped dimensions become `COMPLETE` only after
-exhaustive evidence. MC68705P5 internal-memory decode is the first such closed
-dimension. The evidence-backed target matrix is in
+exhaustive evidence. MC68705P5 internal-memory decode and normalized digital
+timer function are the first such closed dimensions. The evidence-backed target matrix is in
 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) and its authoritative structured
 form is [spec/devices.yml](spec/devices.yml).
 
@@ -160,6 +160,10 @@ behavior are also exhaustively directed-tested. The wrapper's deterministic
 `$ff` DDR-read value follows two manufacturer figures, but conflicting prose in
 the same manual leaves silicon-equivalent DDR read data undefined; GPIO status
 therefore remains `PARTIAL`.
+The normalized digital timer dimension is `COMPLETE`: every TCR encoding,
+counter value, prescaler, source mode, and timer-relevant fixed MOR
+configuration is directly checked. This claim excludes the separately marked
+oscillator, pad, and analog minimum-pulse-width behavior.
 The HD63705V0 digital programming boundary does implement all five documented
 read/output-disable/program/verify/disable states; separate +5-V-read and VPP
 qualifiers avoid conflating voltage states while leaving their analog

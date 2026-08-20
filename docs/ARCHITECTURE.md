@@ -466,7 +466,11 @@ latch/direction/pin combination on all 20 GPIO lines and exercise INT assertion,
 vector acknowledgement, held-low suppression, and rearming. DDR reads are
 normalized to `$ff`, following figures 4 and 16; conflicting printed-page-13
 prose makes their silicon-equivalent value `UNDEFINED_BY_DOCUMENTATION`. A
-generated 768-cycle corpus compares every exposed state boundary. The interface
+generated 768-cycle corpus compares every exposed state boundary. Timer-directed
+checks cover all TCR values, counter values, prescalers, source modes, and the
+complete timer-relevant MOR fixed-option matrix. The digital timer is complete
+at normalized processor-cycle boundaries; manufacturer nanosecond pulse limits,
+pad behavior, and oscillator physics remain outside that claim. The interface
 contract is
 [spec/interfaces/mc68705p5_mcu.json](../spec/interfaces/mc68705p5_mcu.json).
 

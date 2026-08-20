@@ -27,6 +27,7 @@
     "prescaler": "7-bit programmable divider by 1,2,4,8,16,32,64,128; PSC initializes it to all ones",
     "input_modes": {"00": "internal processor clock", "01": "external pin gates internal clock", "10": "disabled", "11": "external positive transitions"},
     "interrupt": "level request when TIR=1 and TIM=0; service software must clear TIR",
+    "verification": "All 256 TCR writes, 256 counter values at each divider, every source/divider timing combination, all 256 MOR reset projections in the independent model, and all 32 timer-relevant MOR RTL configurations are checked.",
     "reference": {"id": "motorola-mc68705p5-advance-information-1983", "locator": "Timer, figure 7, and Timer Control Register, printed pages 8-9 and 15"}
   },
   "interrupts": [

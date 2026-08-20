@@ -27,10 +27,14 @@ class DeviceSpecificationTests(unittest.TestCase):
             for dimension, status in device["status"].items()
             if status == "COMPLETE"
         }
-        self.assertEqual(complete, {("mc68705p5", "internal_memory")})
+        self.assertEqual(
+            complete,
+            {("mc68705p5", "internal_memory"), ("mc68705p5", "timer")},
+        )
         for evidence_path in (
             "model/mc68705p5_device.py",
             "sim/tb_mc68705p5_peripheral_diff.sv",
+            "sim/tb_mc68705p5_mask_timer.sv",
             "spec/peripherals/mc68705p5.json",
             "spec/interfaces/mc68705p5_mcu.json",
         ):
@@ -44,9 +48,10 @@ class DeviceSpecificationTests(unittest.TestCase):
             self.assertEqual(device["status"]["cycle_count_tests"], "PARTIAL")
             self.assertEqual(device["status"]["bus_trace_tests"], "PARTIAL")
         p5 = devices["mc68705p5"]["status"]
-        for dimension in ("device_wrapper", "gpio", "timer"):
+        for dimension in ("device_wrapper", "gpio"):
             self.assertEqual(p5[dimension], "PARTIAL")
         self.assertEqual(p5["internal_memory"], "COMPLETE")
+        self.assertEqual(p5["timer"], "COMPLETE")
         self.assertEqual(devices["mc6800"]["status"]["device_wrapper"], "PARTIAL")
         mc6801 = devices["mc6801"]["status"]
         for dimension in ("device_wrapper", "internal_memory", "gpio", "timer", "serial"):

@@ -62,6 +62,12 @@ printed-page-13 DDR-read caution conflicts with the all-one values in figures 4
 and 16. The wrapper deterministically returns `$ff` but classifies silicon
 equivalence for those reads as `UNDEFINED_BY_DOCUMENTATION`. A 768-cycle
 independent peripheral model/RTL comparison covers the normalized boundary.
+The timer dimension is `COMPLETE` at that boundary: all 256 TCR encodings, all
+2,048 counter-value/divider pairs, the 32 source/divider combinations, and all
+32 timer-relevant fixed-MOR RTL configurations have direct evidence. The
+independent model additionally projects all 256 MOR byte values. Electrical
+pad behavior, oscillator physics, and nanosecond minimum pulse widths remain
+outside this digital timer claim.
 EPROM voltage/pulse/retention physics and the copyrighted factory bootstrap-ROM
 image remain outside the distributable implementation.
 

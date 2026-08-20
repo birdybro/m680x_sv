@@ -55,12 +55,14 @@ The committed tests cover:
 | HD63705V0 integration checks | 34 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | M6805 directed core checks | 13 |
-| MC68705P5 integration checks | 21 |
+| MC68705P5 integration checks | 16 |
 | MC68705P5 peripheral model/RTL cycle comparisons | 768 |
 | MC68705P5 PCR/VPP table checks | 8 |
 | MC68705P5 exhaustive memory-map/RAM checks | 2,272 |
 | MC68705P5 GPIO truth/reset/normalized-DDR checks | 164 |
 | MC68705P5 INT pin checks | 5 |
+| MC68705P5 software-timer direct RTL checks | 5,468 |
+| MC68705P5 fixed-MOR timer matrix checks | 224 |
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
@@ -312,8 +314,8 @@ after the instruction following CLI. The MC68705P5 suites add register/RAM
 decode, DDR behavior, mixed-direction GPIO reads, all four timer sources and
 all prescalers, TOPT/MOR-fixed timer behavior, timer request clearing,
 simultaneous external/timer priority, distinct vectors, secure-qualified
-bootstrap selection, and PCR/VPP address/data/program sequencing. Ten focused
-Python model tests classify every manufacturer PCR-table row, exhaustively
+bootstrap selection, and PCR/VPP address/data/program sequencing. Thirteen
+focused Python model tests classify every manufacturer PCR-table row, exhaustively
 project both normal and programming address partitions, and cover memory, GPIO,
 timer, interrupt, and bootstrap behavior. Seed `0x68705a05` provides 768
 cycle-by-cycle comparisons without sharing the RTL control structure; eight
@@ -326,6 +328,14 @@ DDR-read normalization; five INT checks cover falling-edge assertion, vector
 acknowledgement, held-low suppression, and high-to-low rearming. Because the
 manual's DDR-read prose conflicts with two of its figures, the normalized read
 value is tested without claiming documented silicon equivalence.
+The timer extension directly checks all 256 TCR writes; every 8-bit counter
+value under each of the eight divide selections; all four source modes crossed
+with every divider; disabled, gated-low, held-high, and falling-edge intervals;
+request assertion and masking; and wraparound. A 32-instance RTL matrix crosses
+both documented fixed clock sources, all prescalers, and both values of the MOR
+TIE bit that TOPT makes irrelevant. The independent model separately checks all
+256 complete MOR bytes. These tests establish normalized cycle-boundary digital
+behavior, not the manual's electrical or nanosecond pulse-width limits.
 
 The HD63705V0 directed suite executes real CPU transactions through both RAM
 boundaries and the complete register map. Its 34 checks cover reset/vector

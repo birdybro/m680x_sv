@@ -36,6 +36,9 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.hd63705v0_spec = json.loads(
             (ROOT / "spec/interfaces/hd63705v0_mcu.json").read_text()
         )
+        self.mc68705p5_spec = json.loads(
+            (ROOT / "spec/interfaces/mc68705p5_mcu.json").read_text()
+        )
         self.hd6303r_modes_spec = json.loads(
             (ROOT / "spec/interfaces/hd6303r_modes.json").read_text()
         )
@@ -161,6 +164,10 @@ class InterfaceSpecificationTests(unittest.TestCase):
             self.hd63705v0_spec["implementation_status"][
                 "eprom_programming_digital_controls"
             ],
+            "COMPLETE",
+        )
+        self.assertEqual(
+            self.mc68705p5_spec["implementation_status"]["timer_function"],
             "COMPLETE",
         )
 

@@ -35,6 +35,7 @@ module mc68705p5_mcu_formal;
   logic [7:0] debug_timer;
   logic [7:0] debug_tcr;
   logic [7:0] debug_pcr;
+  logic timer_irq;
 
   assign reset_n = past_valid;
   always @(posedge clk) past_valid <= 1'b1;
@@ -52,7 +53,7 @@ module mc68705p5_mcu_formal;
     .eprom_latch_enable_o(eprom_latch_enable),
     .eprom_program_enable_o(eprom_program_enable),
     .eprom_program_address_o(eprom_program_address),
-    .eprom_program_data_o(eprom_program_data), .timer_irq_o(),
+    .eprom_program_data_o(eprom_program_data), .timer_irq_o(timer_irq),
     .external_irq_o(), .opcode_fetch_o(), .retire_o(), .illegal_o(),
     .undefined_o(), .waiting_o(), .stopped_o(), .interrupt_ack_o(),
     .debug_address_o(debug_address), .debug_pc_o(debug_pc),
@@ -69,6 +70,7 @@ module mc68705p5_mcu_formal;
     assert (debug_sp[15:7] == 9'h000);
     assert (debug_sp[6:5] == 2'b11);
     assert (debug_tcr[3] == 1'b0);
+    assert (timer_irq == (debug_tcr[7] && !debug_tcr[6]));
     assert (debug_pcr[7:3] == 5'h1f);
     assert (debug_pcr[2] == !vpp_present);
     if (past_valid) assert (debug_pcr[1] || !debug_pcr[0]);
@@ -89,6 +91,10 @@ module mc68705p5_mcu_formal;
     if (program_read && vpp_present &&
         !((program_address >= 11'h785) && (program_address <= 11'h7f7))) begin
       assert (debug_pcr[0]);
+    end
+    if (!reset_n) begin
+      assert (debug_timer == 8'hff);
+      assert (debug_tcr == 8'h40);
     end
   end
 

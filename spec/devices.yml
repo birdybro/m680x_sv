@@ -166,7 +166,7 @@
       "clocking": "On-chip oscillator option divided by four for the internal processor clock.",
       "documented_quirks": ["SP resets to 007F and wraps within a fixed device stack window; only 31 bytes down to 0061 are documented as usable.", "DDRs are write-only; figures 4 and 16 specify all-one reads, but the printed-page-13 caution calls reads undefined.", "The user program counter is 11 bits."],
       "undefined_by_documentation": ["Unassigned opcode results.", "Operation after exceeding documented stack depth.", "Silicon DDR read values: the printed-page-13 prose conflicts with the all-one values in figures 4 and 16. The normalized FPGA interface selects FF but does not claim silicon equivalence for this read."],
-      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "COMPLETE", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
+      "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "COMPLETE", "gpio": "PARTIAL", "timer": "COMPLETE", "serial": "NOT_APPLICABLE", "low_power": "NOT_APPLICABLE"},
       "references": [{"id": "motorola-mc68705p5-advance-information-1983", "locators": ["figures 4-7; CPU, timer, interrupt, reset, and programming sections"]}, {"id": "motorola-m6805-family-users-manual-1983", "locators": ["software description and instruction appendices"]}]
     },
     {

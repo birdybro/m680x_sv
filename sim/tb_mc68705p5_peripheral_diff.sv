@@ -42,6 +42,13 @@ module tb_mc68705p5_peripheral_diff;
   integer memory_index;
   integer memory_checks;
   integer pcr_checks;
+  integer timer_checks;
+  integer timer_divide;
+  integer timer_divisor;
+  integer timer_event_index;
+  integer timer_source;
+  integer timer_value;
+  logic [7:0] expected_timer;
   logic expected_program_read;
 
   /* verilator lint_off PINCONNECTEMPTY */
@@ -110,6 +117,27 @@ module tb_mc68705p5_peripheral_diff;
     end
   endtask
 
+  task automatic drive_timer_event(input integer source_mode);
+    begin
+      case (source_mode)
+        0: begin
+          timer_pin = 1'b0;
+          tick();
+        end
+        1: begin
+          timer_pin = 1'b1;
+          tick();
+        end
+        default: begin
+          timer_pin = 1'b0;
+          tick();
+          timer_pin = 1'b1;
+          tick();
+        end
+      endcase
+    end
+  endtask
+
   initial begin
     clk = 1'b0;
     reset_n = 1'b1;
@@ -130,6 +158,7 @@ module tb_mc68705p5_peripheral_diff;
     interrupt_checks = 0;
     memory_checks = 0;
     pcr_checks = 0;
+    timer_checks = 0;
     #1;
     reset_n = 1'b0;
     #1;
@@ -422,9 +451,161 @@ module tb_mc68705p5_peripheral_diff;
     if (!external_irq) $fatal(1, "MC68705P5 INT did not rearm");
     interrupt_checks = interrupt_checks + 1;
 
-    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d PCR states=%0d memory checks=%0d GPIO checks=%0d INT checks=%0d",
+    // Software-controlled TCR makes every bit read/write except write-only
+    // PSC, which reads zero. Check all 256 bus values directly.
+    int_n = 1'b1;
+    timer_pin = 1'b0;
+    stub_address = 16'h0009;
+    stub_write = 1'b1;
+    stub_valid = 1'b1;
+    for (timer_value = 0; timer_value < 256;
+         timer_value = timer_value + 1) begin
+      stub_data = timer_value[7:0];
+      tick();
+      if (debug_tcr !== (timer_value[7:0] & 8'hf7)) begin
+        $fatal(1, "MC68705P5 TCR encoding write=%02x read=%02x",
+               timer_value[7:0], debug_tcr);
+      end
+      timer_checks = timer_checks + 1;
+    end
+
+    // For every divider and every counter value, load while disabled, set
+    // PSC, and verify the documented immediate first decrement, wrap, and
+    // zero-transition request behavior.
+    for (timer_divide = 0; timer_divide < 8;
+         timer_divide = timer_divide + 1) begin
+      for (timer_value = 0; timer_value < 256;
+           timer_value = timer_value + 1) begin
+        timer_pin = 1'b0;
+        stub_address = 16'h0009;
+        stub_data = 8'h60;
+        stub_write = 1'b1;
+        stub_valid = 1'b1;
+        tick();
+        stub_address = 16'h0008;
+        stub_data = timer_value[7:0];
+        tick();
+        if (debug_timer !== timer_value[7:0]) begin
+          $fatal(1, "MC68705P5 TDR load divide=%0d value=%02x data=%02x",
+                 timer_divide, timer_value[7:0], debug_timer);
+        end
+        timer_checks = timer_checks + 1;
+        stub_address = 16'h0009;
+        stub_data = {4'h0, 1'b1, timer_divide[2:0]};
+        tick();
+        stub_valid = 1'b0;
+        stub_write = 1'b0;
+        drive_timer_event(0);
+        expected_timer = timer_value[7:0] - 8'h01;
+        if (debug_timer !== expected_timer ||
+            debug_tcr[7] != (timer_value == 1) ||
+            timer_irq != (timer_value == 1)) begin
+          $fatal(1, "MC68705P5 counter divide=%0d value=%02x data=%02x/%02x TIR=%b IRQ=%b",
+                 timer_divide, timer_value[7:0], debug_timer,
+                 expected_timer, debug_tcr[7], timer_irq);
+        end
+        timer_checks = timer_checks + 1;
+      end
+    end
+
+    // Cross all four TIN/TIE source modes with all eight divisors. The
+    // initialized all-one prescaler gives an immediate count, followed by
+    // exactly 2**PS input events per count. Disabled, gated-low, falling, and
+    // held-high external intervals must not advance the timer.
+    for (timer_source = 0; timer_source < 4;
+         timer_source = timer_source + 1) begin
+      for (timer_divide = 0; timer_divide < 8;
+           timer_divide = timer_divide + 1) begin
+        timer_divisor = 1 << timer_divide;
+        timer_pin = 1'b0;
+        stub_address = 16'h0009;
+        stub_data = 8'h60;
+        stub_write = 1'b1;
+        stub_valid = 1'b1;
+        tick();
+        stub_address = 16'h0008;
+        stub_data = 8'h03;
+        tick();
+        stub_address = 16'h0009;
+        stub_data = {2'b00, timer_source[1:0], 1'b1,
+                     timer_divide[2:0]};
+        tick();
+        if (debug_tcr !== {2'b00, timer_source[1:0], 1'b0,
+                           timer_divide[2:0]}) begin
+          $fatal(1, "MC68705P5 source/divider TCR source=%0d divide=%0d read=%02x",
+                 timer_source, timer_divide, debug_tcr);
+        end
+        timer_checks = timer_checks + 1;
+        stub_valid = 1'b0;
+        stub_write = 1'b0;
+
+        if (timer_source == 2) begin
+          for (timer_event_index = 0; timer_event_index <= timer_divisor;
+               timer_event_index = timer_event_index + 1) begin
+            drive_timer_event(timer_source);
+            if (debug_timer !== 8'h03 || timer_irq) begin
+              $fatal(1, "MC68705P5 disabled timer divide=%0d event=%0d data=%02x",
+                     timer_divide, timer_event_index, debug_timer);
+            end
+            timer_checks = timer_checks + 1;
+          end
+        end else begin
+          drive_timer_event(timer_source);
+          if (debug_timer !== 8'h02) begin
+            $fatal(1, "MC68705P5 first timer event source=%0d divide=%0d data=%02x",
+                   timer_source, timer_divide, debug_timer);
+          end
+          timer_checks = timer_checks + 1;
+          for (timer_event_index = 1; timer_event_index < timer_divisor;
+               timer_event_index = timer_event_index + 1) begin
+            drive_timer_event(timer_source);
+            if (debug_timer !== 8'h02) begin
+              $fatal(1, "MC68705P5 early timer count source=%0d divide=%0d event=%0d data=%02x",
+                     timer_source, timer_divide, timer_event_index, debug_timer);
+            end
+            timer_checks = timer_checks + 1;
+          end
+          drive_timer_event(timer_source);
+          if (debug_timer !== 8'h01) begin
+            $fatal(1, "MC68705P5 divided timer event source=%0d divide=%0d data=%02x",
+                   timer_source, timer_divide, debug_timer);
+          end
+          timer_checks = timer_checks + 1;
+
+          if (timer_source == 1) begin
+            timer_pin = 1'b0;
+            tick();
+            if (debug_timer !== 8'h01) begin
+              $fatal(1, "MC68705P5 gated-low timer advanced divide=%0d", timer_divide);
+            end
+            timer_checks = timer_checks + 1;
+            tick();
+            if (debug_timer !== 8'h01) begin
+              $fatal(1, "MC68705P5 gated-low timer repeated divide=%0d", timer_divide);
+            end
+            timer_checks = timer_checks + 1;
+          end else if (timer_source == 3) begin
+            tick();
+            if (debug_timer !== 8'h01) begin
+              $fatal(1, "MC68705P5 held-high external timer advanced divide=%0d",
+                     timer_divide);
+            end
+            timer_checks = timer_checks + 1;
+            timer_pin = 1'b0;
+            tick();
+            if (debug_timer !== 8'h01) begin
+              $fatal(1, "MC68705P5 external falling edge advanced divide=%0d",
+                     timer_divide);
+            end
+            timer_checks = timer_checks + 1;
+          end
+        end
+      end
+    end
+
+    $display("MC68705P5 PERIPHERAL DIFFERENTIAL PASS: seed=%08x cycles=%0d PCR states=%0d memory checks=%0d GPIO checks=%0d INT checks=%0d timer checks=%0d",
              32'h68705a05, MC68705P5_PERIPHERAL_VECTOR_COUNT, pcr_checks,
-             memory_checks, gpio_checks, interrupt_checks);
+             memory_checks, gpio_checks, interrupt_checks, timer_checks);
     $finish;
   end
 endmodule

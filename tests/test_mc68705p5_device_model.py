@@ -141,6 +141,94 @@ class MC68705P5DeviceModelTests(unittest.TestCase):
                             if width == 4:
                                 self.assertEqual(value & 0xF0, 0xF0)
 
+    def test_every_mask_option_timer_configuration(self) -> None:
+        for mask_option in range(256):
+            model = MC68705P5DeviceModel(mask_option=mask_option)
+            if mask_option & 0x40:
+                self.assertEqual(model.state.tcr(mask_option), 0x7F)
+                self.assertEqual(
+                    model.timer_options(),
+                    (True, bool(mask_option & 0x20), mask_option & 0x07),
+                )
+            else:
+                self.assertEqual(
+                    model.state.tcr(mask_option), 0x40 | (mask_option & 0x37)
+                )
+                self.assertEqual(
+                    model.timer_options(),
+                    (
+                        bool(mask_option & 0x10),
+                        bool(mask_option & 0x20),
+                        mask_option & 0x07,
+                    ),
+                )
+
+    def test_all_timer_counter_values_and_dividers(self) -> None:
+        model = MC68705P5DeviceModel()
+        for divide_select in range(8):
+            for initial_value in range(256):
+                # Disable the source while loading, then select the internal
+                # clock and initialize the prescaler to all ones. The first
+                # input event must therefore decrement immediately.
+                self.write(model, 0x009, 0x60, timer=False)
+                self.write(model, 0x008, initial_value, timer=False)
+                self.assertEqual(model.state.timer_data, initial_value)
+                self.write(model, 0x009, 0x08 | divide_select, timer=False)
+                result = self.cycle(model, timer=False)
+                self.assertEqual(
+                    result.state["TDR"], (initial_value - 1) & 0xFF
+                )
+                self.assertEqual(bool(result.state["TCR"] & 0x80), initial_value == 1)
+                self.assertEqual(result.timer_irq, initial_value == 1)
+
+    def test_every_timer_source_and_divider_timing(self) -> None:
+        model = MC68705P5DeviceModel()
+
+        def event(source: int) -> None:
+            if source == 0:  # internal processor clock
+                self.cycle(model, timer=False)
+            elif source == 1:  # TIMER pin gates the internal clock
+                self.cycle(model, timer=True)
+            else:  # disabled or external positive-transition input
+                self.cycle(model, timer=False)
+                self.cycle(model, timer=True)
+
+        for source in range(4):
+            for divide_select in range(8):
+                divisor = 1 << divide_select
+                self.write(model, 0x009, 0x60, timer=False)
+                self.write(model, 0x008, 0x03, timer=False)
+                self.write(
+                    model,
+                    0x009,
+                    (source << 4) | 0x08 | divide_select,
+                    timer=False,
+                )
+                self.assertEqual(model.state.tcr(0), (source << 4) | divide_select)
+                if source == 2:
+                    for _ in range(divisor + 1):
+                        event(source)
+                        self.assertEqual(model.state.timer_data, 0x03)
+                    continue
+
+                event(source)
+                self.assertEqual(model.state.timer_data, 0x02)
+                for _ in range(1, divisor):
+                    event(source)
+                    self.assertEqual(model.state.timer_data, 0x02)
+                event(source)
+                self.assertEqual(model.state.timer_data, 0x01)
+
+                if source == 1:
+                    self.cycle(model, timer=False)
+                    self.cycle(model, timer=False)
+                    self.assertEqual(model.state.timer_data, 0x01)
+                elif source == 3:
+                    self.cycle(model, timer=True)
+                    self.assertEqual(model.state.timer_data, 0x01)
+                    self.cycle(model, timer=False)
+                    self.assertEqual(model.state.timer_data, 0x01)
+
     def test_memory_gpio_and_reset_preserve_ram(self) -> None:
         program = Memory()
         program[0x080] = 0xA5
