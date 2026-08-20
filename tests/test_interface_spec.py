@@ -24,6 +24,9 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.hd6303r_bus_spec = json.loads(
             (ROOT / "spec/interfaces/hd6303r_phased_bus.json").read_text()
         )
+        self.hd6301v1_bus_spec = json.loads(
+            (ROOT / "spec/interfaces/hd6301v1_phased_bus.json").read_text()
+        )
         self.hd6303r_modes_spec = json.loads(
             (ROOT / "spec/interfaces/hd6303r_modes.json").read_text()
         )
@@ -73,6 +76,14 @@ class InterfaceSpecificationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
             validate_interfaces.validate_interface(broken, self.devices, self.references)
 
+    def test_hd6301v1_phased_bus_requires_mode7_strobe_input(self) -> None:
+        broken = deepcopy(self.hd6301v1_bus_spec)
+        broken["signals"] = [
+            signal for signal in broken["signals"] if signal["name"] != "sc1_i"
+        ]
+        with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
+            validate_interfaces.validate_interface(broken, self.devices, self.references)
+
     def test_documented_phased_bus_timing_claims_are_complete(self) -> None:
         self.assertEqual(
             self.mc6801_bus_spec["implementation_status"][
@@ -83,6 +94,12 @@ class InterfaceSpecificationTests(unittest.TestCase):
         self.assertEqual(
             self.hd6303r_bus_spec["implementation_status"][
                 "three_cycle_reset_bus_release"
+            ],
+            "COMPLETE",
+        )
+        self.assertEqual(
+            self.hd6301v1_bus_spec["implementation_status"][
+                "all_seven_legal_mode_pin_roles"
             ],
             "COMPLETE",
         )

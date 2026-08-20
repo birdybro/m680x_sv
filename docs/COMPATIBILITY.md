@@ -134,8 +134,9 @@ byte is not transferred to RDR when the stop bit is missing.
 Both parts also implement Hitachi's writable 16-bit FRC sequence and assert
 TOF on rollover to `$0000`, rather than using the MC6801 write/overflow rules.
 
-The HD6301V1 claim covers every legal Mode 0, 1, 2, 4, 5, 6, and 7 at the
-normalized digital boundary. Mode-directed tests cover the `$f000`-`$ffff`
+The HD6301V1 claim covers every legal Mode 0, 1, 2, 4, 5, 6, and 7 at both the
+normalized memory boundary and a separate four-subphase digital pin boundary.
+Mode-directed tests cover the `$f000`-`$ffff`
 mask-ROM selection in Modes 0/5/6/7, external program space in Modes 1/2/4,
 Mode-0 external reset-vector handoff, Mode-5 partial decode, Mode-1 Port-1
 address function, mode-specific register exclusions, and common internal RAM.
@@ -147,14 +148,20 @@ two Mode-5 non-memory spans, and both Mode-7 spans. Mode 2 again follows the
 manual's explicit Mode-2/Mode-4 equivalence because the address-error table
 omits a separate Mode-2 row.
 
-Mode 7 additionally covers all four GPIO ports, the IS3 input latch and IRQ1
+The 627-check all-mode pin suite covers dedicated and multiplexed address/data,
+Port-4 partial-address DDR behavior, AS, exact Mode-5 IOS decode, R/W, internal
+write mirroring, Mode-7 IS3/OS3 with E qualification, address release after the
+third low-RES cycle, distinct WAI/SLP bus state, and E-synchronous standby.
+An independent model exhaustively projects every 16-bit address through all six
+address-bus modes and separately checks Mode-7 GPIO/strobes. Mode 7 additionally
+covers all four GPIO ports, the IS3 input latch and IRQ1
 source, read/write-selected OS3, common timer/SCI functions, and SLP behavior.
 Directed tests verify that instruction fetches in both documented non-memory
 ranges enter the 13-cycle address TRAP while normal data accesses do not.
 E-synchronous STBY entry, retained RAM/STBY_PWR, high-impedance ports,
-reset-vector recovery, and the reserved bi-phase selection are tested. Physical
-multiplexed/non-multiplexed timing and actual mask-ROM contents remain outside
-this partial claim.
+reset-vector recovery, and the reserved bi-phase selection are tested.
+Nanosecond/oscillator/pad characteristics and actual mask-ROM contents remain
+outside this partial claim.
 Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
 The Mode-7 timer regression verifies full-counter double-byte writes and the
 documented Hitachi TOF boundary. It also verifies that V1 DDR clearing waits

@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 135 |
+| Python unit tests | 142 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -35,13 +35,14 @@ The committed tests cover:
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801 Mode 0-7/1R/6R decode checks | 62 |
 | MC6801 real-core mode boot paths | 2 |
-| MC6801 four-subphase bus-wrapper checks | 205 |
+| MC6801 four-subphase bus-wrapper checks | 211 |
 | MC6801 external-clock SCI checks | 165 |
 | MC6801 bi-phase SCI checks | 24 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
 | HD6301V1 Mode-7 integration checks | 32 |
 | HD6301V1 legal-mode decode checks | 105 |
 | HD6301V1 seven-mode execution/source checks | 28 |
+| HD6301V1 four-subphase bus-wrapper checks | 627 |
 | HD6303R Mode-1/2/4 integration checks | 57 |
 | HD6303R legal-mode decode checks | 47 |
 | HD6303R four-subphase bus-wrapper checks | 180 |
@@ -56,8 +57,8 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 18 (13 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
-| Synthesis tops | 28 |
+| Bounded formal profiles | 19 (14 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
+| Synthesis tops | 29 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -129,7 +130,7 @@ decode, RAM/control state, GPIO value and direction, timer/capture/compare
 state, SCI state and pins, interrupt requests, retained request latches, and
 late priority vector. Directed protocol sequences precede the deterministic
 random register/pin traffic. These checks establish peripheral transaction and
-state timing at the normalized E-cycle boundary. A separate 205-check
+state timing at the normalized E-cycle boundary. A separate 211-check
 four-subphase bench verifies the manufacturer-documented physical digital
 ordering across all eight modes: E low/high phases, AS closure, Port-3 address
 and bus turnaround, E-qualified write data, Mode-0 internal-read monitoring,
@@ -138,7 +139,9 @@ stall, and the Mode-4-to-5 transition. Its independent Python pin model checks
 every mode/phase combination and exhaustively classifies all 65,536 Mode-5 IOS
 addresses. Both paths also check that MC6801 WAI repeatedly reads the
 post-stack SP, preserves Mode-5 IOS decoding, and releases Port 3 during the
-read-data phase. A separate real-core bench enters WAI in all three
+read-data phase. It also permanently regresses that the Mode-7 OS3 output is
+inactive while E is low and active only during a selected E-high access. A
+separate real-core bench enters WAI in all three
 M6800-lineage profiles and makes 18 steady-state/stall checks distinguishing
 MC6800 bus release, MC6801 post-stack-SP reads, and HD6301 inactive-strobe
 `$ffff`. A separate 47-check real-core trace bench drives NMI, an IRQ2-class
@@ -185,6 +188,17 @@ masked-request SLP rule. Model and RTL tests additionally cover E-synchronous
 STBY entry, high-impedance GPIO and external-bus suppression, retained RAM and
 STBY_PWR, active-state reset, external reset-vector recovery, and explicit
 rejection of the Motorola-only bi-phase selection.
+
+The 627-check HD6301V1 physical-wrapper suite verifies all seven legal modes
+over the four E subphases. It covers dedicated and multiplexed address/data,
+AS-open/close turnaround, full and DDR-selected partial address pins, exact
+Mode-5 IOS decode, E-qualified writes and Mode-7 OS3, internal-write mirroring,
+the third-reset-cycle bus release, distinct WAI/SLP `$ffff` pin state, and
+E-synchronous standby bus release and E suppression. The independent Python
+pin model exhaustively projects all 65,536 addresses through every address-bus
+mode and separately checks all-seven-mode phase, GPIO, reset, standby, and
+low-power behavior.
+Nanosecond, oscillator, pad, and electrical behavior is not claimed.
 
 The 105-check HD6301V1 mode suite verifies every legal Mode 0/1/2/4/5/6/7
 memory partition, register exclusion, Port-1/4 address role, mask-ROM source,
@@ -278,11 +292,12 @@ edge on resume.
 HD6305 profiles plus the MC6800 normalized and four-subphase bus wrappers,
 MC6801 Mode 3 integration and
 Mode-0/Mode-4 decode, the MC6801 four-subphase bus wrapper, HD6303R and its
-physical bus wrapper, HD6301V1,
+physical bus wrapper, HD6301V1 and its four-subphase physical bus wrapper,
 HD63701V0 legal-mode decode, MC68705P5, HD6301V1 and HD63701V0 Mode-7
 integrations, and the HD63705V0 MCU.
-The core/device and MC6800 phase profiles run at depth 10, the four mode-decode
-profiles at depth 5, and the HD6303R physical bus wrapper at depth 8; together
+The core/device, MC6800 phase, and HD6301V1 physical-wrapper profiles run at
+depth 10, the four mode-decode profiles at depth 5, and the HD6303R physical
+bus wrapper at depth 8; together
 they prove the committed safety properties for all symbolic input sequences
 within those bounds:
 
@@ -313,6 +328,10 @@ within those bounds:
   Mode-2/4 AS and Port-3 turnaround, permits data drive only for E-high writes,
   presents the SLP `$ffff` read without stopping E, releases every address/data
   bus in standby, and suppresses E while standby is active.
+- The HD6301V1 physical wrapper sequences every phase, confines Mode-5 IOS to
+  `$0100`-`$01ff`, never drives multiplexed read data, releases address buses
+  after three completed low-reset E cycles and in standby, keeps WAI/SLP data
+  released, and suppresses E while standby is active.
 - MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
   remapping respects secure mode, program reads stay within internal storage,
   VPP qualifies programming controls, and disabled-cycle state stalls.
@@ -340,8 +359,8 @@ compiles and runs both directed CPU suites, the MC6800 four-subphase bus suite,
 the HD6301 TRAP trace, the interrupt
 delay traces, the MC68705P5, HD6301V1, HD6303R, all-mode HD63701V0, and
 HD63705V0 device suites, both MC6801/MC6803 peripheral differential profiles,
-and the MC6801 all-mode/direct-boot and four-subphase bus suites, the HD6303R
-Mode-1/2/4 phased-bus suite, plus the
+and the MC6801 all-mode/direct-boot and four-subphase bus suites, the HD6301V1
+all-mode and HD6303R Mode-1/2/4 phased-bus suites, plus the
 MC68705P5 and HD63705V0 peripheral differential corpora from generated
 package-flattened views. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
@@ -365,6 +384,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD6301V1 Mode 5 integration | 12,190 | 1,445 |
 | HD6301V1 Mode 6 integration | 12,247 | 1,454 |
 | HD6301V1 Mode 7 integration | 12,126 | 1,485 |
+| HD6301V1 four-subphase bus wrapper | 12,427 | 1,459 |
 | HD6303R Mode 1 integration | 12,183 | 1,421 |
 | HD6303R Mode 2 integration | 12,229 | 1,447 |
 | HD6303R Mode 4 integration | 12,156 | 1,437 |

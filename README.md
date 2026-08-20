@@ -48,6 +48,9 @@ with device wrappers kept at separate integration boundaries:
   separate 4-KiB FPGA mask-ROM image port, normalized expanded-memory bus,
   executable RAM, mode-dependent ports/strobes, timer/SCI, SLP,
   E-synchronous STBY retention, and per-mode address/opcode TRAP;
+- `hd6301v1_bus_wrapper`: all-seven-mode four-subphase Port-1/3/4,
+  AS/IOS, R/W/OS3, third-reset-cycle release, WAI/SLP, and standby digital
+  pin behavior around the HD6301V1 integration;
 - `hd6303r_mcu`: HD6303R legal Mode-1/2/4 ROMless integration with the HD6301
   ISA, opcode TRAP, SLP/STBY behavior, RAM, mode-dependent Port 1, timer, and
   SCI;
@@ -120,7 +123,7 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
-across two simulators, eighteen bounded formal profiles, and twenty-eight
+across two simulators, nineteen bounded formal profiles, and twenty-nine
 synthesis tops. Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
@@ -134,9 +137,9 @@ cycle boundaries being checked.
 ## Known limitations
 
 MC6800 nanosecond phi1/phi2 and electrical clock-pad timing, MC6801/MC6803
-nanosecond setup/hold and oscillator/pad behavior, HD6303R
+nanosecond setup/hold and oscillator/pad behavior, HD6301V1/HD6303R
 nanosecond/oscillator/pad timing,
-physical HD6301V1/HD63701V0 bus waveforms, complete Port 3 handshake timing, analog EPROM
+physical HD63701V0 bus waveforms, nanosecond Port 3 handshake timing, analog EPROM
 programming physics, SCI clock-skew/electrical
 tolerance, and complete manufacturer bus waveforms outside the specifically
 verified traces remain

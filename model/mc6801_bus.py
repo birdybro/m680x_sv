@@ -62,7 +62,7 @@ def bus_pins(inputs: MC6801BusInputs) -> MC6801BusPins:
     port4 = inputs.normalized_port4 & 0xFF
     sc1 = True
     sc1_oe = multiplexed or nonmultiplexed
-    sc2 = inputs.os3_n if not sc1_oe else not write
+    sc2 = (not e or inputs.os3_n) if not sc1_oe else not write
 
     if not inputs.reset_n:
         port3_oe = 0

@@ -415,8 +415,9 @@ module mc6801_mcu #(
        (TIMER_COUNTER_DOUBLE_WRITE && timer_counter_write_armed &&
         (core_address == 16'h000a)));
     capture_high_read = internal_read && (core_address == 16'h000d);
-    port3_access = clock_enable_i && internal_register_select &&
-      (core_address == 16'h0006);
+    // OS3 qualifies the complete selected bus cycle. Sequential side effects
+    // remain clock-enable gated by their enclosing always_ff block.
+    port3_access = internal_register_select && (core_address == 16'h0006);
     instruction_address_error = HITACHI_CPU && HITACHI_ADDRESS_TRAP &&
       core_opcode_fetch &&
       hitachi_address_error_for_mode(active_mode, core_address);

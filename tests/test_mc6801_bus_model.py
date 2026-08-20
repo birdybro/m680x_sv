@@ -55,6 +55,13 @@ class MC6801BusModelTests(unittest.TestCase):
             0xFF,
         )
 
+    def test_single_chip_os3_is_qualified_by_e(self) -> None:
+        for mode in (4, 7):
+            self.assertTrue(self.pins(mode, 0, os3_n=False).sc2)
+            self.assertTrue(self.pins(mode, 1, os3_n=False).sc2)
+            self.assertFalse(self.pins(mode, 2, os3_n=False).sc2)
+            self.assertFalse(self.pins(mode, 3, os3_n=False).sc2)
+
     def test_reset_releases_data_and_holds_controls_high(self) -> None:
         for mode in range(8):
             for phase in range(4):

@@ -6,7 +6,7 @@
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "HD6301V1 derives E from its oscillator; E is the documented peripheral and processor cycle reference",
     "status": "PARTIAL",
-    "limitation": "Expanded modes use a normalized full-address transaction; Port-3 multiplexing, AS/RW half-cycle waveforms, oscillator division, duty cycle, setup/hold, pad delays, and electrical timing are outside this boundary"
+    "limitation": "This normalized boundary omits pin subphases; hd6301v1-four-subphase-device-bus separately implements every legal mode's digital bus waveform. Oscillator division, duty cycle, setup/hold, pad delays, and electrical timing remain outside both boundaries"
   },
   "signals": [
     {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
@@ -57,9 +57,9 @@
     "legal_mode_decode": "COMPLETE",
     "normalized_digital_interface": "COMPLETE",
     "mask_rom_selection": "COMPLETE",
-    "mode7_gpio_and_strobes": "PARTIAL",
+    "mode7_gpio_and_strobes": "COMPLETE",
     "sleep_and_standby_digital": "COMPLETE",
-    "physical_expanded_bus_waveforms": "NOT_IMPLEMENTED",
+    "physical_device_pin_waveforms": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"
   }

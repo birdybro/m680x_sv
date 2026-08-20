@@ -284,18 +284,30 @@ but omits a separate Mode-2 row from address-error table 2-13-1.
 documented 4-KiB internal mask-ROM window to an integration-owned FPGA image,
 including reset and interrupt vectors. The clean-room repository supplies no
 copyrighted mask-ROM contents. Reads and writes to RAM and peripheral registers
-do not assert `program_read_o`. The `external_*` signals expose a normalized
-full-address transaction for expanded modes; they do not claim the physical
-Port-3 multiplexing, AS/RW phases, or pin electrical timing.
+do not assert `program_read_o`. The `external_*` signals expose the independent
+normalized full-address transaction for expanded-mode FPGA integration.
+
+`rtl/hd6301/hd6301v1_bus_wrapper.sv` is the separate device-pin projection. It
+uses four FPGA-clock subphases per E cycle: address/AS-open, AS-close and
+Port-3 turnaround, E-high data, and E-fall data/MCU advancement. Modes 0/2/4/6
+multiplex low address and data on Port 3; Mode 1 drives dedicated low address
+on Port 1; Mode 5 drives DDR-selected low-address bits on Port 4 and decodes
+active-low IOS exactly for `$0100`-`$01ff`; Mode 7 retains GPIO and IS3/OS3.
+The wrapper also implements address-bus release after the third completed
+low-RES E cycle, the distinct WAI/SLP `$ffff` inactive-strobe state, and
+E-synchronous standby bus release and E suppression. It creates no generated
+clock. Manufacturer nanosecond limits, oscillator stabilization, pad behavior,
+and electrical characteristics remain outside synthesizable RTL. The exact
+contract and primary-manual locators are in
+`../spec/interfaces/hd6301v1_phased_bus.json`.
 
 In Mode 7, Ports 3 and 4 expose separate input, output-latch, and output-enable
 vectors. The active-low `is3_n_i` input sets the P3CSR flag and optionally
 captures Port 3. Reading P3CSR while set arms the documented clear; the
 following PORT3 read or write clears it unless a new edge occurs. `os3_n_o`
-pulses during the
-P3CSR-selected PORT3 read or write E-cycle. The exact interface contract and
-electrical exclusions are recorded in
-`../spec/interfaces/hd6301v1_mode7.json`.
+pulses during the P3CSR-selected PORT3 read or write E-cycle. The normalized
+Mode-7 contract is recorded in `../spec/interfaces/hd6301v1_mode7.json`; the
+physical wrapper qualifies that strobe to E high as specified above.
 
 ## HD6303R Mode-1/2/4 integration
 

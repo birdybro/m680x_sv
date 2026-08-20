@@ -90,10 +90,10 @@
     {"source": "sci", "vector": "FFF0:FFF1", "priority": 7}
   ],
   "implementation_scope": {
-    "rtl": "rtl/hd6301/hd6301v1_mcu.sv implements every legal Mode-0/1/2/4/5/6/7 digital memory and port selection and accepts a separate 4-KiB FPGA mask-ROM image",
-    "model": "model/hd6301v1_device.py independently classifies all legal-mode E-cycle transactions, program/external memory, Mode-7 GPIO/handshake state, and address errors",
-    "verification": "A 105-check decode suite covers all legal mode maps and address-error regions, and a seven-core bench executes from every program source; Mode-7 directed execution additionally covers internal reset/vector fetch, executable RAM, exact 13-cycle address TRAP, Port 3/4 GPIO, IS3/OS3, SLP, STBY, and retention",
-    "excluded_modes": "Mode 3 is not defined; physical multiplexed/non-multiplexed half-cycle bus waveforms and oscillator recovery delay remain unclaimed",
+    "rtl": "rtl/hd6301/hd6301v1_mcu.sv implements every legal Mode-0/1/2/4/5/6/7 digital memory and port selection and accepts a separate 4-KiB FPGA mask-ROM image; rtl/hd6301/hd6301v1_bus_wrapper.sv projects every legal mode onto four digital E subphases",
+    "model": "model/hd6301v1_device.py independently classifies all legal-mode E-cycle transactions, program/external memory, Mode-7 GPIO/handshake state, and address errors; model/hd6301v1_bus.py separately models physical pin phases, bus ownership, reset release, and low-power states",
+    "verification": "A 105-check decode suite covers all legal mode maps and address-error regions, a seven-core bench executes from every program source, and a 627-check pin suite plus exhaustive address projection covers the all-mode four-subphase wrapper; Mode-7 directed execution additionally covers internal reset/vector fetch, executable RAM, exact 13-cycle address TRAP, Port 3/4 GPIO, IS3/OS3, SLP, STBY, and retention",
+    "excluded_modes": "Mode 3 is not defined; nanosecond bus limits, oscillator recovery delay, pad behavior, and electrical characteristics remain unclaimed",
     "analog_exclusions": ["mask-ROM contents", "oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

@@ -1,0 +1,97 @@
+// SPDX-License-Identifier: MIT
+module hd6301v1_bus_wrapper_formal;
+  (* anyseq *) logic clk;
+  (* anyseq *) logic clock_enable;
+  (* anyseq *) logic standby_n;
+  (* anyseq *) logic device_reset_n;
+  (* anyseq *) logic [7:0] port3_in;
+  logic past_valid = 1'b0;
+  logic [1:0] expected_reset_low_e_cycles = 2'd0;
+  logic phase_reset_n;
+  logic reset_n;
+  logic [1:0] phase;
+  logic e;
+  logic standby;
+  logic sleeping;
+  logic waiting;
+  logic [7:0] port1_oe;
+  logic [7:0] port3;
+  logic [7:0] port3_oe;
+  logic [7:0] port4;
+  logic [7:0] port4_oe;
+  logic sc1;
+  logic sc1_oe;
+  logic sc2;
+  logic [15:0] address;
+
+  assign phase_reset_n = past_valid;
+  assign reset_n = past_valid && device_reset_n;
+
+  always @(posedge clk) begin
+    past_valid <= 1'b1;
+    if (!phase_reset_n || reset_n) begin
+      expected_reset_low_e_cycles <= 2'd0;
+    end else if (clock_enable && (phase == 2'd3) &&
+                 (expected_reset_low_e_cycles != 2'd3)) begin
+      expected_reset_low_e_cycles <= expected_reset_low_e_cycles + 2'd1;
+    end
+  end
+
+  /* verilator lint_off PINCONNECTEMPTY */
+  hd6301v1_bus_wrapper #(.OPERATING_MODE(3'd6)) dut (
+    .phase_clk_i(clk), .phase_reset_n_i(phase_reset_n), .reset_n_i(reset_n),
+    .standby_n_i(standby_n), .clock_enable_i(clock_enable), .nmi_n_i(1'b1),
+    .irq1_n_i(1'b1), .standby_power_ok_i(1'b1), .program_data_i(8'hff),
+    .program_address_o(), .program_read_o(), .port1_i(8'hff), .port1_o(),
+    .port1_oe_o(port1_oe), .port2_i(5'h1f), .port2_o(), .port2_oe_o(),
+    .port3_i(port3_in), .port3_o(port3), .port3_oe_o(port3_oe),
+    .port4_i(8'hff), .port4_o(port4), .port4_oe_o(port4_oe), .sc1_i(1'b1),
+    .sc1_o(sc1), .sc1_oe_o(sc1_oe), .sc2_o(sc2), .e_o(e),
+    .bus_phase_o(phase), .standby_active_o(standby), .sci_tx_o(),
+    .sci_clock_o(), .timer_irq_o(), .sci_irq_o(), .opcode_fetch_o(),
+    .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(waiting),
+    .sleeping_o(sleeping), .interrupt_ack_o(), .debug_address_o(address),
+    .debug_pc_o(), .debug_sp_o(), .debug_a_o(), .debug_b_o(), .debug_x_o(),
+    .debug_ccr_o()
+  );
+  /* verilator lint_on PINCONNECTEMPTY */
+
+  always @* begin
+    assert (e == (phase_reset_n && !standby && phase[1]));
+    if (!phase_reset_n || standby ||
+        (!reset_n && (expected_reset_low_e_cycles == 2'd3))) begin
+      assert (port1_oe == 8'h00);
+      assert (port3_oe == 8'h00);
+      assert (port4_oe == 8'h00);
+      assert (sc2);
+    end else begin
+      assert (sc1_oe);
+      assert (sc1 == (phase == 2'd0));
+      if (sleeping || waiting) begin
+        assert (sc2);
+        assert (port4 == 8'hff);
+      end else begin
+        assert (port4 == address[15:8]);
+      end
+      if (phase == 2'd0) begin
+        assert (port3_oe == 8'hff);
+        if (sleeping || waiting) assert (port3 == 8'hff);
+        else assert (port3 == address[7:0]);
+      end
+      if (phase == 2'd1) assert (port3_oe == 8'h00);
+      if ((phase != 2'd0) && (port3_oe != 8'h00)) begin
+        assert (e && !sc2 && !sleeping && !waiting);
+      end
+    end
+  end
+
+  always @(posedge clk) begin
+    if (past_valid && $past(past_valid)) begin
+      if ($past(clock_enable)) begin
+        assert (phase == ($past(phase) + 2'd1));
+      end else begin
+        assert (phase == $past(phase));
+      end
+    end
+  end
+endmodule

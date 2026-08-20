@@ -112,7 +112,7 @@ module mc6801_bus_wrapper #(
     port4_oe_o = raw_port4_oe;
     sc1_o = 1'b1;
     sc1_oe_o = !single_chip;
-    sc2_o = single_chip ? raw_os3_n : !pin_write;
+    sc2_o = single_chip ? (!bus_phase[1] || raw_os3_n) : !pin_write;
 
     if (!reset_n_i) begin
       // The manual specifies high AS/RW/address pull states and a released

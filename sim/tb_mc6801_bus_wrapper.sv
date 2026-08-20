@@ -211,6 +211,13 @@ module tb_mc6801_bus_wrapper;
     check_value(!sc1_oe[7] && sc2[7], "mode7 SC1 input and inactive OS3");
     check_value(port3_oe[7] == 8'h00 && port4_oe[7] == 8'h00,
            "mode7 GPIO directions reset to input");
+    set_transaction(16'h0006, 1'b0, 8'h00);
+    check_value(sc2[7], "mode7 OS3 remains inactive before E");
+    advance_phase(2'd1);
+    advance_phase(2'd2);
+    check_value(!sc2[7], "mode7 OS3 is active through selected E-high read");
+    advance_phase(2'd3);
+    advance_phase(2'd0);
 
     // The Mode 4 escape write changes physical pin roles on the next E cycle.
     check_value(active_mode[4] == 3'd4 && !sc1_oe[4], "mode4 starts single chip");

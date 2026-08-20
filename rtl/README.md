@@ -30,6 +30,13 @@ clock, presents multiplexed address/data and AS or Mode-5 IOS, and keeps the
 historical device reset separate from the FPGA subphase reset. It deliberately
 does not model oscillator, pad, or nanosecond electrical characteristics.
 
+`hd6301/hd6301v1_bus_wrapper.sv` is the separate all-legal-mode Hitachi pin
+top. It projects dedicated, multiplexed, partial-address, and single-chip
+Port-1/3/4 roles over four digital subphases, including AS/IOS, R/W/OS3,
+third-reset-cycle release, WAI/SLP, and E-synchronous standby behavior. Its
+structured interface spec excludes only nanosecond, oscillator, pad, and
+electrical characteristics from the implemented digital pin claim.
+
 `hd6301/hd6303r_bus_wrapper.sv` is the separate Hitachi ROMless device-pin
 top. It implements Mode-1 dedicated address/data pins, Mode-2/4 AS-controlled
 Port-3 multiplexing, E-qualified writes, third-reset-cycle address-bus release,
