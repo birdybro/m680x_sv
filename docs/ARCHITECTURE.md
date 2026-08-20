@@ -96,9 +96,11 @@ and vector sequences.
 For the base profile, MC6800 System Design Data Table 8 additionally drives
 explicit bus-valid reads for every two-cycle inherent/accumulator form, all
 8- and 16-bit immediate forms, direct byte/word reads, and extended byte/word
-reads plus JMP. The 107 opcode records carry the complete
-cycle-address/direction/data-role sequence; MC6801 and HD6301 retain their own
-manufacturer timing profiles.
+reads and stores plus JMP. The 115 opcode records carry the complete
+cycle-address/direction/data-role/VMA sequence; MC6801 and HD6301 retain their
+own manufacturer timing profiles. Direct and extended stores expose their
+destination address with VMA low before the first write, exactly as Table 8
+specifies.
 
 ## MC6800 device bus wrapper
 

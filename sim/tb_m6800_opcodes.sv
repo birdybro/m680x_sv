@@ -172,7 +172,27 @@ module tb_m6800_opcodes #(
       cycle_count = 0;
       access_count = 0;
       do begin
-        if (bus_valid) begin
+        if (expected_vector.exact_bus_trace) begin
+          if (access_count >= expected_vector.access_count) begin
+            $fatal(1, "opcode %02x emitted unexpected cycle %0d addr=%04x",
+              expected_vector.opcode, access_count, address);
+          end
+          expected_access = m6800_access(vector_index[7:0], access_count[7:0]);
+          if ((access_count == 0) && !opcode_fetch) begin
+            $fatal(1, "opcode %02x first cycle was not marked as fetch", expected_vector.opcode);
+          end
+          if (bus_valid != expected_access.bus_valid ||
+              write_enable != expected_access.write_enable ||
+              address != expected_access.address ||
+              (!expected_access.data_ignored &&
+               ((write_enable ? data_out : data_in) != expected_access.data))) begin
+            $fatal(1, "opcode %02x cycle %0d expected=%0d/%0d/%04x/%02x actual=%0d/%0d/%04x/%02x",
+              expected_vector.opcode, access_count, expected_access.bus_valid,
+              expected_access.write_enable, expected_access.address, expected_access.data,
+              bus_valid, write_enable, address, write_enable ? data_out : data_in);
+          end
+          access_count = access_count + 1;
+        end else if (bus_valid) begin
           if (access_count >= expected_vector.access_count) begin
             $fatal(1, "opcode %02x emitted unexpected access %0d addr=%04x",
               expected_vector.opcode, access_count, address);
@@ -186,7 +206,8 @@ module tb_m6800_opcodes #(
             $fatal(1, "opcode %02x first access was not marked as fetch", expected_vector.opcode);
           end
           if (write_enable != expected_access.write_enable || address != expected_access.address ||
-              (write_enable ? data_out : data_in) != expected_access.data) begin
+              (!expected_access.data_ignored &&
+               ((write_enable ? data_out : data_in) != expected_access.data))) begin
             $fatal(1, "opcode %02x access %0d expected=%0d/%04x/%02x actual=%0d/%04x/%02x",
               expected_vector.opcode, access_count, expected_access.write_enable,
               expected_access.address, expected_access.data, write_enable, address,

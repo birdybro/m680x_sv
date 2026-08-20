@@ -17,7 +17,7 @@ class UndefinedBehavior(RuntimeError):
 
 @dataclass(frozen=True)
 class BusAccess:
-    """An architecturally ordered memory access within one instruction."""
+    """An architecturally ordered external-bus cycle within one instruction."""
 
     kind: str
     address: int
@@ -25,6 +25,7 @@ class BusAccess:
     purpose: str
     data_defined: bool = True
     address_defined_mask: int = 0xFFFF
+    bus_valid: bool = True
 
 
 @dataclass

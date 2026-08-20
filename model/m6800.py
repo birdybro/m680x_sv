@@ -234,6 +234,20 @@ class M6800Model:
         self.memory[address] = value
         self._accesses.append(BusAccess("write", address, value, purpose))
 
+    def _invalid_read_cycle(self, address: int, purpose: str) -> None:
+        """Record a Table-8 R/W-high cycle for which MC6800 VMA is low."""
+
+        self._accesses.append(
+            BusAccess(
+                "read",
+                address & 0xFFFF,
+                0,
+                purpose,
+                data_defined=False,
+                bus_valid=False,
+            )
+        )
+
     def _read16(self, address: int, purpose: str) -> int:
         high = self._read8(address, f"{purpose} high")
         low = self._read8(address + 1, f"{purpose} low")
@@ -299,6 +313,12 @@ class M6800Model:
         else:
             raise AssertionError(f"unsupported M6800 addressing mode {mode}")
         if mnemonic in {"JMP", "JSR"} or mnemonic in WORD_STORES or mnemonic.startswith("STA"):
+            if (
+                self.architecture == "m6800"
+                and mode in {"direct", "extended"}
+                and (mnemonic in WORD_STORES or mnemonic.startswith("STA"))
+            ):
+                self._invalid_read_cycle(address, "pre-write VMA-low cycle")
             return None, address
         root, _ = self._data_operation(mnemonic)
         if root == "CLR":

@@ -58,6 +58,7 @@ module m6800_core #(
     ST_MEMORY_READ,
     ST_MEMORY_READ_16_HIGH,
     ST_MEMORY_READ_16_LOW,
+    ST_MEMORY_PREWRITE,
     ST_MEMORY_WRITE,
     ST_MEMORY_WRITE_16_HIGH,
     ST_MEMORY_WRITE_16_LOW,
@@ -281,7 +282,9 @@ module m6800_core #(
       end else if (decoded.operation == OP_STA) begin
         write_data <= selected_byte(decoded.target);
         set_nzv8(selected_byte(decoded.target));
-        state <= ST_MEMORY_WRITE;
+        state <= ((ARCHITECTURE == 2'd0) &&
+          (decoded.mode == AM_DIRECT || decoded.mode == AM_EXTENDED)) ?
+          ST_MEMORY_PREWRITE : ST_MEMORY_WRITE;
       end else if (is_word_store(decoded.operation)) begin
         case (decoded.operation)
           OP_STX: store_value = index_register;
@@ -292,7 +295,9 @@ module m6800_core #(
         condition_codes[CCR_N] <= store_value[15];
         condition_codes[CCR_Z] <= (store_value == 16'h0000);
         condition_codes[CCR_V] <= 1'b0;
-        state <= ST_MEMORY_WRITE_16_HIGH;
+        state <= ((ARCHITECTURE == 2'd0) &&
+          (decoded.mode == AM_DIRECT || decoded.mode == AM_EXTENDED)) ?
+          ST_MEMORY_PREWRITE : ST_MEMORY_WRITE_16_HIGH;
       end else if (decoded.operation == OP_CLR) begin
         write_data <= 8'h00;
         condition_codes[CCR_N] <= 1'b0;
@@ -770,6 +775,11 @@ module m6800_core #(
         address_o = effective_address + 16'h0001;
         bus_valid_o = 1'b1;
       end
+      ST_MEMORY_PREWRITE: begin
+        // MC6800 Table 8 exposes the destination address with VMA low before
+        // direct and extended stores drive their first write cycle.
+        address_o = effective_address;
+      end
       ST_MEMORY_WRITE: begin
         address_o = effective_address;
         data_o = write_data;
@@ -1072,6 +1082,10 @@ module m6800_core #(
           state <= ST_MEMORY_READ_16_LOW;
         end
         ST_MEMORY_READ_16_LOW: execute_word({temporary_high, data_i});
+        ST_MEMORY_PREWRITE: begin
+          if (decoded.operation == OP_STA) state <= ST_MEMORY_WRITE;
+          else state <= ST_MEMORY_WRITE_16_HIGH;
+        end
         ST_MEMORY_WRITE: finish_to(ST_FETCH);
         ST_MEMORY_WRITE_16_HIGH: state <= ST_MEMORY_WRITE_16_LOW;
         ST_MEMORY_WRITE_16_LOW: finish_to(ST_FETCH);

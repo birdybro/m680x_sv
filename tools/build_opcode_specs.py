@@ -544,7 +544,31 @@ def _aliases(mnemonic: str, architecture: str) -> list[str]:
 
 def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
     def read(cycle: int, address: str, data: str) -> dict:
-        return {"cycle": cycle, "address": address, "direction": "read", "data": data}
+        return {
+            "cycle": cycle,
+            "address": address,
+            "direction": "read",
+            "data": data,
+            "bus_valid": True,
+        }
+
+    def invalid_read(cycle: int, address: str) -> dict:
+        return {
+            "cycle": cycle,
+            "address": address,
+            "direction": "read",
+            "data": "irrelevant_data",
+            "bus_valid": False,
+        }
+
+    def write(cycle: int, address: str, data: str) -> dict:
+        return {
+            "cycle": cycle,
+            "address": address,
+            "direction": "write",
+            "data": data,
+            "bus_valid": True,
+        }
 
     opcode = read(1, "opcode_address", "opcode")
     if mode == "immediate-8":
@@ -568,6 +592,21 @@ def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
                 read(3, "direct_effective_address", "operand_high"),
                 read(4, "direct_effective_address+1", "operand_low"),
             ]
+        if mnemonic.startswith("STA"):
+            return [
+                opcode,
+                address,
+                invalid_read(3, "direct_effective_address"),
+                write(4, "direct_effective_address", "accumulator_data"),
+            ]
+        if mnemonic in {"STS", "STX"}:
+            return [
+                opcode,
+                address,
+                invalid_read(3, "direct_effective_address"),
+                write(4, "direct_effective_address", "register_high"),
+                write(5, "direct_effective_address+1", "register_low"),
+            ]
     if mode == "extended":
         address_high = read(2, "opcode_address+1", "extended_address_high")
         address_low = read(3, "opcode_address+2", "extended_address_low")
@@ -587,6 +626,23 @@ def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
                 address_low,
                 read(4, "extended_effective_address", "operand_high"),
                 read(5, "extended_effective_address+1", "operand_low"),
+            ]
+        if mnemonic.startswith("STA"):
+            return [
+                opcode,
+                address_high,
+                address_low,
+                invalid_read(4, "extended_effective_address"),
+                write(5, "extended_effective_address", "accumulator_data"),
+            ]
+        if mnemonic in {"STS", "STX"}:
+            return [
+                opcode,
+                address_high,
+                address_low,
+                invalid_read(4, "extended_effective_address"),
+                write(5, "extended_effective_address", "register_high"),
+                write(6, "extended_effective_address+1", "register_low"),
             ]
     return []
 

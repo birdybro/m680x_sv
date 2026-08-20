@@ -96,12 +96,12 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
             raise OpcodeSpecError(f"{architecture}: documented bus cycles must be a list for {opcode:02X}")
         for cycle_number, bus_cycle in enumerate(bus_cycles, start=1):
             cycle_fields = set(bus_cycle) if isinstance(bus_cycle, dict) else set()
+            required_cycle_fields = {"cycle", "address", "direction", "data"}
+            optional_cycle_fields = {"address_defined_mask", "bus_valid"}
             if (
                 not isinstance(bus_cycle, dict)
-                or cycle_fields not in (
-                    {"cycle", "address", "direction", "data"},
-                    {"cycle", "address", "address_defined_mask", "direction", "data"},
-                )
+                or not required_cycle_fields <= cycle_fields
+                or not cycle_fields <= required_cycle_fields | optional_cycle_fields
                 or bus_cycle["cycle"] != cycle_number
                 or bus_cycle["direction"] not in {"read", "write"}
                 or not isinstance(bus_cycle["address"], str)
@@ -110,6 +110,10 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
                 or not bus_cycle["data"]
             ):
                 raise OpcodeSpecError(f"{architecture}: invalid documented bus cycle for {opcode:02X}")
+            if "bus_valid" in bus_cycle and not isinstance(bus_cycle["bus_valid"], bool):
+                raise OpcodeSpecError(
+                    f"{architecture}: invalid documented bus-valid value for {opcode:02X}"
+                )
             if "address_defined_mask" in bus_cycle and (
                 not isinstance(bus_cycle["address_defined_mask"], str)
                 or re.fullmatch(r"0x[0-9a-fA-F]{4}", bus_cycle["address_defined_mask"]) is None

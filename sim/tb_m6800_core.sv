@@ -225,8 +225,9 @@ module tb_m6800_core;
       $fatal(1, "ADDA result/flags A=%02x CCR=%02x", debug_a, debug_ccr);
     end
     run_instruction(5, 8'hb7);
-    if (memory[16'h2000] != 8'h80 || !trace_write[3] ||
-        trace_address[3] != 16'h2000 || trace_data[3] != 8'h80 || trace_valid[4]) begin
+    if (memory[16'h2000] != 8'h80 || trace_valid[3] || trace_write[3] ||
+        trace_address[3] != 16'h2000 || !trace_valid[4] || !trace_write[4] ||
+        trace_address[4] != 16'h2000 || trace_data[4] != 8'h80) begin
       $fatal(1, "STAA external trace");
     end
     run_instruction(3, 8'hce);

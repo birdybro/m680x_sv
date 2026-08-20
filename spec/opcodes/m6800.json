@@ -81,13 +81,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -271,13 +273,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -323,13 +327,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -463,13 +469,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -517,13 +525,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -571,13 +581,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -625,13 +637,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -679,13 +693,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -733,13 +749,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -796,13 +814,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -858,13 +878,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -1042,13 +1064,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -1102,13 +1126,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -1199,13 +1225,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -1295,13 +1323,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -2776,13 +2806,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -2900,13 +2932,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -2962,13 +2996,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3057,13 +3093,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3119,13 +3157,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3183,13 +3223,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3247,13 +3289,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3307,13 +3351,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3398,13 +3444,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3459,13 +3507,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3551,13 +3601,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3613,13 +3665,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3737,13 +3791,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3799,13 +3855,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3894,13 +3952,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -3956,13 +4016,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -4020,13 +4082,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -4084,13 +4148,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -4144,13 +4210,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -4235,13 +4303,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -4296,13 +4366,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -4388,13 +4460,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "next_opcode"
+          "data": "next_opcode",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -5788,19 +5862,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -5906,13 +5983,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -5968,13 +6047,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6033,13 +6114,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6125,13 +6208,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6185,13 +6270,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6245,13 +6332,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6337,13 +6426,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6404,13 +6495,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6465,13 +6558,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6530,13 +6625,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6590,19 +6687,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6700,19 +6800,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [
@@ -6803,19 +6906,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6872,19 +6978,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -6944,19 +7053,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7043,19 +7155,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7110,19 +7225,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7177,19 +7295,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7238,14 +7359,43 @@
         "read 1 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 4,
+          "address": "direct_effective_address",
+          "direction": "write",
+          "data": "accumulator_data",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -7293,19 +7443,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7367,19 +7520,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7435,19 +7591,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7507,19 +7666,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7574,25 +7736,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "direct_effective_address+1",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -7678,25 +7844,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "direct_effective_address+1",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [
@@ -7747,14 +7917,50 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 4,
+          "address": "direct_effective_address",
+          "direction": "write",
+          "data": "register_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 5,
+          "address": "direct_effective_address+1",
+          "direction": "write",
+          "data": "register_low",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STS instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -8592,25 +8798,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -8667,25 +8877,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -8745,25 +8959,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -8850,25 +9068,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -8923,25 +9145,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -8996,25 +9222,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9063,14 +9293,50 @@
         "read 2 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low",
+          "bus_valid": true
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 5,
+          "address": "extended_effective_address",
+          "direction": "write",
+          "data": "accumulator_data",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -9118,25 +9384,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9198,25 +9468,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9272,25 +9546,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9350,25 +9628,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9423,31 +9705,36 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 5,
           "address": "extended_effective_address+1",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9546,31 +9833,36 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 5,
           "address": "extended_effective_address+1",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [
@@ -9621,14 +9913,57 @@
         "read 2 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low",
+          "bus_valid": true
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 5,
+          "address": "extended_effective_address",
+          "direction": "write",
+          "data": "register_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 6,
+          "address": "extended_effective_address+1",
+          "direction": "write",
+          "data": "register_low",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STS instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -9677,13 +10012,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9739,13 +10076,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9804,13 +10143,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9896,13 +10237,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -9956,13 +10299,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10016,13 +10361,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10108,13 +10455,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10175,13 +10524,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10236,13 +10587,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10301,13 +10654,15 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10423,19 +10778,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10524,19 +10882,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10593,19 +10954,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10665,19 +11029,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10764,19 +11131,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10831,19 +11201,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10898,19 +11271,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -10959,14 +11335,43 @@
         "read 1 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 4,
+          "address": "direct_effective_address",
+          "direction": "write",
+          "data": "accumulator_data",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -11014,19 +11419,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -11088,19 +11496,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -11156,19 +11567,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -11228,19 +11642,22 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -11357,25 +11774,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "direct_address"
+          "data": "direct_address",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "direct_effective_address",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "direct_effective_address+1",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -11424,14 +11845,50 @@
         "read 1 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "direct_address",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "direct_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 4,
+          "address": "direct_effective_address",
+          "direction": "write",
+          "data": "register_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 5,
+          "address": "direct_effective_address+1",
+          "direction": "write",
+          "data": "register_low",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STX instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -12235,25 +12692,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12310,25 +12771,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12388,25 +12853,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12493,25 +12962,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12566,25 +13039,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12639,25 +13116,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12706,14 +13187,50 @@
         "read 2 instruction operand byte(s)",
         "write 1 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low",
+          "bus_valid": true
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 5,
+          "address": "extended_effective_address",
+          "direction": "write",
+          "data": "accumulator_data",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STA instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     },
@@ -12761,25 +13278,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12841,25 +13362,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12915,25 +13440,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -12993,25 +13522,29 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand"
+          "data": "operand",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -13128,31 +13661,36 @@
           "cycle": 1,
           "address": "opcode_address",
           "direction": "read",
-          "data": "opcode"
+          "data": "opcode",
+          "bus_valid": true
         },
         {
           "cycle": 2,
           "address": "opcode_address+1",
           "direction": "read",
-          "data": "extended_address_high"
+          "data": "extended_address_high",
+          "bus_valid": true
         },
         {
           "cycle": 3,
           "address": "opcode_address+2",
           "direction": "read",
-          "data": "extended_address_low"
+          "data": "extended_address_low",
+          "bus_valid": true
         },
         {
           "cycle": 4,
           "address": "extended_effective_address",
           "direction": "read",
-          "data": "operand_high"
+          "data": "operand_high",
+          "bus_valid": true
         },
         {
           "cycle": 5,
           "address": "extended_effective_address+1",
           "direction": "read",
-          "data": "operand_low"
+          "data": "operand_low",
+          "bus_valid": true
         }
       ],
       "stack_effects": [],
@@ -13201,14 +13739,57 @@
         "read 2 instruction operand byte(s)",
         "write 2 effective-address byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode",
+          "bus_valid": true
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "extended_address_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "extended_address_low",
+          "bus_valid": true
+        },
+        {
+          "cycle": 4,
+          "address": "extended_effective_address",
+          "direction": "read",
+          "data": "irrelevant_data",
+          "bus_valid": false
+        },
+        {
+          "cycle": 5,
+          "address": "extended_effective_address",
+          "direction": "write",
+          "data": "register_high",
+          "bus_valid": true
+        },
+        {
+          "cycle": 6,
+          "address": "extended_effective_address+1",
+          "direction": "write",
+          "data": "register_low",
+          "bus_valid": true
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
-        "id": "motorola-m6800-prm-1976",
-        "locator": "appendix A, STX instruction entry"
+        "id": "motorola-mc6800-system-design-data-1976",
+        "locator": "MC6800 MPU table 8 operation summary, printed pages 35-38"
       },
       "notes": ""
     }
