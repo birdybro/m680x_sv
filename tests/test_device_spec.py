@@ -64,6 +64,7 @@ class DeviceSpecificationTests(unittest.TestCase):
             self.assertEqual(hd63705v0[dimension], "PARTIAL")
         for evidence_path in (
             "rtl/m6801/mc6801_mcu.sv",
+            "rtl/m6801/mc6801_bus_wrapper.sv",
             "rtl/hd6301/hd6301v1_mcu.sv",
             "rtl/hd6301/hd6303r_mcu.sv",
             "rtl/hd6301/hd63701v0_mcu.sv",
@@ -76,6 +77,7 @@ class DeviceSpecificationTests(unittest.TestCase):
             "model/hd6301v1_device.py",
             "model/hd63701v0_device.py",
             "model/hd63705v0_device.py",
+            "model/mc6801_bus.py",
             "spec/peripherals/mc6801.json",
             "spec/peripherals/mc6803.json",
             "spec/peripherals/hd6301v1.json",
@@ -85,6 +87,7 @@ class DeviceSpecificationTests(unittest.TestCase):
             "spec/interfaces/hd6301v1_mode7.json",
             "spec/interfaces/hd63701v0_modes.json",
             "spec/interfaces/hd63705v0_mcu.json",
+            "spec/interfaces/mc6801_phased_bus.json",
         ):
             self.assertTrue((ROOT / evidence_path).is_file(), evidence_path)
         implemented_full_mcus = {

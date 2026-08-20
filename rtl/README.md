@@ -16,3 +16,9 @@ bit-width errors before the package is used by a CPU state machine.
 
 The maintained CPU and device interfaces, lineages, timing contract, and
 generated Yosys views are documented in `docs/ARCHITECTURE.md`.
+
+`m6801/mc6801_bus_wrapper.sv` is the Motorola device-oriented integration top.
+It derives four digital subphases per E cycle without generating an internal
+clock, presents multiplexed address/data and AS or Mode-5 IOS, and keeps the
+historical device reset separate from the FPGA subphase reset. It deliberately
+does not model oscillator, pad, or nanosecond electrical characteristics.

@@ -20,7 +20,13 @@ REQUIRED_SIGNALS = {
         "halt_n_i", "tsc_i", "dbe_i", "data_i", "address_o",
         "address_oe_o", "data_o", "data_oe_o", "read_not_write_o",
         "read_not_write_oe_o", "vma_o", "ba_o",
-    }
+    },
+    "mc6801-four-subphase-device-bus": {
+        "phase_clk_i", "phase_reset_n_i", "clock_enable_i", "reset_n_i",
+        "e_o", "bus_phase_o", "sc1_i", "sc1_o", "sc1_oe_o", "sc2_o",
+        "port3_i", "port3_o", "port3_oe_o", "port4_i", "port4_o",
+        "port4_oe_o", "operating_mode_o",
+    },
 }
 
 

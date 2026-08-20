@@ -1,0 +1,4 @@
+read_verilog -sv rtl/generated/yosys_m6800_core.sv rtl/m6801/mc6801_mcu.sv rtl/m6801/mc6801_bus_wrapper.sv
+synth -top mc6801_bus_wrapper
+check -assert
+tee -o build/synth_mc6801_bus_wrapper.json stat -json

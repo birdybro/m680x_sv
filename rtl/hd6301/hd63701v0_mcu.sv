@@ -129,7 +129,7 @@ module hd63701v0_mcu #(
     .timer_irq_o(timer_irq_internal), .sci_irq_o(sci_irq_internal),
     .opcode_fetch_o(opcode_fetch_o), .retire_o(retire_o),
     .illegal_o(illegal_o), .undefined_o(undefined_o), .waiting_o(waiting_o),
-    .sleeping_o(sleeping_o), .interrupt_ack_o(interrupt_ack_o),
+    .sleeping_o(sleeping_o), .interrupt_ack_o(interrupt_ack_o), .operating_mode_o(),
     .debug_address_o(debug_address_o), .debug_pc_o(debug_pc_o),
     .debug_sp_o(debug_sp_o), .debug_a_o(debug_a_o), .debug_b_o(debug_b_o),
     .debug_x_o(debug_x_o), .debug_ccr_o(debug_ccr_o),

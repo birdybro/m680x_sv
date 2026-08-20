@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 class InterfaceSpecificationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.spec = json.loads((ROOT / "spec/interfaces/mc6800_bus.json").read_text())
+        self.mc6801_bus_spec = json.loads(
+            (ROOT / "spec/interfaces/mc6801_phased_bus.json").read_text()
+        )
         self.devices = validate_devices._load_json(ROOT / "spec/devices.yml")
         self.references = load_manifest(ROOT / "docs/references.yml")
 
@@ -31,6 +34,14 @@ class InterfaceSpecificationTests(unittest.TestCase):
         broken = deepcopy(self.spec)
         broken["signals"] = [
             signal for signal in broken["signals"] if signal["name"] != "vma_o"
+        ]
+        with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
+            validate_interfaces.validate_interface(broken, self.devices, self.references)
+
+    def test_mc6801_phased_bus_requires_every_pin_role(self) -> None:
+        broken = deepcopy(self.mc6801_bus_spec)
+        broken["signals"] = [
+            signal for signal in broken["signals"] if signal["name"] != "e_o"
         ]
         with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
             validate_interfaces.validate_interface(broken, self.devices, self.references)

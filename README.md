@@ -37,6 +37,9 @@ with device wrappers kept at separate integration boundaries:
 - `mc6801_mcu`: normalized MC6801 Mode 0-7/1R/6R register, RAM, mask-ROM,
   GPIO/address, timer, SCI, interrupt-priority, and memory-selection integration;
   MC6803 uses the same block only in its documented Modes 2/3;
+- `mc6801_bus_wrapper`: device-oriented four-subphase E/AS/R/W/IOS and
+  Port-3 address/data waveform for every Motorola operating mode, including
+  the dynamic Mode-4-to-5 pin-role transition;
 - `hd6301v1_mcu`: every legal HD6301V1 Mode 0/1/2/4/5/6/7 integration with a
   separate 4-KiB FPGA mask-ROM image port, normalized expanded-memory bus,
   executable RAM, mode-dependent ports/strobes, timer/SCI, SLP,
@@ -104,7 +107,7 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
-across two simulators, fifteen bounded formal profiles, and twenty-five
+across two simulators, sixteen bounded formal profiles, and twenty-six
 synthesis tops. Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).
@@ -117,9 +120,10 @@ cycle boundaries being checked.
 
 ## Known limitations
 
-Pin-level MC6800 phase generation/electrical timing, physical MC6801/MC6803
-and Hitachi multiplexed/non-multiplexed bus waveforms, complete Port 3
-handshake timing, analog EPROM programming physics, SCI clock-skew/electrical
+Pin-level MC6800 phase generation/electrical timing, MC6801/MC6803 nanosecond
+setup/hold and oscillator/pad behavior, physical Hitachi multiplexed and
+non-multiplexed bus waveforms, complete Port 3 handshake timing, analog EPROM
+programming physics, SCI clock-skew/electrical
 tolerance, and complete manufacturer bus waveforms outside the specifically
 verified traces remain
 incomplete. The copyrighted MC68705P5 bootstrap ROM bytes must be supplied by

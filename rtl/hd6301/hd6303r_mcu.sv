@@ -134,6 +134,7 @@ module hd6303r_mcu #(
     .waiting_o(waiting_o),
     .sleeping_o(sleeping_o),
     .interrupt_ack_o(interrupt_ack_o),
+    .operating_mode_o(),
     .debug_address_o(debug_address_o),
     .debug_pc_o(debug_pc_o),
     .debug_sp_o(debug_sp_o),

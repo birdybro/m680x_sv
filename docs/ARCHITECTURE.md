@@ -158,11 +158,24 @@ Mode 5 until reset. Mode 5 selects external storage only at `$0100-$01ff`;
 Modes 4/7 never assert the external select. Port 4 emits the documented low or
 high partial address in Modes 5/6, while Modes 4/7 expose Port 3/4 GPIO.
 
-The external memory port deliberately remains a normalized 16-bit FPGA bus.
-`spec/interfaces/mc6801_modes.json` defines that boundary; a future physical
-pin wrapper owns the half-cycle Port 3 address/data multiplexing, AS, E,
-setup/hold, and electrical timing. Undefined output-latch reset state is
-assigned deterministic zero only as an FPGA integration choice.
+The normalized 16-bit FPGA memory port remains available and is specified by
+`spec/interfaces/mc6801_modes.json`. For device-oriented integration,
+`rtl/m6801/mc6801_bus_wrapper.sv` advances four explicit subphases from a
+`phase_clk_i` running at four times E: low-address/AS-open, AS-close and Port-3
+turnaround, E-high data, and E-fall data. The normalized MCU advances once on
+the last subphase, so no generated clock is used. Modes 0/1/2/3/6 multiplex
+Port 3 and emit the high address on Port 4; Mode 5 emits active-low IOS for
+`$0100-$01ff` and gates write-data drive with E; Modes 4/7 preserve the
+GPIO/IS3/OS3 roles. The active-mode output makes the one-way Mode-4-to-5 pin
+transition immediate at its completing E boundary.
+
+`phase_reset_n_i` is an FPGA integration reset for the subphase counter and is
+separate from historical `reset_n_i`; the latter resets the device while E
+continues. This wrapper models documented digital ordering, not oscillator,
+pad, pull strength, or nanosecond setup/hold/propagation limits. Undefined
+output-latch reset state is assigned deterministic zero only as an FPGA
+integration choice. `spec/interfaces/mc6801_phased_bus.json` records the exact
+pin contract and primary-manual locators.
 
 The 16-bit timer implements coherent counter reads, the FFF8 test preset,
 one-cycle compare inhibition, synchronized input capture, output-level

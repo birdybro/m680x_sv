@@ -6,12 +6,13 @@
     "rtl_boundary": "clk_i rising edge advances one complete normalized E-cycle when clock_enable_i is high",
     "historical_boundary": "MC6801 bus and peripheral behavior is specified relative to the internally derived E clock",
     "status": "PARTIAL",
-    "limitation": "Port 3 address/data half-cycle multiplexing, AS/E waveforms, setup/hold, and electrical timing require a separate physical-pin wrapper"
+    "limitation": "This normalized boundary intentionally omits pin subphases; mc6801-four-subphase-device-bus defines the separate implemented digital physical-pin wrapper"
   },
   "signals": [
     {"name": "clk_i", "historical": "oscillator-derived E integration boundary", "direction": "input", "fact": "one rising edge advances one normalized E-cycle"},
     {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low preserves synchronous CPU and peripheral state"},
     {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active-low reset restores the hardware-selected OPERATING_MODE and begins reset-vector entry"},
+    {"name": "operating_mode_o", "historical": "latched mode state", "direction": "output", "fact": "reports the hardware-selected mode and the documented irreversible Mode 4 to Mode 5 transition"},
     {"name": "nmi_n_i", "historical": "NMI", "direction": "input", "fact": "active-low non-maskable interrupt input"},
     {"name": "irq1_n_i", "historical": "IRQ1", "direction": "input", "fact": "active-low highest-priority maskable external interrupt input"},
     {"name": "port1_i", "historical": "P10-P17 pin sample", "direction": "input", "fact": "physical pin levels returned by PORT1 reads"},
@@ -53,7 +54,7 @@
     "normalized_external_clock_nrz_sci": "COMPLETE",
     "normalized_internal_biphase_sci": "COMPLETE",
     "normalized_gpio_and_address_outputs": "PARTIAL",
-    "physical_multiplexed_bus_waveform": "NOT_IMPLEMENTED",
+    "physical_multiplexed_bus_waveform": "COMPLETE",
     "electrical_timing": "NOT_IMPLEMENTED",
     "analog_behavior": "NOT_APPLICABLE"
   }

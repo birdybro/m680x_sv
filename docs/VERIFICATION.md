@@ -26,12 +26,13 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 108 |
+| Python unit tests | 115 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801 Mode 0-7/1R/6R decode checks | 62 |
 | MC6801 real-core mode boot paths | 2 |
+| MC6801 four-subphase bus-wrapper checks | 197 |
 | MC6801 external-clock SCI checks | 165 |
 | MC6801 bi-phase SCI checks | 24 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
@@ -51,8 +52,8 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 15 (11 at depth 10; 4 mode-decode profiles at depth 5) |
-| Synthesis tops | 25 |
+| Bounded formal profiles | 16 (11 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
+| Synthesis tops | 26 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -124,8 +125,14 @@ decode, RAM/control state, GPIO value and direction, timer/capture/compare
 state, SCI state and pins, interrupt requests, retained request latches, and
 late priority vector. Directed protocol sequences precede the deterministic
 random register/pin traffic. These checks establish peripheral transaction and
-state timing at the normalized E-cycle boundary; they do not claim the physical
-Port 3 multiplexed waveform.
+state timing at the normalized E-cycle boundary. A separate 197-check
+four-subphase bench verifies the manufacturer-documented physical digital
+ordering across all eight modes: E low/high phases, AS closure, Port-3 address
+and bus turnaround, E-qualified write data, Mode-0 internal-read monitoring,
+Mode-5 IOS endpoints, reset pin states, single-chip pin roles, clock-enable
+stall, and the Mode-4-to-5 transition. Its independent Python pin model checks
+every mode/phase combination and exhaustively classifies all 65,536 Mode-5 IOS
+addresses. Neither path claims nanosecond electrical limits.
 
 The HD6301 TRAP suite independently exercises an unassigned opcode and an
 instruction-address-error input. It compares the exact 13-cycle normalized bus
@@ -239,11 +246,13 @@ edge on resume.
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
 HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration and
-Mode-0/Mode-4 decode, HD6303R, HD6301V1, and HD63701V0 legal-mode decode,
-MC68705P5, HD6301V1 and HD63701V0 Mode-7 integrations, and the HD63705V0 MCU.
-The core/device profiles run at depth 10 and the four mode-decode profiles at
-depth 5; together they prove the committed safety properties for all symbolic
-input sequences within those bounds:
+Mode-0/Mode-4 decode, the MC6801 four-subphase bus wrapper, HD6303R, HD6301V1,
+HD63701V0 legal-mode decode, MC68705P5, HD6301V1 and HD63701V0 Mode-7
+integrations, and the HD63705V0 MCU.
+The core/device profiles run at depth 10, the four mode-decode profiles at
+depth 5, and the physical bus wrapper at depth 8; together they prove the
+committed safety properties for all symbolic input sequences within those
+bounds:
 
 - a write is always a valid bus cycle;
 - an opcode fetch is a valid read;
@@ -262,6 +271,10 @@ input sequences within those bounds:
   internal program data onto Port 3; the Mode-4/5 path never selects program
   and external storage together and confines external selection to
   `$0100-$01ff`.
+- The MC6801 physical wrapper sequences all four phases under clock enable,
+  asserts E only in its two data phases, presents and releases multiplexed
+  Port 3 around AS, and confines Mode-5 IOS and write drive to their documented
+  address and E windows.
 - MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
   remapping respects secure mode, program reads stay within internal storage,
   VPP qualifies programming controls, and disabled-cycle state stalls.
@@ -287,8 +300,9 @@ full instruction-correctness proof.
 Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
 delay traces, the MC68705P5, HD6301V1, HD6303R, all-mode HD63701V0, and
-HD63705V0 device suites, both MC6801/MC6803 peripheral differential profiles, and the
-MC6801 all-mode/direct-boot suites plus the MC68705P5 and HD63705V0 peripheral differential corpora from generated
+HD63705V0 device suites, both MC6801/MC6803 peripheral differential profiles,
+and the MC6801 all-mode/direct-boot and four-subphase bus suites plus the
+MC68705P5 and HD63705V0 peripheral differential corpora from generated
 package-flattened views. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
 hide it.
@@ -302,6 +316,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | MC6801 | 6,165 | 217 |
 | MC6801 Mode 2 integration | 11,364 | 1,454 |
 | MC6801 Mode 4/5 integration | 11,379 | 1,493 |
+| MC6801 four-subphase bus wrapper | 11,422 | 1,456 |
 | HD6301 | 7,289 | 218 |
 | HD6301V1 Mode 0 integration | 12,102 | 1,425 |
 | HD6301V1 Mode 1 integration | 12,149 | 1,416 |

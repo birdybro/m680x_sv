@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "interface": "mc6801-four-subphase-device-bus",
+  "device": "mc6801",
+  "clock_model": {
+    "rtl_boundary": "phase_clk_i runs at four times E; enabled rising edges advance address, AS-close, E-rise data, and E-fall data subphases in order",
+    "historical_boundary": "the on-chip oscillator derives E and sequences AS, address, Port 3 data direction, R/W, and IOS around each E cycle",
+    "status": "COMPLETE",
+    "limitation": "The digital subphase ordering is implemented; manufacturer nanosecond minima/maxima, pad delay, oscillator behavior, and electrical pull strength remain outside synthesizable RTL"
+  },
+  "signals": [
+    {"name": "phase_clk_i", "historical": "FPGA integration clock", "direction": "input", "fact": "four enabled rising edges represent one E cycle and no internally generated clock is used"},
+    {"name": "phase_reset_n_i", "historical": "FPGA integration only", "direction": "input", "fact": "asynchronously initializes the subphase counter; this is intentionally distinct from historical RESET"},
+    {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low holds both the subphase counter and normalized MCU state"},
+    {"name": "reset_n_i", "historical": "RESET", "direction": "input", "fact": "active low resets the device while E continues; controlled bus outputs assume documented reset digital levels"},
+    {"name": "e_o", "historical": "E", "direction": "output", "fact": "low in address and AS-close subphases and high in the two data subphases"},
+    {"name": "bus_phase_o", "historical": "verification/integration only", "direction": "output", "fact": "0 address, 1 AS-close/turnaround, 2 E-rise data, and 3 E-fall data"},
+    {"name": "sc1_i", "historical": "IS3 input in single-chip Modes 4 and 7", "direction": "input", "fact": "sampled as the Port 3 input-strobe source only when SC1 is not an output"},
+    {"name": "sc1_o", "historical": "AS in multiplexed modes or IOS in Mode 5", "direction": "output", "fact": "AS is high only in the address subphase; IOS is low exactly for addresses 0100 through 01FF"},
+    {"name": "sc1_oe_o", "historical": "SC1 role selection", "direction": "output", "fact": "enabled in expanded Modes 0, 1, 2, 3, 5, and 6; disabled in single-chip Modes 4 and 7"},
+    {"name": "sc2_o", "historical": "R/W in expanded modes or OS3 in single-chip modes", "direction": "output", "fact": "R/W is high for reads and low for writes; the pin carries the documented Port 3 output strobe in single-chip modes"},
+    {"name": "port3_i", "historical": "P30-P37 or multiplexed data input", "direction": "input", "fact": "read data is sampled by the normalized MCU before the E-fall advancement boundary"},
+    {"name": "port3_o", "historical": "P30-P37, A0-A7, or D0-D7", "direction": "output", "fact": "low address in multiplexed address phase, write/internal-monitor data during E, or GPIO in single-chip modes"},
+    {"name": "port3_oe_o", "historical": "Port 3 direction", "direction": "output", "fact": "multiplexed low address is driven before AS closes; the bus is released for turnaround and read data; writes drive only while E is high"},
+    {"name": "port4_i", "historical": "P40-P47 GPIO sample", "direction": "input", "fact": "used as GPIO in single-chip configurations"},
+    {"name": "port4_o", "historical": "P40-P47, A8-A15, or A0-A7", "direction": "output", "fact": "high address in multiplexed modes, low address in Mode 5, or GPIO in single-chip modes"},
+    {"name": "port4_oe_o", "historical": "Port 4 direction", "direction": "output", "fact": "always-address or DDR-controlled behavior follows the selected operating mode"},
+    {"name": "operating_mode_o", "historical": "latched mode state", "direction": "output", "fact": "reports the active mode so the documented irreversible Mode 4 to Mode 5 transition is observable"}
+  ],
+  "halt_interrupt_behavior": "MC6801 has no HALT pin; WAI, interrupt recognition, and vector cycles advance only at the E-fall normalized-cycle boundary while the four-subphase pin sequencer remains deterministic",
+  "references": [
+    {
+      "id": "motorola-mc6801-reference-1983",
+      "locators": [
+        "sections 3.3.1-3.3.5 and figure 3-23, printed pages 3-29 to 3-34",
+        "sections 3.4.1-3.4.5 and figure 3-28, printed pages 3-37 to 3-43",
+        "Appendix I AC electrical specifications and bus timing diagrams"
+      ]
+    }
+  ],
+  "implementation_status": {
+    "digital_four_subphase_sequence": "COMPLETE",
+    "multiplexed_address_data_direction": "COMPLETE",
+    "mode5_ios_and_data_direction": "COMPLETE",
+    "mode_dependent_pin_roles": "COMPLETE",
+    "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
+    "oscillator_and_pad_behavior": "NOT_APPLICABLE"
+  }
+}

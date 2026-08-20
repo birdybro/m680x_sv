@@ -69,6 +69,7 @@ module mc6801_mcu #(
   output logic        waiting_o,
   output logic        sleeping_o,
   output logic        interrupt_ack_o,
+  output logic [2:0]  operating_mode_o,
   output logic [15:0] debug_address_o,
   output logic [15:0] debug_pc_o,
   output logic [15:0] debug_sp_o,
@@ -1075,6 +1076,7 @@ module mc6801_mcu #(
      !internal_ram_select && !internal_program_select && !unusable_select);
   assign external_opcode_fetch_o = core_opcode_fetch && external_bus_valid_o;
   assign opcode_fetch_o = core_opcode_fetch;
+  assign operating_mode_o = active_mode;
   assign debug_address_o = core_address;
   assign debug_timer_o = timer_counter;
   assign debug_output_compare_o = output_compare;

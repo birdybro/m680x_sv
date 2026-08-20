@@ -72,9 +72,17 @@ boundary transitions, optional one-valued half-bit transitions, transition-
 interval decoding, and idle/wake qualification. External NRZ forces P22 to
 input and advances one serial bit per eight sampled positive clock edges.
 
+The separate Motorola device-pin wrapper implements the documented digital
+four-subphase E waveform for all eight modes. It covers AS and Port-3
+address/data turnaround in multiplexed Modes 0/1/2/3/6, R/W, Mode-5 IOS and
+E-qualified data drive, reset bus release, single-chip IS3/OS3 roles, and the
+Mode-4-to-5 transition. Manufacturer nanosecond limits, oscillator/pad
+behavior, and electrical pull strength remain outside the claim.
+
 The MC6803 profile inherits only the manufacturer-stated Modes 2/3 facts and
-rejects other public configurations. Physical multiplexed-bus waveforms,
-and complete Port 3 handshake timing remain outside this partial claim.
+rejects other public configurations. Its shared Motorola digital multiplexed
+bus waveform is implemented; nanosecond electrical timing and complete Port 3
+handshake timing remain outside this partial claim.
 For a framing error, MC6801 transfers the misframed byte into RDR while setting
 ORFE without RDRF. This behavior is independently selected and tested rather
 than generalized to Hitachi parts.

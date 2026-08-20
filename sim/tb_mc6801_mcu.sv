@@ -68,7 +68,7 @@ module tb_mc6801_mcu #(
     .sci_irq_o(sci_irq), .opcode_fetch_o(opcode_fetch), .retire_o(retire),
     .illegal_o(illegal), .undefined_o(undefined_value), .waiting_o(waiting_state),
     .sleeping_o(sleeping_state),
-    .interrupt_ack_o(interrupt_ack), .debug_address_o(debug_address),
+    .interrupt_ack_o(interrupt_ack), .operating_mode_o(), .debug_address_o(debug_address),
     .debug_pc_o(debug_pc), .debug_sp_o(debug_sp), .debug_a_o(debug_a),
     .debug_b_o(debug_b), .debug_x_o(debug_x), .debug_ccr_o(debug_ccr),
     .debug_timer_o(debug_timer), .debug_output_compare_o(debug_compare),

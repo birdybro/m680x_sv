@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd63701v0 test-hd63701v0-modes test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd63701v0 test-hd63701v0-modes test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -24,6 +24,7 @@ help:
 	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
 	@echo "  test-mc6801-mcu verify Mode 2/3 RAM, GPIO, timer, SCI, and interrupts"
 	@echo "  test-mc6801-modes verify Mode 0-7/1R/6R decode, vectors, RAM, ROM, and ports"
+	@echo "  test-mc6801-bus-wrapper verify the four-subphase E/AS/IOS physical bus"
 	@echo "  test-mc6801-sci-external verify P22-clocked NRZ transmit and receive"
 	@echo "  test-mc6801-sci-biphase verify transition-coded transmit and receive"
 	@echo "  test-mc6801-peripheral-diff compare 1,536 model/RTL E-cycles"
@@ -105,6 +106,10 @@ lint-rtl:
 	$(VERILATOR) --lint-only --assert -Wall --top-module mc6801_mcu \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv rtl/m6801/mc6801_mcu.sv
+	$(VERILATOR) --lint-only --assert -Wall --top-module mc6801_bus_wrapper \
+		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
+		rtl/m6800/m6800_core.sv rtl/m6801/mc6801_mcu.sv \
+		rtl/m6801/mc6801_bus_wrapper.sv
 	$(VERILATOR) --lint-only --assert -Wall --top-module m6800_core "-GARCHITECTURE=2'b10" \
 		rtl/common/m680x_alu_pkg.sv rtl/generated/m680x_decode_pkg.sv \
 		rtl/m6800/m6800_core.sv
@@ -138,7 +143,8 @@ test:
 
 test-model:
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_m6805_model \
-		tests.test_mc6801_device_model tests.test_hd6301v1_device_model \
+		tests.test_mc6801_device_model tests.test_mc6801_bus_model \
+		tests.test_hd6301v1_device_model \
 		tests.test_hd6303r_device_model tests.test_hd63701v0_device_model \
 		tests.test_mc68705p5_device_model tests.test_hd63705v0_device_model -v
 
@@ -171,8 +177,8 @@ test-mc6800-wrapper:
 		sim/tb_mc6800_bus_wrapper.sv
 	build/obj_mc6800_bus_wrapper/Vtb_mc6800_bus_wrapper
 
-test-m6801: test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase
-	$(PYTHON) -m unittest tests.test_m6800_model tests.test_mc6801_device_model -v
+test-m6801: test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase
+	$(PYTHON) -m unittest tests.test_m6800_model tests.test_mc6801_device_model tests.test_mc6801_bus_model -v
 
 test-m6801-opcodes:
 	mkdir -p build
@@ -210,6 +216,17 @@ test-mc6801-modes:
 		sim/tb_mc6801_boot_modes.sv
 	build/obj_mc6801_boot_modes/Vtb_mc6801_boot_modes
 
+test-mc6801-bus-wrapper:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall \
+		--top-module tb_mc6801_bus_wrapper \
+		-Mdir build/obj_mc6801_bus_wrapper -o Vtb_mc6801_bus_wrapper \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv rtl/m6801/mc6801_bus_wrapper.sv \
+		sim/tb_mc6801_bus_wrapper.sv
+	build/obj_mc6801_bus_wrapper/Vtb_mc6801_bus_wrapper
+	$(PYTHON) -m unittest tests.test_mc6801_bus_model -v
+
 test-mc6801-sci-external:
 	mkdir -p build
 	$(VERILATOR) --binary --timing --assert -Wall \
@@ -228,8 +245,9 @@ test-mc6801-sci-biphase:
 		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_sci_biphase.sv
 	build/obj_mc6801_sci_biphase/Vtb_mc6801_sci_biphase
 
-test-mc6803: test-mc6801-mcu
-	$(PYTHON) -m unittest tests.test_peripheral_spec tests.test_mc6801_device_model -v
+test-mc6803: test-mc6801-mcu test-mc6801-bus-wrapper
+	$(PYTHON) -m unittest tests.test_peripheral_spec tests.test_mc6801_device_model \
+		tests.test_mc6801_bus_model -v
 
 test-mc6801-peripheral-diff:
 	mkdir -p build
@@ -435,7 +453,7 @@ test-interrupt-delay:
 		rtl/m6805/m6805_core.sv sim/tb_interrupt_delay.sv
 	build/obj_delay_hd6305/Vdelay_hd6305
 
-test-peripherals: test-mc6803 test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5 test-mc68705p5-peripheral-diff test-hd63705v0 test-hd63705-peripheral-diff
+test-peripherals: test-mc6803 test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5 test-mc68705p5-peripheral-diff test-hd63705v0 test-hd63705-peripheral-diff
 
 test-mc68705p5:
 	mkdir -p build
@@ -547,6 +565,12 @@ test-iverilog: spec-check
 		-o build/iverilog/tb_mc6801_boot_modes rtl/generated/yosys_m6800_core.sv \
 		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_boot_modes.sv
 	$(VVP) build/iverilog/tb_mc6801_boot_modes
+	$(IVERILOG) -g2012 -Wall -s tb_mc6801_bus_wrapper \
+		-o build/iverilog/tb_mc6801_bus_wrapper \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv rtl/m6801/mc6801_bus_wrapper.sv \
+		sim/tb_mc6801_bus_wrapper.sv
+	$(VVP) build/iverilog/tb_mc6801_bus_wrapper
 	$(IVERILOG) -g2012 -Wall -s tb_mc6801_sci_external \
 		-o build/iverilog/tb_mc6801_sci_external \
 		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
@@ -650,6 +674,7 @@ formal: spec-check
 	$(YOSYS) -ql build/formal_mc6800_wrapper.log -s formal/prove_mc6800_wrapper.ys
 	$(YOSYS) -ql build/formal_mc6801_mcu.log -s formal/prove_mc6801_mcu.ys
 	$(YOSYS) -ql build/formal_mc6801_modes.log -s formal/prove_mc6801_modes.ys
+	$(YOSYS) -ql build/formal_mc6801_bus_wrapper.log -s formal/prove_mc6801_bus_wrapper.ys
 	$(YOSYS) -ql build/formal_hd6303r_modes.log -s formal/prove_hd6303r_modes.ys
 	$(YOSYS) -ql build/formal_mc68705p5_mcu.log -s formal/prove_mc68705p5_mcu.ys
 	$(YOSYS) -ql build/formal_hd6301v1_mcu.log -s formal/prove_hd6301v1_mcu.ys
@@ -669,6 +694,7 @@ synth: spec-check
 	$(YOSYS) -ql build/synth_mc6800_wrapper.log -s synth/mc6800_wrapper.ys
 	$(YOSYS) -ql build/synth_mc6801_mcu.log -s synth/mc6801_mcu.ys
 	$(YOSYS) -ql build/synth_mc6801_modes.log -s synth/mc6801_modes.ys
+	$(YOSYS) -ql build/synth_mc6801_bus_wrapper.log -s synth/mc6801_bus_wrapper.ys
 	$(YOSYS) -ql build/synth_hd6303r_mcu.log -s synth/hd6303r_mcu.ys
 	$(YOSYS) -ql build/synth_hd6303r_mode1_mcu.log -s synth/hd6303r_mode1_mcu.ys
 	$(YOSYS) -ql build/synth_hd6303r_mode4_mcu.log -s synth/hd6303r_mode4_mcu.ys

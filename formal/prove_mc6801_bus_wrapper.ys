@@ -1,0 +1,7 @@
+read_verilog -formal -sv formal/m6800_bus_anyseq_stub.sv rtl/m6801/mc6801_mcu.sv rtl/m6801/mc6801_bus_wrapper.sv formal/mc6801_bus_wrapper_formal.sv
+prep -top mc6801_bus_wrapper_formal -flatten
+memory_map
+opt_clean
+async2sync
+dffunmap
+sat -verify -prove-asserts -seq 8 -set-def-inputs -set-def-formal

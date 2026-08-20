@@ -37,7 +37,7 @@ module tb_mc6801_modes;
         .port4_oe_o(port4_oe[mode_index]), .os3_n_o(), .sci_tx_o(),
         .sci_clock_o(), .timer_irq_o(), .sci_irq_o(), .opcode_fetch_o(),
         .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(),
-        .sleeping_o(), .interrupt_ack_o(), .debug_address_o(), .debug_pc_o(),
+        .sleeping_o(), .interrupt_ack_o(), .operating_mode_o(), .debug_address_o(), .debug_pc_o(),
         .debug_sp_o(), .debug_a_o(), .debug_b_o(), .debug_x_o(), .debug_ccr_o(),
         .debug_timer_o(), .debug_output_compare_o(), .debug_input_capture_o(),
         .debug_tcsr_o(), .debug_trcsr_o(), .debug_receive_data_o(),
@@ -63,7 +63,7 @@ module tb_mc6801_modes;
     .port4_o(port4_out[8]), .port4_oe_o(port4_oe[8]), .os3_n_o(),
     .sci_tx_o(), .sci_clock_o(), .timer_irq_o(), .sci_irq_o(),
     .opcode_fetch_o(), .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(),
-    .sleeping_o(), .interrupt_ack_o(), .debug_address_o(), .debug_pc_o(),
+    .sleeping_o(), .interrupt_ack_o(), .operating_mode_o(), .debug_address_o(), .debug_pc_o(),
     .debug_sp_o(), .debug_a_o(), .debug_b_o(), .debug_x_o(), .debug_ccr_o(),
     .debug_timer_o(), .debug_output_compare_o(), .debug_input_capture_o(),
     .debug_tcsr_o(), .debug_trcsr_o(), .debug_receive_data_o(), .debug_opcode_o()
@@ -83,7 +83,7 @@ module tb_mc6801_modes;
     .port4_o(port4_out[9]), .port4_oe_o(port4_oe[9]), .os3_n_o(),
     .sci_tx_o(), .sci_clock_o(), .timer_irq_o(), .sci_irq_o(),
     .opcode_fetch_o(), .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(),
-    .sleeping_o(), .interrupt_ack_o(), .debug_address_o(), .debug_pc_o(),
+    .sleeping_o(), .interrupt_ack_o(), .operating_mode_o(), .debug_address_o(), .debug_pc_o(),
     .debug_sp_o(), .debug_a_o(), .debug_b_o(), .debug_x_o(), .debug_ccr_o(),
     .debug_timer_o(), .debug_output_compare_o(), .debug_input_capture_o(),
     .debug_tcsr_o(), .debug_trcsr_o(), .debug_receive_data_o(), .debug_opcode_o()
