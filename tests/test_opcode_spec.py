@@ -202,7 +202,7 @@ class OpcodeSpecificationTests(unittest.TestCase):
             for record in self.m6805["opcodes"]
             if record["bus_trace_status"] == "COMPLETE"
         ]
-        self.assertEqual(len(complete), 175)
+        self.assertEqual(len(complete), 191)
         for record in complete:
             self.assertEqual(len(record["documented_bus_cycles"]), record["cycles"])
             self.assertEqual(
@@ -219,6 +219,24 @@ class OpcodeSpecificationTests(unittest.TestCase):
                 "data": "first_subroutine_opcode",
             },
         )
+        self.assertEqual(
+            self.m6805["opcodes"][0xC7]["documented_bus_cycles"][3],
+            {
+                "cycle": 4,
+                "address": "XFF",
+                "address_defined_mask": "0x00ff",
+                "direction": "read",
+                "data": "unused",
+            },
+        )
+        self.assertEqual(
+            [
+                cycle["address_defined_mask"]
+                for cycle in self.m6805["opcodes"][0xD6]["documented_bus_cycles"]
+                if "address_defined_mask" in cycle
+            ],
+            ["0x00ff", "0x00ff"],
+        )
         self.assertTrue(
             all(
                 record["bus_trace_status"] == "PARTIAL"
@@ -231,6 +249,12 @@ class OpcodeSpecificationTests(unittest.TestCase):
         broken = deepcopy(self.m6805)
         broken["opcodes"][0x9D]["documented_bus_cycles"].pop()
         with self.assertRaisesRegex(validate_opcodes.OpcodeSpecError, "trace length mismatch"):
+            validate_opcodes.validate_opcode_spec(broken, self.known_references)
+
+    def test_invalid_bus_address_mask_is_rejected(self) -> None:
+        broken = deepcopy(self.m6805)
+        broken["opcodes"][0xC7]["documented_bus_cycles"][3]["address_defined_mask"] = "0x0000"
+        with self.assertRaisesRegex(validate_opcodes.OpcodeSpecError, "bus address mask"):
             validate_opcodes.validate_opcode_spec(broken, self.known_references)
 
     def test_hd6305_cycle_adjustments_match_operation_map(self) -> None:

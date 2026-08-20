@@ -288,6 +288,42 @@ class M6805ModelTests(unittest.TestCase):
                 self.assertEqual(len(trace.accesses), trace.documented_cycles)
                 self.assertEqual([access.address for access in trace.accesses], addresses)
 
+    def test_m6805_table_g2_documented_long_form_traces(self) -> None:
+        expected = {
+            0xC7: [0x1000, 0x1001, 0x1002, 0x00FF, 0x1020, 0x1020],  # STA extended
+            0xCD: [
+                0x1000,
+                0x1001,
+                0x1002,
+                0x00FF,
+                0x1020,
+                0x0070,
+                0x006F,
+                0x006E,
+            ],  # JSR extended
+            0xD6: [0x1000, 0x1001, 0x1002, 0x00FF, 0x00FF, 0x1040],  # LDA 16-bit,X
+            0xDC: [0x1000, 0x1001, 0x1002, 0x00FF, 0x00FF],  # JMP 16-bit,X
+        }
+        for opcode, addresses in expected.items():
+            with self.subTest(opcode=f"{opcode:02X}"):
+                model = _fixture("m6805", opcode)
+                trace = model.step()
+                self.assertEqual(len(trace.accesses), trace.documented_cycles)
+                self.assertEqual([access.address for access in trace.accesses], addresses)
+                self.assertEqual(
+                    [access.address_defined_mask for access in trace.accesses],
+                    [0xFFFF] * 3
+                    + [0x00FF] * (2 if opcode in {0xD6, 0xDC} else 1)
+                    + [0xFFFF] * (len(addresses) - (5 if opcode in {0xD6, 0xDC} else 4)),
+                )
+                self.assertTrue(
+                    all(
+                        not access.data_defined
+                        for access in trace.accesses
+                        if access.address_defined_mask == 0x00FF
+                    )
+                )
+
     def test_hd6305_low_power_and_irq_entry(self) -> None:
         for opcode, state_name in ((0x8E, "stopped"), (0x8F, "waiting")):
             model = _fixture("hd6305", opcode)

@@ -1207,8 +1207,17 @@ def _m6805_control_facts(mnemonic: str, condition: str | None) -> tuple[list[str
 
 
 def _m6805_table_g2_trace(mnemonic: str, mode: str) -> list[dict]:
-    def read(cycle: int, address: str, data: str) -> dict:
-        return {"cycle": cycle, "address": address, "direction": "read", "data": data}
+    def read(
+        cycle: int,
+        address: str,
+        data: str,
+        *,
+        address_defined_mask: str | None = None,
+    ) -> dict:
+        result = {"cycle": cycle, "address": address, "direction": "read", "data": data}
+        if address_defined_mask is not None:
+            result["address_defined_mask"] = address_defined_mask
+        return result
 
     def write(cycle: int, address: str, data: str) -> dict:
         return {"cycle": cycle, "address": address, "direction": "write", "data": data}
@@ -1285,6 +1294,24 @@ def _m6805_table_g2_trace(mnemonic: str, mode: str) -> list[dict]:
             read(2, "opcode_address+1", "unsigned_offset"),
             read(3, "0x007f", "unused"),
             read(4, "0x007f", "unused"),
+        ])
+    if mode == "extended" and mnemonic in {"STA", "STX", "JSR"}:
+        return data_trace([
+            opcode,
+            read(2, "opcode_address+1", "operand_address_high"),
+            read(3, "opcode_address+2", "operand_address_low"),
+            read(4, "XFF", "unused", address_defined_mask="0x00ff"),
+        ])
+    if mode == "indexed-unsigned-16" and mnemonic in {
+        "ADC", "ADD", "AND", "BIT", "CMP", "CPX", "EOR", "JMP",
+        "LDA", "LDX", "ORA", "SBC", "SUB",
+    }:
+        return data_trace([
+            opcode,
+            read(2, "opcode_address+1", "unsigned_offset_high"),
+            read(3, "opcode_address+2", "unsigned_offset_low"),
+            read(4, "XFF", "unused", address_defined_mask="0x00ff"),
+            read(5, "XFF", "unused", address_defined_mask="0x00ff"),
         ])
     if mode == "immediate-8":
         return [opcode, read(2, "opcode_address+1", "operand")]
@@ -1380,14 +1407,22 @@ def _m6805_instruction(
         _m6805_table_g2_trace(mnemonic, mode) if architecture == "m6805" else []
     )
     if documented_bus_cycles:
-        if mode == "indexed-no-offset":
+        if mode == "extended":
             locator = "appendix G table G2, printed page 241"
-        elif mode == "indexed-unsigned-8":
+        elif mode == "indexed-no-offset":
+            locator = "appendix G table G2, printed page 241"
+        elif mode in {"indexed-unsigned-8", "indexed-unsigned-16"}:
             locator = "appendix G table G2, printed page 242"
         elif mode in {"relative", "direct"}:
             locator = "appendix G table G2, printed page 240"
         else:
             locator = "appendix G table G2, printed page 239"
+    if architecture == "m6805" and mode in {"extended", "indexed-unsigned-16"} and documented_bus_cycles:
+        notes = (
+            notes + (" " if notes else "")
+            + "Table G2 marks the upper address field of each XFF dummy read as don't-care; "
+              "address_defined_mask 0x00ff records only the documented low byte."
+        )
     return {
         "opcode": opcode,
         "opcode_hex": f"{opcode:02X}",

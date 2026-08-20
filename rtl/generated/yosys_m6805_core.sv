@@ -1720,6 +1720,31 @@ module m6805_core #(
     endcase
   endfunction
 
+  function automatic logic table_g2_indexed_16_operation(input operation_t operation);
+    case (operation)
+      OP_ADC, OP_ADD, OP_AND, OP_BIT, OP_CMP, OP_CPX, OP_EOR, OP_JMP,
+      OP_LDA, OP_LDX, OP_ORA, OP_SBC, OP_SUB:
+        table_g2_indexed_16_operation = 1'b1;
+      default: table_g2_indexed_16_operation = 1'b0;
+    endcase
+  endfunction
+
+  function automatic logic table_g2_routed_operation(
+    input address_mode_t mode,
+    input operation_t operation
+  );
+    case (mode)
+      AM_DIRECT, AM_INDEXED_NONE, AM_INDEXED_8:
+        table_g2_routed_operation = 1'b1;
+      AM_EXTENDED:
+        table_g2_routed_operation =
+          (operation == OP_STA) || (operation == OP_STX) || (operation == OP_JSR);
+      AM_INDEXED_16:
+        table_g2_routed_operation = table_g2_indexed_16_operation(operation);
+      default: table_g2_routed_operation = 1'b0;
+    endcase
+  endfunction
+
   task automatic finish_to(input state_t destination);
     begin
       terminal_state <= destination;
@@ -1751,17 +1776,19 @@ module m6805_core #(
 
   task automatic route_address(input logic [15:0] address_value);
     logic [7:0] stored_value;
+    logic [15:0] documented_dummy_address;
     begin
       effective_address <= address_value;
-      if (!HITACHI_PROFILE &&
-          ((decoded.mode == AM_DIRECT) ||
-           (decoded.mode == AM_INDEXED_NONE) ||
-           (decoded.mode == AM_INDEXED_8))) begin
-        dummy_address <= STACK_TOP;
-        dummy_reads_left <= (decoded.mode == AM_INDEXED_8) ? 2'd2 : 2'd1;
+      if (!HITACHI_PROFILE && table_g2_routed_operation(decoded.mode, decoded.operation)) begin
+        documented_dummy_address =
+          ((decoded.mode == AM_EXTENDED) || (decoded.mode == AM_INDEXED_16)) ?
+            16'h00ff : STACK_TOP;
+        dummy_address <= documented_dummy_address;
+        dummy_reads_left <=
+          ((decoded.mode == AM_INDEXED_8) || (decoded.mode == AM_INDEXED_16)) ? 2'd2 : 2'd1;
         if (decoded.operation == OP_JMP) begin
           program_counter <= pc_value(address_value);
-          padding_address <= STACK_TOP;
+          padding_address <= documented_dummy_address;
           padding_bus_valid <= 1'b1;
           finish_to(ST_FETCH);
         end else if (decoded.operation == OP_JSR) begin

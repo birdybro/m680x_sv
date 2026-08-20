@@ -85,6 +85,7 @@ def render_access_function(lines: list[str], name: str, vectors: list[tuple]) ->
             if not access.data_defined:
                 lines.append(f"          {name}_access.data_ignored = 1'b1;")
             lines.extend([
+                f"          {name}_access.address_mask = 16'h{access.address_defined_mask:04x};",
                 f"          {name}_access.address = 16'h{access.address:04x};",
                 f"          {name}_access.data = 8'h{access.data:02x};",
                 "        end",
@@ -106,6 +107,7 @@ def render() -> str:
         "    logic waiting_state;", "    logic stopped_state;", "    logic [3:0] access_count;",
         "  } opcode_vector_t;",
         "  typedef struct packed {", "    logic write_enable;", "    logic data_ignored;",
+        "    logic [15:0] address_mask;",
         "    logic [15:0] address;",
         "    logic [7:0] data;", "  } opcode_access_t;", "",
     ]

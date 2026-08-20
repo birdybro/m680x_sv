@@ -24,6 +24,7 @@ class BusAccess:
     data: int
     purpose: str
     data_defined: bool = True
+    address_defined_mask: int = 0xFFFF
 
 
 @dataclass

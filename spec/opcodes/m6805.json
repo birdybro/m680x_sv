@@ -13096,16 +13096,54 @@
         "read 2 instruction operand byte(s)",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "operand_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "operand_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 200,
@@ -13374,8 +13412,58 @@
         "write return-PC low byte to stack",
         "write return-PC high byte to stack"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "operand_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "operand_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "subroutine_start",
+          "direction": "read",
+          "data": "first_subroutine_opcode"
+        },
+        {
+          "cycle": 6,
+          "address": "stack_pointer",
+          "direction": "write",
+          "data": "return_address_low"
+        },
+        {
+          "cycle": 7,
+          "address": "stack_pointer-1",
+          "direction": "write",
+          "data": "return_address_high"
+        },
+        {
+          "cycle": 8,
+          "address": "stack_pointer-2",
+          "direction": "read",
+          "data": "irrelevant"
+        }
+      ],
       "stack_effects": [
         "push PCL, then PCH; SP decrements after each byte"
       ],
@@ -13383,9 +13471,9 @@
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 206,
@@ -13468,16 +13556,54 @@
         "read 2 instruction operand byte(s)",
         "write effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "operand_address_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "operand_address_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "current_operand"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "write",
+          "data": "new_operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 241"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 208,
@@ -13518,16 +13644,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 209,
@@ -13567,16 +13732,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 210,
@@ -13619,16 +13823,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 211,
@@ -13667,16 +13910,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 212,
@@ -13715,16 +13997,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 213,
@@ -13762,16 +14083,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 214,
@@ -13809,16 +14169,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 215,
@@ -13904,16 +14303,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 217,
@@ -13958,16 +14396,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 218,
@@ -14006,16 +14483,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 219,
@@ -14058,16 +14574,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 220,
@@ -14097,16 +14652,49 @@
         "read opcode at PC",
         "read 2 instruction operand byte(s)"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": "load PC with the effective address",
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 221,
@@ -14189,16 +14777,55 @@
         "read 2 instruction operand byte(s)",
         "read effective-address byte"
       ],
-      "bus_trace_status": "PARTIAL",
-      "documented_bus_cycles": [],
+      "bus_trace_status": "COMPLETE",
+      "documented_bus_cycles": [
+        {
+          "cycle": 1,
+          "address": "opcode_address",
+          "direction": "read",
+          "data": "opcode"
+        },
+        {
+          "cycle": 2,
+          "address": "opcode_address+1",
+          "direction": "read",
+          "data": "unsigned_offset_high"
+        },
+        {
+          "cycle": 3,
+          "address": "opcode_address+2",
+          "direction": "read",
+          "data": "unsigned_offset_low"
+        },
+        {
+          "cycle": 4,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 5,
+          "address": "XFF",
+          "direction": "read",
+          "data": "unused",
+          "address_defined_mask": "0x00ff"
+        },
+        {
+          "cycle": 6,
+          "address": "operand_address",
+          "direction": "read",
+          "data": "operand"
+        }
+      ],
       "stack_effects": [],
       "branch_behavior": null,
       "vector_behavior": null,
       "primary_reference": {
         "id": "motorola-m6805-family-users-manual-1983",
-        "locator": "appendix D operation code map and appendix C instruction entries"
+        "locator": "appendix G table G2, printed page 242"
       },
-      "notes": ""
+      "notes": "Table G2 marks the upper address field of each XFF dummy read as don't-care; address_defined_mask 0x00ff records only the documented low byte."
     },
     {
       "opcode": 223,

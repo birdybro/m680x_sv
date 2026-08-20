@@ -45,10 +45,13 @@ profiles for the Motorola and Hitachi 6805-derived lineages.
 cycle-total, and ordered semantic-bus comparison against the independent model,
 while the HD6301 profile also implements every documented opcode-error TRAP map
 value. The Motorola M6805 profile additionally has complete structured and RTL
-bus traces for 175 table-G2 inherent, accumulator, immediate, relative, bit,
-direct, indexed-no-offset, and indexed-8 encodings, including BSR/RTS/RTI/SWI;
-the remaining addressing-mode rows and
-device-specific interrupt sources are not yet complete. The MC68705P5 wrapper additionally has
+bus traces for all 191 encodings with published table-G2 rows: inherent,
+accumulator, immediate, relative, bit, direct, both short-indexed forms,
+extended stores/call, and indexed-16 reads/jump, including BSR/RTS/RTI/SWI.
+The intermediate traces of the 16 otherwise documented extended and indexed-16
+encodings whose detailed rows are absent from table G2 are
+`UNDEFINED_BY_DOCUMENTATION`; device-specific interrupt sources remain partial.
+The MC68705P5 wrapper additionally has
 tested RAM/register decode, GPIO, every timer input/prescaler mode in both
 software-controlled and fixed-MOR configurations, interrupt priority, the
 secure-qualified bootstrap vector, and digital PCR address/data/program

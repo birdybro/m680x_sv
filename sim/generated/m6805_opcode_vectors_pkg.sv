@@ -19,6 +19,7 @@ package m6805_opcode_vectors_pkg;
   typedef struct packed {
     logic write_enable;
     logic data_ignored;
+    logic [15:0] address_mask;
     logic [15:0] address;
     logic [7:0] data;
   } opcode_access_t;
@@ -1988,7 +1989,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         151: begin // C8 EOR
           m6805_vector.opcode = 8'hc8;
@@ -2066,7 +2067,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd5;
+          m6805_vector.access_count = 4'd8;
         end
         157: begin // CE LDX
           m6805_vector.opcode = 8'hce;
@@ -2092,7 +2093,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         159: begin // D0 SUB
           m6805_vector.opcode = 8'hd0;
@@ -2105,7 +2106,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         160: begin // D1 CMP
           m6805_vector.opcode = 8'hd1;
@@ -2118,7 +2119,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         161: begin // D2 SBC
           m6805_vector.opcode = 8'hd2;
@@ -2131,7 +2132,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         162: begin // D3 CPX
           m6805_vector.opcode = 8'hd3;
@@ -2144,7 +2145,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         163: begin // D4 AND
           m6805_vector.opcode = 8'hd4;
@@ -2157,7 +2158,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         164: begin // D5 BIT
           m6805_vector.opcode = 8'hd5;
@@ -2170,7 +2171,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         165: begin // D6 LDA
           m6805_vector.opcode = 8'hd6;
@@ -2183,7 +2184,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         166: begin // D7 STA
           m6805_vector.opcode = 8'hd7;
@@ -2209,7 +2210,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         168: begin // D9 ADC
           m6805_vector.opcode = 8'hd9;
@@ -2222,7 +2223,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         169: begin // DA ORA
           m6805_vector.opcode = 8'hda;
@@ -2235,7 +2236,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         170: begin // DB ADD
           m6805_vector.opcode = 8'hdb;
@@ -2248,7 +2249,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         171: begin // DC JMP
           m6805_vector.opcode = 8'hdc;
@@ -2261,7 +2262,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd3;
+          m6805_vector.access_count = 4'd5;
         end
         172: begin // DD JSR
           m6805_vector.opcode = 8'hdd;
@@ -2287,7 +2288,7 @@ package m6805_opcode_vectors_pkg;
           m6805_vector.ccr_mask = 5'h1f;
           m6805_vector.waiting_state = 1'b0;
           m6805_vector.stopped_state = 1'b0;
-          m6805_vector.access_count = 4'd4;
+          m6805_vector.access_count = 4'd6;
         end
         174: begin // DF STX
           m6805_vector.opcode = 8'hdf;
@@ -2732,5276 +2733,6558 @@ package m6805_opcode_vectors_pkg;
       case ({vector_index, access_index})
         16'h0000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h00;
         end
         16'h0001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0004: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0005: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0006: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0007: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0008: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0009: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h01;
         end
         16'h0101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0104: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0105: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0106: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0107: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0108: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0109: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h02;
         end
         16'h0201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0204: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0205: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0206: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0207: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0208: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0209: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h03;
         end
         16'h0301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0304: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0305: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0306: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0307: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0308: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0309: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h04;
         end
         16'h0401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0404: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0405: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0406: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0407: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0408: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0409: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h05;
         end
         16'h0501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0504: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0505: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0506: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0507: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0508: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0509: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h06;
         end
         16'h0601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0604: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0605: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0606: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0607: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0608: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0609: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h07;
         end
         16'h0701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0704: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0705: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0706: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0707: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0708: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0709: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h08;
         end
         16'h0801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0804: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0805: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0806: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0807: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0808: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0809: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h09;
         end
         16'h0901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0904: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0905: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0906: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0907: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0908: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0909: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h0a;
         end
         16'h0a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0a04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0a05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0a06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0a07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0a08: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0a09: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h0b;
         end
         16'h0b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0b03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0b04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0b05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0b06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0b07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0b08: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0b09: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h0c;
         end
         16'h0c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0c03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0c04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0c05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0c06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0c07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0c08: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0c09: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h0d;
         end
         16'h0d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0d04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0d05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0d06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0d07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0d08: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0d09: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h0e;
         end
         16'h0e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0e03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0e04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0e05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0e06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0e07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0e08: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0e09: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h0f;
         end
         16'h0f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h0f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h0f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0f04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0f05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0f06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h0f07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h0f08: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h0f09: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1008;
           m6805_access.data = 8'h30;
         end
         16'h1000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h10;
         end
         16'h1001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1004: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1005: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1006: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb7;
         end
         16'h1100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h11;
         end
         16'h1101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1104: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1105: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1106: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h12;
         end
         16'h1201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1204: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1205: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1206: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h13;
         end
         16'h1301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1304: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1305: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1306: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb4;
         end
         16'h1400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h14;
         end
         16'h1401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1404: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1405: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1406: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h15;
         end
         16'h1501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1504: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1505: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1506: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb2;
         end
         16'h1600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h16;
         end
         16'h1601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1604: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1605: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1606: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hbe;
         end
         16'h1700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h17;
         end
         16'h1701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1704: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1705: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1706: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h18;
         end
         16'h1801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1804: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1805: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1806: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h19;
         end
         16'h1901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1904: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1905: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1906: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'ha6;
         end
         16'h1a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h1a;
         end
         16'h1a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1a04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1a05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1a06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h1b;
         end
         16'h1b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1b03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1b04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1b05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1b06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h96;
         end
         16'h1c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h1c;
         end
         16'h1c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1c03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1c04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1c05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1c06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hf6;
         end
         16'h1d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h1d;
         end
         16'h1d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1d04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1d05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1d06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h1e;
         end
         16'h1e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1e03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1e04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1e05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1e06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h1f;
         end
         16'h1f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h1f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h1f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1f04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1f05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h1f06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h36;
         end
         16'h2000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h20;
         end
         16'h2001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h21;
         end
         16'h2101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h22;
         end
         16'h2201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h23;
         end
         16'h2301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h24;
         end
         16'h2401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h25;
         end
         16'h2501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h26;
         end
         16'h2601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h27;
         end
         16'h2701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h28;
         end
         16'h2801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h29;
         end
         16'h2901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h2a;
         end
         16'h2a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h2b;
         end
         16'h2b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2b03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h2c;
         end
         16'h2c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2c03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h2d;
         end
         16'h2d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h2e;
         end
         16'h2e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2e03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h2f;
         end
         16'h2f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h2f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h2f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h30;
         end
         16'h3001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3004: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3005: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h4a;
         end
         16'h3100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h33;
         end
         16'h3101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3104: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3105: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h49;
         end
         16'h3200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h34;
         end
         16'h3201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3204: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3205: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h5b;
         end
         16'h3300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h36;
         end
         16'h3301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3304: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3305: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h5b;
         end
         16'h3400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h37;
         end
         16'h3401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3404: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3405: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hdb;
         end
         16'h3500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h38;
         end
         16'h3501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3504: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3505: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h6c;
         end
         16'h3600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h39;
         end
         16'h3601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3604: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3605: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h6c;
         end
         16'h3700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h3a;
         end
         16'h3701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3704: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3705: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb5;
         end
         16'h3800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h3c;
         end
         16'h3801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3804: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3805: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb7;
         end
         16'h3900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h3d;
         end
         16'h3901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3904: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3905: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h3f;
         end
         16'h3a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h3a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3a04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h3a05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h00;
         end
         16'h3b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h40;
         end
         16'h3b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3b03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h43;
         end
         16'h3c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3c03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h44;
         end
         16'h3d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h46;
         end
         16'h3e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3e03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h47;
         end
         16'h3f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h3f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h3f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h48;
         end
         16'h4001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h49;
         end
         16'h4101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4a;
         end
         16'h4201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4c;
         end
         16'h4301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4d;
         end
         16'h4401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h4f;
         end
         16'h4501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h50;
         end
         16'h4601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h53;
         end
         16'h4701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h54;
         end
         16'h4801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h56;
         end
         16'h4901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h57;
         end
         16'h4a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h58;
         end
         16'h4b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4b03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h59;
         end
         16'h4c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4c03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5a;
         end
         16'h4d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5c;
         end
         16'h4e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4e03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5d;
         end
         16'h4f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h4f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h4f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h5000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h5f;
         end
         16'h5001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h5003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h5100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h60;
         end
         16'h5101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5104: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5105: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5106: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h6a;
         end
         16'h5200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h63;
         end
         16'h5201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5204: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5205: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5206: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h69;
         end
         16'h5300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h64;
         end
         16'h5301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5304: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5305: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5306: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h4b;
         end
         16'h5400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h66;
         end
         16'h5401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5404: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5405: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5406: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h4b;
         end
         16'h5500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h67;
         end
         16'h5501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5504: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5505: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5506: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'hcb;
         end
         16'h5600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h68;
         end
         16'h5601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5604: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5605: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5606: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h2c;
         end
         16'h5700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h69;
         end
         16'h5701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5704: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5705: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5706: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h2c;
         end
         16'h5800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h6a;
         end
         16'h5801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5804: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5805: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5806: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h95;
         end
         16'h5900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h6c;
         end
         16'h5901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5904: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5905: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5906: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h97;
         end
         16'h5a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h6d;
         end
         16'h5a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5a04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5a05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5a06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h6f;
         end
         16'h5b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5b03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5b04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5b05: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'h5b06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h00;
         end
         16'h5c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h70;
         end
         16'h5c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5c03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5c04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5c05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h7a;
         end
         16'h5d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h73;
         end
         16'h5d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5d04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5d05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h79;
         end
         16'h5e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h74;
         end
         16'h5e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5e03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5e04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5e05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h43;
         end
         16'h5f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h76;
         end
         16'h5f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h5f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h5f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5f04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h5f05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h43;
         end
         16'h6000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h77;
         end
         16'h6001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6004: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6005: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'hc3;
         end
         16'h6100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h78;
         end
         16'h6101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6104: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6105: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h0c;
         end
         16'h6200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h79;
         end
         16'h6201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6204: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6205: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h0c;
         end
         16'h6300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h7a;
         end
         16'h6301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6304: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6305: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h85;
         end
         16'h6400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h7c;
         end
         16'h6401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6404: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6405: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h87;
         end
         16'h6500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h7d;
         end
         16'h6501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6504: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6505: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h7f;
         end
         16'h6601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6604: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'h6605: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h00;
         end
         16'h6700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h80;
         end
         16'h6701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0060;
           m6805_access.data = 8'he0;
         end
         16'h6704: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0061;
           m6805_access.data = 8'h12;
         end
         16'h6705: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0062;
           m6805_access.data = 8'h20;
         end
         16'h6706: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0063;
           m6805_access.data = 8'h10;
         end
         16'h6707: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0064;
           m6805_access.data = 8'h09;
         end
         16'h6708: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0065;
           m6805_access.data = 8'h00;
         end
         16'h6800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h81;
         end
         16'h6801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h6803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0060;
           m6805_access.data = 8'he0;
         end
         16'h6804: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0061;
           m6805_access.data = 8'h12;
         end
         16'h6805: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0062;
           m6805_access.data = 8'h20;
         end
         16'h6900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h83;
         end
         16'h6901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6902: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h06;
         end
         16'h6903: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
         16'h6904: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007d;
           m6805_access.data = 8'h20;
         end
         16'h6905: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007c;
           m6805_access.data = 8'h12;
         end
         16'h6906: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007b;
           m6805_access.data = 8'he0;
         end
         16'h6907: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007a;
           m6805_access.data = 8'h00;
         end
         16'h6908: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'hfffc;
           m6805_access.data = 8'h22;
         end
         16'h6909: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'hfffd;
           m6805_access.data = 8'h00;
         end
         16'h690a: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h2200;
           m6805_access.data = 8'h00;
         end
         16'h6a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h97;
         end
         16'h6a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h98;
         end
         16'h6b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h99;
         end
         16'h6c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9a;
         end
         16'h6d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9b;
         end
         16'h6e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h6f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9c;
         end
         16'h6f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9d;
         end
         16'h7001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'h9f;
         end
         16'h7101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha0;
         end
         16'h7201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha1;
         end
         16'h7301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha2;
         end
         16'h7401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha3;
         end
         16'h7501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha4;
         end
         16'h7601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha5;
         end
         16'h7701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha6;
         end
         16'h7801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha8;
         end
         16'h7901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'ha9;
         end
         16'h7a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'haa;
         end
         16'h7b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hab;
         end
         16'h7c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'had;
         end
         16'h7d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h7d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h7d04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1017;
           m6805_access.data = 8'h00;
         end
         16'h7d05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h07;
         end
         16'h7d06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
         16'h7d07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007d;
           m6805_access.data = 8'h00;
         end
         16'h7e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hae;
         end
         16'h7e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb0;
         end
         16'h7f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h7f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h7f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb1;
         end
         16'h8001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb2;
         end
         16'h8101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb3;
         end
         16'h8201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb4;
         end
         16'h8301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb5;
         end
         16'h8401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb6;
         end
         16'h8501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb7;
         end
         16'h8601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8604: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h12;
         end
         16'h8700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb8;
         end
         16'h8701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hb9;
         end
         16'h8801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hba;
         end
         16'h8901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hbb;
         end
         16'h8a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hbc;
         end
         16'h8b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hbd;
         end
         16'h8c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8c03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8c04: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h07;
         end
         16'h8c05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
         16'h8c06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007d;
           m6805_access.data = 8'h00;
         end
         16'h8d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hbe;
         end
         16'h8d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hbf;
         end
         16'h8e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'h8e03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'hb6;
         end
         16'h8e04: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0010;
           m6805_access.data = 8'h20;
         end
         16'h8f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc0;
         end
         16'h8f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h8f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h8f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc1;
         end
         16'h9001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc2;
         end
         16'h9101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc3;
         end
         16'h9201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc4;
         end
         16'h9301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc5;
         end
         16'h9401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc6;
         end
         16'h9501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc7;
         end
         16'h9601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9603: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'h9604: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
+          m6805_access.address = 16'h1020;
+          m6805_access.data = 8'h86;
+        end
+        16'h9605: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h12;
         end
         16'h9700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc8;
         end
         16'h9701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hc9;
         end
         16'h9801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hca;
         end
         16'h9901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9a00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hcb;
         end
         16'h9a01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9a02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9a03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9b00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hcc;
         end
         16'h9b01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9b02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9c00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hcd;
         end
         16'h9c01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9c02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9c03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'h9c04: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
+          m6805_access.address = 16'h1020;
+          m6805_access.data = 8'h86;
+        end
+        16'h9c05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h08;
         end
-        16'h9c04: begin
+        16'h9c06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
+        16'h9c07: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
+          m6805_access.address = 16'h007d;
+          m6805_access.data = 8'h00;
+        end
         16'h9d00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hce;
         end
         16'h9d01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9d02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9d03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h86;
         end
         16'h9e00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hcf;
         end
         16'h9e01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9e02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9e03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'h9e04: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
+          m6805_access.address = 16'h1020;
+          m6805_access.data = 8'h86;
+        end
+        16'h9e05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1020;
           m6805_access.data = 8'h20;
         end
         16'h9f00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd0;
         end
         16'h9f01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'h9f02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'h9f03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'h9f04: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'h9f05: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd1;
         end
         16'ha001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha004: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha005: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd2;
         end
         16'ha101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha104: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha105: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd3;
         end
         16'ha201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha204: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha205: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd4;
         end
         16'ha301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha304: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha305: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd5;
         end
         16'ha401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha404: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha405: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd6;
         end
         16'ha501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha504: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha505: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd7;
         end
         16'ha601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha603: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'h12;
         end
         16'ha700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd8;
         end
         16'ha701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha704: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha705: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hd9;
         end
         16'ha801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha804: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha805: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'ha900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hda;
         end
         16'ha901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'ha902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'ha903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha904: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'ha905: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'haa00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hdb;
         end
         16'haa01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'haa02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'haa03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'haa04: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'haa05: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'hab00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hdc;
         end
         16'hab01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hab02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
+        16'hab03: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'hab04: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
         16'hac00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hdd;
         end
         16'hac01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hac02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'hac03: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h08;
         end
         16'hac04: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
         16'had00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hde;
         end
         16'had01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'had02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'had03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'had04: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.data_ignored = 1'b1;
+          m6805_access.address_mask = 16'h00ff;
+          m6805_access.address = 16'h00ff;
+          m6805_access.data = 8'h00;
+        end
+        16'had05: begin
+          m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'he6;
         end
         16'hae00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hdf;
         end
         16'hae01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hae02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1007;
           m6805_access.data = 8'h20;
         end
         16'hae03: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1040;
           m6805_access.data = 8'h20;
         end
         16'haf00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he0;
         end
         16'haf01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'haf02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'haf03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'haf04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he1;
         end
         16'hb001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb004: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he2;
         end
         16'hb101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb104: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he3;
         end
         16'hb201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb204: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he4;
         end
         16'hb301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb304: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he5;
         end
         16'hb401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb404: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he6;
         end
         16'hb501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb504: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he7;
         end
         16'hb601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb604: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb605: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h12;
         end
         16'hb700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he8;
         end
         16'hb701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb704: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'he9;
         end
         16'hb801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb804: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hb900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hea;
         end
         16'hb901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hb902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hb904: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hba00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'heb;
         end
         16'hba01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hba02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hba03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hba04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hbb00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hec;
         end
         16'hbb01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hbb02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbb03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbc00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hed;
         end
         16'hbc01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hbc02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbc03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbc04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hbc05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h07;
         end
         16'hbc06: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
         16'hbc07: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007d;
           m6805_access.data = 8'h00;
         end
         16'hbd00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hee;
         end
         16'hbd01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hbd02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbd03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbd04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hbe00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hef;
         end
         16'hbe01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hbe02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbe03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbe04: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h96;
         end
         16'hbe05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0030;
           m6805_access.data = 8'h20;
         end
         16'hbf00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf0;
         end
         16'hbf01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hbf02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hbf03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc000: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf1;
         end
         16'hc001: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc002: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc003: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc100: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf2;
         end
         16'hc101: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc102: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc103: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc200: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf3;
         end
         16'hc201: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc202: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc203: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc300: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf4;
         end
         16'hc301: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc302: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc303: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc400: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf5;
         end
         16'hc401: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc402: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc403: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc500: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf6;
         end
         16'hc501: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc502: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc503: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc600: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf7;
         end
         16'hc601: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc602: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc603: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc604: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h12;
         end
         16'hc700: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf8;
         end
         16'hc701: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc702: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc703: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc800: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hf9;
         end
         16'hc801: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc802: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc803: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hc900: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hfa;
         end
         16'hc901: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hc902: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hc903: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hca00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hfb;
         end
         16'hca01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hca02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hca03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hcb00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hfc;
         end
         16'hcb01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hcb02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hcc00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hfd;
         end
         16'hcc01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hcc02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hcc03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hcc04: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h06;
         end
         16'hcc05: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007e;
           m6805_access.data = 8'h10;
         end
         16'hcc06: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007d;
           m6805_access.data = 8'h00;
         end
         16'hcd00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hfe;
         end
         16'hcd01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hcd02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hcd03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hce00: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1005;
           m6805_access.data = 8'hff;
         end
         16'hce01: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h1006;
           m6805_access.data = 8'h10;
         end
         16'hce02: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h007f;
           m6805_access.data = 8'h00;
         end
         16'hce03: begin
           m6805_access.write_enable = 1'b0;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h86;
         end
         16'hce04: begin
           m6805_access.write_enable = 1'b1;
+          m6805_access.address_mask = 16'hffff;
           m6805_access.address = 16'h0020;
           m6805_access.data = 8'h20;
         end
@@ -10758,3046 +12041,3655 @@ package m6805_opcode_vectors_pkg;
       case ({vector_index, access_index})
         16'h0000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h00;
         end
         16'h0001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0002: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0003: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h01;
         end
         16'h0101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0102: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0103: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h02;
         end
         16'h0201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0203: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h03;
         end
         16'h0301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0303: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h04;
         end
         16'h0401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0403: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h05;
         end
         16'h0501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0503: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h06;
         end
         16'h0601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0603: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h07;
         end
         16'h0701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0703: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h08;
         end
         16'h0801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0803: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h09;
         end
         16'h0901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0902: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0903: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h0a;
         end
         16'h0a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0a02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0a03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h0b;
         end
         16'h0b01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0b02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0b03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h0c;
         end
         16'h0c01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0c02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0c03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h0d;
         end
         16'h0d01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0d02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0d03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h0e;
         end
         16'h0e01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0e02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0e03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h0f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h0f;
         end
         16'h0f01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h0f02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h0f03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h10;
         end
         16'h1001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1002: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1003: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb7;
         end
         16'h1100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h11;
         end
         16'h1101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1102: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1103: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h12;
         end
         16'h1201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1203: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h13;
         end
         16'h1301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1303: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb4;
         end
         16'h1400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h14;
         end
         16'h1401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1403: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h15;
         end
         16'h1501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1503: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb2;
         end
         16'h1600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h16;
         end
         16'h1601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1603: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hbe;
         end
         16'h1700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h17;
         end
         16'h1701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1703: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h18;
         end
         16'h1801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1803: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h19;
         end
         16'h1901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1902: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1903: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'ha6;
         end
         16'h1a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h1a;
         end
         16'h1a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1a02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1a03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h1b;
         end
         16'h1b01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1b02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1b03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h96;
         end
         16'h1c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h1c;
         end
         16'h1c01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1c02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1c03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hf6;
         end
         16'h1d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h1d;
         end
         16'h1d01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1d02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1d03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h1e;
         end
         16'h1e01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1e02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1e03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h1f;
         end
         16'h1f01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h1f02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h1f03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h36;
         end
         16'h2000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h20;
         end
         16'h2001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h21;
         end
         16'h2101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h22;
         end
         16'h2201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h23;
         end
         16'h2301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h24;
         end
         16'h2401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h25;
         end
         16'h2501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h26;
         end
         16'h2601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h27;
         end
         16'h2701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h28;
         end
         16'h2801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h29;
         end
         16'h2901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h2a;
         end
         16'h2a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h2b;
         end
         16'h2b01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h2c;
         end
         16'h2c01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h2d;
         end
         16'h2d01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h2e;
         end
         16'h2e01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h2f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h2f;
         end
         16'h2f01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h30;
         end
         16'h3001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3002: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3003: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h4a;
         end
         16'h3100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h33;
         end
         16'h3101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3102: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3103: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h49;
         end
         16'h3200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h34;
         end
         16'h3201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3203: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h5b;
         end
         16'h3300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h36;
         end
         16'h3301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3303: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h5b;
         end
         16'h3400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h37;
         end
         16'h3401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3403: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hdb;
         end
         16'h3500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h38;
         end
         16'h3501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3503: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h6c;
         end
         16'h3600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h39;
         end
         16'h3601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3603: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h6c;
         end
         16'h3700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h3a;
         end
         16'h3701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3703: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb5;
         end
         16'h3800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h3c;
         end
         16'h3801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3803: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb7;
         end
         16'h3900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h3d;
         end
         16'h3901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3902: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h3a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h3f;
         end
         16'h3a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h3a02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h00;
         end
         16'h3b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h40;
         end
         16'h3c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h43;
         end
         16'h3d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h44;
         end
         16'h3e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h46;
         end
         16'h3f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h47;
         end
         16'h4000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h48;
         end
         16'h4100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h49;
         end
         16'h4200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h4a;
         end
         16'h4300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h4c;
         end
         16'h4400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h4d;
         end
         16'h4500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h4f;
         end
         16'h4600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h50;
         end
         16'h4700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h53;
         end
         16'h4800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h54;
         end
         16'h4900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h56;
         end
         16'h4a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h57;
         end
         16'h4b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h58;
         end
         16'h4c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h59;
         end
         16'h4d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h5a;
         end
         16'h4e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h5c;
         end
         16'h4f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h5d;
         end
         16'h5000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h5f;
         end
         16'h5100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h60;
         end
         16'h5101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5102: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5103: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h6a;
         end
         16'h5200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h63;
         end
         16'h5201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5203: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h69;
         end
         16'h5300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h64;
         end
         16'h5301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5303: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h4b;
         end
         16'h5400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h66;
         end
         16'h5401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5403: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h4b;
         end
         16'h5500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h67;
         end
         16'h5501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5503: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'hcb;
         end
         16'h5600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h68;
         end
         16'h5601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5603: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h2c;
         end
         16'h5700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h69;
         end
         16'h5701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5703: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h2c;
         end
         16'h5800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h6a;
         end
         16'h5801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5803: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h95;
         end
         16'h5900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h6c;
         end
         16'h5901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5902: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5903: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h97;
         end
         16'h5a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h6d;
         end
         16'h5a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5a02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'h5b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h6f;
         end
         16'h5b01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h5b02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h00;
         end
         16'h5c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h70;
         end
         16'h5c01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h5c02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h7a;
         end
         16'h5d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h73;
         end
         16'h5d01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h5d02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h79;
         end
         16'h5e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h74;
         end
         16'h5e01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h5e02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h43;
         end
         16'h5f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h76;
         end
         16'h5f01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h5f02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h43;
         end
         16'h6000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h77;
         end
         16'h6001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h6002: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'hc3;
         end
         16'h6100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h78;
         end
         16'h6101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h6102: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h0c;
         end
         16'h6200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h79;
         end
         16'h6201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h6202: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h0c;
         end
         16'h6300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h7a;
         end
         16'h6301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h6302: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h85;
         end
         16'h6400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h7c;
         end
         16'h6401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h6402: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h87;
         end
         16'h6500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h7d;
         end
         16'h6501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'h6600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h7f;
         end
         16'h6601: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h00;
         end
         16'h6700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h80;
         end
         16'h6701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0060;
           hd6305_access.data = 8'he0;
         end
         16'h6702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0061;
           hd6305_access.data = 8'h12;
         end
         16'h6703: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0062;
           hd6305_access.data = 8'h20;
         end
         16'h6704: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0063;
           hd6305_access.data = 8'h10;
         end
         16'h6705: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0064;
           hd6305_access.data = 8'h09;
         end
         16'h6800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h81;
         end
         16'h6801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0060;
           hd6305_access.data = 8'he0;
         end
         16'h6802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0061;
           hd6305_access.data = 8'h12;
         end
         16'h6900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h83;
         end
         16'h6901: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007f;
           hd6305_access.data = 8'h06;
         end
         16'h6902: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007e;
           hd6305_access.data = 8'h10;
         end
         16'h6903: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007d;
           hd6305_access.data = 8'h20;
         end
         16'h6904: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007c;
           hd6305_access.data = 8'h12;
         end
         16'h6905: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007b;
           hd6305_access.data = 8'he0;
         end
         16'h6906: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'hfffc;
           hd6305_access.data = 8'h22;
         end
         16'h6907: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'hfffd;
           hd6305_access.data = 8'h00;
         end
         16'h6a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h8d;
         end
         16'h6b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h8e;
         end
         16'h6c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h8f;
         end
         16'h6d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h97;
         end
         16'h6e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h98;
         end
         16'h6f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h99;
         end
         16'h7000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h9a;
         end
         16'h7100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h9b;
         end
         16'h7200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h9c;
         end
         16'h7300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h9d;
         end
         16'h7400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'h9f;
         end
         16'h7500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha0;
         end
         16'h7501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha1;
         end
         16'h7601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha2;
         end
         16'h7701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha3;
         end
         16'h7801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha4;
         end
         16'h7901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha5;
         end
         16'h7a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha6;
         end
         16'h7b01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha8;
         end
         16'h7c01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'ha9;
         end
         16'h7d01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'haa;
         end
         16'h7e01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h7f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hab;
         end
         16'h7f01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'had;
         end
         16'h8001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8002: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007f;
           hd6305_access.data = 8'h07;
         end
         16'h8003: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007e;
           hd6305_access.data = 8'h10;
         end
         16'h8100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hae;
         end
         16'h8101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb0;
         end
         16'h8201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb1;
         end
         16'h8301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb2;
         end
         16'h8401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb3;
         end
         16'h8501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb4;
         end
         16'h8601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb5;
         end
         16'h8701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb6;
         end
         16'h8801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb7;
         end
         16'h8901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8902: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h12;
         end
         16'h8a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb8;
         end
         16'h8a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8a02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hb9;
         end
         16'h8b01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8b02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hba;
         end
         16'h8c01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8c02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hbb;
         end
         16'h8d01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8d02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h8e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hbc;
         end
         16'h8e01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hbd;
         end
         16'h8f01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h8f02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007f;
           hd6305_access.data = 8'h07;
         end
         16'h8f03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007e;
           hd6305_access.data = 8'h10;
         end
         16'h9000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hbe;
         end
         16'h9001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9002: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'hb6;
         end
         16'h9100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hbf;
         end
         16'h9101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9102: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0010;
           hd6305_access.data = 8'h20;
         end
         16'h9200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc0;
         end
         16'h9201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9203: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc1;
         end
         16'h9301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9303: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc2;
         end
         16'h9401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9403: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc3;
         end
         16'h9501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9503: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc4;
         end
         16'h9601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9603: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc5;
         end
         16'h9701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9703: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc6;
         end
         16'h9801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9803: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc7;
         end
         16'h9901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9902: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9903: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h12;
         end
         16'h9a00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc8;
         end
         16'h9a01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9a02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9a03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9b00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hc9;
         end
         16'h9b01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9b02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9b03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9c00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hca;
         end
         16'h9c01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9c02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9c03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9d00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hcb;
         end
         16'h9d01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9d02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9d03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'h9e00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hcc;
         end
         16'h9e01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9e02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9f00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hcd;
         end
         16'h9f01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'h9f02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'h9f03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007f;
           hd6305_access.data = 8'h08;
         end
         16'h9f04: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007e;
           hd6305_access.data = 8'h10;
         end
         16'ha000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hce;
         end
         16'ha001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha002: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha003: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h86;
         end
         16'ha100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hcf;
         end
         16'ha101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha102: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha103: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1020;
           hd6305_access.data = 8'h20;
         end
         16'ha200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd0;
         end
         16'ha201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha203: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'ha300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd1;
         end
         16'ha301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha303: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'ha400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd2;
         end
         16'ha401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha403: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'ha500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd3;
         end
         16'ha501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha503: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'ha600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd4;
         end
         16'ha601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha603: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'ha700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd5;
         end
         16'ha701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha703: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'ha800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd6;
         end
         16'ha801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha803: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'ha900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd7;
         end
         16'ha901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'ha902: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'ha903: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'h12;
         end
         16'haa00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd8;
         end
         16'haa01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'haa02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'haa03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'hab00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hd9;
         end
         16'hab01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hab02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'hab03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'hac00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hda;
         end
         16'hac01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hac02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'hac03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'had00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hdb;
         end
         16'had01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'had02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'had03: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'hae00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hdc;
         end
         16'hae01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hae02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'haf00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hdd;
         end
         16'haf01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'haf02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'haf03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007f;
           hd6305_access.data = 8'h08;
         end
         16'haf04: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007e;
           hd6305_access.data = 8'h10;
         end
         16'hb000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hde;
         end
         16'hb001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb002: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'hb003: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'he6;
         end
         16'hb100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hdf;
         end
         16'hb101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb102: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1007;
           hd6305_access.data = 8'h20;
         end
         16'hb103: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1040;
           hd6305_access.data = 8'h20;
         end
         16'hb200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he0;
         end
         16'hb201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb202: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hb300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he1;
         end
         16'hb301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb302: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hb400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he2;
         end
         16'hb401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb402: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hb500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he3;
         end
         16'hb501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb502: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hb600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he4;
         end
         16'hb601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb602: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hb700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he5;
         end
         16'hb701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb702: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hb800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he6;
         end
         16'hb801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb802: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hb900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he7;
         end
         16'hb901: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hb902: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h12;
         end
         16'hba00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he8;
         end
         16'hba01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hba02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hbb00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'he9;
         end
         16'hbb01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hbb02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hbc00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hea;
         end
         16'hbc01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hbc02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hbd00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'heb;
         end
         16'hbd01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hbd02: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hbe00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hec;
         end
         16'hbe01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hbf00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hed;
         end
         16'hbf01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hbf02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007f;
           hd6305_access.data = 8'h07;
         end
         16'hbf03: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007e;
           hd6305_access.data = 8'h10;
         end
         16'hc000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hee;
         end
         16'hc001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hc002: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h96;
         end
         16'hc100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hef;
         end
         16'hc101: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1006;
           hd6305_access.data = 8'h10;
         end
         16'hc102: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0030;
           hd6305_access.data = 8'h20;
         end
         16'hc200: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf0;
         end
         16'hc201: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hc300: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf1;
         end
         16'hc301: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hc400: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf2;
         end
         16'hc401: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hc500: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf3;
         end
         16'hc501: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hc600: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf4;
         end
         16'hc601: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hc700: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf5;
         end
         16'hc701: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hc800: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf6;
         end
         16'hc801: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hc900: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf7;
         end
         16'hc901: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h12;
         end
         16'hca00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf8;
         end
         16'hca01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hcb00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hf9;
         end
         16'hcb01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hcc00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hfa;
         end
         16'hcc01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hcd00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hfb;
         end
         16'hcd01: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hce00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hfc;
         end
         16'hcf00: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hfd;
         end
         16'hcf01: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007f;
           hd6305_access.data = 8'h06;
         end
         16'hcf02: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h007e;
           hd6305_access.data = 8'h10;
         end
         16'hd000: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hfe;
         end
         16'hd001: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h86;
         end
         16'hd100: begin
           hd6305_access.write_enable = 1'b0;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h1005;
           hd6305_access.data = 8'hff;
         end
         16'hd101: begin
           hd6305_access.write_enable = 1'b1;
+          hd6305_access.address_mask = 16'hffff;
           hd6305_access.address = 16'h0020;
           hd6305_access.data = 8'h20;
         end

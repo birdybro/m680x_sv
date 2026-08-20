@@ -159,10 +159,14 @@ low-vector read, and a final read at address `$0000` whose input data is not
 used. The same table drives explicit Motorola-only states for inherent and
 relative repeated reads, bit-operation dummy/repeated reads and late branch
 displacement, direct-address dummy and repeated reads, BSR/JSR target prefetch
-and stack writes, short-indexed next-opcode/offset and dummy reads, and the dummy reads before
+and stack writes, short-indexed next-opcode/offset and dummy reads, documented
+extended store/call and indexed-16 read/jump dummy cycles, and the dummy reads before
 and after RTS/RTI pulls. These are real bus cycles rather than
 unqualified timing padding. The Hitachi profile retains its separately selected
 reset and instruction sequencing;
+Motorola denotes the long-form dummy address as `$XFF` and defines `X` as
+don't-care. The normalized interface drives zero in that upper field, while the
+specification/model trace mask exposes that only address bits 7:0 are documented.
 Motorola timing is not projected onto it without a Hitachi primary-source
 basis.
 

@@ -12,6 +12,10 @@ ARCHITECTURES = {"m6805", "hd6305"}
 FLAG_BITS = {"H": 4, "I": 3, "N": 2, "Z": 1, "C": 0}
 DATA_OPS = {"SUB", "CMP", "SBC", "CPX", "AND", "BIT", "LDA", "STA", "EOR", "ADC", "ORA", "ADD", "JMP", "JSR", "LDX", "STX"}
 RMW_OPS = {"NEG", "COM", "LSR", "ROR", "ASR", "ASL", "ROL", "DEC", "INC", "TST", "CLR"}
+TABLE_G2_INDEXED_16_OPS = {
+    "ADC", "ADD", "AND", "BIT", "CMP", "CPX", "EOR", "JMP",
+    "LDA", "LDX", "ORA", "SBC", "SUB",
+}
 
 
 @dataclass
@@ -167,10 +171,26 @@ class M6805Model:
         self.state.pc &= 0xFFFF
         self.state.ccr &= 0x1F
 
-    def _read8(self, address: int, purpose: str, *, data_defined: bool = True) -> int:
+    def _read8(
+        self,
+        address: int,
+        purpose: str,
+        *,
+        data_defined: bool = True,
+        address_defined_mask: int = 0xFFFF,
+    ) -> int:
         address &= 0xFFFF
         value = self.memory[address]
-        self._accesses.append(BusAccess("read", address, value, purpose, data_defined))
+        self._accesses.append(
+            BusAccess(
+                "read",
+                address,
+                value,
+                purpose,
+                data_defined,
+                address_defined_mask & 0xFFFF,
+            )
+        )
         return value
 
     def _write8(self, address: int, value: int, purpose: str) -> None:
@@ -216,11 +236,23 @@ class M6805Model:
         return byte - 0x100 if byte & 0x80 else byte
 
     def _table_g2_data_accesses(
-        self, mnemonic: str, address: int, dummy_reads: int
+        self,
+        mnemonic: str,
+        address: int,
+        dummy_reads: int,
+        *,
+        dummy_address: int | None = None,
+        dummy_address_defined_mask: int = 0xFFFF,
     ) -> int | None:
-        stack_top = self.stack_base | self.stack_mask
+        if dummy_address is None:
+            dummy_address = self.stack_base | self.stack_mask
         for cycle in range(dummy_reads):
-            self._read8(stack_top, f"addressing-mode unused read {cycle + 1}")
+            self._read8(
+                dummy_address,
+                f"addressing-mode unused read {cycle + 1}",
+                data_defined=(dummy_address_defined_mask == 0xFFFF),
+                address_defined_mask=dummy_address_defined_mask,
+            )
         if mnemonic == "JSR":
             self._read8(address, "first subroutine opcode")
             return None
@@ -276,6 +308,14 @@ class M6805Model:
                 return self._table_g2_data_accesses(mnemonic, address, 1), address, None
         elif mode == "extended":
             address = self._fetch16("extended address")
+            if self.architecture == "m6805" and mnemonic in {"STA", "STX", "JSR"}:
+                return self._table_g2_data_accesses(
+                    mnemonic,
+                    address,
+                    1,
+                    dummy_address=0x00FF,
+                    dummy_address_defined_mask=0x00FF,
+                ), address, None
         elif mode == "indexed-no-offset":
             address = self.state.x
             if self.architecture == "m6805":
@@ -287,6 +327,14 @@ class M6805Model:
                 return self._table_g2_data_accesses(mnemonic, address, 2), address, None
         elif mode == "indexed-unsigned-16":
             address = (self.state.x + self._fetch16("indexed 16-bit offset")) & 0xFFFF
+            if self.architecture == "m6805" and mnemonic in TABLE_G2_INDEXED_16_OPS:
+                return self._table_g2_data_accesses(
+                    mnemonic,
+                    address,
+                    2,
+                    dummy_address=0x00FF,
+                    dummy_address_defined_mask=0x00FF,
+                ), address, None
         else:
             raise AssertionError(f"unsupported M6805 addressing mode {mode}")
         if mnemonic in {"STA", "STX", "JMP", "JSR"}:
@@ -354,6 +402,7 @@ class M6805Model:
                     self._push_return_pc()
                     if self.architecture == "m6805" and record["addressing_mode"] in {
                         "direct",
+                        "extended",
                         "indexed-no-offset",
                         "indexed-unsigned-8",
                     }:

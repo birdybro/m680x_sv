@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import re
 import sys
 
 from tools.fetch_references import DEFAULT_MANIFEST, ReferenceError, load_manifest
@@ -94,9 +95,13 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
         if not isinstance(bus_cycles, list):
             raise OpcodeSpecError(f"{architecture}: documented bus cycles must be a list for {opcode:02X}")
         for cycle_number, bus_cycle in enumerate(bus_cycles, start=1):
+            cycle_fields = set(bus_cycle) if isinstance(bus_cycle, dict) else set()
             if (
                 not isinstance(bus_cycle, dict)
-                or set(bus_cycle) != {"cycle", "address", "direction", "data"}
+                or cycle_fields not in (
+                    {"cycle", "address", "direction", "data"},
+                    {"cycle", "address", "address_defined_mask", "direction", "data"},
+                )
                 or bus_cycle["cycle"] != cycle_number
                 or bus_cycle["direction"] not in {"read", "write"}
                 or not isinstance(bus_cycle["address"], str)
@@ -105,6 +110,14 @@ def validate_opcode_spec(spec: dict, known_references: set[str]) -> None:
                 or not bus_cycle["data"]
             ):
                 raise OpcodeSpecError(f"{architecture}: invalid documented bus cycle for {opcode:02X}")
+            if "address_defined_mask" in bus_cycle and (
+                not isinstance(bus_cycle["address_defined_mask"], str)
+                or re.fullmatch(r"0x[0-9a-fA-F]{4}", bus_cycle["address_defined_mask"]) is None
+                or int(bus_cycle["address_defined_mask"], 16) == 0
+            ):
+                raise OpcodeSpecError(
+                    f"{architecture}: invalid documented bus address mask for {opcode:02X}"
+                )
         reference = record["primary_reference"]
         if (
             not isinstance(reference, dict)

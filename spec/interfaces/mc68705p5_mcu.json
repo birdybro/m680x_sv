@@ -42,7 +42,7 @@
     "gpio_and_interrupt_pins": "PARTIAL",
     "timer_function": "COMPLETE",
     "interrupt_controller": "COMPLETE",
-    "inherent_immediate_relative_bit_direct_and_short_indexed_bus_traces": "COMPLETE",
+    "all_published_table_g2_opcode_bus_trace_rows": "COMPLETE",
     "software_interrupt_bus_trace": "COMPLETE",
     "reset_response_bus_trace": "COMPLETE",
     "bootstrap_and_programming_controls": "COMPLETE",

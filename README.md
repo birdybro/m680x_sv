@@ -91,14 +91,16 @@ read and ends after the low byte.
 The separate 11-cycle SWI trace ends with a defined read of the first handler
 opcode at the address resolved from `$07fc:$07fd`; hardware IRQ instead ends
 with the documented unusable-data read after its low vector byte.
-For 175 Motorola encodings, the opcode specification now records every table-G2
+For 191 Motorola encodings, the opcode specification records every published table-G2
 cycle as structured address/direction/data-role facts. RTL and the independently
 organized Python model match the complete inherent, accumulator, immediate,
 relative, bit-operation, direct, indexed-no-offset, indexed-8, BSR, RTS, RTI,
-and SWI traces, including repeated next-opcode reads,
+documented extended-store/call, indexed-16 read/jump, and SWI traces, including repeated next-opcode reads,
 subroutine-target prefetch, and pre/post-stack dummy reads. Other instruction
-extended and indexed-16 forms remain explicitly `PARTIAL` until their documented table rows are
-implemented and checked; the Motorola timing is not projected onto Hitachi.
+extended and indexed-16 forms remain explicitly `PARTIAL` because table G2 does
+not publish their detailed rows; the Motorola timing is not projected onto Hitachi.
+For the manual's `$XFF` dummy accesses, only the documented low byte is compared;
+the `X` upper field is recorded with an address-defined mask and normalized to zero in RTL.
 
 All 256 opcode values are explicitly classified for each profile. The current
 five maps contain 1,064 documented instruction encodings, 26 HD6301 map values
