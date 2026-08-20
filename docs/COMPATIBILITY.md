@@ -95,8 +95,13 @@ continued timer operation in SLP, masked-request wake without vectoring, and
 simultaneous NMI/IRQ priority in all three modes.
 They also cover E-synchronous STBY entry, high-impedance GPIO/external-bus
 qualification, retained RAM/STBY_PWR, and reset-vector recovery. Port 3
-handshakes and the physical multiplexed waveform remain outside this partial
-claim. The Hitachi SCI table reserves `CC1:CC0=00`, so the wrapper explicitly
+handshakes remain outside this partial claim. A separate physical wrapper
+implements active Mode-1 dedicated address/data timing and the Mode-2/4
+four-subphase AS/address/data waveform. It also mirrors internal writes onto
+the physical data bus, presents the documented `$ffff` read while SLP leaves E
+active, and stops E while standby is active. The documented
+third-reset-cycle bus release, nanosecond limits, and oscillator/pad behavior
+remain unclaimed. The Hitachi SCI table reserves `CC1:CC0=00`, so the wrapper explicitly
 disables Motorola bi-phase rather than leaking that format across variants.
 The primary mode table makes Modes 1, 2, and 4 available on HD6303R; Modes 0,
 5, 6, and 7 require the disabled mask ROM. Mode 1 exposes the full

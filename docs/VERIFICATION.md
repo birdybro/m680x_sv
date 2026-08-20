@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 115 |
+| Python unit tests | 123 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
@@ -41,6 +41,7 @@ The committed tests cover:
 | HD6301V1 seven-mode execution/source checks | 28 |
 | HD6303R Mode-1/2/4 integration checks | 57 |
 | HD6303R legal-mode decode checks | 47 |
+| HD6303R four-subphase bus-wrapper checks | 125 |
 | HD63701V0 Mode-7 integration checks | 30 |
 | HD63701V0 legal-mode decode checks | 95 |
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
@@ -52,8 +53,8 @@ The committed tests cover:
 | HD6301 exact TRAP trace checks | 3 |
 | Deterministic random programs | 80 (16 per architecture profile) |
 | Per-retirement randomized comparisons | 5,120 |
-| Bounded formal profiles | 16 (11 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
-| Synthesis tops | 26 |
+| Bounded formal profiles | 17 (12 at depth 10; 4 mode-decode profiles at depth 5; 1 bus wrapper at depth 8) |
+| Synthesis tops | 27 |
 
 The Python ALU total comprises 131,072 ADD/ADC cases, 131,072 SUB/SBC/CMP
 cases, 196,608 logic cases, 65,536 multiply cases, 3,073 unary/shift/rotate
@@ -140,6 +141,17 @@ trace documented by handbook figure III-8: faulting opcode, discarded PC+1,
 two `$ffff` reads, seven stack writes, and `$ffee:$ffef` vector reads. It checks
 the complete stacked state, unmaskable I-bit update, RTI restoration of the
 faulting PC, and immediate retrap when the invalid opcode remains present.
+
+The HD6303R pin suite independently checks all three legal operating modes.
+Its 125 RTL assertions cover Mode-1 dedicated low/high address pins,
+Mode-2/4 AS and multiplexed Port-3 turnaround, read release, E-qualified
+writes, physical mirroring of internal writes, R/W, historical-reset E
+continuation, the SLP `$ffff` idle-read bus with E still active, E-synchronous
+standby entry/exit, standby bus release, and E suppression. The separate Python
+model exhaustively projects all 65,536 addresses onto both physical
+organizations and independently checks the SLP/STBY distinction. The documented
+third reset cycle and nanosecond/electrical behavior are explicitly not counted
+as verified.
 
 The HD6303R suite executes through the integrated device wrapper separately in
 each legal Mode 1, 2, and 4. Every profile checks external reset vectors,
@@ -246,7 +258,8 @@ edge on resume.
 
 `make formal` uses Yosys bounded SAT over the M6800, MC6801, HD6301, M6805, and
 HD6305 profiles plus the MC6800 bus wrapper, MC6801 Mode 3 integration and
-Mode-0/Mode-4 decode, the MC6801 four-subphase bus wrapper, HD6303R, HD6301V1,
+Mode-0/Mode-4 decode, the MC6801 four-subphase bus wrapper, HD6303R and its
+physical bus wrapper, HD6301V1,
 HD63701V0 legal-mode decode, MC68705P5, HD6301V1 and HD63701V0 Mode-7
 integrations, and the HD63705V0 MCU.
 The core/device profiles run at depth 10, the four mode-decode profiles at
@@ -275,6 +288,10 @@ bounds:
   asserts E only in its two data phases, presents and releases multiplexed
   Port 3 around AS, and confines Mode-5 IOS and write drive to their documented
   address and E windows.
+- The HD6303R physical wrapper holds Mode-1 dedicated address pins, sequences
+  Mode-2/4 AS and Port-3 turnaround, permits data drive only for E-high writes,
+  presents the SLP `$ffff` read without stopping E, releases every address/data
+  bus in standby, and suppresses E while standby is active.
 - MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
   remapping respects secure mode, program reads stay within internal storage,
   VPP qualifies programming controls, and disabled-cycle state stalls.
@@ -301,7 +318,8 @@ Verilator is the primary strict-warning simulator. Icarus Verilog independently
 compiles and runs both directed CPU suites, the HD6301 TRAP trace, the interrupt
 delay traces, the MC68705P5, HD6301V1, HD6303R, all-mode HD63701V0, and
 HD63705V0 device suites, both MC6801/MC6803 peripheral differential profiles,
-and the MC6801 all-mode/direct-boot and four-subphase bus suites plus the
+and the MC6801 all-mode/direct-boot and four-subphase bus suites, the HD6303R
+Mode-1/2/4 phased-bus suite, plus the
 MC68705P5 and HD63705V0 peripheral differential corpora from generated
 package-flattened views. Icarus reports its known conservative `always_*`
 sensitivity note for constant part-selects; no design warning is suppressed to
@@ -327,6 +345,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD6303R Mode 1 integration | 12,131 | 1,416 |
 | HD6303R Mode 2 integration | 12,343 | 1,434 |
 | HD6303R Mode 4 integration | 12,114 | 1,424 |
+| HD6303R four-subphase bus wrapper | 12,310 | 1,449 |
 | HD63701V0 Mode 0 integration | 13,888 | 1,949 |
 | HD63701V0 Mode 1 integration | 13,838 | 1,932 |
 | HD63701V0 Mode 2 integration | 14,023 | 1,958 |

@@ -7,4 +7,5 @@ package mc6801_peripheral_bus_stub_pkg;
   logic stub_valid;
   logic stub_opcode_fetch = 1'b0;
   logic stub_interrupt_mask;
+  logic stub_sleeping = 1'b0;
 endpackage

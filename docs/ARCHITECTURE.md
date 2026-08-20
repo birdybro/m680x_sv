@@ -285,10 +285,23 @@ its explicit compatibility claim, rather than device-number similarity.
 behavior: Hitachi Mode 1 disables Port-1 registers and internal ROM while
 driving Port 1 as A0-A7, and Hitachi Mode 4 remains an expanded multiplexed RAM
 mode equivalent to Mode 2 rather than mirroring RAM or switching to Mode 5.
-The wrapper exposes the normalized external-memory boundary; physical Mode-1
-data/address pins and Mode-2/4 Port-3 multiplexing and AS timing remain separate
-pin-interface tasks. The exact boundary is recorded in
-`../spec/interfaces/hd6303r_modes.json`.
+The normalized wrapper exposes a full-address memory boundary. The separate
+`rtl/hd6301/hd6303r_bus_wrapper.sv` advances four subphases per E cycle without
+generating a clock. Mode 1 drives dedicated A0-A7 on Port 1, A8-A15 on Port 4,
+and E-qualified write data on Port 3. Modes 2/4 drive low address on Port 3
+while AS is high, release it between AS and E, and use it as the E-high data
+bus. Every write, including an internal-RAM/register write, remains visible on
+the physical data bus as the handbook specifies. Accepted STBY releases the
+address/data buses and holds E low; SLP leaves E active and presents a
+read-direction `$ffff` idle address, with the multiplexed data phase released.
+The exact normalized and pin boundaries are recorded in
+`../spec/interfaces/hd6303r_modes.json` and
+`../spec/interfaces/hd6303r_phased_bus.json`.
+
+The pin wrapper immediately releases its address/data output enables while RES
+is low. It therefore does not claim Hitachi's documented transition at the
+third reset E-cycle. Oscillator stabilization, nanosecond setup/hold, and pad
+behavior also remain outside the active-cycle digital claim.
 
 The wrapper keeps all vectors external, decodes the common internal register
 window and RAME-controlled 128-byte RAM, and leaves all program space external.

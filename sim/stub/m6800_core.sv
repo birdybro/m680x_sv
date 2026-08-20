@@ -49,7 +49,7 @@ module m6800_core #(
     illegal_o = 1'b0;
     undefined_o = 1'b0;
     waiting_o = 1'b0;
-    sleeping_o = 1'b0;
+    sleeping_o = stub_sleeping;
     interrupt_ack_o = 1'b0;
     interrupt_vector_o = 2'b00;
     debug_a_o = 8'h00;

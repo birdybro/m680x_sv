@@ -29,6 +29,7 @@ module tb_hd6303r_mcu #(
   logic waiting_state;
   logic sleeping_state;
   logic interrupt_ack;
+  logic standby_active_state;
   logic [15:0] debug_address;
   logic [15:0] debug_pc;
   logic [15:0] debug_sp;
@@ -62,6 +63,7 @@ module tb_hd6303r_mcu #(
     .sci_irq_o(sci_irq), .opcode_fetch_o(opcode_fetch), .retire_o(retire),
     .illegal_o(illegal), .undefined_o(undefined_value), .waiting_o(waiting_state),
     .sleeping_o(sleeping_state), .interrupt_ack_o(interrupt_ack),
+    .standby_active_o(standby_active_state),
     .debug_address_o(debug_address), .debug_pc_o(debug_pc),
     .debug_sp_o(debug_sp), .debug_a_o(debug_a), .debug_b_o(debug_b),
     .debug_x_o(debug_x), .debug_ccr_o(debug_ccr), .debug_timer_o(debug_timer),
@@ -296,10 +298,12 @@ module tb_hd6303r_mcu #(
     memory[16'hfffe] = 8'h06; memory[16'hffff] = 8'h20;
     standby_n = 1'b0;
     #1;
-    if (port1_oe != 8'hff) $fatal(1, "HD6303R STBY was not E-synchronous");
+    if (port1_oe != 8'hff || standby_active_state) begin
+      $fatal(1, "HD6303R STBY was not E-synchronous");
+    end
     tick();
-    if (port1_oe != 8'h00 || port2_oe != 5'h00 || external_valid || external_fetch ||
-        debug_timer != 16'h0000) begin
+    if (!standby_active_state || port1_oe != 8'h00 || port2_oe != 5'h00 ||
+        external_valid || external_fetch || debug_timer != 16'h0000) begin
       $fatal(1, "HD6303R standby reset/high impedance");
     end
     ticks(2);
@@ -310,6 +314,7 @@ module tb_hd6303r_mcu #(
       cycles = cycles + 1;
       if (cycles > 5) $fatal(1, "HD6303R standby release did not reset-vector");
     end while (debug_pc != 16'h0620 || !opcode_fetch);
+    if (standby_active_state) $fatal(1, "HD6303R standby state did not clear");
     run_instruction(8'h96);
     if (debug_a != 8'hc0) $fatal(1, "HD6303R retained STBY_PWR %02x", debug_a);
     run_instruction(8'h96);

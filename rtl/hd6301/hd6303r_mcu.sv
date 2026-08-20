@@ -39,6 +39,7 @@ module hd6303r_mcu #(
   output logic        waiting_o,
   output logic        sleeping_o,
   output logic        interrupt_ack_o,
+  output logic        standby_active_o,
   output logic [15:0] debug_address_o,
   output logic [15:0] debug_pc_o,
   output logic [15:0] debug_sp_o,
@@ -77,6 +78,7 @@ module hd6303r_mcu #(
   assign port2_oe_o = port2_oe_internal & {5{!standby_active}};
   assign timer_irq_o = timer_irq_internal && !standby_active;
   assign sci_irq_o = sci_irq_internal && !standby_active;
+  assign standby_active_o = standby_active;
 
   // HD6303R has neither on-chip program ROM nor Port 3/4 GPIO in its legal
   // expanded modes. HITACHI_NEW_MODES distinguishes its Mode 1 and Mode 4
