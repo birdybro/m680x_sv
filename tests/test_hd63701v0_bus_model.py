@@ -57,11 +57,11 @@ class HD63701V0BusModelTests(unittest.TestCase):
             self.assertEqual(mode5.port3_oe, 0xFF if phase >= 2 else 0)
             self.assertFalse(mode5.sc1)
 
-            mode7 = self.pins(7, phase, os3_n=False)
+            mode7 = self.pins(7, phase, os3_active=True)
             self.assertEqual((mode7.port1, mode7.port1_oe), (0x96, 0x3C))
             self.assertEqual((mode7.port4, mode7.port4_oe), (0x69, 0x0F))
             self.assertFalse(mode7.sc1_oe)
-            self.assertEqual(mode7.sc2, phase < 2)
+            self.assertFalse(mode7.sc2)
 
             for mode in (0, 2, 6):
                 mux = self.pins(mode, phase, port3_oe=0xFF)
@@ -73,6 +73,30 @@ class HD63701V0BusModelTests(unittest.TestCase):
                 self.assertEqual(mux.port4, 0xA5)
                 expected_oe = 0x0F if mode == 6 else 0xFF
                 self.assertEqual(mux.port4_oe, expected_oe)
+
+    def test_mode7_os3_spans_one_complete_e_cycle(self) -> None:
+        sequencer = HD63701V0BusSequencer()
+        for _ in range(4):
+            sequencer.tick()
+        self.assertFalse(sequencer.reset_active)
+        sequencer.tick(single_chip=True)
+        sequencer.tick(single_chip=True, os3_selected=True)
+        for expected_phase in (2, 3, 0, 1):
+            self.assertEqual(sequencer.phase, expected_phase)
+            self.assertTrue(sequencer.os3_active)
+            self.assertFalse(
+                self.pins(7, expected_phase, os3_active=True).sc2
+            )
+            if expected_phase != 1:
+                sequencer.tick(single_chip=True)
+        sequencer.tick(single_chip=True)
+        self.assertEqual(sequencer.phase, 2)
+        self.assertFalse(sequencer.os3_active)
+        self.assertTrue(self.pins(7, 2).sc2)
+        sequencer.os3_active = True
+        sequencer.tick(clock_enable=False, reset_n=False)
+        self.assertEqual(sequencer.phase, 2)
+        self.assertFalse(sequencer.os3_active)
 
     def test_address_projection_and_ios_decode_are_exhaustive(self) -> None:
         for address in range(0x10000):

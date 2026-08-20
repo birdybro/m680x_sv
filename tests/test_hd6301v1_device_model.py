@@ -60,6 +60,11 @@ class HD6301V1Mode7ModelTests(unittest.TestCase):
 
         status = self.read(model, 0x000F)
         self.assertEqual(status.read_data, 0xEF)
+        ddr = self.read(model, 0x0004, port3=0x55)
+        self.assertEqual(ddr.read_data, 0xFF)
+        self.assertTrue(ddr.os3_n)
+        self.assertTrue(model.state.port3_latch_valid)
+        self.assertTrue(model.state.port3_is3_flag)
         latched = self.read(model, 0x0006, port3=0x55)
         self.assertEqual(latched.read_data, 0x96)
         self.assertFalse(latched.os3_n)
@@ -69,6 +74,15 @@ class HD6301V1Mode7ModelTests(unittest.TestCase):
         self.write(model, 0x000F, 0x58)
         self.assertTrue(self.read(model, 0x0006, port3=0x22).os3_n)
         self.assertFalse(self.write(model, 0x0006, 0xA5).os3_n)
+
+        self.write(model, 0x000F, 0x48)
+        self.cycle(model, port3=0xA6, is3_n=False)
+        self.cycle(model, port3=0xA6, is3_n=False)
+        self.assertTrue(model.state.port3_latch_valid)
+        self.write(model, 0x000F, 0x40, port3=0x3C)
+        self.assertFalse(model.state.port3_latch_valid)
+        self.assertEqual(self.read(model, 0x0004, port3=0x3C).read_data, 0xFF)
+        self.assertEqual(self.read(model, 0x0006, port3=0x3C).read_data, 0x3C)
 
     def test_port34_gpio_and_reset_values(self) -> None:
         model = HD6301V1Mode7Model()

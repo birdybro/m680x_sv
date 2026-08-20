@@ -212,6 +212,8 @@ class HD6301V1DeviceModel(MC6801DeviceModel):
                 state.port3_is3_enable = bool(inputs.data & 0x40)
                 state.port3_output_strobe_select = bool(inputs.data & 0x10)
                 state.port3_latch_enable = bool(inputs.data & 0x08)
+                if not state.port3_latch_enable:
+                    state.port3_latch_valid = False
 
         if internal_read and address == 0x000F:
             state.port3_clear_armed = state.port3_is3_flag

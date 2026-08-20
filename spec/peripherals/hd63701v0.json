@@ -53,7 +53,11 @@
     "port3": "eight Mode-7 GPIO pins with DDR, optional IS3 input latch, read- or write-selected OS3 pulse, and IS3 interrupt flag; external address/data bus in expanded modes",
     "port4": "eight GPIO pins in Modes 5/6/7 and a mode-selected address function in Modes 0/1/2",
     "reset": "all DDRs are asynchronously cleared while RES is low so pins enter the input state before synchronous internal reset release",
-    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "sections 2.4 and 5.7 comparison table, printed pages 266-269 and 348"}
+    "port3_latch": "an IS3 falling edge captures Port 3 only while latch-enable is set; clearing latch-enable makes the path transparent and a Port-3 DATA read makes it transparent on the following rising E edge",
+    "p3ddr_read": "P3DDR is write-only and reads FF without changing the IS3 flag, clear sequence, input latch, or OS3",
+    "p3csr_clear": "IS3 flag clears only after P3CSR is read while set followed by a read or write of PORT3 DATA; a new falling edge wins over a coincident clear",
+    "os3": "OSS chooses Port-3 DATA reads or writes; a selected access asserts active-low OS3 after its positive E edge and releases it after the following positive E edge, spanning one complete E cycle",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4, figure 3-11-5, and section 5.7 comparison table, printed pages 266-269, 319, and 348"}
   },
   "sci": {
     "framing_error": "a missing stop bit sets ORFE, leaves RDRF clear, and transfers the receive shift-register byte into RDR",
@@ -84,7 +88,7 @@
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd63701v0_mcu.sv implements every legal Mode-0/1/2/5/6/7 memory and peripheral selection; hd63701v0_bus_wrapper.sv adds four-subphase Port-1/2/3/4, AS/IOS, R/W/OS3, reset, low-power, and standby pins",
     "model": "model/hd63701v0_device.py independently selects every legal device mode, model/hd63701v0_bus.py independently projects physical digital pin phases, and model/hd63701v0_prom.py independently classifies the 27256-compatible PROM interface",
-    "verification": "A 95-check decode suite, 30-check six-core execution bench, Mode-7 directed/model suites, 468-check all-mode physical wrapper bench, and 28-check PROM bench cover memory, TRAP, peripheral, reset, standby, WAI/SLP, address/data, AS/IOS, R/W/OS3, GPIO, and every documented table-3-1 PROM state; the pin model exhaustively projects 65,536 active addresses and the PROM model exhaustively checks all 32,768 PROM addresses",
+    "verification": "A 95-check decode suite, 30-check six-core execution bench, Mode-7 directed/model suites, 22-check cross-manufacturer Port-3 suite, 496-check all-mode physical wrapper bench, and 28-check PROM bench cover memory, TRAP, peripheral, reset, standby, WAI/SLP, address/data, AS/IOS, R/W/OS3, GPIO, and every documented table-3-1 PROM state; the pin model exhaustively projects 65,536 active addresses and the PROM model exhaustively checks all 32,768 PROM addresses",
     "excluded_modes": "Modes 3 and 4 are not used; PROM voltage magnitude, programming-pulse timing, erasure, charge retention, nanosecond timing, pads, and oscillator recovery delay remain unclaimed",
     "analog_exclusions": ["PROM programming voltage magnitude and pulse timing", "EPROM erasure and charge retention", "oscillator behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }

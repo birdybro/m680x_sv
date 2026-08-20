@@ -162,6 +162,39 @@ class MC6801DeviceModelTests(unittest.TestCase):
         self.assertEqual(port2_oe & 0x1C, 0x10)
         self.assertEqual(model.state.port2_ddr & 0x1C, 0x10)
 
+    def test_motorola_port3_latch_ddr_alias_and_handshake_side_effects(self) -> None:
+        model = MC6801DeviceModel(7)
+        self.write(model, 0x000F, 0x48)
+        self.idle(model, port3=0x96, is3_n=False)
+        self.idle(model, port3=0x96, is3_n=False)
+        self.assertTrue(model.state.port3_latch_valid)
+        self.assertTrue(model.state.port3_is3_flag)
+
+        self.assertEqual(self.read(model, 0x000F).read_data, 0xEF)
+        ddr_read = self.read(model, 0x0004, port3=0x55)
+        self.assertEqual(ddr_read.read_data, 0x96)
+        self.assertTrue(ddr_read.os3_n)
+        self.assertTrue(model.state.port3_latch_valid)
+        self.assertTrue(model.state.port3_is3_flag)
+
+        data_read = self.read(model, 0x0006, port3=0x55)
+        self.assertEqual(data_read.read_data, 0x96)
+        self.assertFalse(data_read.os3_n)
+        self.assertFalse(model.state.port3_latch_valid)
+        self.assertFalse(model.state.port3_is3_flag)
+
+        self.idle(model, port3=0xA5, is3_n=True)
+        self.idle(model, port3=0xA5, is3_n=True)
+        self.idle(model, port3=0xA5, is3_n=False)
+        self.idle(model, port3=0xA5, is3_n=False)
+        self.assertTrue(model.state.port3_latch_valid)
+        self.write(model, 0x000F, 0x40, port3=0x3C)
+        self.assertFalse(model.state.port3_latch_enable)
+        self.assertFalse(model.state.port3_latch_valid)
+        transparent = self.read(model, 0x0004, port3=0x3C)
+        self.assertEqual(transparent.read_data, 0x3C)
+        self.assertTrue(transparent.os3_n)
+
     def test_timer_flags_coherent_read_and_ordered_clear(self) -> None:
         model = MC6801DeviceModel()
         model.state.timer = 0x1233

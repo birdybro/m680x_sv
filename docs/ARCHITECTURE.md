@@ -179,8 +179,16 @@ turnaround, E-high data, and E-fall data. The normalized MCU advances once on
 the last subphase, so no generated clock is used. Modes 0/1/2/3/6 multiplex
 Port 3 and emit the high address on Port 4; Mode 5 emits active-low IOS for
 `$0100-$01ff` and gates write-data drive with E; Modes 4/7 preserve the
-GPIO/IS3/OS3 roles. The active-mode output makes the one-way Mode-4-to-5 pin
+GPIO/IS3 roles and hold a selected OS3 assertion from one positive E edge to
+the next. The active-mode output makes the one-way Mode-4-to-5 pin
 transition immediate at its completing E boundary.
+
+In Motorola single-chip modes, an IS3 falling edge optionally captures Port 3
+and sets the P3CSR flag. P3CSR-read followed by PORT3 DATA access performs the
+ordered clear; P3DDR reads instead return the same live/captured Port-3 data
+without affecting that protocol or OS3. Clearing latch-enable makes a stale
+captured value transparent immediately. These Motorola DDR-read semantics are
+kept separate from Hitachi's write-only `$ff` P3DDR behavior.
 
 WAI is not generalized across the lineage. MC6801RM(AD2) section 5.4.2 states
 that the expanded bus repeatedly reads the address seven below the pre-WAI SP,
@@ -303,11 +311,13 @@ contract and primary-manual locators are in
 
 In Mode 7, Ports 3 and 4 expose separate input, output-latch, and output-enable
 vectors. The active-low `is3_n_i` input sets the P3CSR flag and optionally
-captures Port 3. Reading P3CSR while set arms the documented clear; the
-following PORT3 read or write clears it unless a new edge occurs. `os3_n_o`
-pulses during the P3CSR-selected PORT3 read or write E-cycle. The normalized
+captures Port 3. Clearing latch-enable makes a captured input transparent.
+Reading P3CSR while set arms the documented clear; the following PORT3 DATA
+read or write clears it unless a new edge occurs. P3DDR is write-only, reads
+`$ff`, and has none of those side effects. `os3_n_o` pulses for the
+P3CSR-selected PORT3 DATA read or write E-cycle. The normalized
 Mode-7 contract is recorded in `../spec/interfaces/hd6301v1_mode7.json`; the
-physical wrapper qualifies that strobe to E high as specified above.
+physical wrapper holds that strobe between consecutive positive E edges.
 
 ## HD6303R Mode-1/2/4 integration
 
@@ -411,8 +421,9 @@ The device-pin wrapper advances address, AS-close/turnaround, E-rise data, and
 E-fall data subphases on one FPGA integration clock. Mode 1 drives dedicated
 Port-1/4 address pins; Modes 0/2/6 multiplex Port 3 under AS; Mode 5 decodes
 IOS and drives DDR-selected low-address bits; Mode 7 retains GPIO and qualifies
-OS3 to E high. RES asynchronously releases all four ports while E continues,
-then active roles recover only at a completing E boundary. WAI and SLP present
+OS3 between consecutive positive E edges. RES asynchronously releases all four
+ports while E continues, then active roles recover only at a completing E
+boundary. WAI and SLP present
 the documented `$ffff` read-inactive expanded state, whereas STBY immediately
 releases the ports and stops E. The exact contract and primary-manual locators
 are in `../spec/interfaces/hd63701v0_phased_bus.json`.

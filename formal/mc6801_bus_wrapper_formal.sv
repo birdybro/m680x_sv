@@ -25,6 +25,9 @@ module mc6801_bus_wrapper_formal;
   logic [15:0] address_mode5;
   logic [15:0] sp_mode5;
   logic waiting_mode5;
+  logic [1:0] phase7;
+  logic sc1oe_mode7;
+  logic sc2_mode7;
 
   assign reset_n = past_valid;
   always @(posedge clk) past_valid <= 1'b1;
@@ -61,10 +64,26 @@ module mc6801_bus_wrapper_formal;
     .debug_sp_o(sp_mode5),
     .debug_a_o(), .debug_b_o(), .debug_x_o(), .debug_ccr_o()
   );
+
+  mc6801_bus_wrapper #(.OPERATING_MODE(3'd7)) mode7 (
+    .phase_clk_i(clk), .phase_reset_n_i(reset_n), .reset_n_i(reset_n),
+    .clock_enable_i(clock_enable), .nmi_n_i(1'b1), .irq1_n_i(1'b1),
+    .program_data_i(8'hff), .program_address_o(), .program_read_o(),
+    .port1_i(8'hff), .port1_o(), .port1_oe_o(), .port2_i(5'h1f),
+    .port2_o(), .port2_oe_o(), .port3_i(8'hff), .port3_o(),
+    .port3_oe_o(), .port4_i(8'hff), .port4_o(), .port4_oe_o(),
+    .sc1_i(1'b1), .sc1_o(), .sc1_oe_o(sc1oe_mode7),
+    .sc2_o(sc2_mode7), .e_o(), .bus_phase_o(phase7), .opcode_fetch_o(),
+    .retire_o(), .illegal_o(), .undefined_o(), .waiting_o(),
+    .interrupt_ack_o(), .operating_mode_o(), .debug_address_o(),
+    .debug_pc_o(), .debug_sp_o(), .debug_a_o(), .debug_b_o(), .debug_x_o(),
+    .debug_ccr_o()
+  );
   /* verilator lint_on PINCONNECTEMPTY */
 
   always @* begin
     assert (phase2 == phase5);
+    assert (phase2 == phase7);
     assert (e2 == (reset_n && phase2[1]));
     assert (e5 == (reset_n && phase5[1]));
     if (!reset_n) begin
@@ -72,9 +91,11 @@ module mc6801_bus_wrapper_formal;
       assert (p3oe_mode5 == 8'h00);
       assert (sc1_mode2 && sc2_mode2);
       assert (sc1_mode5 && sc2_mode5);
+      assert (sc2_mode7);
     end else begin
       assert (sc1oe_mode2);
       assert (sc1oe_mode5);
+      assert (!sc1oe_mode7);
       assert (sc1_mode2 == (phase2 == 2'd0));
       if (phase2 == 2'd0) begin
         if (waiting_mode2) assert (p3_mode2 == sp_mode2[7:0]);
@@ -107,6 +128,12 @@ module mc6801_bus_wrapper_formal;
         assert (phase2 == ($past(phase2) + 2'd1));
       end else begin
         assert (phase2 == $past(phase2));
+      end
+      // MC6801RM(AD2) figure 3-18 permits OS3 to change only at positive E
+      // edges. Thus an asserted strobe necessarily spans one complete cycle.
+      if ($past(reset_n) && reset_n &&
+          (!$past(clock_enable) || ($past(phase7) != 2'd1))) begin
+        assert (sc2_mode7 == $past(sc2_mode7));
       end
     end
   end

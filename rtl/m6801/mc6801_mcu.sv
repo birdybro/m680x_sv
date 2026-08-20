@@ -22,6 +22,7 @@ module mc6801_mcu #(
   parameter logic       TIMER_COUNTER_DOUBLE_WRITE = 1'b0,
   parameter logic       TIMER_OVERFLOW_AT_ZERO = 1'b0,
   parameter logic       PORT_DDR_ASYNC_RESET = 1'b1,
+  parameter logic       PORT3_DDR_READS_DATA = 1'b1,
   parameter logic [15:0] INTERNAL_RAM_START = 16'h0080,
   parameter logic [15:0] INTERNAL_RAM_BYTES = 16'd128,
   parameter logic [15:0] INTERNAL_PROGRAM_START = 16'hf800,
@@ -209,6 +210,7 @@ module mc6801_mcu #(
   logic timer_counter_write_armed;
   logic is3_falling_edge;
   logic port3_access;
+  logic port3_latch_enable_for_edge;
   logic instruction_address_error;
   logic port3_irq;
   logic device_reset_n;
@@ -223,6 +225,9 @@ module mc6801_mcu #(
   logic mode5_external_select;
 
   assign device_reset_n = reset_n_i && standby_reset_n_i;
+  assign port3_latch_enable_for_edge =
+    (single_chip_ports && internal_write && (core_address == 16'h000f)) ?
+    core_data_out[3] : port3_latch_enable;
   assign hitachi_mode1_nonmultiplexed = HITACHI_NEW_MODES &&
     (active_mode == 3'd1);
   assign hitachi_mode4_expanded = HITACHI_NEW_MODES &&
@@ -434,7 +439,8 @@ module mc6801_mcu #(
         16'h0000, 16'h0001: core_data_in = 8'hff;
         16'h0002: core_data_in = port1_i;
         16'h0003: core_data_in = {active_mode, port2_i};
-        16'h0004: core_data_in = port3_latch_valid ? port3_input_latch : port3_i;
+        16'h0004: core_data_in = PORT3_DDR_READS_DATA ?
+          (port3_latch_valid ? port3_input_latch : port3_i) : 8'hff;
         16'h0005: core_data_in = 8'hff;
         16'h0006: core_data_in = port3_latch_valid ? port3_input_latch : port3_i;
         16'h0007: core_data_in = port4_i;
@@ -557,6 +563,9 @@ module mc6801_mcu #(
             port3_is3_enable <= core_data_out[6];
             port3_output_strobe_select <= core_data_out[4];
             port3_latch_enable <= core_data_out[3];
+            // A disabled latch is transparent immediately; a previously
+            // captured byte must not survive the control-register write.
+            if (!core_data_out[3]) port3_latch_valid <= 1'b0;
           end
           16'h0014: begin
             rame <= core_data_out[6];
@@ -578,7 +587,7 @@ module mc6801_mcu #(
       // A new IS3 edge wins over a coincident software clear.
       if (single_chip_ports && is3_falling_edge) begin
         port3_is3_flag <= 1'b1;
-        if (port3_latch_enable && !port3_latch_valid) begin
+        if (port3_latch_enable_for_edge && !port3_latch_valid) begin
           port3_input_latch <= port3_i;
           port3_latch_valid <= 1'b1;
         end

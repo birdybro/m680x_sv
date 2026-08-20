@@ -42,8 +42,8 @@ with device wrappers kept at separate integration boundaries:
   MC6803 uses the same block only in its documented Modes 2/3;
 - `mc6801_bus_wrapper`: device-oriented four-subphase E/AS/R/W/IOS and
   Port-3 address/data waveform for every Motorola operating mode, including
-  the dynamic Mode-4-to-5 pin-role transition and documented post-stack-SP
-  read cycles while WAI is active;
+  full-E-cycle OS3, the dynamic Mode-4-to-5 pin-role transition, and documented
+  post-stack-SP read cycles while WAI is active;
 - `hd6301v1_mcu`: every legal HD6301V1 Mode 0/1/2/4/5/6/7 integration with a
   separate 4-KiB FPGA mask-ROM image port, normalized expanded-memory bus,
   executable RAM, mode-dependent ports/strobes, timer/SCI, SLP,
@@ -127,7 +127,7 @@ The current regressions include 1,839,105 Python ALU cases, 1,969,155 RTL ALU
 cases, every documented opcode encoding, 5,120 deterministic CPU model/RTL
 retirement comparisons, 1,536 MC6801/MC6803, 768 MC68705P5, and 768 HD63705V0
 peripheral cycle comparisons, and directed reset/stack/interrupt/device tests
-across two simulators, twenty bounded formal profiles, and thirty
+across two simulators, twenty-one bounded formal profiles, and thirty
 synthesis tops. Detailed counts,
 coverage limits, formal properties, and representative synthesis statistics are
 in [docs/VERIFICATION.md](docs/VERIFICATION.md).

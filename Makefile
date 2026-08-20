@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-wai-bus test-mc6801-wai-response test-mc6800-wrapper test-mc6800-phased-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd6303r-bus-wrapper test-hd63701v0 test-hd63701v0-modes test-hd63701v0-prom test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-wai-bus test-mc6801-wai-response test-mc6800-wrapper test-mc6800-phased-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-port3 test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6301v1-modes test-hd6303r test-hd6303r-modes test-hd6303r-bus-wrapper test-hd63701v0 test-hd63701v0-modes test-hd63701v0-prom test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 .PHONY: test-hd6301v1-bus-wrapper test-hd63701v0-bus-wrapper
 
 help:
@@ -28,6 +28,7 @@ help:
 	@echo "  test-m6801-opcodes compare all documented MC6801 encodings to the model"
 	@echo "  test-mc6801-mcu verify Mode 2/3 RAM, GPIO, timer, SCI, and interrupts"
 	@echo "  test-mc6801-modes verify Mode 0-7/1R/6R decode, vectors, RAM, ROM, and ports"
+	@echo "  test-mc6801-port3 verify Motorola/Hitachi Port-3 handshake differences"
 	@echo "  test-mc6801-bus-wrapper verify the four-subphase E/AS/IOS physical bus"
 	@echo "  test-mc6801-sci-external verify P22-clocked NRZ transmit and receive"
 	@echo "  test-mc6801-sci-biphase verify transition-coded transmit and receive"
@@ -247,7 +248,7 @@ test-mc6800-phased-wrapper:
 	build/obj_mc6800_phased_bus_wrapper/Vtb_mc6800_phased_bus_wrapper
 	$(PYTHON) -m unittest tests.test_mc6800_phase_model -v
 
-test-m6801: test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase
+test-m6801: test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-port3 test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_mc6801_device_model tests.test_mc6801_bus_model -v
 
 test-m6801-opcodes:
@@ -285,6 +286,16 @@ test-mc6801-modes:
 		rtl/m6800/m6800_core.sv rtl/m6801/mc6801_mcu.sv \
 		sim/tb_mc6801_boot_modes.sv
 	build/obj_mc6801_boot_modes/Vtb_mc6801_boot_modes
+
+test-mc6801-port3:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall --top-module tb_mc6801_port3 \
+		-Mdir build/obj_mc6801_port3 -o Vtb_mc6801_port3 \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv rtl/hd6301/hd6301v1_mcu.sv \
+		rtl/hd6301/hd63701v0_mcu.sv \
+		sim/tb_mc6801_port3.sv
+	build/obj_mc6801_port3/Vtb_mc6801_port3
 
 test-mc6801-bus-wrapper:
 	mkdir -p build
@@ -569,7 +580,7 @@ test-interrupt-delay:
 		rtl/m6805/m6805_core.sv sim/tb_interrupt_delay.sv
 	build/obj_delay_hd6305/Vdelay_hd6305
 
-test-peripherals: test-mc6803 test-mc6801-modes test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5 test-mc68705p5-peripheral-diff test-hd63705v0 test-hd63705-peripheral-diff
+test-peripherals: test-mc6803 test-mc6801-modes test-mc6801-port3 test-mc6801-bus-wrapper test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5 test-mc68705p5-peripheral-diff test-hd63705v0 test-hd63705-peripheral-diff
 
 test-mc68705p5:
 	mkdir -p build
@@ -703,6 +714,13 @@ test-iverilog: spec-check
 		-o build/iverilog/tb_mc6801_boot_modes rtl/generated/yosys_m6800_core.sv \
 		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_boot_modes.sv
 	$(VVP) build/iverilog/tb_mc6801_boot_modes
+	$(IVERILOG) -g2012 -Wall -s tb_mc6801_port3 \
+		-o build/iverilog/tb_mc6801_port3 \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv rtl/hd6301/hd6301v1_mcu.sv \
+		rtl/hd6301/hd63701v0_mcu.sv \
+		sim/tb_mc6801_port3.sv
+	$(VVP) build/iverilog/tb_mc6801_port3
 	$(IVERILOG) -g2012 -Wall -s tb_mc6801_bus_wrapper \
 		-o build/iverilog/tb_mc6801_bus_wrapper \
 		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \

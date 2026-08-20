@@ -71,11 +71,14 @@ module mc6801_bus_wrapper #(
   logic [7:0] raw_port4;
   logic [7:0] raw_port4_oe;
   logic raw_os3_n;
+  logic os3_active;
+  logic os3_reset_n;
 
   assign device_clock_enable = clock_enable_i &&
     (bus_phase == PHASE_E_FALL);
   assign bus_phase_o = bus_phase;
   assign e_o = phase_reset_n_i && bus_phase[1];
+  assign os3_reset_n = phase_reset_n_i && reset_n_i;
   assign pin_address = waiting_o ? debug_sp_o : cycle_address;
   assign pin_write = waiting_o ? 1'b0 : cycle_write;
 
@@ -84,6 +87,16 @@ module mc6801_bus_wrapper #(
       bus_phase <= PHASE_ADDRESS;
     end else if (clock_enable_i) begin
       bus_phase <= bus_phase + 2'd1;
+    end
+  end
+
+  always_ff @(posedge phase_clk_i or negedge os3_reset_n) begin
+    if (!os3_reset_n) begin
+      os3_active <= 1'b0;
+    end else if (clock_enable_i && (bus_phase == PHASE_AS_CLOSE)) begin
+      // Figure 3-18 starts OS3 after this E rising edge and ends it after the
+      // following E rising edge, one complete E cycle later.
+      os3_active <= single_chip && !raw_os3_n;
     end
   end
 
@@ -112,7 +125,7 @@ module mc6801_bus_wrapper #(
     port4_oe_o = raw_port4_oe;
     sc1_o = 1'b1;
     sc1_oe_o = !single_chip;
-    sc2_o = single_chip ? (!bus_phase[1] || raw_os3_n) : !pin_write;
+    sc2_o = single_chip ? !os3_active : !pin_write;
 
     if (!reset_n_i) begin
       // The manual specifies high AS/RW/address pull states and a released

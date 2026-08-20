@@ -83,6 +83,34 @@ class HD63701V0Mode7ModelTests(unittest.TestCase):
         self.cycle(model)
         self.assertTrue(model.state.tcsr & 0x20)
 
+    def test_port3_write_only_ddr_and_handshake_side_effects(self) -> None:
+        model = HD63701V0Mode7Model()
+        self.write(model, 0x000F, 0x48)
+        self.cycle(model, port3=0x96, is3_n=False)
+        self.cycle(model, port3=0x96, is3_n=False)
+        self.assertTrue(model.state.port3_latch_valid)
+        self.assertEqual(self.read(model, 0x000F).read_data, 0xEF)
+
+        ddr_read = self.read(model, 0x0004, port3=0x3C)
+        self.assertEqual(ddr_read.read_data, 0xFF)
+        self.assertTrue(ddr_read.os3_n)
+        self.assertTrue(model.state.port3_is3_flag)
+        self.assertTrue(model.state.port3_latch_valid)
+
+        data_read = self.read(model, 0x0006, port3=0x3C)
+        self.assertEqual(data_read.read_data, 0x96)
+        self.assertFalse(data_read.os3_n)
+        self.assertFalse(model.state.port3_is3_flag)
+        self.assertFalse(model.state.port3_latch_valid)
+
+        self.cycle(model, port3=0xA5, is3_n=True)
+        self.cycle(model, port3=0xA5, is3_n=True)
+        self.cycle(model, port3=0xA5, is3_n=False)
+        self.cycle(model, port3=0xA5, is3_n=False)
+        self.write(model, 0x000F, 0x40, port3=0x3C)
+        self.assertFalse(model.state.port3_latch_valid)
+        self.assertEqual(self.read(model, 0x0006, port3=0x3C).read_data, 0x3C)
+
     def test_asynchronous_standby_retained_domain(self) -> None:
         model = HD63701V0Mode7Model()
         self.write(model, 0x0040, 0x96)

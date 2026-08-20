@@ -4,7 +4,7 @@
   "device": "hd6301v1",
   "clock_model": {
     "rtl_boundary": "phase_clk_i runs at four times E; enabled rising edges advance address, AS-close, E-rise data, and E-fall data subphases",
-    "historical_boundary": "the on-chip oscillator divides by four to produce E; expanded bus data transfer and Port-3 OS3 occur while E is high, and accepted STBY stops E",
+    "historical_boundary": "the on-chip oscillator divides by four to produce E; expanded data transfer occurs while E is high, Mode-7 OS3 spans consecutive positive E edges, and accepted STBY stops E",
     "status": "PARTIAL",
     "limitation": "All legal-mode digital pin roles, active subphase ordering, third-E-cycle reset release, and standby E suppression are implemented; nanosecond limits, oscillator stabilization, pads, and electrical behavior are not"
   },
@@ -20,7 +20,7 @@
     {"name": "sc1_i", "historical": "IS3 in Mode 7", "direction": "input", "fact": "Mode-7 falling edge input for Port-3 latch and interrupt control"},
     {"name": "sc1_o", "historical": "AS in Modes 0/2/4/6 or IOS in Mode 5", "direction": "output", "fact": "AS is high only in the multiplexed address phase; IOS is low exactly for 0100-01FF"},
     {"name": "sc1_oe_o", "historical": "SC1 role selection", "direction": "output", "fact": "enabled in multiplexed modes and Mode 5, disabled for unused Mode 1 and Mode-7 IS3 input"},
-    {"name": "sc2_o", "historical": "R/W in expanded modes or OS3 in Mode 7", "direction": "output", "fact": "expanded direction is high for reads and low for writes; Mode-7 OS3 is active only during the selected E-high Port-3 access"},
+    {"name": "sc2_o", "historical": "R/W in expanded modes or OS3 in Mode 7", "direction": "output", "fact": "expanded direction is high for reads and low for writes; a selected Mode-7 Port-3 DATA access asserts OS3 after its positive E edge and releases it after the following positive E edge"},
     {"name": "port1_i", "historical": "P10-P17 GPIO input", "direction": "input", "fact": "physical GPIO samples in every mode except dedicated-address Mode 1"},
     {"name": "port1_o", "historical": "P10-P17 or A0-A7", "direction": "output", "fact": "Mode 1 lower address; otherwise the Port-1 output latch"},
     {"name": "port1_oe_o", "historical": "Port-1 direction/address drive", "direction": "output", "fact": "all ones for active Mode-1 address, otherwise the GPIO DDR; released in established reset and standby"},

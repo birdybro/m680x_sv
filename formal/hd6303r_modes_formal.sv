@@ -20,6 +20,7 @@ module hd6303r_modes_formal;
   /* verilator lint_off PINCONNECTEMPTY */
   mc6801_mcu #(
     .OPERATING_MODE(3'd1), .HITACHI_CPU(1'b1), .HITACHI_NEW_MODES(1'b1),
+    .PORT3_DDR_READS_DATA(1'b0),
     .SCI_BIPHASE_SUPPORTED(1'b0)
   ) mode1 (
     .clk_i(clk), .reset_n_i(reset_n), .standby_reset_n_i(1'b1),
@@ -44,6 +45,7 @@ module hd6303r_modes_formal;
 
   mc6801_mcu #(
     .OPERATING_MODE(3'd4), .HITACHI_CPU(1'b1), .HITACHI_NEW_MODES(1'b1),
+    .PORT3_DDR_READS_DATA(1'b0),
     .SCI_BIPHASE_SUPPORTED(1'b0)
   ) mode4 (
     .clk_i(clk), .reset_n_i(reset_n), .standby_reset_n_i(1'b1),

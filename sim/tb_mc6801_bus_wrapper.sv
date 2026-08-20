@@ -215,7 +215,16 @@ module tb_mc6801_bus_wrapper;
     check_value(sc2[7], "mode7 OS3 remains inactive before E");
     advance_phase(2'd1);
     advance_phase(2'd2);
-    check_value(!sc2[7], "mode7 OS3 is active through selected E-high read");
+    check_value(!sc2[7], "mode7 OS3 starts at the selected positive E edge");
+    advance_phase(2'd3);
+    check_value(!sc2[7], "mode7 OS3 remains active after E falls");
+    advance_phase(2'd0);
+    check_value(!sc2[7], "mode7 OS3 spans the complete E cycle");
+    set_transaction(16'h0002, 1'b0, 8'h00);
+    advance_phase(2'd1);
+    check_value(!sc2[7], "mode7 OS3 remains active until the next positive E edge");
+    advance_phase(2'd2);
+    check_value(sc2[7], "mode7 OS3 ends at the next positive E edge");
     advance_phase(2'd3);
     advance_phase(2'd0);
 

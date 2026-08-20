@@ -55,18 +55,39 @@ class MC6801BusModelTests(unittest.TestCase):
             0xFF,
         )
 
-    def test_single_chip_os3_is_qualified_by_e(self) -> None:
+    def test_single_chip_os3_spans_consecutive_e_rising_edges(self) -> None:
         for mode in (4, 7):
-            self.assertTrue(self.pins(mode, 0, os3_n=False).sc2)
-            self.assertTrue(self.pins(mode, 1, os3_n=False).sc2)
-            self.assertFalse(self.pins(mode, 2, os3_n=False).sc2)
-            self.assertFalse(self.pins(mode, 3, os3_n=False).sc2)
+            sequencer = MC6801BusSequencer()
+            sequencer.tick(single_chip=True)
+            sequencer.tick(single_chip=True, os3_selected=True)
+            for expected_phase in (2, 3, 0, 1):
+                self.assertEqual(sequencer.phase, expected_phase)
+                self.assertTrue(sequencer.os3_active)
+                self.assertFalse(
+                    self.pins(
+                        mode,
+                        sequencer.phase,
+                        os3_active=sequencer.os3_active,
+                    ).sc2
+                )
+                if expected_phase != 1:
+                    sequencer.tick(single_chip=True)
+            sequencer.tick(single_chip=True)
+            self.assertEqual(sequencer.phase, 2)
+            self.assertFalse(sequencer.os3_active)
+            self.assertTrue(self.pins(mode, 2).sc2)
+
+            sequencer.phase = 2
+            sequencer.os3_active = True
+            sequencer.tick(clock_enable=False, reset_n=False)
+            self.assertEqual(sequencer.phase, 2)
+            self.assertFalse(sequencer.os3_active)
 
     def test_reset_releases_data_and_holds_controls_high(self) -> None:
         for mode in range(8):
             for phase in range(4):
                 pins = self.pins(mode, phase, reset_n=False, write=True,
-                                 normalized_port3_oe=0xFF, os3_n=False)
+                                 normalized_port3_oe=0xFF, os3_active=True)
                 self.assertEqual(pins.port3_oe, 0)
                 self.assertTrue(pins.sc1)
                 self.assertTrue(pins.sc2)

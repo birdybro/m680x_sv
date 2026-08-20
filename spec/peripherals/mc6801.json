@@ -14,7 +14,7 @@
     {"address": "0001", "name": "P2DDR", "read": "FF", "write": "one selects output subject to timer and SCI overrides", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 3.1.8-3.1.9, printed pages 3-14 to 3-22"}},
     {"address": "0002", "name": "PORT1", "read": "physical pin levels", "write": "output latch", "reset": "output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 3.1.8, printed pages 3-14 to 3-18"}},
     {"address": "0003", "name": "PORT2", "read": "PC2:PC0 in bits 7:5 and physical P24:P20 in bits 4:0", "write": "output latch except P21; timer and SCI override selected pins", "reset": "DDR=00; output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 3.1.9.1-3.1.9.4 and figure 3-11, printed pages 3-18 to 3-22"}},
-    {"address": "0004", "name": "P3DDR", "read": "PORT3 data in modes 4 and 7", "write": "one selects output in modes 4 and 7", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and section 2.2.1, printed pages 2-18 to 2-19"}},
+    {"address": "0004", "name": "P3DDR", "read": "PORT3 pin or captured-latch data in modes 4 and 7 without changing the IS3 flag, clear sequence, input latch, or OS3", "write": "one selects output in modes 4 and 7", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "section 3.2.3, printed pages 3-25 to 3-26"}},
     {"address": "0005", "name": "P4DDR", "read": "FF", "write": "one selects output/address function in modes that expose Port 4", "reset": "00", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and sections 2.1.2-2.2.1, printed pages 2-5 to 2-19"}},
     {"address": "0006", "name": "PORT3", "read": "mode-dependent pin or latched-bus data", "write": "mode-dependent output data", "reset": "output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and sections 2.2.1 and 3.2, printed pages 2-18 to 2-19 and 3-23 onward"}},
     {"address": "0007", "name": "PORT4", "read": "physical pin levels when configured as port", "write": "output latch", "reset": "output latch undefined", "reference": {"id": "motorola-mc6801-reference-1983", "locator": "figure 2-17 and sections 2.1.2-2.2.1, printed pages 2-5 to 2-19"}},
@@ -45,7 +45,10 @@
     "port1": "eight independent DDR pins; reads sample physical pins even for outputs",
     "port2": "five DDR pins plus mode bits in read bits 7:5; P20/P21 timer and P22:P24 SCI functions override GPIO when enabled",
     "port3_port4": "register addresses are external in expanded multiplexed modes 0-3",
-    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 2.2.1 and 3.1.8-3.2, printed pages 2-18 to 2-19 and 3-14 onward"}
+    "port3_latch": "an IS3 falling edge captures Port 3 only while latch-enable is set; clearing latch-enable makes the path transparent and a Port-3 DATA read makes it transparent on the following rising E edge",
+    "p3csr_clear": "IS3 flag clears only after P3CSR is read while set followed by a read or write of PORT3 DATA; a P3DDR access has no handshake side effects and a new falling edge wins over a coincident clear",
+    "os3": "OSS chooses Port-3 DATA reads or writes; a selected access asserts active-low OS3 after its positive E edge and releases it after the following positive E edge, spanning one complete E cycle",
+    "reference": {"id": "motorola-mc6801-reference-1983", "locator": "sections 2.2.1 and 3.1.8-3.2, figures 3-17 to 3-19, printed pages 2-18 to 2-19 and 3-14 to 3-27"}
   },
   "sci": {
     "clock_modes": {"00": "internal bi-phase", "01": "internal NRZ", "10": "internal NRZ with bit clock on P22", "11": "external 8x NRZ clock on P22"},
@@ -87,7 +90,7 @@
     {"source": "sci", "vector": "FFF0:FFF1", "priority": 6}
   ],
   "implementation_scope": {
-    "current_profile": "Normalized Mode 0-7 plus 1R/6R decode, internal RAM/ROM selection, Port 3/4 functions, Mode 4-to-5 transition, all three NRZ clock selections, and internally clocked bi-phase-M with transition-interval receive. Physical bus multiplexing and Port 3 handshake completeness remain separate profiles.",
+    "current_profile": "Normalized Mode 0-7 plus 1R/6R decode, internal RAM/ROM selection, complete Port 3/4 digital handshake functions, Mode 4-to-5 transition, all three NRZ clock selections, and internally clocked bi-phase-M with transition-interval receive. Physical bus multiplexing and full-E-cycle OS3 timing are implemented by the separate device-oriented wrapper.",
     "differential_evidence": "Two deterministic seeds compare 768 independent-model E-cycle transactions per mode against internal decode, GPIO, timer, SCI, and interrupt RTL state.",
     "undefined_output_latches": "RTL selects deterministic zero after reset without claiming that manufacturer-undefined silicon latch value.",
     "standby_retention": "RTL exposes standby validity without claiming analog threshold or power-domain retention equivalence.",

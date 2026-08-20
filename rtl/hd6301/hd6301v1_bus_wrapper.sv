@@ -82,6 +82,8 @@ module hd6301v1_bus_wrapper #(
   logic [7:0] raw_port4;
   logic [7:0] raw_port4_oe;
   logic raw_os3_n;
+  logic os3_active;
+  logic os3_reset_n;
 
   assign multiplexed_mode = (OPERATING_MODE == 3'd0) ||
     (OPERATING_MODE == 3'd2) || (OPERATING_MODE == 3'd4) ||
@@ -102,12 +104,26 @@ module hd6301v1_bus_wrapper #(
   assign reset_counter_clear = !phase_reset_n_i || reset_n_i;
   assign bus_phase_o = bus_phase;
   assign e_o = phase_reset_n_i && !standby_active_o && bus_phase[1];
+  assign os3_reset_n = phase_reset_n_i && reset_n_i;
 
   always_ff @(posedge phase_clk_i or negedge phase_reset_n_i) begin
     if (!phase_reset_n_i) begin
       bus_phase <= PHASE_ADDRESS;
     end else if (clock_enable_i) begin
       bus_phase <= bus_phase + 2'd1;
+    end
+  end
+
+  always_ff @(posedge phase_clk_i or negedge os3_reset_n) begin
+    if (!os3_reset_n) begin
+      os3_active <= 1'b0;
+    end else if (clock_enable_i) begin
+      if (standby_active_o) begin
+        os3_active <= 1'b0;
+      end else if (bus_phase == PHASE_AS_CLOSE) begin
+        // Figures 5-5/3-11-5 bound OS3 between consecutive E rising edges.
+        os3_active <= single_chip_mode && !raw_os3_n;
+      end
     end
   end
 
@@ -139,7 +155,7 @@ module hd6301v1_bus_wrapper #(
     port4_oe_o = raw_port4_oe;
     sc1_o = 1'b1;
     sc1_oe_o = multiplexed_mode || mode5_nonmultiplexed;
-    sc2_o = single_chip_mode ? (!bus_phase[1] || raw_os3_n) : !pin_write;
+    sc2_o = single_chip_mode ? !os3_active : !pin_write;
 
     if (reset_bus_released || standby_active_o) begin
       port1_oe_o = 8'h00;

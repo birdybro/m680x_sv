@@ -49,7 +49,10 @@
     "port3": "eight Mode-7 GPIO pins with DDR, optional IS3 input latch, read- or write-selected active-low OS3 pulse, and IS3 interrupt flag; external address/data bus in expanded modes",
     "port4": "eight Mode-7 GPIO pins; high/full/partial address function in expanded modes according to table 2-1-2",
     "reset": "port DDRs clear synchronously with E; the current output-enable state persists between RES assertion and the next E edge",
-    "p3csr_clear": "IS3 flag clears only after P3CSR is read while set followed by a read or write of PORT3; a new falling edge wins over a coincident clear",
+    "port3_latch": "an IS3 falling edge captures Port 3 only while latch-enable is set; clearing latch-enable makes the path transparent and a Port-3 DATA read makes it transparent on the following rising E edge",
+    "p3ddr_read": "P3DDR is write-only and reads FF without changing the IS3 flag, clear sequence, input latch, or OS3",
+    "p3csr_clear": "IS3 flag clears only after P3CSR is read while set followed by a read or write of PORT3 DATA; a new falling edge wins over a coincident clear",
+    "os3": "OSS chooses Port-3 DATA reads or writes; a selected access asserts active-low OS3 after its positive E edge and releases it after the following positive E edge, spanning one complete E cycle",
     "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 2.4 and timing figures 5-3 to 5-6, printed pages 142-145 and 189-190"}
   },
   "sci": {
@@ -92,7 +95,7 @@
   "implementation_scope": {
     "rtl": "rtl/hd6301/hd6301v1_mcu.sv implements every legal Mode-0/1/2/4/5/6/7 digital memory and port selection and accepts a separate 4-KiB FPGA mask-ROM image; rtl/hd6301/hd6301v1_bus_wrapper.sv projects every legal mode onto four digital E subphases",
     "model": "model/hd6301v1_device.py independently classifies all legal-mode E-cycle transactions, program/external memory, Mode-7 GPIO/handshake state, and address errors; model/hd6301v1_bus.py separately models physical pin phases, bus ownership, reset release, and low-power states",
-    "verification": "A 105-check decode suite covers all legal mode maps and address-error regions, a seven-core bench executes from every program source, and a 627-check pin suite plus exhaustive address projection covers the all-mode four-subphase wrapper; Mode-7 directed execution additionally covers internal reset/vector fetch, executable RAM, exact 13-cycle address TRAP, Port 3/4 GPIO, IS3/OS3, SLP, STBY, and retention",
+    "verification": "A 105-check decode suite covers all legal mode maps and address-error regions, a seven-core bench executes from every program source, a 22-check cross-manufacturer Port-3 suite covers the DDR/latch/flag/strobe contract, and a 659-check pin suite plus exhaustive address projection covers the all-mode four-subphase wrapper; Mode-7 directed execution additionally covers internal reset/vector fetch, executable RAM, exact 13-cycle address TRAP, Port 3/4 GPIO, IS3/OS3, SLP, STBY, and retention",
     "excluded_modes": "Mode 3 is not defined; nanosecond bus limits, oscillator recovery delay, pad behavior, and electrical characteristics remain unclaimed",
     "analog_exclusions": ["mask-ROM contents", "oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }

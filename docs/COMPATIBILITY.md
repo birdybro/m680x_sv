@@ -80,8 +80,9 @@ input and advances one serial bit per eight sampled positive clock edges.
 The separate Motorola device-pin wrapper implements the documented digital
 four-subphase E waveform for all eight modes. It covers AS and Port-3
 address/data turnaround in multiplexed Modes 0/1/2/3/6, R/W, Mode-5 IOS and
-E-qualified data drive, reset bus release, single-chip IS3/OS3 roles, and the
-Mode-4-to-5 transition. During WAI it repeatedly presents the current
+E-qualified data drive, reset bus release, the single-chip IS3 latch/flag-clear
+protocol, Motorola's P3DDR data alias, OS3 from one positive E edge to the
+next, and the Mode-4-to-5 transition. During WAI it repeatedly presents the current
 post-stack SP as a read, including Mode-5 IOS decode and Port-3 read release.
 The response trace retains that read through internal cycles, then performs
 the two vector reads and reaches the first handler opcode in five E-cycles for
@@ -91,8 +92,9 @@ strength remain outside the claim.
 
 The MC6803 profile inherits only the manufacturer-stated Modes 2/3 facts and
 rejects other public configurations. Its shared Motorola digital multiplexed
-bus waveform is implemented; nanosecond electrical timing and complete Port 3
-handshake timing remain outside this partial claim.
+bus waveform is implemented. Single-chip Port 3 handshake behavior is not
+applicable to the claimed MC6803 Modes 2/3 profile; nanosecond electrical
+timing remains outside the partial pin-level claim.
 For a framing error, MC6801 transfers the misframed byte into RDR while setting
 ORFE without RDRF. This behavior is independently selected and tested rather
 than generalized to Hitachi parts.
@@ -104,8 +106,9 @@ Directed integration tests repeat HD6301-only instructions, opcode TRAP,
 continued timer operation in SLP, masked-request wake without vectoring, and
 simultaneous NMI/IRQ priority in all three modes.
 They also cover E-synchronous STBY entry, high-impedance GPIO/external-bus
-qualification, retained RAM/STBY_PWR, and reset-vector recovery. Port 3
-handshakes remain outside this partial claim. A separate physical wrapper
+qualification, retained RAM/STBY_PWR, and reset-vector recovery. Single-chip
+Port 3 handshakes are not applicable to the documented ROMless Modes 1/2/4.
+A separate physical wrapper
 implements active Mode-1 dedicated address/data timing and the Mode-2/4
 four-subphase AS/address/data waveform. It also mirrors internal writes onto
 the physical data bus, presents the documented `$ffff` read while SLP leaves E
@@ -148,14 +151,16 @@ two Mode-5 non-memory spans, and both Mode-7 spans. Mode 2 again follows the
 manual's explicit Mode-2/Mode-4 equivalence because the address-error table
 omits a separate Mode-2 row.
 
-The 627-check all-mode pin suite covers dedicated and multiplexed address/data,
+The 659-check all-mode pin suite covers dedicated and multiplexed address/data,
 Port-4 partial-address DDR behavior, AS, exact Mode-5 IOS decode, R/W, internal
-write mirroring, Mode-7 IS3/OS3 with E qualification, address release after the
-third low-RES cycle, distinct WAI/SLP bus state, and E-synchronous standby.
+write mirroring, and Mode-7 OS3 across one complete E cycle, plus address
+release after the third low-RES cycle, distinct WAI/SLP bus state, and
+E-synchronous standby.
 An independent model exhaustively projects every 16-bit address through all six
 address-bus modes and separately checks Mode-7 GPIO/strobes. Mode 7 additionally
-covers all four GPIO ports, the IS3 input latch and IRQ1
-source, read/write-selected OS3, common timer/SCI functions, and SLP behavior.
+covers all four GPIO ports, the IS3 input latch and IRQ1 source, write-only
+P3DDR reads, the ordered P3CSR/PORT3 clear protocol, read/write-selected OS3,
+common timer/SCI functions, and SLP behavior.
 Directed tests verify that instruction fetches in both documented non-memory
 ranges enter the 13-cycle address TRAP while normal data accesses do not.
 E-synchronous STBY entry, retained RAM/STBY_PWR, high-impedance ports,

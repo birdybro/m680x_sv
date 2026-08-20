@@ -33,7 +33,7 @@ class HD6301V1BusInputs:
     port3_oe: int = 0
     port4: int = 0
     port4_oe: int = 0
-    os3_n: bool = True
+    os3_active: bool = False
 
 
 @dataclass(frozen=True)
@@ -74,7 +74,7 @@ def bus_pins(inputs: HD6301V1BusInputs) -> HD6301V1BusPins:
     if mode5:
         sc1 = (address >> 8) != 0x01
     sc1_oe = multiplexed or mode5
-    sc2 = (inputs.phase < 2 or inputs.os3_n) if single_chip else not write
+    sc2 = not inputs.os3_active if single_chip else not write
     port1 = inputs.port1 & 0xFF
     port1_oe = inputs.port1_oe & 0xFF
     port3 = inputs.port3 & 0xFF
@@ -138,17 +138,33 @@ def bus_pins(inputs: HD6301V1BusInputs) -> HD6301V1BusPins:
 class HD6301V1BusSequencer:
     phase: int = 0
     reset_low_cycles: int = 0
+    os3_active: bool = False
 
     def reset(self) -> None:
         self.phase = 0
         self.reset_low_cycles = 0
+        self.os3_active = False
 
-    def tick(self, clock_enable: bool = True, reset_n: bool = True) -> int:
+    def tick(
+        self,
+        clock_enable: bool = True,
+        reset_n: bool = True,
+        *,
+        single_chip: bool = False,
+        os3_selected: bool = False,
+        standby_active: bool = False,
+    ) -> int:
         previous_phase = self.phase
         if reset_n:
             self.reset_low_cycles = 0
+        else:
+            self.os3_active = False
         if clock_enable:
             self.phase = (self.phase + 1) & 3
+            if standby_active:
+                self.os3_active = False
+            elif reset_n and previous_phase == 1:
+                self.os3_active = single_chip and os3_selected
             if not reset_n and previous_phase == 3:
                 self.reset_low_cycles = min(self.reset_low_cycles + 1, 3)
         return self.phase

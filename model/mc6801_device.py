@@ -449,6 +449,11 @@ class MC6801DeviceModel:
         )
         internal_read = register_select and not inputs.write
         internal_write = register_select and inputs.write
+        port3_access = register_select and address == 0x0006
+        os3_n = not (
+            port3_access
+            and (inputs.write == self.state.port3_output_strobe_select)
+        )
         if self.single_chip_ports:
             external_bus = False
         elif self.active_mode == 5:
@@ -513,6 +518,7 @@ class MC6801DeviceModel:
                 and inputs.opcode_fetch
                 and self.instruction_address_error(address)
             ),
+            os3_n=os3_n,
         )
 
     def _advance_memory_and_gpio(
@@ -593,6 +599,8 @@ class MC6801DeviceModel:
                 state.port3_is3_enable = bool(inputs.data & 0x40)
                 state.port3_output_strobe_select = bool(inputs.data & 0x10)
                 state.port3_latch_enable = bool(inputs.data & 0x08)
+                if not state.port3_latch_enable:
+                    state.port3_latch_valid = False
 
         if internal_read and address == 0x000F:
             state.port3_clear_armed = state.port3_is3_flag

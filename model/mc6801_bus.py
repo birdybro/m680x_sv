@@ -26,7 +26,7 @@ class MC6801BusInputs:
     normalized_port3_oe: int = 0
     normalized_port4: int = 0
     normalized_port4_oe: int = 0
-    os3_n: bool = True
+    os3_active: bool = False
 
 
 @dataclass(frozen=True)
@@ -62,7 +62,7 @@ def bus_pins(inputs: MC6801BusInputs) -> MC6801BusPins:
     port4 = inputs.normalized_port4 & 0xFF
     sc1 = True
     sc1_oe = multiplexed or nonmultiplexed
-    sc2 = (not e or inputs.os3_n) if not sc1_oe else not write
+    sc2 = not inputs.os3_active if not sc1_oe else not write
 
     if not inputs.reset_n:
         port3_oe = 0
@@ -101,11 +101,25 @@ class MC6801BusSequencer:
     """Minimal integration-clock sequencer independent of CPU state."""
 
     phase: int = 0
+    os3_active: bool = False
 
     def reset(self) -> None:
         self.phase = 0
+        self.os3_active = False
 
-    def tick(self, clock_enable: bool = True) -> int:
+    def tick(
+        self,
+        clock_enable: bool = True,
+        *,
+        reset_n: bool = True,
+        single_chip: bool = False,
+        os3_selected: bool = False,
+    ) -> int:
+        if not reset_n:
+            self.os3_active = False
         if clock_enable:
+            previous_phase = self.phase
             self.phase = (self.phase + 1) & 3
+            if reset_n and previous_phase == 1:
+                self.os3_active = single_chip and os3_selected
         return self.phase

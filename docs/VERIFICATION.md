@@ -35,21 +35,22 @@ The committed tests cover:
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801 Mode 0-7/1R/6R decode checks | 62 |
 | MC6801 real-core mode boot paths | 2 |
-| MC6801 four-subphase bus-wrapper checks | 211 |
+| MC6801/HD6301V1/HD63701V0 Port-3 handshake checks | 22 |
+| MC6801 four-subphase bus-wrapper checks | 219 |
 | MC6801 external-clock SCI checks | 165 |
 | MC6801 bi-phase SCI checks | 24 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
 | HD6301V1 Mode-7 integration checks | 32 |
 | HD6301V1 legal-mode decode checks | 105 |
 | HD6301V1 seven-mode execution/source checks | 28 |
-| HD6301V1 four-subphase bus-wrapper checks | 627 |
+| HD6301V1 four-subphase bus-wrapper checks | 659 |
 | HD6303R Mode-1/2/4 integration checks | 57 |
 | HD6303R legal-mode decode checks | 47 |
 | HD6303R four-subphase bus-wrapper checks | 180 |
 | HD63701V0 Mode-7 integration checks | 33 |
 | HD63701V0 legal-mode decode checks | 95 |
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
-| HD63701V0 four-subphase bus-wrapper checks | 468 |
+| HD63701V0 four-subphase bus-wrapper checks | 496 |
 | HD63701V0 digital PROM checks | 28 |
 | HD63705V0 integration checks | 27 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
@@ -132,17 +133,22 @@ decode, RAM/control state, GPIO value and direction, timer/capture/compare
 state, SCI state and pins, interrupt requests, retained request latches, and
 late priority vector. Directed protocol sequences precede the deterministic
 random register/pin traffic. These checks establish peripheral transaction and
-state timing at the normalized E-cycle boundary. A separate 211-check
-four-subphase bench verifies the manufacturer-documented physical digital
-ordering across all eight modes: E low/high phases, AS closure, Port-3 address
+state timing at the normalized E-cycle boundary. A separate 22-check Port-3
+bench distinguishes Motorola's data-returning P3DDR alias from both Hitachi
+profiles' write-only `$ff` read, and checks the latch, ordered flag clear,
+transparent disable, side-effect exclusions, and both OSS selections. A
+separate 219-check four-subphase bench verifies the manufacturer-documented
+physical digital ordering across all eight modes: E low/high phases, AS
+closure, Port-3 address
 and bus turnaround, E-qualified write data, Mode-0 internal-read monitoring,
 Mode-5 IOS endpoints, reset pin states, single-chip pin roles, clock-enable
 stall, and the Mode-4-to-5 transition. Its independent Python pin model checks
 every mode/phase combination and exhaustively classifies all 65,536 Mode-5 IOS
 addresses. Both paths also check that MC6801 WAI repeatedly reads the
 post-stack SP, preserves Mode-5 IOS decoding, and releases Port 3 during the
-read-data phase. It also permanently regresses that the Mode-7 OS3 output is
-inactive while E is low and active only during a selected E-high access. A
+read-data phase. It also permanently regresses that the Mode-7 OS3 output
+starts after a selected positive E edge, remains active through E fall and the
+following low phase, and ends after the next positive E edge. A
 separate real-core bench enters WAI in all three
 M6800-lineage profiles and makes 18 steady-state/stall checks distinguishing
 MC6800 bus release, MC6801 post-stack-SP reads, and HD6301 inactive-strobe
@@ -191,11 +197,12 @@ STBY entry, high-impedance GPIO and external-bus suppression, retained RAM and
 STBY_PWR, active-state reset, external reset-vector recovery, and explicit
 rejection of the Motorola-only bi-phase selection.
 
-The 627-check HD6301V1 physical-wrapper suite verifies all seven legal modes
+The 659-check HD6301V1 physical-wrapper suite verifies all seven legal modes
 over the four E subphases. It covers dedicated and multiplexed address/data,
 AS-open/close turnaround, full and DDR-selected partial address pins, exact
-Mode-5 IOS decode, E-qualified writes and Mode-7 OS3, internal-write mirroring,
-the third-reset-cycle bus release, distinct WAI/SLP `$ffff` pin state, and
+Mode-5 IOS decode, E-qualified writes, full-E-cycle Mode-7 OS3,
+internal-write mirroring, the third-reset-cycle bus release, distinct WAI/SLP
+`$ffff` pin state, and
 E-synchronous standby bus release and E suppression. The independent Python
 pin model exhaustively projects all 65,536 addresses through every address-bus
 mode and separately checks all-seven-mode phase, GPIO, reset, standby, and
@@ -213,10 +220,12 @@ source. The independent model rejects Mode 3 and verifies each legal partition.
 The HD6301V1 Mode-7 suite fetches reset and interrupt vectors through the
 internal program-image interface, executes from both the 4-KiB program window
 and 128-byte RAM, and verifies a 13-cycle address TRAP from documented
-non-memory space. It checks Port 3/4 DDRs and pin reads, the IS3 input latch,
-P3CSR's ordered flag-clear protocol, read- and write-selected active-low OS3
-pulses, masked IS3 release from SLP, and enabled IS3 vectoring through the IRQ1
-priority slot. Three independent Python model tests cover the Mode-7 address
+non-memory space. It checks Port 3/4 DDRs and pin reads, Hitachi's write-only
+`$ff` P3DDR read with no handshake side effects, the IS3 input latch and
+transparent disable, P3CSR's ordered flag-clear protocol, read- and
+write-selected active-low OS3 pulses, masked IS3 release from SLP, and enabled
+IS3 vectoring through the IRQ1 priority slot. Three independent Python model
+tests cover the Mode-7 address
 partition, program-select/address-error distinction, GPIO, latch, flag, strobe,
 and interrupt state. Additional model and RTL tests verify framing-error RDR
 inhibition, Hitachi FRC write/rollover semantics, E-edge DDR reset, synchronous
@@ -249,10 +258,11 @@ release.
 The wrapper suite separately checks that the reserved bi-phase selection is
 disabled.
 
-The 468-check HD63701V0 physical-wrapper suite verifies all six legal modes
+The 496-check HD63701V0 physical-wrapper suite verifies all six legal modes
 over four digital E subphases. It covers Mode-1 dedicated address/data,
 Modes 0/2/6 multiplexed address/data and AS turnaround, Mode-5 DDR-selected
-low address and exact IOS decode, Mode-7 GPIO/IS3/OS3, R/W, E-qualified writes,
+low address and exact IOS decode, Mode-7 GPIO/IS3 plus OS3 across a complete
+E cycle, R/W, E-qualified writes,
 internal-write mirroring, WAI/SLP `$ffff` pin state, asynchronous all-port RES
 entry, E-boundary recovery, and STBY bus/E suppression. Its independent Python
 model exhaustively projects all 65,536 addresses through every address-bus
@@ -350,7 +360,8 @@ within those bounds:
 - The MC6801 physical wrapper sequences all four phases under clock enable,
   asserts E only in its two data phases, presents and releases multiplexed
   Port 3 around AS, and confines Mode-5 IOS and write drive to their documented
-  address and E windows.
+  address and E windows. Its Mode-7 OS3 state can change only at positive E
+  edges and is otherwise stable, including clock-enable stalls.
 - The HD6303R physical wrapper holds Mode-1 dedicated address pins, sequences
   Mode-2/4 AS and Port-3 turnaround, permits data drive only for E-high writes,
   presents the SLP `$ffff` read without stopping E, releases every address/data
@@ -358,7 +369,8 @@ within those bounds:
 - The HD6301V1 physical wrapper sequences every phase, confines Mode-5 IOS to
   `$0100`-`$01ff`, never drives multiplexed read data, releases address buses
   after three completed low-reset E cycles and in standby, keeps WAI/SLP data
-  released, and suppresses E while standby is active.
+  released, suppresses E while standby is active, and permits Mode-7 OS3
+  changes only at positive E edges.
 - MC68705P5 physical PC/SP/address geometry remains legal, bootstrap vector
   remapping respects secure mode, program reads stay within internal storage,
   VPP qualifies programming controls, and disabled-cycle state stalls.
@@ -375,7 +387,8 @@ within those bounds:
 - The HD63701V0 physical wrapper follows the four-phase sequence, immediately
   releases every port for RES/STBY, recovers only at a completing E boundary,
   confines multiplexed address and write drive to their documented phases,
-  and projects the `$ffff` WAI/SLP state without stopping E.
+  projects the `$ffff` WAI/SLP state without stopping E, and permits Mode-7
+  OS3 changes only at positive E edges.
 - HD63701V0 PROM mode suppresses MCU/external activity, maps all fifteen
   address bits to the documented pins, selects storage only for the physical
   4-KiB array, drives data only for read/verify, returns erased `$ff` outside
@@ -410,28 +423,28 @@ Representative generic Yosys 0.68 results from the current source are:
 | MC6800 bus wrapper | 6,222 | 223 |
 | MC6800 four-subphase integration wrapper | 6,251 | 228 |
 | MC6801 | 6,243 | 218 |
-| MC6801 Mode 2 integration | 11,494 | 1,455 |
-| MC6801 Mode 4/5 integration | 11,419 | 1,494 |
-| MC6801 four-subphase bus wrapper | 11,582 | 1,457 |
+| MC6801 Mode 2 integration | 11,434 | 1,447 |
+| MC6801 Mode 4/5 integration | 11,438 | 1,494 |
+| MC6801 four-subphase bus wrapper | 11,579 | 1,450 |
 | HD6301 | 7,294 | 218 |
-| HD6301V1 Mode 0 integration | 12,162 | 1,438 |
-| HD6301V1 Mode 1 integration | 12,094 | 1,421 |
-| HD6301V1 Mode 4 integration | 12,150 | 1,437 |
-| HD6301V1 Mode 5 integration | 12,190 | 1,445 |
-| HD6301V1 Mode 6 integration | 12,247 | 1,454 |
-| HD6301V1 Mode 7 integration | 12,126 | 1,485 |
-| HD6301V1 four-subphase bus wrapper | 12,427 | 1,459 |
-| HD6303R Mode 1 integration | 12,183 | 1,421 |
-| HD6303R Mode 2 integration | 12,229 | 1,447 |
-| HD6303R Mode 4 integration | 12,156 | 1,437 |
-| HD6303R four-subphase bus wrapper | 12,365 | 1,451 |
-| HD63701V0 Mode 0 integration | 13,904 | 1,949 |
-| HD63701V0 Mode 1 integration | 13,889 | 1,932 |
-| HD63701V0 Mode 2 integration | 14,060 | 1,958 |
-| HD63701V0 Mode 5 integration | 13,981 | 1,956 |
-| HD63701V0 Mode 6 integration | 14,074 | 1,965 |
-| HD63701V0 Mode 7 integration | 14,077 | 1,996 |
-| HD63701V0 four-subphase bus wrapper | 14,237 | 1,968 |
+| HD6301V1 Mode 0 integration | 12,134 | 1,438 |
+| HD6301V1 Mode 1 integration | 12,113 | 1,421 |
+| HD6301V1 Mode 4 integration | 12,155 | 1,437 |
+| HD6301V1 Mode 5 integration | 12,141 | 1,445 |
+| HD6301V1 Mode 6 integration | 12,249 | 1,446 |
+| HD6301V1 Mode 7 integration | 12,236 | 1,485 |
+| HD6301V1 four-subphase bus wrapper | 12,423 | 1,451 |
+| HD6303R Mode 1 integration | 12,126 | 1,421 |
+| HD6303R Mode 2 integration | 12,406 | 1,439 |
+| HD6303R Mode 4 integration | 12,147 | 1,437 |
+| HD6303R four-subphase bus wrapper | 12,380 | 1,443 |
+| HD63701V0 Mode 0 integration | 13,986 | 1,949 |
+| HD63701V0 Mode 1 integration | 13,886 | 1,932 |
+| HD63701V0 Mode 2 integration | 14,113 | 1,950 |
+| HD63701V0 Mode 5 integration | 13,947 | 1,956 |
+| HD63701V0 Mode 6 integration | 14,051 | 1,957 |
+| HD63701V0 Mode 7 integration | 14,079 | 1,996 |
+| HD63701V0 four-subphase bus wrapper | 14,218 | 1,960 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

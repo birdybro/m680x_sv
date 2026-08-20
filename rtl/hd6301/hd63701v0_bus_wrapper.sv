@@ -83,6 +83,7 @@ module hd63701v0_bus_wrapper #(
   logic [7:0] raw_port4;
   logic [7:0] raw_port4_oe;
   logic raw_os3_n;
+  logic os3_active;
 
   assign multiplexed_mode = (OPERATING_MODE == 3'd0) ||
     (OPERATING_MODE == 3'd2) || (OPERATING_MODE == 3'd6);
@@ -113,6 +114,19 @@ module hd63701v0_bus_wrapper #(
     end
   end
 
+  always_ff @(posedge phase_clk_i or negedge reset_state_n) begin
+    if (!reset_state_n) begin
+      os3_active <= 1'b0;
+    end else if (clock_enable_i) begin
+      if (reset_active) begin
+        os3_active <= 1'b0;
+      end else if (bus_phase == PHASE_AS_CLOSE) begin
+        // Figure 3-11-5 bounds OS3 between consecutive E rising edges.
+        os3_active <= single_chip_mode && !raw_os3_n;
+      end
+    end
+  end
+
   // Integration reset, RES, and STBY share one realizable asynchronous-reset
   // net. Section 2.8 requires recovery to wait for an enabled E boundary.
   always_ff @(posedge phase_clk_i or negedge reset_state_n) begin
@@ -134,7 +148,7 @@ module hd63701v0_bus_wrapper #(
     port4_oe_o = raw_port4_oe;
     sc1_o = 1'b1;
     sc1_oe_o = multiplexed_mode || mode5_nonmultiplexed;
-    sc2_o = single_chip_mode ? (!bus_phase[1] || raw_os3_n) : !pin_write;
+    sc2_o = single_chip_mode ? !os3_active : !pin_write;
 
     if (!phase_reset_n_i) begin
       port1_oe_o = 8'h00;
