@@ -280,6 +280,8 @@ class M6800Model:
             value = self._read8(address, "effective operand")
             return (immediate << 8) | value, address
         if mode in {"inherent", "accumulator-a", "accumulator-b"}:
+            if self.architecture == "m6800":
+                self._read8(self.state.pc, "next opcode")
             return None, None
         if mode == "relative":
             displacement = self._fetch8("relative displacement")

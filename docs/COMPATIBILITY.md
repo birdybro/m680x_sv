@@ -44,7 +44,11 @@ profiles for the Motorola and Hitachi 6805-derived lineages.
 `PARTIAL` CPU status means every documented opcode encoding has architectural,
 cycle-total, and ordered semantic-bus comparison against the independent model,
 while the HD6301 profile also implements every documented opcode-error TRAP map
-value. The Motorola M6805 profile additionally has complete structured and RTL
+value. The base MC6800 profile has complete structured and RTL Table-8 traces
+for 60 two-cycle inherent/accumulator and immediate encodings, including the
+next-opcode-address read that is not architecturally consumed. Remaining
+MC6800 Table-8 groups stay `PARTIAL` while their VMA-low internal cycles are
+implemented and checked. The Motorola M6805 profile additionally has complete structured and RTL
 bus traces for all 191 encodings with published table-G2 rows: inherent,
 accumulator, immediate, relative, bit, direct, both short-indexed forms,
 extended stores/call, and indexed-16 reads/jump, including BSR/RTS/RTI/SWI.

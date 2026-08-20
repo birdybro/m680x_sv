@@ -2287,6 +2287,12 @@ module m6800_core #(
         bus_valid_o = 1'b1;
         opcode_fetch_o = 1'b1;
       end
+      ST_EXECUTE: begin
+        if (ARCHITECTURE == 2'd0) begin
+          address_o = program_counter;
+          bus_valid_o = 1'b1;
+        end
+      end
       ST_RELATIVE, ST_IMMEDIATE_8, ST_IMMEDIATE_16_HIGH,
       ST_IMMEDIATE_16_LOW, ST_DIRECT, ST_INDEXED,
       ST_EXTENDED_HIGH, ST_EXTENDED_LOW, ST_MASK_IMMEDIATE,

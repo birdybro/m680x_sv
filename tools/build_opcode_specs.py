@@ -542,6 +542,24 @@ def _aliases(mnemonic: str, architecture: str) -> list[str]:
     return aliases
 
 
+def _m6800_table8_trace(mode: str, cycles: int) -> list[dict]:
+    def read(cycle: int, address: str, data: str) -> dict:
+        return {"cycle": cycle, "address": address, "direction": "read", "data": data}
+
+    opcode = read(1, "opcode_address", "opcode")
+    if mode == "immediate-8":
+        return [opcode, read(2, "opcode_address+1", "operand")]
+    if mode == "immediate-16":
+        return [
+            opcode,
+            read(2, "opcode_address+1", "operand_high"),
+            read(3, "opcode_address+2", "operand_low"),
+        ]
+    if mode in {"inherent", "accumulator-a", "accumulator-b"} and cycles == 2:
+        return [opcode, read(2, "opcode_address+1", "next_opcode")]
+    return []
+
+
 def _instruction(
     opcode: int,
     architecture: str,
@@ -568,6 +586,12 @@ def _instruction(
             "after an unmasked request: 5 E-cycles to the first handler opcode "
             "for NMI or IRQ2; 6 E-cycles for IRQ1"
         )
+    documented_bus_cycles = (
+        _m6800_table8_trace(mode, cycles) if architecture == "m6800" else []
+    )
+    if documented_bus_cycles:
+        reference_id = "motorola-mc6800-system-design-data-1976"
+        locator = "MC6800 MPU table 8 operation summary, printed pages 35-38"
     return {
         "opcode": opcode,
         "opcode_hex": f"{opcode:02X}",
@@ -586,8 +610,8 @@ def _instruction(
         "flags_undefined": flags_undefined,
         "flag_semantics": flag_semantics,
         "memory_operations": memory_operations,
-        "bus_trace_status": "PARTIAL",
-        "documented_bus_cycles": [],
+        "bus_trace_status": "COMPLETE" if documented_bus_cycles else "PARTIAL",
+        "documented_bus_cycles": documented_bus_cycles,
         "stack_effects": stack_effects,
         "branch_behavior": branch_behavior,
         "vector_behavior": vector_behavior,
@@ -689,7 +713,7 @@ def build_m6800() -> dict:
         "title": "Motorola M6800 opcode classification",
         "primary_references": [
             {"id": reference_id, "locators": ["appendix A instruction entries", "chapters 4-5"]},
-            {"id": undefined_reference_id, "locators": ["MC6800 MPU tables 2-7"]},
+            {"id": undefined_reference_id, "locators": ["MC6800 MPU tables 2-8"]},
         ],
         "opcodes": records,
     }

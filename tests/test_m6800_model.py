@@ -19,6 +19,18 @@ def _fixture(architecture: str, opcode: int) -> M6800Model:
 
 
 class M6800ModelTests(unittest.TestCase):
+    def test_m6800_table8_complete_traces_have_one_access_per_cycle(self) -> None:
+        template = M6800Model("m6800")
+        complete = 0
+        for record in template.spec["opcodes"]:
+            if record["bus_trace_status"] != "COMPLETE":
+                continue
+            model = _fixture("m6800", record["opcode"])
+            trace = model.step()
+            self.assertEqual(len(trace.accesses), trace.documented_cycles)
+            complete += 1
+        self.assertEqual(complete, 60)
+
     def test_every_documented_encoding_executes(self) -> None:
         counts: dict[str, int] = {}
         for architecture in ("m6800", "m6801", "hd6301"):

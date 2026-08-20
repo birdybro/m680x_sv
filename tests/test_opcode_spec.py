@@ -245,6 +245,30 @@ class OpcodeSpecificationTests(unittest.TestCase):
             )
         )
 
+    def test_m6800_table8_complete_bus_traces_are_structured(self) -> None:
+        complete = [
+            record
+            for record in self.m6800["opcodes"]
+            if record["bus_trace_status"] == "COMPLETE"
+        ]
+        self.assertEqual(len(complete), 60)
+        for record in complete:
+            self.assertEqual(len(record["documented_bus_cycles"]), record["cycles"])
+            self.assertEqual(
+                [cycle["cycle"] for cycle in record["documented_bus_cycles"]],
+                list(range(1, record["cycles"] + 1)),
+            )
+            self.assertIn("table 8", record["primary_reference"]["locator"])
+        self.assertEqual(
+            self.m6800["opcodes"][0x01]["documented_bus_cycles"][1],
+            {
+                "cycle": 2,
+                "address": "opcode_address+1",
+                "direction": "read",
+                "data": "next_opcode",
+            },
+        )
+
     def test_complete_bus_trace_length_mismatch_is_rejected(self) -> None:
         broken = deepcopy(self.m6805)
         broken["opcodes"][0x9D]["documented_bus_cycles"].pop()

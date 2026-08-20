@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 195 |
+| Python unit tests | 197 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6800 four-subphase bus-wrapper checks | 321 |
@@ -65,6 +65,7 @@ The committed tests cover:
 | HD63705V0 SCI Tx/Rx byte checks | 4,096 |
 | HD63705V0 SCI status/rate/protocol checks | 549 |
 | HD63705V0 MR/interrupt priority/protocol checks | 611 |
+| MC6800 Table-8 opcode encodings with complete structured bus traces | 60 |
 | M6805 table-G2 opcode encodings with complete structured bus traces | 191 |
 | M6805 directed core checks | 36 |
 | MC68705P5 integration checks | 19 |
@@ -91,6 +92,11 @@ Every documented encoding is executed from a generated initial state and
 compared after retirement for architectural state, defined condition codes,
 documented cycle total, and ordered semantic memory accesses. Undefined flag
 bits are masked only where the primary manufacturer table marks them undefined.
+For 60 base-MC6800 encodings, the generated opcode regression also requires one
+valid transfer on every documented Table-8 cycle and exact address, direction,
+and data. This first closed group covers every two-cycle inherent/accumulator
+operation and every immediate byte/word operation. MC6801/HD6301 traces remain
+separate rather than inheriting MC6800 bus timing.
 
 The random corpus uses recorded seeds `0x68000000` through `0x6804000f`, grouped
 by profile. Each of the 80 straight-line programs contains 64 instructions.
@@ -563,9 +569,9 @@ Representative generic Yosys 0.68 results from the current source are:
 
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
-| M6800 | 6,254 | 217 |
-| MC6800 bus wrapper | 6,222 | 223 |
-| MC6800 four-subphase integration wrapper | 6,251 | 228 |
+| M6800 | 6,161 | 217 |
+| MC6800 bus wrapper | 6,233 | 223 |
+| MC6800 four-subphase integration wrapper | 6,225 | 228 |
 | MC6801 | 6,243 | 218 |
 | MC6801 Mode 2 integration | 11,434 | 1,447 |
 | MC6801 Mode 4/5 integration | 11,438 | 1,494 |
