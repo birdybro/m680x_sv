@@ -528,8 +528,12 @@ class M6800Model:
                     self._read8(low_address, "JSR repeated low address byte")
             self.state.pc = address
         elif mnemonic == "RTS":
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.sp, "RTS pre-pull stack cycle")
             self._pull_pc()
         elif mnemonic == "RTI":
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.sp, "RTI pre-pull stack cycle")
             self.state.ccr = self._pull8("stacked CCR") & 0x3F
             self.state.b = self._pull8("stacked B")
             self.state.a = self._pull8("stacked A")
@@ -539,7 +543,11 @@ class M6800Model:
             self._pull_pc()
         elif mnemonic in {"PSHA", "PSHB"}:
             self._push8(self._accumulator_value(mnemonic[-1]), f"push {mnemonic[-1]}")
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.sp, "post-push stack cycle")
         elif mnemonic in {"PULA", "PULB"}:
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.sp, "pre-pull stack cycle")
             self._set_accumulator_value(mnemonic[-1], self._pull8(f"pull {mnemonic[-1]}"))
         elif mnemonic == "PSHX":
             self._push8(self.state.x & 0xFF, "push X low")
@@ -550,6 +558,8 @@ class M6800Model:
             self.state.x = (high << 8) | low
         elif mnemonic == "SWI":
             self._stack_complete_state()
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(self.state.sp, "SWI post-stack cycle")
             self.set_flag("I", True)
             self.state.pc = self._read16(0xFFFA, "SWI vector")
         elif mnemonic == "WAI":
@@ -600,18 +610,38 @@ class M6800Model:
             flag = mnemonic[-1]
             self.set_flag(flag, mnemonic.startswith("SE"))
         elif mnemonic in {"INX", "DEX"}:
+            previous = self.state.x
             self.state.x = (self.state.x + (1 if mnemonic == "INX" else -1)) & 0xFFFF
             self.set_flag("Z", self.state.x == 0)
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(previous, "previous index-register contents")
+                self._invalid_read_cycle(self.state.x, "new index-register contents")
         elif mnemonic == "ABX":
             self.state.x = (self.state.x + self.state.b) & 0xFFFF
         elif mnemonic == "TSX":
+            previous = self.state.sp
             self.state.x = (self.state.sp + 1) & 0xFFFF
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(previous, "stack-pointer contents")
+                self._invalid_read_cycle(self.state.x, "new index-register contents")
         elif mnemonic == "TXS":
+            previous = self.state.x
             self.state.sp = (self.state.x - 1) & 0xFFFF
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(previous, "index-register contents")
+                self._invalid_read_cycle(self.state.sp, "new stack-pointer contents")
         elif mnemonic == "INS":
+            previous = self.state.sp
             self.state.sp = (self.state.sp + 1) & 0xFFFF
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(previous, "previous stack-pointer contents")
+                self._invalid_read_cycle(self.state.sp, "new stack-pointer contents")
         elif mnemonic == "DES":
+            previous = self.state.sp
             self.state.sp = (self.state.sp - 1) & 0xFFFF
+            if self.architecture == "m6800":
+                self._invalid_read_cycle(previous, "previous stack-pointer contents")
+                self._invalid_read_cycle(self.state.sp, "new stack-pointer contents")
         elif mnemonic == "XGDX":
             old_d = self.state.d
             self.state.d = self.state.x

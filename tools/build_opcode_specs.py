@@ -590,6 +590,79 @@ def _m6800_table8_trace(mnemonic: str, mode: str, cycles: int) -> list[dict]:
         ]
     if mode in {"inherent", "accumulator-a", "accumulator-b"} and cycles == 2:
         return [opcode, read(2, "opcode_address+1", "next_opcode")]
+    if mode == "inherent":
+        next_opcode = read(2, "opcode_address+1", "next_opcode")
+        if mnemonic in {"INX", "DEX", "INS", "DES"}:
+            return [
+                opcode,
+                next_opcode,
+                invalid_read(3, "previous_register_contents"),
+                invalid_read(4, "new_register_contents"),
+            ]
+        if mnemonic == "TSX":
+            return [
+                opcode,
+                next_opcode,
+                invalid_read(3, "stack_pointer"),
+                invalid_read(4, "new_index_register"),
+            ]
+        if mnemonic == "TXS":
+            return [
+                opcode,
+                next_opcode,
+                invalid_read(3, "index_register"),
+                invalid_read(4, "new_stack_pointer"),
+            ]
+        if mnemonic.startswith("PSH"):
+            return [
+                opcode,
+                next_opcode,
+                write(3, "stack_pointer", "accumulator_data"),
+                invalid_read(4, "stack_pointer-1"),
+            ]
+        if mnemonic.startswith("PUL"):
+            return [
+                opcode,
+                next_opcode,
+                invalid_read(3, "stack_pointer"),
+                read(4, "stack_pointer+1", "stack_operand"),
+            ]
+        if mnemonic == "RTS":
+            return [
+                opcode,
+                read(2, "opcode_address+1", "irrelevant_data"),
+                invalid_read(3, "stack_pointer"),
+                read(4, "stack_pointer+1", "return_address_high"),
+                read(5, "stack_pointer+2", "return_address_low"),
+            ]
+        if mnemonic == "RTI":
+            return [
+                opcode,
+                read(2, "opcode_address+1", "irrelevant_data"),
+                invalid_read(3, "stack_pointer"),
+                read(4, "stack_pointer+1", "stacked_condition_codes"),
+                read(5, "stack_pointer+2", "stacked_accumulator_b"),
+                read(6, "stack_pointer+3", "stacked_accumulator_a"),
+                read(7, "stack_pointer+4", "stacked_index_high"),
+                read(8, "stack_pointer+5", "stacked_index_low"),
+                read(9, "stack_pointer+6", "stacked_pc_high"),
+                read(10, "stack_pointer+7", "stacked_pc_low"),
+            ]
+        if mnemonic == "SWI":
+            return [
+                opcode,
+                read(2, "opcode_address+1", "irrelevant_data"),
+                write(3, "stack_pointer", "return_address_low"),
+                write(4, "stack_pointer-1", "return_address_high"),
+                write(5, "stack_pointer-2", "index_register_low"),
+                write(6, "stack_pointer-3", "index_register_high"),
+                write(7, "stack_pointer-4", "accumulator_a"),
+                write(8, "stack_pointer-5", "accumulator_b"),
+                write(9, "stack_pointer-6", "condition_codes"),
+                invalid_read(10, "stack_pointer-7"),
+                read(11, "0xfffa", "software_interrupt_vector_high"),
+                read(12, "0xfffb", "software_interrupt_vector_low"),
+            ]
     if mode == "direct":
         address = read(2, "opcode_address+1", "direct_address")
         if cycles == 3:
@@ -779,6 +852,14 @@ def _instruction(
     if documented_bus_cycles:
         reference_id = "motorola-mc6800-system-design-data-1976"
         locator = "MC6800 MPU table 8 operation summary, printed pages 35-38"
+    if architecture == "m6800" and mnemonic == "WAI":
+        notes = (
+            notes + (" " if notes else "")
+            + "Table 8 prints VMA=1 and R/W=1 for cycle 9 while naming condition-code "
+              "data; M68PRM/D section 3.2 independently requires WAI to save the condition "
+              "codes in the stack. The implementation preserves the required write, and the "
+              "conflicting cycle direction remains unresolved by the available manufacturer texts."
+        )
     return {
         "opcode": opcode,
         "opcode_hex": f"{opcode:02X}",

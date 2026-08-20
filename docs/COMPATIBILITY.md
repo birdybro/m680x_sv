@@ -45,11 +45,12 @@ profiles for the Motorola and Hitachi 6805-derived lineages.
 cycle-total, and ordered semantic-bus comparison against the independent model,
 while the HD6301 profile also implements every documented opcode-error TRAP map
 value. The base MC6800 profile has complete structured and RTL Table-8 traces
-for 183 two-cycle, immediate, direct, indexed, extended, and relative
-encodings, including next-opcode, partial indexed-address, JSR-prefetch, and
-VMA-low cycles. Remaining
-MC6800 Table-8 groups stay `PARTIAL` while their VMA-low internal cycles are
-implemented and checked. The Motorola M6805 profile additionally has complete structured and RTL
+for 196 of 197 documented encodings, including next-opcode, partial
+indexed-address, JSR-prefetch, stack, vector, and VMA-low cycles. WAI alone
+stays `PARTIAL` because Table 8's cycle-9 read conflicts with the programming
+manual's required condition-code stack write; RTL implements the architectural
+write and records the bus direction as `UNDEFINED_BY_DOCUMENTATION`. The
+Motorola M6805 profile additionally has complete structured and RTL
 bus traces for all 191 encodings with published table-G2 rows: inherent,
 accumulator, immediate, relative, bit, direct, both short-indexed forms,
 extended stores/call, and indexed-16 reads/jump, including BSR/RTS/RTI/SWI.

@@ -47,6 +47,8 @@ module m6800_core #(
     ST_RESET_LOW,
     ST_FETCH,
     ST_EXECUTE,
+    ST_REGISTER_OLD_IDLE,
+    ST_REGISTER_NEW_IDLE,
     ST_RELATIVE,
     ST_BRANCH_SEQUENTIAL,
     ST_BRANCH_TARGET,
@@ -81,6 +83,8 @@ module m6800_core #(
     ST_PULL_PC_HIGH,
     ST_PULL_PC_LOW,
     ST_PUSH_BYTE,
+    ST_PUSH_POST_IDLE,
+    ST_PULL_PRE_IDLE,
     ST_PULL_BYTE,
     ST_PUSH_X_LOW,
     ST_PUSH_X_HIGH,
@@ -95,6 +99,7 @@ module m6800_core #(
     ST_INTERRUPT_POST,
     ST_INTERRUPT_VECTOR_HIGH,
     ST_INTERRUPT_VECTOR_LOW,
+    ST_SWI_VECTOR_IDLE,
     ST_RTI_PULL,
     ST_PADDING,
     ST_WAITING,
@@ -524,10 +529,15 @@ module m6800_core #(
           finish_to(ST_FETCH);
         end
         OP_INX, OP_DEX: begin
-          index_register <= index_register + ((decoded.operation == OP_INX) ? 16'h0001 : 16'hffff);
+          control_target <= index_register;
+          effective_address <= index_register +
+            ((decoded.operation == OP_INX) ? 16'h0001 : 16'hffff);
+          index_register <= index_register +
+            ((decoded.operation == OP_INX) ? 16'h0001 : 16'hffff);
           condition_codes[CCR_Z] <=
             (index_register + ((decoded.operation == OP_INX) ? 16'h0001 : 16'hffff)) == 16'h0000;
-          finish_to(ST_FETCH);
+          if (ARCHITECTURE == 2'd0) state <= ST_REGISTER_OLD_IDLE;
+          else finish_to(ST_FETCH);
         end
         OP_CLV, OP_SEV: begin
           condition_codes[CCR_V] <= (decoded.operation == OP_SEV);
@@ -615,30 +625,45 @@ module m6800_core #(
         end
         OP_SLP: finish_to(ST_SLEEPING);
         OP_TSX: begin
+          control_target <= stack_pointer;
+          effective_address <= stack_pointer + 16'h0001;
           index_register <= stack_pointer + 16'h0001;
-          finish_to(ST_FETCH);
+          if (ARCHITECTURE == 2'd0) state <= ST_REGISTER_OLD_IDLE;
+          else finish_to(ST_FETCH);
         end
         OP_INS, OP_DES: begin
+          control_target <= stack_pointer;
+          effective_address <= stack_pointer +
+            ((decoded.operation == OP_INS) ? 16'h0001 : 16'hffff);
           stack_pointer <= stack_pointer + ((decoded.operation == OP_INS) ? 16'h0001 : 16'hffff);
-          finish_to(ST_FETCH);
+          if (ARCHITECTURE == 2'd0) state <= ST_REGISTER_OLD_IDLE;
+          else finish_to(ST_FETCH);
         end
         OP_TXS: begin
+          control_target <= index_register;
+          effective_address <= index_register - 16'h0001;
           stack_pointer <= index_register - 16'h0001;
-          finish_to(ST_FETCH);
+          if (ARCHITECTURE == 2'd0) state <= ST_REGISTER_OLD_IDLE;
+          else finish_to(ST_FETCH);
         end
         OP_PSHA, OP_PSHB: begin
           write_data <= (decoded.operation == OP_PSHA) ? accumulator_a : accumulator_b;
           state <= ST_PUSH_BYTE;
         end
         OP_PULA, OP_PULB: begin
-          state <= ST_PULL_BYTE;
+          if (ARCHITECTURE == 2'd0) state <= ST_PULL_PRE_IDLE;
+          else state <= ST_PULL_BYTE;
         end
         OP_PSHX: state <= ST_PUSH_X_LOW;
         OP_PULX: state <= ST_PULL_X_HIGH;
-        OP_RTS: state <= ST_PULL_PC_HIGH;
+        OP_RTS: begin
+          if (ARCHITECTURE == 2'd0) state <= ST_PULL_PRE_IDLE;
+          else state <= ST_PULL_PC_HIGH;
+        end
         OP_RTI: begin
           phase <= 3'd0;
-          state <= ST_RTI_PULL;
+          if (ARCHITECTURE == 2'd0) state <= ST_PULL_PRE_IDLE;
+          else state <= ST_RTI_PULL;
         end
         OP_WAI, OP_SWI: begin
           phase <= 3'd0;
@@ -790,6 +815,12 @@ module m6800_core #(
           bus_valid_o = 1'b1;
         end
       end
+      ST_REGISTER_OLD_IDLE: begin
+        address_o = control_target;
+      end
+      ST_REGISTER_NEW_IDLE: begin
+        address_o = effective_address;
+      end
       ST_RELATIVE, ST_IMMEDIATE_8, ST_IMMEDIATE_16_HIGH,
       ST_IMMEDIATE_16_LOW, ST_DIRECT, ST_INDEXED,
       ST_EXTENDED_HIGH, ST_EXTENDED_LOW, ST_MASK_IMMEDIATE,
@@ -893,6 +924,9 @@ module m6800_core #(
         write_o = 1'b1;
         bus_valid_o = 1'b1;
       end
+      ST_PUSH_POST_IDLE, ST_PULL_PRE_IDLE: begin
+        address_o = stack_pointer;
+      end
       ST_PUSH_X_LOW: begin
         address_o = stack_pointer;
         data_o = index_register[7:0];
@@ -944,6 +978,9 @@ module m6800_core #(
       ST_INTERRUPT_VECTOR_LOW: begin
         address_o = vector_address + 16'h0001;
         bus_valid_o = 1'b1;
+      end
+      ST_SWI_VECTOR_IDLE: begin
+        address_o = stack_pointer;
       end
       ST_WAITING: begin
         // Motorola MC6801RM(AD2) section 5.4.2 documents repeated reads at
@@ -1089,6 +1126,8 @@ module m6800_core #(
           end
         end
         ST_EXECUTE: execute_inherent();
+        ST_REGISTER_OLD_IDLE: state <= ST_REGISTER_NEW_IDLE;
+        ST_REGISTER_NEW_IDLE: finish_to(ST_FETCH);
         ST_RELATIVE: begin
           program_counter <= program_counter + 16'h0001;
           if (ARCHITECTURE == 2'd0) begin
@@ -1240,7 +1279,18 @@ module m6800_core #(
         end
         ST_PUSH_BYTE: begin
           stack_pointer <= stack_pointer - 16'h0001;
-          finish_to(ST_FETCH);
+          if ((ARCHITECTURE == 2'd0) &&
+              ((decoded.operation == OP_PSHA) || (decoded.operation == OP_PSHB))) begin
+            state <= ST_PUSH_POST_IDLE;
+          end else begin
+            finish_to(ST_FETCH);
+          end
+        end
+        ST_PUSH_POST_IDLE: finish_to(ST_FETCH);
+        ST_PULL_PRE_IDLE: begin
+          if (decoded.operation == OP_RTS) state <= ST_PULL_PC_HIGH;
+          else if (decoded.operation == OP_RTI) state <= ST_RTI_PULL;
+          else state <= ST_PULL_BYTE;
         end
         ST_PULL_BYTE: begin
           stack_pointer <= stack_pointer + 16'h0001;
@@ -1288,7 +1338,8 @@ module m6800_core #(
                   state <= ST_INTERRUPT_POST;
                 end
               end else begin
-                state <= ST_INTERRUPT_VECTOR_HIGH;
+                if (ARCHITECTURE == 2'd0) state <= ST_SWI_VECTOR_IDLE;
+                else state <= ST_INTERRUPT_VECTOR_HIGH;
               end
             end
           end else begin
@@ -1315,6 +1366,7 @@ module m6800_core #(
           if (interrupt_vector_o == 2'b01) vector_address <= irq_vector_i;
           state <= ST_INTERRUPT_VECTOR_HIGH;
         end
+        ST_SWI_VECTOR_IDLE: state <= ST_INTERRUPT_VECTOR_HIGH;
         ST_INTERRUPT_VECTOR_HIGH: begin
           temporary_high <= data_i;
           state <= ST_INTERRUPT_VECTOR_LOW;
