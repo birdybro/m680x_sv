@@ -3,7 +3,10 @@ module hd6303r_bus_wrapper_formal;
   (* anyseq *) logic clk;
   (* anyseq *) logic clock_enable;
   (* anyseq *) logic standby_n;
+  (* anyseq *) logic device_reset_n;
   logic past_valid = 1'b0;
+  logic [1:0] expected_reset_low_e_cycles = 2'd0;
+  logic phase_reset_n;
   logic reset_n;
   logic [1:0] phase1;
   logic [1:0] phase2;
@@ -33,12 +36,21 @@ module hd6303r_bus_wrapper_formal;
   logic sc2_mode2;
   logic [15:0] address_mode2;
 
-  assign reset_n = past_valid;
-  always @(posedge clk) past_valid <= 1'b1;
+  assign phase_reset_n = past_valid;
+  assign reset_n = past_valid && device_reset_n;
+  always @(posedge clk) begin
+    past_valid <= 1'b1;
+    if (!phase_reset_n || reset_n) begin
+      expected_reset_low_e_cycles <= 2'd0;
+    end else if (clock_enable && (phase1 == 2'd3) &&
+                 (expected_reset_low_e_cycles != 2'd3)) begin
+      expected_reset_low_e_cycles <= expected_reset_low_e_cycles + 2'd1;
+    end
+  end
 
   /* verilator lint_off PINCONNECTEMPTY */
   hd6303r_bus_wrapper #(.OPERATING_MODE(3'd1)) mode1 (
-    .phase_clk_i(clk), .phase_reset_n_i(reset_n), .reset_n_i(reset_n),
+    .phase_clk_i(clk), .phase_reset_n_i(phase_reset_n), .reset_n_i(reset_n),
     .standby_n_i(standby_n), .clock_enable_i(clock_enable),
     .nmi_n_i(1'b1), .irq1_n_i(1'b1), .standby_power_ok_i(1'b1),
     .port1_i(8'hff), .port1_o(p1_mode1), .port1_oe_o(p1oe_mode1),
@@ -56,7 +68,7 @@ module hd6303r_bus_wrapper_formal;
   );
 
   hd6303r_bus_wrapper #(.OPERATING_MODE(3'd2)) mode2 (
-    .phase_clk_i(clk), .phase_reset_n_i(reset_n), .reset_n_i(reset_n),
+    .phase_clk_i(clk), .phase_reset_n_i(phase_reset_n), .reset_n_i(reset_n),
     .standby_n_i(standby_n), .clock_enable_i(clock_enable),
     .nmi_n_i(1'b1), .irq1_n_i(1'b1), .standby_power_ok_i(1'b1),
     .port1_i(8'hff), .port1_o(), .port1_oe_o(), .port2_i(5'h1f),
@@ -78,8 +90,9 @@ module hd6303r_bus_wrapper_formal;
     assert (phase1 == phase2);
     assert (standby1 == standby2);
     assert (e1 == e2);
-    assert (e1 == (reset_n && !standby1 && phase1[1]));
-    if (!reset_n || standby1) begin
+    assert (e1 == (phase_reset_n && !standby1 && phase1[1]));
+    if (!phase_reset_n || standby1 ||
+        (!reset_n && (expected_reset_low_e_cycles == 2'd3))) begin
       assert (p1oe_mode1 == 8'h00);
       assert (p3oe_mode1 == 8'h00);
       assert (p4oe_mode1 == 8'h00);

@@ -204,12 +204,12 @@
       "interrupt_sources": ["RESET", "TRAP", "NMI", "SWI", "IRQ1/IS3", "input capture", "output compare", "timer overflow", "SCI"],
       "interrupt_priority": ["RESET", "TRAP", "NMI", "SWI", "IRQ1", "input capture", "output compare", "timer overflow", "SCI"],
       "vectors": {"RESET": "FFFE:FFFF", "TRAP": "FFEE:FFEF", "NMI": "FFFC:FFFD", "SWI": "FFFA:FFFB", "IRQ1": "FFF8:FFF9", "ICF": "FFF6:FFF7", "OCF": "FFF4:FFF5", "TOF": "FFF2:FFF3", "SCI": "FFF0:FFF1"},
-      "external_interface": "Mode 1 provides a non-multiplexed bus; Modes 2 and 4 provide the ROMless 40-pin multiplexed bus with E, AS, R/W, low address/data, and high address pins. All three legal modes have normalized memory integration and separate active-cycle four-subphase pin waveforms; reset-entry and electrical timing remain partial.",
+      "external_interface": "Mode 1 provides a non-multiplexed bus; Modes 2 and 4 provide the ROMless 40-pin multiplexed bus with E, AS, R/W, low address/data, and high address pins. All three legal modes have normalized memory integration, separate active-cycle four-subphase pin waveforms, and the documented third-reset-cycle address-bus release; electrical timing remains partial.",
       "clocking": "Internal oscillator with 1.0/1.5/2.0 MHz speed grades; E defines bus timing and stops in accepted standby. The pin wrapper uses a four-times-E FPGA clock and excludes oscillator stabilization.",
-      "documented_quirks": ["ROMless counterpart in the V/R architectural pair; Modes 0, 5, 6, and 7 are unavailable.", "Address and opcode errors invoke unmaskable TRAP."],
+      "documented_quirks": ["ROMless counterpart in the V/R architectural pair; Modes 0, 5, 6, and 7 are unavailable.", "Address buses become high impedance only on the third system-clock cycle while RES remains low.", "Address and opcode errors invoke unmaskable TRAP."],
       "undefined_by_documentation": ["Behavior outside documented address/opcode trap cases.", "Address-error table 2-13-1 omits Mode 2; the implementation follows the manual's explicit statement that Mode 2 and Mode 4 are equivalent expanded multiplexed RAM modes."],
       "status": {"cpu_core": "PARTIAL", "architectural_tests": "PARTIAL", "cycle_count_tests": "PARTIAL", "bus_trace_tests": "PARTIAL", "device_wrapper": "PARTIAL", "internal_memory": "PARTIAL", "gpio": "PARTIAL", "timer": "PARTIAL", "serial": "PARTIAL", "low_power": "PARTIAL"},
-      "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["quick reference printed pages 2-3; HD6301V1/HD6303R user manual"]}]
+      "references": [{"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locators": ["quick reference printed pages 2-3; HD6301V1/HD6303R user manual section 2.8 and figure 2-8-1, printed pages 159-160"]}]
     },
     {
       "id": "hd63701v0",

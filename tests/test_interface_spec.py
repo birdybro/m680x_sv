@@ -59,6 +59,20 @@ class InterfaceSpecificationTests(unittest.TestCase):
         with self.assertRaisesRegex(validate_interfaces.InterfaceSpecError, "missing required"):
             validate_interfaces.validate_interface(broken, self.devices, self.references)
 
+    def test_documented_phased_bus_timing_claims_are_complete(self) -> None:
+        self.assertEqual(
+            self.mc6801_bus_spec["implementation_status"][
+                "wai_interrupt_response_latency"
+            ],
+            "COMPLETE",
+        )
+        self.assertEqual(
+            self.hd6303r_bus_spec["implementation_status"][
+                "three_cycle_reset_bus_release"
+            ],
+            "COMPLETE",
+        )
+
     def test_unknown_reference_is_rejected(self) -> None:
         broken = deepcopy(self.spec)
         broken["references"][0]["id"] = "unknown"

@@ -311,10 +311,12 @@ The exact normalized and pin boundaries are recorded in
 `../spec/interfaces/hd6303r_modes.json` and
 `../spec/interfaces/hd6303r_phased_bus.json`.
 
-The pin wrapper immediately releases its address/data output enables while RES
-is low. It therefore does not claim Hitachi's documented transition at the
-third reset E-cycle. Oscillator stabilization, nanosecond setup/hold, and pad
-behavior also remain outside the active-cycle digital claim.
+The pin wrapper counts completed E cycles while RES remains low. Address pins
+remain enabled for the first two cycles and become high impedance at the third
+E-fall boundary, matching section 2.8 and figure 2-8-1. The FPGA-only phase
+reset selects the safe released condition without advancing that historical
+counter. Oscillator stabilization, nanosecond setup/hold, and pad behavior
+remain outside the active-cycle digital claim.
 
 The wrapper keeps all vectors external, decodes the common internal register
 window and RAME-controlled 128-byte RAM, and leaves all program space external.

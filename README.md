@@ -131,7 +131,7 @@ cycle boundaries being checked.
 ## Known limitations
 
 Pin-level MC6800 phase generation/electrical timing, MC6801/MC6803 nanosecond
-setup/hold and oscillator/pad behavior, HD6303R three-cycle reset-entry timing,
+setup/hold and oscillator/pad behavior, HD6303R nanosecond/oscillator/pad timing,
 physical HD6301V1/HD63701V0 bus waveforms, complete Port 3 handshake timing, analog EPROM
 programming physics, SCI clock-skew/electrical
 tolerance, and complete manufacturer bus waveforms outside the specifically

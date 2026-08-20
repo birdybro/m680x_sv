@@ -106,9 +106,10 @@ four-subphase AS/address/data waveform. It also mirrors internal writes onto
 the physical data bus, presents the documented `$ffff` read while SLP leaves E
 active, presents `$ffff` with released data during WAI, and stops E while
 standby is active. The normalized WAI transaction is invalid to preserve the
-handbook's inactive-strobe distinction. The documented
-third-reset-cycle bus release, nanosecond limits, and oscillator/pad behavior
-remain unclaimed. The Hitachi SCI table reserves `CC1:CC0=00`, so the wrapper explicitly
+handbook's inactive-strobe distinction. RES preserves address drive for two
+completed E cycles and releases it on the third, as documented. Nanosecond
+limits and oscillator/pad behavior remain unclaimed. The Hitachi SCI table
+reserves `CC1:CC0=00`, so the wrapper explicitly
 disables Motorola bi-phase rather than leaking that format across variants.
 The primary mode table makes Modes 1, 2, and 4 available on HD6303R; Modes 0,
 5, 6, and 7 require the disabled mask ROM. Mode 1 exposes the full

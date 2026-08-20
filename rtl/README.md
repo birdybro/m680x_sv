@@ -25,6 +25,6 @@ does not model oscillator, pad, or nanosecond electrical characteristics.
 
 `hd6301/hd6303r_bus_wrapper.sv` is the separate Hitachi ROMless device-pin
 top. It implements Mode-1 dedicated address/data pins, Mode-2/4 AS-controlled
-Port-3 multiplexing, E-qualified writes, and standby bus/E behavior. Its
-structured interface spec keeps reset-entry delay and electrical timing outside
-that active-cycle claim.
+Port-3 multiplexing, E-qualified writes, third-reset-cycle address-bus release,
+and standby bus/E behavior. Its structured interface spec keeps only
+nanosecond/oscillator/pad timing outside that active-cycle claim.

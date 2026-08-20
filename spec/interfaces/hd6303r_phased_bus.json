@@ -6,13 +6,13 @@
     "rtl_boundary": "phase_clk_i runs at four times E; enabled rising edges advance address, AS-close, E-rise data, and E-fall data subphases",
     "historical_boundary": "the on-chip oscillator divides by four to produce E; STBY stops the oscillator and E",
     "status": "PARTIAL",
-    "limitation": "Active read/write subphase ordering and standby clock suppression are implemented; the documented three-E-cycle reset-entry delay, nanosecond limits, oscillator stabilization, pads, and electrical behavior are not"
+    "limitation": "Active read/write subphase ordering, third-E-cycle reset bus release, and standby clock suppression are implemented; nanosecond limits, oscillator stabilization, pads, and electrical behavior are not"
   },
   "signals": [
     {"name": "phase_clk_i", "historical": "FPGA integration clock", "direction": "input", "fact": "four enabled rising edges represent one E cycle and no internally generated clock is used"},
     {"name": "phase_reset_n_i", "historical": "FPGA integration only", "direction": "input", "fact": "asynchronously initializes the subphase counter; distinct from historical RES"},
     {"name": "clock_enable_i", "historical": "FPGA integration only", "direction": "input", "fact": "low holds the subphase counter and normalized MCU state"},
-    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active low resets the MCU; this wrapper immediately releases address/data outputs rather than claiming the documented third-cycle transition"},
+    {"name": "reset_n_i", "historical": "RES", "direction": "input", "fact": "active low resets the MCU; address outputs remain enabled for the first two completed E cycles and become high impedance when the third low E cycle completes"},
     {"name": "standby_n_i", "historical": "STBY", "direction": "input", "fact": "accepted at the normalized E boundary; active standby releases buses and suppresses E"},
     {"name": "standby_power_ok_i", "historical": "standby RAM supply validity", "direction": "input", "fact": "digital retention-valid indication only"},
     {"name": "e_o", "historical": "E", "direction": "output", "fact": "low in address/AS-close phases, high in both data phases, remains active during SLP, and is low throughout accepted standby"},
@@ -50,7 +50,7 @@
     "wai_ffff_idle_bus": "COMPLETE",
     "sleep_idle_ffff_read_bus": "COMPLETE",
     "standby_bus_and_e_behavior": "COMPLETE",
-    "three_cycle_reset_bus_release": "NOT_IMPLEMENTED",
+    "three_cycle_reset_bus_release": "COMPLETE",
     "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
     "oscillator_and_pad_behavior": "NOT_APPLICABLE"
   }

@@ -119,17 +119,37 @@ module tb_hd6303r_bus_wrapper;
       check_value((port1_oe[reset_index] == 8'h00) &&
                   (port3_oe[reset_index] == 8'h00) &&
                   (port4_oe[reset_index] == 8'h00),
-                  "device reset releases address and data buses");
-      check_value(sc2[reset_index], "device reset holds R/W high");
+                  "integration reset safely releases buses");
     end
 
-    // Historical reset leaves E running; only the FPGA phase reset stops it.
+    // Hitachi #U07 section 2.8 releases the address buses only after RES has
+    // remained low for three complete E cycles. E itself continues throughout.
     phase_reset_n = 1'b1;
-    advance_phase(2'd1);
-    advance_phase(2'd2);
-    check_value(e[0] && e[1] && e[2], "E continues during device reset");
-    advance_phase(2'd3);
-    advance_phase(2'd0);
+    #1;
+    for (integer reset_cycle = 0; reset_cycle < 3;
+         reset_cycle = reset_cycle + 1) begin
+      check_value((port1_oe[0] == 8'hff) && (port4_oe[0] == 8'hff),
+                  "mode1 address buses remain driven before third reset cycle");
+      for (integer reset_mux_index = 1; reset_mux_index < 3;
+           reset_mux_index = reset_mux_index + 1) begin
+        check_value((port3_oe[reset_mux_index] == 8'hff) &&
+                    (port4_oe[reset_mux_index] == 8'hff),
+                    "multiplexed address buses remain driven before third reset cycle");
+      end
+      advance_phase(2'd1);
+      advance_phase(2'd2);
+      check_value(e[0] && e[1] && e[2], "E continues during device reset");
+      advance_phase(2'd3);
+      advance_phase(2'd0);
+    end
+    for (integer reset_index = 0; reset_index < 3;
+         reset_index = reset_index + 1) begin
+      check_value((port1_oe[reset_index] == 8'h00) &&
+                  (port3_oe[reset_index] == 8'h00) &&
+                  (port4_oe[reset_index] == 8'h00),
+                  "third reset cycle releases address and data buses");
+      check_value(sc2[reset_index], "established reset holds R/W high");
+    end
     reset_n = 1'b1;
     #1;
 

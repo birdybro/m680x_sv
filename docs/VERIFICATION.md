@@ -26,7 +26,7 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 128 |
+| Python unit tests | 130 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | M6800/MC6801/HD6301 real-core WAI-bus checks | 18 |
@@ -43,7 +43,7 @@ The committed tests cover:
 | HD6301V1 seven-mode execution/source checks | 28 |
 | HD6303R Mode-1/2/4 integration checks | 57 |
 | HD6303R legal-mode decode checks | 47 |
-| HD6303R four-subphase bus-wrapper checks | 142 |
+| HD6303R four-subphase bus-wrapper checks | 180 |
 | HD63701V0 Mode-7 integration checks | 30 |
 | HD63701V0 legal-mode decode checks | 95 |
 | HD63701V0 six-mode execution/source/TRAP checks | 30 |
@@ -154,15 +154,16 @@ the complete stacked state, unmaskable I-bit update, RTI restoration of the
 faulting PC, and immediate retrap when the invalid opcode remains present.
 
 The HD6303R pin suite independently checks all three legal operating modes.
-Its 142 RTL assertions cover Mode-1 dedicated low/high address pins,
+Its 180 RTL assertions cover Mode-1 dedicated low/high address pins,
 Mode-2/4 AS and multiplexed Port-3 turnaround, read release, E-qualified
 writes, physical mirroring of internal writes, R/W, historical-reset E
-continuation, distinct WAI and SLP `$ffff` bus states with E still active,
-E-synchronous standby entry/exit, standby bus release, and E suppression. The
-separate Python model exhaustively projects all 65,536 addresses onto both
-physical organizations and independently checks the WAI/SLP/STBY distinction.
-The documented third reset cycle and nanosecond/electrical behavior are
-explicitly not counted as verified.
+continuation, address drive through the first two reset cycles, exact release
+on the third E-fall, distinct WAI and SLP `$ffff` bus states with E still
+active, E-synchronous standby entry/exit, standby bus release, and E
+suppression. The separate Python model exhaustively projects all 65,536
+addresses onto both physical organizations and independently checks the reset,
+WAI, SLP, and STBY distinctions. Nanosecond/electrical behavior remains outside
+the verified claim.
 
 The HD6303R suite executes through the integrated device wrapper separately in
 each legal Mode 1, 2, and 4. Every profile checks external reset vectors,
@@ -358,7 +359,7 @@ Representative generic Yosys 0.68 results from the current source are:
 | HD6303R Mode 1 integration | 12,183 | 1,421 |
 | HD6303R Mode 2 integration | 12,229 | 1,447 |
 | HD6303R Mode 4 integration | 12,156 | 1,437 |
-| HD6303R four-subphase bus wrapper | 12,312 | 1,449 |
+| HD6303R four-subphase bus wrapper | 12,365 | 1,451 |
 | HD63701V0 Mode 0 integration | 13,917 | 1,949 |
 | HD63701V0 Mode 1 integration | 13,863 | 1,932 |
 | HD63701V0 Mode 2 integration | 14,045 | 1,958 |

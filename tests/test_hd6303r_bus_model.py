@@ -82,6 +82,34 @@ class HD6303RBusModelTests(unittest.TestCase):
                 self.assertFalse(standby.e)
                 self.assertTrue(standby.sc2)
 
+    def test_reset_releases_address_buses_on_third_e_cycle(self) -> None:
+        sequencer = HD6303RBusSequencer()
+        for completed_cycles in range(3):
+            mode1 = self.pins(
+                1, 0, reset_n=False, reset_low_cycles=completed_cycles
+            )
+            self.assertEqual((mode1.port1_oe, mode1.port4_oe), (0xFF, 0xFF))
+            for mode in (2, 4):
+                mux = self.pins(
+                    mode, 0, reset_n=False, reset_low_cycles=completed_cycles
+                )
+                self.assertEqual((mux.port3_oe, mux.port4_oe), (0xFF, 0xFF))
+            for _ in range(4):
+                sequencer.tick(reset_n=False)
+            self.assertEqual(sequencer.reset_low_cycles, completed_cycles + 1)
+
+        for mode in (1, 2, 4):
+            released = self.pins(mode, 0, reset_n=False, reset_low_cycles=3)
+            self.assertEqual(
+                (released.port1_oe, released.port3_oe, released.port4_oe),
+                (0, 0, 0),
+            )
+        for _ in range(4):
+            sequencer.tick(reset_n=False)
+        self.assertEqual(sequencer.reset_low_cycles, 3)
+        sequencer.tick(clock_enable=False, reset_n=True)
+        self.assertEqual(sequencer.reset_low_cycles, 0)
+
     def test_sleep_keeps_e_and_presents_idle_ffff_read(self) -> None:
         for mode in (1, 2, 4):
             for phase in range(4):
@@ -116,6 +144,8 @@ class HD6303RBusModelTests(unittest.TestCase):
             self.pins(5, 0)
         with self.assertRaisesRegex(ValueError, "bus phase"):
             self.pins(2, 4)
+        with self.assertRaisesRegex(ValueError, "reset-low cycle count"):
+            self.pins(2, 0, reset_low_cycles=4)
 
 
 if __name__ == "__main__":

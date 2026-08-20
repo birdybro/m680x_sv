@@ -4,7 +4,7 @@
 // Hitachi #U07, HD6301V1/HD6303R sections 2.1, 2.4, 2.8, 2.12 and
 // figures 5-1/5-2 define the digital ordering represented here. Mode 1 has
 // dedicated address and data pins; Modes 2 and 4 multiplex A0-A7/D0-D7 on
-// Port 3. Nanosecond, pad, oscillator, and reset-entry delay characteristics
+// Port 3. Nanosecond, pad, oscillator, and oscillator-recovery characteristics
 // remain outside this subphase abstraction.
 module hd6303r_bus_wrapper #(
   parameter logic [2:0] OPERATING_MODE = 3'd2
@@ -58,6 +58,9 @@ module hd6303r_bus_wrapper #(
   localparam logic [1:0] PHASE_E_FALL = 2'd3;
 
   logic [1:0] bus_phase;
+  logic [1:0] reset_low_e_cycles;
+  logic reset_counter_clear;
+  logic reset_bus_released;
   logic device_clock_enable;
   logic multiplexed_mode;
   logic mode1_nonmultiplexed;
@@ -79,6 +82,12 @@ module hd6303r_bus_wrapper #(
   assign pin_write = (sleeping_o || waiting_o) ? 1'b0 : cycle_write;
   assign device_clock_enable = clock_enable_i &&
     (bus_phase == PHASE_E_FALL);
+  // Section 2.8 and figure 2-8-1: address buses become high impedance on
+  // the third system-clock cycle for which RES remains low. The FPGA-only
+  // phase reset also selects the safe released condition while E is stopped.
+  assign reset_bus_released = !phase_reset_n_i ||
+    (!reset_n_i && (reset_low_e_cycles == 2'd3));
+  assign reset_counter_clear = !phase_reset_n_i || reset_n_i;
   assign bus_phase_o = bus_phase;
   assign e_o = phase_reset_n_i && !standby_active_o && bus_phase[1];
 
@@ -87,6 +96,17 @@ module hd6303r_bus_wrapper #(
       bus_phase <= PHASE_ADDRESS;
     end else if (clock_enable_i) begin
       bus_phase <= bus_phase + 2'd1;
+    end
+  end
+
+  // RES high asynchronously clears the low-cycle history. Once RES falls,
+  // only enabled E-fall boundaries can advance the saturating counter.
+  always_ff @(posedge phase_clk_i or posedge reset_counter_clear) begin
+    if (reset_counter_clear) begin
+      reset_low_e_cycles <= 2'd0;
+    end else if (clock_enable_i && (bus_phase == PHASE_E_FALL) &&
+                 (reset_low_e_cycles != 2'd3)) begin
+      reset_low_e_cycles <= reset_low_e_cycles + 2'd1;
     end
   end
 
@@ -101,7 +121,7 @@ module hd6303r_bus_wrapper #(
     sc1_oe_o = multiplexed_mode;
     sc2_o = !pin_write;
 
-    if (!reset_n_i || standby_active_o) begin
+    if (reset_bus_released || standby_active_o) begin
       port1_oe_o = 8'h00;
       port3_oe_o = 8'h00;
       port4_oe_o = 8'h00;
