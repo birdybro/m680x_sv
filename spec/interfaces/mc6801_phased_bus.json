@@ -27,7 +27,7 @@
     {"name": "port4_oe_o", "historical": "Port 4 direction", "direction": "output", "fact": "always-address or DDR-controlled behavior follows the selected operating mode"},
     {"name": "operating_mode_o", "historical": "latched mode state", "direction": "output", "fact": "reports the active mode so the documented irreversible Mode 4 to Mode 5 transition is observable"}
   ],
-  "halt_interrupt_behavior": "MC6801 has no HALT pin; after WAI stacks the machine state, expanded modes repeatedly read the current post-stack SP address until interrupt recognition at an E-fall normalized-cycle boundary. The documented five/six-E-cycle interrupt-to-handler latency is not yet claimed",
+  "halt_interrupt_behavior": "MC6801 has no HALT pin; after WAI stacks the machine state, expanded modes repeatedly read the current post-stack SP address through interrupt recognition and internal response cycles. The first handler opcode is reached in five E-cycles for NMI/IRQ2 and six for IRQ1",
   "references": [
     {
       "id": "motorola-mc6801-reference-1983",
@@ -45,7 +45,7 @@
     "mode5_ios_and_data_direction": "COMPLETE",
     "mode_dependent_pin_roles": "COMPLETE",
     "wai_post_stack_sp_read_bus": "COMPLETE",
-    "wai_interrupt_response_latency": "PARTIAL",
+    "wai_interrupt_response_latency": "COMPLETE",
     "nanosecond_electrical_timing": "NOT_IMPLEMENTED",
     "oscillator_and_pad_behavior": "NOT_APPLICABLE"
   }

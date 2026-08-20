@@ -142,6 +142,13 @@ class OpcodeSpecificationTests(unittest.TestCase):
             "repeat read at post-stack SP while waiting",
             m6801_wai["memory_operations"],
         )
+        self.assertEqual(
+            m6801_wai["conditional_cycles"],
+            [
+                "after an unmasked request: 5 E-cycles to the first handler opcode "
+                "for NMI or IRQ2; 6 E-cycles for IRQ1"
+            ],
+        )
         self.assertIn(
             "present FFFF with read/write strobes inactive while waiting",
             hd6301_wai["memory_operations"],
@@ -150,6 +157,8 @@ class OpcodeSpecificationTests(unittest.TestCase):
             "repeat read at post-stack SP while waiting",
             hd6301_wai["memory_operations"],
         )
+        self.assertEqual(m6800_wai["conditional_cycles"], [])
+        self.assertEqual(hd6301_wai["conditional_cycles"], [])
 
     def test_hd6301_undefined_map_cells_are_documented_traps(self) -> None:
         traps = [

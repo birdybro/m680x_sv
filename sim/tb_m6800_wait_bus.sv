@@ -32,7 +32,7 @@ module tb_m6800_wait_bus #(
   /* verilator lint_on PINCONNECTEMPTY */
 
   assign data_in = memory[address];
-  always #5 clk = ~clk;
+  always #5 clk <= ~clk;
 
   task automatic tick;
     begin

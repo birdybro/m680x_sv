@@ -26,10 +26,11 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 127 |
+| Python unit tests | 128 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | M6800/MC6801/HD6301 real-core WAI-bus checks | 18 |
+| MC6801 exact WAI-response trace checks | 47 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801 Mode 0-7/1R/6R decode checks | 62 |
 | MC6801 real-core mode boot paths | 2 |
@@ -139,8 +140,11 @@ post-stack SP, preserves Mode-5 IOS decoding, and releases Port 3 during the
 read-data phase. A separate real-core bench enters WAI in all three
 M6800-lineage profiles and makes 18 steady-state/stall checks distinguishing
 MC6800 bus release, MC6801 post-stack-SP reads, and HD6301 inactive-strobe
-`$ffff`. Neither path claims nanosecond electrical limits or MC6801's currently
-unverified five/six-E-cycle wake latency.
+`$ffff`. A separate 47-check real-core trace bench drives NMI, an IRQ2-class
+peripheral vector, and IRQ1. It verifies every post-stack-SP/internal read,
+both vector addresses, no second stack frame, the exact five/five/six-cycle
+latencies, and the first handler opcode fetch. Neither path claims nanosecond
+electrical limits.
 
 The HD6301 TRAP suite independently exercises an unassigned opcode and an
 instruction-address-error input. It compares the exact 13-cycle normalized bus
@@ -338,29 +342,29 @@ Representative generic Yosys 0.68 results from the current source are:
 
 | Top/profile | Generic cells | Sequential cells |
 |---|---:|---:|
-| M6800 | 6,213 | 217 |
-| MC6800 bus wrapper | 6,274 | 223 |
-| MC6801 | 6,181 | 217 |
-| MC6801 Mode 2 integration | 11,390 | 1,454 |
-| MC6801 Mode 4/5 integration | 11,393 | 1,493 |
-| MC6801 four-subphase bus wrapper | 11,520 | 1,459 |
-| HD6301 | 7,321 | 218 |
-| HD6301V1 Mode 0 integration | 12,127 | 1,438 |
-| HD6301V1 Mode 1 integration | 12,107 | 1,421 |
-| HD6301V1 Mode 4 integration | 12,167 | 1,437 |
-| HD6301V1 Mode 5 integration | 12,165 | 1,445 |
-| HD6301V1 Mode 6 integration | 12,188 | 1,454 |
-| HD6301V1 Mode 7 integration | 12,183 | 1,485 |
-| HD6303R Mode 1 integration | 12,090 | 1,421 |
-| HD6303R Mode 2 integration | 12,382 | 1,447 |
-| HD6303R Mode 4 integration | 12,144 | 1,437 |
-| HD6303R four-subphase bus wrapper | 12,303 | 1,449 |
-| HD63701V0 Mode 0 integration | 13,888 | 1,949 |
-| HD63701V0 Mode 1 integration | 13,786 | 1,932 |
-| HD63701V0 Mode 2 integration | 13,978 | 1,958 |
-| HD63701V0 Mode 5 integration | 13,937 | 1,956 |
+| M6800 | 6,254 | 217 |
+| MC6800 bus wrapper | 6,222 | 223 |
+| MC6801 | 6,243 | 218 |
+| MC6801 Mode 2 integration | 11,494 | 1,455 |
+| MC6801 Mode 4/5 integration | 11,419 | 1,494 |
+| MC6801 four-subphase bus wrapper | 11,582 | 1,457 |
+| HD6301 | 7,294 | 218 |
+| HD6301V1 Mode 0 integration | 12,162 | 1,438 |
+| HD6301V1 Mode 1 integration | 12,094 | 1,421 |
+| HD6301V1 Mode 4 integration | 12,150 | 1,437 |
+| HD6301V1 Mode 5 integration | 12,190 | 1,445 |
+| HD6301V1 Mode 6 integration | 12,247 | 1,454 |
+| HD6301V1 Mode 7 integration | 12,126 | 1,485 |
+| HD6303R Mode 1 integration | 12,183 | 1,421 |
+| HD6303R Mode 2 integration | 12,229 | 1,447 |
+| HD6303R Mode 4 integration | 12,156 | 1,437 |
+| HD6303R four-subphase bus wrapper | 12,312 | 1,449 |
+| HD63701V0 Mode 0 integration | 13,917 | 1,949 |
+| HD63701V0 Mode 1 integration | 13,863 | 1,932 |
+| HD63701V0 Mode 2 integration | 14,045 | 1,958 |
+| HD63701V0 Mode 5 integration | 13,951 | 1,956 |
 | HD63701V0 Mode 6 integration | 14,043 | 1,965 |
-| HD63701V0 Mode 7 integration | 14,034 | 1,996 |
+| HD63701V0 Mode 7 integration | 13,920 | 1,996 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

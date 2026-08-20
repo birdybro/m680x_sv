@@ -173,9 +173,10 @@ WAI is not generalized across the lineage. MC6801RM(AD2) section 5.4.2 states
 that the expanded bus repeatedly reads the address seven below the pre-WAI SP,
 which is the current post-stack SP. The core and pin wrapper therefore present
 that address with read direction until an interrupt is accepted. The base
-MC6800 profile retains its separate bus-release behavior. The currently
-implemented wake path does not yet claim MC6801's documented five/six-E-cycle
-interrupt-to-handler timing.
+MC6800 profile retains its separate bus-release behavior. During MC6801 wake,
+the SP read remains visible through the internal response and late-priority
+cycles before the two vector reads. NMI/IRQ2 reaches the first handler opcode
+in five E-cycles; synchronized IRQ1 takes six, matching figure 5-15.
 
 `phase_reset_n_i` is an FPGA integration reset for the subphase counter and is
 separate from historical `reset_n_i`; the latter resets the device while E

@@ -226,6 +226,16 @@ class M6800ModelTests(unittest.TestCase):
             self.assertEqual(model.state.sp, 0x3FF9)
             self.assertEqual(model.waiting_bus_state(), bus_state)
 
+    def test_mc6801_wai_interrupt_response_cycles(self) -> None:
+        model = _fixture("m6801", 0x3E)
+        self.assertEqual(model.wai_interrupt_response_cycles("NMI"), 5)
+        self.assertEqual(model.wai_interrupt_response_cycles("IRQ2"), 5)
+        self.assertEqual(model.wai_interrupt_response_cycles("IRQ1"), 6)
+        with self.assertRaisesRegex(ValueError, "unsupported MC6801 interrupt class"):
+            model.wai_interrupt_response_cycles("RESET")
+        with self.assertRaisesRegex(ValueError, "only for MC6801"):
+            _fixture("m6800", 0x3E).wai_interrupt_response_cycles("IRQ1")
+
     def test_nmi_is_unmasked_and_stacks_running_state(self) -> None:
         model = _fixture("m6800", 0x01)
         model.set_flag("I", True)

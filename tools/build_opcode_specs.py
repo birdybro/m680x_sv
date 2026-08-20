@@ -557,8 +557,13 @@ def _instruction(
     registers_read, registers_written = _register_facts(mnemonic, mode)
     stack_effects, branch_behavior, vector_behavior = _control_facts(mnemonic, condition)
     memory_operations = _memory_facts(mnemonic, mode, length)
+    conditional_cycles: list[str] = []
     if architecture == "m6801" and mnemonic == "WAI":
         memory_operations.append("repeat read at post-stack SP while waiting")
+        conditional_cycles.append(
+            "after an unmasked request: 5 E-cycles to the first handler opcode "
+            "for NMI or IRQ2; 6 E-cycles for IRQ1"
+        )
     return {
         "opcode": opcode,
         "opcode_hex": f"{opcode:02X}",
@@ -569,7 +574,7 @@ def _instruction(
         "addressing_mode": mode,
         "length": length,
         "cycles": cycles,
-        "conditional_cycles": [],
+        "conditional_cycles": conditional_cycles,
         "registers_read": registers_read,
         "registers_written": registers_written,
         "flags_read": flags_read,
@@ -859,6 +864,7 @@ def build_hd6301() -> dict:
         if record["classification"] == "documented_instruction":
             record["cycles"] = _hd6301_cycles(record)
             if record["mnemonic"] == "WAI":
+                record["conditional_cycles"] = []
                 record["memory_operations"] = [
                     operation
                     for operation in record["memory_operations"]

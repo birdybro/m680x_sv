@@ -95,6 +95,16 @@ class M6800Model:
             return {"address": self.state.sp, "read": True, "valid": True}
         return {"address": 0xFFFF, "read": False, "valid": False}
 
+    def wai_interrupt_response_cycles(self, interrupt_class: str) -> int:
+        """Return documented MC6801 E-cycles to the first handler opcode."""
+
+        if self.architecture != "m6801":
+            raise ValueError("WAI response timing is established here only for MC6801")
+        try:
+            return {"NMI": 5, "IRQ2": 5, "IRQ1": 6}[interrupt_class]
+        except KeyError as error:
+            raise ValueError(f"unsupported MC6801 interrupt class: {interrupt_class}") from error
+
     def reset(self) -> None:
         self.state.a = 0
         self.state.b = 0

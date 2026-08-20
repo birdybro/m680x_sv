@@ -1614,6 +1614,7 @@ module m6800_core #(
     ST_MASK_INDEXED,
     ST_INTERRUPT_DELAY,
     ST_INTERRUPT_PUSH,
+    ST_WAIT_RESPONSE,
     ST_INTERRUPT_POST,
     ST_INTERRUPT_VECTOR_HIGH,
     ST_INTERRUPT_VECTOR_LOW,
@@ -1649,6 +1650,7 @@ module m6800_core #(
   logic [7:0] immediate_mask;
   logic [1:0] interrupt_enable_delay;
   logic trap_interrupt;
+  logic wait_wake_slow;
 
   opcode_decode_t fetched_decode;
   logic decoded_sane;
@@ -2376,7 +2378,14 @@ module m6800_core #(
           bus_valid_o = 1'b1;
         end
       end
-      ST_INTERRUPT_POST: ;
+      ST_WAIT_RESPONSE, ST_INTERRUPT_POST: begin
+        // MC6801RM(AD2) figure 5-15 keeps the post-stack SP read visible
+        // throughout the WAI interrupt-response cycles preceding the vector.
+        if ((ARCHITECTURE == 2'd1) && interrupt_is_wait) begin
+          address_o = stack_pointer;
+          bus_valid_o = 1'b1;
+        end
+      end
       ST_INTERRUPT_VECTOR_HIGH: begin
         address_o = vector_address;
         bus_valid_o = 1'b1;
@@ -2431,6 +2440,7 @@ module m6800_core #(
       immediate_mask <= 8'h00;
       interrupt_enable_delay <= 2'd0;
       trap_interrupt <= 1'b0;
+      wait_wake_slow <= 1'b0;
       retire_o <= 1'b0;
       illegal_o <= 1'b0;
       undefined_o <= 1'b0;
@@ -2673,6 +2683,18 @@ module m6800_core #(
             phase <= phase + 3'd1;
           end
         end
+        ST_WAIT_RESPONSE: begin
+          // NMI and IRQ2 need one response cycle before late priority
+          // selection; synchronized IRQ1 needs two. Together with the
+          // recognition, priority, and vector cycles this produces the
+          // documented five/six-E-cycle WAI response.
+          if (phase == (wait_wake_slow ? 3'd1 : 3'd0)) begin
+            phase <= 3'd0;
+            state <= ST_INTERRUPT_POST;
+          end else begin
+            phase <= phase + 3'd1;
+          end
+        end
         ST_INTERRUPT_POST: begin
           // MC6801-family devices select the highest-priority maskable vector
           // after stacking, not when entry is first recognized. Resampling here
@@ -2690,6 +2712,8 @@ module m6800_core #(
           if (external_interrupt) begin
             external_interrupt <= 1'b0;
             trap_interrupt <= 1'b0;
+            interrupt_is_wait <= 1'b0;
+            wait_wake_slow <= 1'b0;
             state <= ST_FETCH;
             interrupt_ack_o <= 1'b1;
           end else begin
@@ -2718,9 +2742,12 @@ module m6800_core #(
         end
         ST_WAITING: begin
           if (nmi_requested() || (!irq_n_i && !condition_codes[CCR_I])) begin
+            phase <= 3'd0;
             external_interrupt <= 1'b1;
             trap_interrupt <= 1'b0;
             condition_codes[CCR_I] <= 1'b1;
+            wait_wake_slow <= (ARCHITECTURE == 2'd1) && !nmi_requested() &&
+              (irq_vector_i == 16'hfff8);
             if (nmi_requested()) begin
               vector_address <= 16'hfffc;
               interrupt_vector_o <= 2'b10;
@@ -2729,7 +2756,8 @@ module m6800_core #(
               vector_address <= irq_vector_i;
               interrupt_vector_o <= 2'b01;
             end
-            state <= ST_INTERRUPT_POST;
+            if (ARCHITECTURE == 2'd1) state <= ST_WAIT_RESPONSE;
+            else state <= ST_INTERRUPT_POST;
           end
         end
         ST_SLEEPING: begin

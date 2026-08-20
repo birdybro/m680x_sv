@@ -80,8 +80,9 @@ match their documented logical polarity without generating internal clocks.
 The low-power steady bus is profile-specific: MC6800 releases its normalized
 bus in WAI, MC6801 repeatedly reads the current post-stack SP, and HD6301
 presents `$ffff` with an invalid normalized transaction to represent inactive
-read/write strobes. MC6801's separate documented interrupt-response latency
-remains a partial timing claim.
+read/write strobes. MC6801 wake-up preserves the SP read through its internal
+response cycles and reaches the first handler opcode in the documented five
+E-cycles for NMI/IRQ2 or six for IRQ1.
 
 ## Build and verification
 

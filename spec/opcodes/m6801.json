@@ -2422,7 +2422,9 @@
       "addressing_mode": "inherent",
       "length": 1,
       "cycles": 9,
-      "conditional_cycles": [],
+      "conditional_cycles": [
+        "after an unmasked request: 5 E-cycles to the first handler opcode for NMI or IRQ2; 6 E-cycles for IRQ1"
+      ],
       "registers_read": [
         "PC",
         "SP",

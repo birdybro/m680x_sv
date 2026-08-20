@@ -78,7 +78,9 @@ address/data turnaround in multiplexed Modes 0/1/2/3/6, R/W, Mode-5 IOS and
 E-qualified data drive, reset bus release, single-chip IS3/OS3 roles, and the
 Mode-4-to-5 transition. During WAI it repeatedly presents the current
 post-stack SP as a read, including Mode-5 IOS decode and Port-3 read release.
-The documented five/six-E-cycle interrupt response is not yet verified.
+The response trace retains that read through internal cycles, then performs
+the two vector reads and reaches the first handler opcode in five E-cycles for
+NMI/IRQ2 or six for IRQ1.
 Manufacturer nanosecond limits, oscillator/pad behavior, and electrical pull
 strength remain outside the claim.
 
