@@ -157,6 +157,9 @@ module tb_hd6301v1_mcu;
     port3_in = 8'h3c;
     port4_in = 8'hc3;
     checks = 0;
+    if (dut.device.SCI_BIPHASE_SUPPORTED !== 1'b0)
+      $fatal(1, "HD6301V1 incorrectly enables reserved RMCR=00 bi-phase");
+    checks = checks + 1;
     os3_pulses = 0;
     for (index = 0; index < 4096; index = index + 1) firmware[index] = 8'h01;
 

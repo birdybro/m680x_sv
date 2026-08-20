@@ -286,6 +286,77 @@ class MC6801DeviceModelTests(unittest.TestCase):
         self.assertFalse(model.state.orfe)
         self.assertEqual(model.state.receive_data, 0xC3)
 
+    def test_biphase_transition_coding_and_interval_receive(self) -> None:
+        transmitter = MC6801DeviceModel(2)
+        self.read(transmitter, 0x0011)
+        self.write(transmitter, 0x0013, 0x4D)
+        self.write(transmitter, 0x0011, 0x02)
+        for _ in range(16 * 11):
+            self.idle(transmitter, port2=0x08)
+            if transmitter.state.tx_bits == 10:
+                break
+        self.assertEqual(transmitter.state.tx_bits, 10)
+
+        bits = [0, *(0x4D >> bit & 1 for bit in range(8)), 1]
+        for bit in bits:
+            boundary_level = transmitter.state.sci_tx
+            for _ in range(8):
+                self.idle(transmitter, port2=0x08)
+            self.assertEqual(transmitter.state.sci_tx, boundary_level ^ bit)
+            for _ in range(8):
+                self.idle(transmitter, port2=0x08)
+            self.assertEqual(transmitter.state.sci_tx, boundary_level ^ bit ^ 1)
+
+        receiver = MC6801DeviceModel(2)
+        self.write(receiver, 0x0011, 0x08, port2=0x08)
+        receive_level = 1
+
+        def send_biphase_bit(bit: int) -> None:
+            nonlocal receive_level
+            receive_level ^= 1
+            for _ in range(8):
+                self.idle(receiver, port2=receive_level << 3)
+            if bit:
+                receive_level ^= 1
+            for _ in range(8):
+                self.idle(receiver, port2=receive_level << 3)
+
+        send_biphase_bit(1)
+        send_biphase_bit(1)
+        for bit in [0, *(0xA7 >> bit & 1 for bit in range(8)), 1]:
+            send_biphase_bit(bit)
+        self.assertTrue(receiver.state.rdrf)
+        self.assertFalse(receiver.state.orfe)
+        self.assertEqual(receiver.state.receive_data, 0xA7)
+
+        self.read(receiver, 0x0011, port2=receive_level << 3)
+        self.read(receiver, 0x0012, port2=receive_level << 3)
+        send_biphase_bit(1)
+        send_biphase_bit(1)
+        for bit in [0, *(0x5A >> bit & 1 for bit in range(8)), 0]:
+            send_biphase_bit(bit)
+        send_biphase_bit(1)
+        self.assertFalse(receiver.state.rdrf)
+        self.assertTrue(receiver.state.orfe)
+        self.assertEqual(receiver.state.receive_data, 0x5A)
+
+        wake_receiver = MC6801DeviceModel(2)
+        self.write(wake_receiver, 0x0011, 0x09, port2=0x08)
+        receive_level = 1
+
+        def send_wake_mark() -> None:
+            nonlocal receive_level
+            receive_level ^= 1
+            for _ in range(8):
+                self.idle(wake_receiver, port2=receive_level << 3)
+            receive_level ^= 1
+            for _ in range(8):
+                self.idle(wake_receiver, port2=receive_level << 3)
+
+        for _ in range(11):
+            send_wake_mark()
+        self.assertEqual(wake_receiver.state.trcsr_control & 0x01, 0)
+
     def test_mc6801_framing_error_transfers_misframed_byte(self) -> None:
         model = MC6801DeviceModel()
         self.write(model, 0x0010, 0x04)

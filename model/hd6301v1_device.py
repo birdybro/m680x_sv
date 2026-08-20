@@ -30,6 +30,7 @@ class HD6301V1Mode7Model(MC6801DeviceModel):
         super().__init__(
             7,
             transfer_framing_error=False,
+            sci_biphase_supported=False,
             timer_counter_double_write=True,
             timer_overflow_at_zero=True,
         )

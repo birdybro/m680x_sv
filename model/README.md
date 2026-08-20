@@ -54,7 +54,9 @@ and one-way Mode-5 transition, normalized external selection, GPIO/address
 functions, the capture/compare/overflow timer and ordered flag protocols,
 internally or externally clocked NRZ SCI framing/status, and retained IRQ1/IRQ2
 requests. The external-clock path independently counts eight sampled P22
-positive edges per serial bit.
+positive edges per serial bit. The Motorola profile also implements bi-phase-M
+through transition-interval decoding independently of the RTL state machine;
+Hitachi profiles explicitly reserve that Motorola-only RMCR selection.
 MC6803 users select only its documented Modes 2/3; no behavior is assigned to
 the modes which that device's manual leaves undefined.
 

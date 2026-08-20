@@ -13,6 +13,7 @@ module mc6801_mcu #(
   parameter logic       HITACHI_CPU = 1'b0,
   parameter logic       HD6301_MODE7 = 1'b0,
   parameter logic       SCI_TRANSFER_FRAMING_ERROR = 1'b1,
+  parameter logic       SCI_BIPHASE_SUPPORTED = 1'b1,
   parameter logic       TIMER_COUNTER_DOUBLE_WRITE = 1'b0,
   parameter logic       TIMER_OVERFLOW_AT_ZERO = 1'b0,
   parameter logic       PORT_DDR_ASYNC_RESET = 1'b1,
@@ -142,11 +143,16 @@ module mc6801_mcu #(
   logic [3:0] tx_bits_remaining;
   logic [3:0] tx_preamble_remaining;
   logic tx_active;
+  logic tx_biphase_level;
   logic rx_previous;
   logic rx_busy;
   logic [12:0] rx_countdown;
   logic [3:0] rx_bit_index;
   logic [7:0] rx_shift;
+  logic biphase_transition_seen;
+  logic [12:0] biphase_interval;
+  logic biphase_short_pending;
+  logic [1:0] biphase_idle_intervals;
   logic [3:0] wake_mark_count;
   logic sci_clock_previous;
   logic [2:0] sci_external_subcycles;
@@ -174,13 +180,22 @@ module mc6801_mcu #(
   logic timer_compare_event;
   logic timer_overflow_event;
   logic sci_bit_tick;
+  logic sci_half_tick;
   logic [12:0] sci_divisor;
   logic sci_nrz_format;
+  logic sci_biphase_format;
   logic sci_external_nrz;
   logic sci_external_clock_rise;
   logic sci_receive_count_event;
   logic [12:0] sci_receive_half_interval;
   logic [12:0] sci_receive_bit_interval;
+  logic sci_receive_transition;
+  logic [12:0] sci_biphase_elapsed;
+  logic [12:0] sci_biphase_threshold;
+  logic sci_biphase_short_interval;
+  logic sci_biphase_decoded_valid;
+  logic sci_biphase_decoded_bit;
+  logic sci_tx_current_bit;
   logic sci_clock_level;
   logic timer_counter_write;
   logic capture_high_read;
@@ -410,25 +425,30 @@ module mc6801_mcu #(
       2'b00: begin
         sci_divisor = 13'd16;
         sci_bit_tick = (timer_next[3:0] == 4'h0);
+        sci_half_tick = (timer_next[2:0] == 3'h0);
         sci_clock_level = timer_counter[3];
       end
       2'b01: begin
         sci_divisor = 13'd128;
         sci_bit_tick = (timer_next[6:0] == 7'h00);
+        sci_half_tick = (timer_next[5:0] == 6'h00);
         sci_clock_level = timer_counter[6];
       end
       2'b10: begin
         sci_divisor = 13'd1024;
         sci_bit_tick = (timer_next[9:0] == 10'h000);
+        sci_half_tick = (timer_next[8:0] == 9'h000);
         sci_clock_level = timer_counter[9];
       end
       default: begin
         sci_divisor = 13'd4096;
         sci_bit_tick = (timer_next[11:0] == 12'h000);
+        sci_half_tick = (timer_next[10:0] == 11'h000);
         sci_clock_level = timer_counter[11];
       end
     endcase
     sci_nrz_format = rmcr[3:2] != 2'b00;
+    sci_biphase_format = SCI_BIPHASE_SUPPORTED && (rmcr[3:2] == 2'b00);
     sci_external_nrz = rmcr[3:2] == 2'b11;
     sci_external_clock_rise = !sci_clock_previous && port2_i[2];
     if (sci_external_nrz) begin
@@ -442,6 +462,16 @@ module mc6801_mcu #(
       sci_receive_half_interval = sci_divisor >> 1;
       sci_receive_bit_interval = sci_divisor;
     end
+    sci_receive_transition = rx_previous != port2_i[3];
+    sci_biphase_elapsed = (biphase_interval == 13'h1fff) ?
+      13'h1fff : biphase_interval + 13'd1;
+    sci_biphase_threshold = sci_divisor - (sci_divisor >> 2);
+    sci_biphase_short_interval = sci_biphase_elapsed < sci_biphase_threshold;
+    sci_biphase_decoded_valid = biphase_transition_seen &&
+      sci_receive_transition &&
+      (!sci_biphase_short_interval || !biphase_short_pending);
+    sci_biphase_decoded_bit = sci_biphase_short_interval;
+    sci_tx_current_bit = (tx_bits_remaining != 4'd0) ? tx_shift[0] : 1'b1;
   end
 
   always_ff @(posedge clk_i or negedge device_reset_n) begin
@@ -640,11 +670,16 @@ module mc6801_mcu #(
       tx_bits_remaining <= 4'd0;
       tx_preamble_remaining <= 4'd0;
       tx_active <= 1'b0;
+      tx_biphase_level <= 1'b1;
       rx_previous <= 1'b1;
       rx_busy <= 1'b0;
       rx_countdown <= 13'd0;
       rx_bit_index <= 4'd0;
       rx_shift <= 8'h00;
+      biphase_transition_seen <= 1'b0;
+      biphase_interval <= 13'd0;
+      biphase_short_pending <= 1'b0;
+      biphase_idle_intervals <= 2'd0;
       wake_mark_count <= 4'd0;
       sci_clock_previous <= 1'b1;
       sci_external_subcycles <= 3'd0;
@@ -655,6 +690,15 @@ module mc6801_mcu #(
         sci_external_subcycles <= sci_external_subcycles + 3'd1;
       end else if (!sci_external_nrz) begin
         sci_external_subcycles <= 3'd0;
+      end
+      if (!trcsr_control[1]) begin
+        tx_biphase_level <= 1'b1;
+      end else if (sci_biphase_format && sci_half_tick &&
+                   !(internal_write && (core_address == 16'h0010)) &&
+                   !(internal_write && (core_address == 16'h0011) &&
+                     (core_data_out[1] != trcsr_control[1])) &&
+                   (sci_bit_tick || sci_tx_current_bit)) begin
+        tx_biphase_level <= !tx_biphase_level;
       end
 
       if (internal_read && (core_address == 16'h0011)) begin
@@ -672,16 +716,23 @@ module mc6801_mcu #(
           16'h0010: begin
             rmcr <= core_data_out[3:0];
             sci_external_subcycles <= 3'd0;
+            tx_biphase_level <= 1'b1;
+            biphase_transition_seen <= 1'b0;
+            biphase_interval <= 13'd0;
+            biphase_short_pending <= 1'b0;
+            biphase_idle_intervals <= 2'd0;
           end
           16'h0011: begin
             trcsr_control <= core_data_out[4:0];
             if (!trcsr_control[1] && core_data_out[1]) begin
               tx_preamble_remaining <= 4'd9;
               tx_active <= 1'b0;
+              tx_biphase_level <= 1'b1;
             end
             if (!core_data_out[1]) begin
               tx_active <= 1'b0;
               tx_bits_remaining <= 4'd0;
+              tx_biphase_level <= 1'b1;
             end
           end
           16'h0013: begin
@@ -695,7 +746,7 @@ module mc6801_mcu #(
         endcase
       end
 
-      if (sci_bit_tick && trcsr_control[0]) begin
+      if (sci_bit_tick && sci_nrz_format && trcsr_control[0]) begin
         if (port2_i[3]) begin
           if (wake_mark_count == 4'd9) begin
             trcsr_control[0] <= 1'b0;
@@ -708,7 +759,8 @@ module mc6801_mcu #(
         end
       end
 
-      if (sci_bit_tick && sci_nrz_format && trcsr_control[1]) begin
+      if (sci_bit_tick && (sci_nrz_format || sci_biphase_format) &&
+          trcsr_control[1]) begin
         if (tx_preamble_remaining != 4'd0) begin
           tx_preamble_remaining <= tx_preamble_remaining - 4'd1;
         end else if (tx_active) begin
@@ -733,7 +785,76 @@ module mc6801_mcu #(
         end
       end
 
-      if (!trcsr_control[3] || !sci_nrz_format || trcsr_control[0]) begin
+      if (sci_biphase_format) begin
+        if (!(internal_write && (core_address == 16'h0010)) &&
+            !(internal_write && (core_address == 16'h0011) &&
+              (((core_data_out[3:0] ^ trcsr_control[3:0]) & 4'h9) != 4'h0))) begin
+          if (!trcsr_control[3] && !trcsr_control[0]) begin
+            rx_busy <= 1'b0;
+            biphase_transition_seen <= 1'b0;
+            biphase_interval <= 13'd0;
+            biphase_short_pending <= 1'b0;
+            biphase_idle_intervals <= 2'd0;
+          end else begin
+            if (sci_receive_transition) begin
+              biphase_interval <= 13'd0;
+              if (!biphase_transition_seen) begin
+                biphase_transition_seen <= 1'b1;
+              end else if (sci_biphase_short_interval) begin
+                if (biphase_idle_intervals != 2'd2)
+                  biphase_idle_intervals <= biphase_idle_intervals + 2'd1;
+                biphase_short_pending <= !biphase_short_pending;
+              end else begin
+                biphase_idle_intervals <= 2'd0;
+                biphase_short_pending <= 1'b0;
+              end
+            end else begin
+              biphase_interval <= sci_biphase_elapsed;
+            end
+
+            if (sci_biphase_decoded_valid) begin
+              if (trcsr_control[0]) begin
+                rx_busy <= 1'b0;
+                if (sci_biphase_decoded_bit) begin
+                  if (wake_mark_count == 4'd9) begin
+                    trcsr_control[0] <= 1'b0;
+                    wake_mark_count <= 4'd0;
+                  end else begin
+                    wake_mark_count <= wake_mark_count + 4'd1;
+                  end
+                end else begin
+                  wake_mark_count <= 4'd0;
+                end
+              end else if (!trcsr_control[3]) begin
+                rx_busy <= 1'b0;
+              end else if (!rx_busy) begin
+                if (!sci_biphase_decoded_bit &&
+                    (biphase_idle_intervals == 2'd2)) begin
+                  rx_busy <= 1'b1;
+                  rx_bit_index <= 4'd1;
+                  rx_shift <= 8'h00;
+                end
+              end else if (rx_bit_index <= 4'd8) begin
+                rx_shift[rx_bit_index[2:0] - 3'd1] <= sci_biphase_decoded_bit;
+                rx_bit_index <= rx_bit_index + 4'd1;
+              end else begin
+                rx_busy <= 1'b0;
+                biphase_idle_intervals <= sci_biphase_decoded_bit ? 2'd1 : 2'd2;
+                if (!sci_biphase_decoded_bit) begin
+                  if (SCI_TRANSFER_FRAMING_ERROR && !rdrf && !orfe)
+                    receive_data <= rx_shift;
+                  orfe <= 1'b1;
+                end else if (rdrf || orfe) begin
+                  orfe <= 1'b1;
+                end else begin
+                  receive_data <= rx_shift;
+                  rdrf <= 1'b1;
+                end
+              end
+            end
+          end
+        end
+      end else if (!sci_nrz_format || !trcsr_control[3] || trcsr_control[0]) begin
         rx_busy <= 1'b0;
       end else if (!rx_busy) begin
         if (rx_previous && !port2_i[3]) begin
@@ -808,7 +929,15 @@ module mc6801_mcu #(
     irq_n = !(irq1_pending || !irq1_n_i || port3_irq || irq2_pending ||
       timer_irq_o || sci_irq_o);
 
-    sci_tx_o = (trcsr_control[1] && tx_active) ? tx_shift[0] : 1'b1;
+    if (!trcsr_control[1]) begin
+      sci_tx_o = 1'b1;
+    end else if (sci_biphase_format) begin
+      sci_tx_o = tx_biphase_level;
+    end else if (sci_nrz_format) begin
+      sci_tx_o = tx_active ? tx_shift[0] : 1'b1;
+    end else begin
+      sci_tx_o = 1'b1;
+    end
     sci_clock_o = sci_clock_level;
     port1_o = port1_latch;
     port1_oe_o = port1_ddr;

@@ -98,7 +98,8 @@
     "compatibility": "The asynchronous transmitter, receiver, clocks, controls, flags, and interrupt functions follow the documented HD6801-compatible SCI except for the explicitly listed framing-error transfer rule.",
     "framing_error": "A missing stop bit sets ORFE without RDRF and does not transfer the receive shift-register byte into RDR.",
     "implemented_clock_modes": "internally clocked NRZ with divisors 16, 128, 1024, and 4096, plus external NRZ divided from eight sampled P22 positive edges per bit",
-    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 5.7 comparison table, printed pages 347-348"}
+    "reserved_clock_modes": "CC1:CC0=00 has no format or clock source; the wrapper disables the Motorola-only bi-phase engine",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "HD6301V1 table 2-6-2 and sections 2.6(5)-(7), printed pages 153-154; HD6303R common-die statement, printed page 126"}
   },
   "operating_modes": {
     "mode2": "expanded multiplexed ROMless operation with internal registers and RAME-controlled 128-byte RAM; implemented by the current wrapper",
@@ -116,7 +117,7 @@
     "rtl": "rtl/hd6301/hd6303r_mcu.sv binds the HD6301 CPU profile to the manufacturer-compatible Mode-2 peripheral and RAM integration",
     "verification": "Directed execution covers external reset vectoring, internal RAM, AIM, XGDX, SLP peripheral continuity, masked-request wake, opcode TRAP, E-synchronous STBY, external-bus suppression, reset-vector recovery, and retained RAM/STBY_PWR",
     "address_error": "Mode 2 defines no non-memory instruction-fetch region, so the wrapper does not assert an instruction-address-error input; opcode error still invokes TRAP",
-    "excluded_modes": "Available Modes 1 and 4, Port 3 handshake, physical multiplexed-bus waveforms, oscillator recovery delay, and bi-phase SCI remain unclaimed",
+    "excluded_modes": "Available Modes 1 and 4, Port 3 handshake, physical multiplexed-bus waveforms, and oscillator recovery delay remain unclaimed",
     "analog_exclusions": ["oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

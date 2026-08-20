@@ -55,7 +55,8 @@
     "compatibility": "The asynchronous transmitter, receiver, clocks, controls, flags, and interrupt functions follow the documented HD6801-compatible SCI except for the explicitly listed framing-error transfer rule.",
     "framing_error": "A missing stop bit sets ORFE without RDRF and does not transfer the receive shift-register byte into RDR.",
     "implemented_clock_modes": "internally clocked NRZ with divisors 16, 128, 1024, and 4096, plus external NRZ divided from eight sampled P22 positive edges per bit",
-    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "section 5.7 comparison table, printed pages 347-348"}
+    "reserved_clock_modes": "CC1:CC0=00 has no format or clock source; the wrapper disables the Motorola-only bi-phase engine",
+    "reference": {"id": "hitachi-hd6301-hd6303-series-handbook-1989", "locator": "table 2-6-2 and sections 2.6(5)-(7), printed pages 153-154"}
   },
   "operating_modes": {
     "mode7": "single-chip operation with all program memory and vectors in the internal F000-FFFF mask-ROM window; implemented",
@@ -85,7 +86,7 @@
     "rtl": "rtl/hd6301/hd6301v1_mcu.sv implements the single-chip Mode-7 digital boundary and accepts a separate 4-KiB FPGA program image",
     "model": "model/hd6301v1_device.py independently classifies Mode-7 E-cycle transactions, GPIO/handshake state, program memory, and address errors",
     "verification": "Directed RTL execution covers internal reset/vector fetch, executable RAM, both address-error ranges through representative fetch, Port 3/4 GPIO, IS3 latch and ordered flag clear, both OS3 selections, masked SLP wake, enabled IS3 interrupt vectoring, E-synchronous STBY, reset-vector recovery, and retained RAM/STBY_PWR",
-    "excluded_modes": "Expanded modes, physical multiplexed/non-multiplexed bus pins, oscillator recovery delay, and bi-phase SCI remain unclaimed",
+    "excluded_modes": "Expanded modes, physical multiplexed/non-multiplexed bus pins, and oscillator recovery delay remain unclaimed",
     "analog_exclusions": ["mask-ROM contents", "oscillator and crystal behavior", "standby voltage threshold", "pad drive strength", "metastability"]
   }
 }

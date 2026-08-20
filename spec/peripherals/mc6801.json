@@ -51,6 +51,8 @@
     "clock_modes": {"00": "internal bi-phase", "01": "internal NRZ", "10": "internal NRZ with bit clock on P22", "11": "external 8x NRZ clock on P22"},
     "internal_divisors": {"00": 16, "01": 128, "10": 1024, "11": 4096},
     "frame": "one start, eight data bits least-significant first, one stop, no hardware parity",
+    "biphase": "bi-phase-M transitions at every bit boundary and additionally at the half-bit point for a one; idle toggles at every half-bit, receive requires at least one idle bit, intervals below six of eight sub-intervals decode as one, and intervals above six decode as zero",
+    "biphase_exact_six_subintervals": "UNDEFINED_BY_DOCUMENTATION",
     "transmitter": "TE rising sends nine marks; TDR transfers at a bit boundary and sets TDRE; status-read-before-TDR-write is required to clear TDRE",
     "receiver": "valid stop transfers data and sets RDRF; a missing stop transfers the misframed byte to RDR and sets ORFE without RDRF; full RDR causes overrun and inhibits transfer",
     "flag_clear": "TRCSR read followed by RDR read clears the RDRF/ORFE bits observed",
@@ -85,7 +87,7 @@
     {"source": "sci", "vector": "FFF0:FFF1", "priority": 6}
   ],
   "implementation_scope": {
-    "current_profile": "Normalized Mode 0-7 plus 1R/6R decode, internal RAM/ROM selection, Port 3/4 functions, Mode 4-to-5 transition, internally clocked NRZ, and P22-clocked 8x external NRZ. Physical bus multiplexing, Port 3 handshake completeness, and bi-phase SCI remain separate profiles.",
+    "current_profile": "Normalized Mode 0-7 plus 1R/6R decode, internal RAM/ROM selection, Port 3/4 functions, Mode 4-to-5 transition, all three NRZ clock selections, and internally clocked bi-phase-M with transition-interval receive. Physical bus multiplexing and Port 3 handshake completeness remain separate profiles.",
     "differential_evidence": "Two deterministic seeds compare 768 independent-model E-cycle transactions per mode against internal decode, GPIO, timer, SCI, and interrupt RTL state.",
     "undefined_output_latches": "RTL selects deterministic zero after reset without claiming that manufacturer-undefined silicon latch value.",
     "standby_retention": "RTL exposes standby validity without claiming analog threshold or power-domain retention equivalence.",

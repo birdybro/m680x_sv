@@ -4,7 +4,7 @@ IVERILOG ?= iverilog
 VVP ?= vvp
 YOSYS ?= yowasp-yosys
 
-.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
+.PHONY: help refs refs-check spec-build spec-check lint lint-rtl test test-model test-m6800 test-m6800-rtl test-m6800-opcodes test-mc6800-wrapper test-m6801 test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-mc6803 test-m6805 test-m6805-rtl test-m6805-opcodes test-hitachi test-hd6301-opcodes test-hd6301-trap test-hd6301v1 test-hd6303r test-hd63701v0 test-hd6305-opcodes test-hd63705v0 test-hd63705-peripheral-diff test-alu test-alu-rtl test-cycle test-interrupts test-interrupt-delay test-peripherals test-mc68705p5 test-mc68705p5-peripheral-diff test-random test-random-m6800 test-random-m6801 test-random-hd6301 test-random-m6805 test-random-hd6305 test-iverilog formal synth quick ci clean
 
 help:
 	@echo "m680x_sv developer targets"
@@ -25,6 +25,7 @@ help:
 	@echo "  test-mc6801-mcu verify Mode 2/3 RAM, GPIO, timer, SCI, and interrupts"
 	@echo "  test-mc6801-modes verify Mode 0-7/1R/6R decode, vectors, RAM, ROM, and ports"
 	@echo "  test-mc6801-sci-external verify P22-clocked NRZ transmit and receive"
+	@echo "  test-mc6801-sci-biphase verify transition-coded transmit and receive"
 	@echo "  test-mc6801-peripheral-diff compare 1,536 model/RTL E-cycles"
 	@echo "  test-mc6803 verify the inherited MC6801 Mode 2/3 device profile"
 	@echo "  test-m6805  run M6805-lineage model regressions"
@@ -170,7 +171,7 @@ test-mc6800-wrapper:
 		sim/tb_mc6800_bus_wrapper.sv
 	build/obj_mc6800_bus_wrapper/Vtb_mc6800_bus_wrapper
 
-test-m6801: test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external
+test-m6801: test-m6801-opcodes test-mc6801-mcu test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase
 	$(PYTHON) -m unittest tests.test_m6800_model tests.test_mc6801_device_model -v
 
 test-m6801-opcodes:
@@ -217,6 +218,15 @@ test-mc6801-sci-external:
 		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
 		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_sci_external.sv
 	build/obj_mc6801_sci_external/Vtb_mc6801_sci_external
+
+test-mc6801-sci-biphase:
+	mkdir -p build
+	$(VERILATOR) --binary --timing --assert -Wall \
+		--top-module tb_mc6801_sci_biphase \
+		-Mdir build/obj_mc6801_sci_biphase -o Vtb_mc6801_sci_biphase \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_sci_biphase.sv
+	build/obj_mc6801_sci_biphase/Vtb_mc6801_sci_biphase
 
 test-mc6803: test-mc6801-mcu
 	$(PYTHON) -m unittest tests.test_peripheral_spec tests.test_mc6801_device_model -v
@@ -366,7 +376,7 @@ test-interrupt-delay:
 		rtl/m6805/m6805_core.sv sim/tb_interrupt_delay.sv
 	build/obj_delay_hd6305/Vdelay_hd6305
 
-test-peripherals: test-mc6803 test-mc6801-modes test-mc6801-sci-external test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5 test-mc68705p5-peripheral-diff test-hd63705v0 test-hd63705-peripheral-diff
+test-peripherals: test-mc6803 test-mc6801-modes test-mc6801-sci-external test-mc6801-sci-biphase test-mc6801-peripheral-diff test-hd6301v1 test-hd6303r test-hd63701v0 test-mc68705p5 test-mc68705p5-peripheral-diff test-hd63705v0 test-hd63705-peripheral-diff
 
 test-mc68705p5:
 	mkdir -p build
@@ -483,6 +493,11 @@ test-iverilog: spec-check
 		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
 		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_sci_external.sv
 	$(VVP) build/iverilog/tb_mc6801_sci_external
+	$(IVERILOG) -g2012 -Wall -s tb_mc6801_sci_biphase \
+		-o build/iverilog/tb_mc6801_sci_biphase \
+		sim/mc6801_peripheral_bus_stub_pkg.sv sim/stub/m6800_core.sv \
+		rtl/m6801/mc6801_mcu.sv sim/tb_mc6801_sci_biphase.sv
+	$(VVP) build/iverilog/tb_mc6801_sci_biphase
 	$(IVERILOG) -g2012 -Wall -s tb_mc6801_peripheral_diff \
 		-o build/iverilog/mc6801_peripheral_diff \
 		sim/generated/mc6801_peripheral_vectors_pkg.sv \

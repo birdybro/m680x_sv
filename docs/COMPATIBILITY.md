@@ -67,13 +67,14 @@ windows, Mode-0 external-to-internal reset-vector handoff, Mode-5's selected
 mode-selected Port 3/4 GPIO/address functions. The complete peripheral suite
 continues to exercise Modes 2/3 and implements Port 1/2 GPIO, the
 capture/compare/overflow timer, documented interrupt priority/vectors, and
-internally or externally clocked NRZ SCI. The external mode forces P22 to input
-and advances one serial bit per eight sampled positive clock edges.
+all four documented Motorola SCI selections. Bi-phase-M transmit/receive uses
+boundary transitions, optional one-valued half-bit transitions, transition-
+interval decoding, and idle/wake qualification. External NRZ forces P22 to
+input and advances one serial bit per eight sampled positive clock edges.
 
 The MC6803 profile inherits only the manufacturer-stated Modes 2/3 facts and
 rejects other public configurations. Physical multiplexed-bus waveforms,
-complete Port 3 handshake timing and bi-phase SCI remain
-outside this partial claim.
+and complete Port 3 handshake timing remain outside this partial claim.
 For a framing error, MC6801 transfers the misframed byte into RDR while setting
 ORFE without RDRF. This behavior is independently selected and tested rather
 than generalized to Hitachi parts.
@@ -85,8 +86,10 @@ tests cover HD6301-only instructions, opcode TRAP, continued timer operation in
 SLP, masked-request wake without vectoring, and simultaneous NMI/IRQ priority.
 They also cover E-synchronous STBY entry, high-impedance GPIO/external-bus
 qualification, retained RAM/STBY_PWR, and reset-vector recovery. Port 3
-handshakes, the physical multiplexed waveform, and bi-phase SCI remain outside
-this partial claim. The primary mode table makes Modes 1, 2, and 4 available on
+handshakes and the physical multiplexed waveform remain outside this partial
+claim. The Hitachi SCI table reserves `CC1:CC0=00`, so the wrapper explicitly
+disables Motorola bi-phase rather than leaking that format across variants.
+The primary mode table makes Modes 1, 2, and 4 available on
 HD6303R; Modes 0, 5, 6, and 7 require the disabled mask ROM. Only Mode 2 is
 currently exposed by the wrapper.
 HD6303R follows the HD6301V1-specific framing-error rule: the shift-register
@@ -101,9 +104,9 @@ and the `$f000`-`$ffff` internal program/vector window. The program image is an
 integration input. Directed tests verify that instruction fetches in both
 documented non-memory ranges enter the 13-cycle address TRAP while normal data
 accesses do not. E-synchronous STBY entry, retained RAM/STBY_PWR, high-impedance
-ports, and reset-vector recovery are tested. Expanded modes,
-bi-phase SCI, physical timing, and actual mask-ROM contents
-remain outside this partial claim.
+ports, reset-vector recovery, and the reserved bi-phase selection are tested.
+Expanded modes, physical timing, and actual mask-ROM contents remain outside
+this partial claim.
 Its tested SCI profile likewise inhibits transfer of a misframed byte into RDR.
 The Mode-7 timer regression verifies full-counter double-byte writes and the
 documented Hitachi TOF boundary. It also verifies that V1 DDR clearing waits
@@ -116,8 +119,9 @@ interrupts, the V0-specific framing-error transfer, SLP, and a separately
 supplied `$f000`-`$ffff` EPROM image. The RTL and model execute from both RAM
 boundaries and trap representative fetches in the unambiguous non-memory
 range. Asynchronous STBY entry, retained RAM/STBY_PWR, high-impedance ports,
-and reset-vector recovery are tested. Expanded modes, bi-phase SCI, physical
-timing, and EPROM programming mode remain outside the claim.
+and reset-vector recovery are tested. Expanded modes, physical timing, and
+EPROM programming mode remain outside the claim. Its `CC1:CC0=00` selection is
+likewise reserved and does not enable the Motorola bi-phase engine.
 The V0 regression verifies its distinct asynchronous DDR reset at the digital
 boundary.
 

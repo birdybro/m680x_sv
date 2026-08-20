@@ -97,6 +97,17 @@ class HD6301V1Mode7ModelTests(unittest.TestCase):
         self.assertFalse(model.state.rdrf)
         self.assertEqual(model.state.receive_data, 0x3C)
 
+    def test_reserved_rmcr_zero_does_not_enable_motorola_biphase(self) -> None:
+        model = HD6301V1Mode7Model()
+        self.read(model, 0x0011)
+        self.write(model, 0x0013, 0xA5)
+        self.write(model, 0x0011, 0x02)
+        for _ in range(64):
+            self.cycle(model, port2=0x08)
+        self.assertEqual(model.state.sci_tx, 1)
+        self.assertEqual(model.state.tx_bits, 0)
+        self.assertFalse(model.state.tdre)
+
     def test_hitachi_counter_double_write_and_rollover_flag(self) -> None:
         model = HD6301V1Mode7Model()
         self.write(model, 0x0009, 0xA5)

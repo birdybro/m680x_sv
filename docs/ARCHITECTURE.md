@@ -173,13 +173,22 @@ set. The core resamples the wrapper's priority vector after stacking, matching
 the documented late encoder and its default-SCI result when software removes
 the identity of an already latched IRQ2 request.
 
-The SCI implements all three NRZ clock selections: internal clock, internal
-clock exported on P22, and the external 8x clock input on P22. It includes all
-four internal divisors, an eight-edge external divider, nine-mark transmitter
-preamble, LSB-first ten-bit frames, ordered TDRE/RDRF/ORFE clearing,
-center-sampled receive, overrun/framing status, wake-mark counting, pin
-overrides, and shared interrupt. Bi-phase coding is not approximated and
-remains outside the claim.
+The Motorola SCI profile implements all three NRZ clock selections—internal,
+internal with the bit clock exported on P22, and external 8x input on P22—and
+the internally clocked bi-phase-M selection. The bi-phase transmitter always
+changes level at a bit boundary, adds the documented half-bit transition for a
+one, and emits the toggling idle pattern. Its independent receiver measures
+transition intervals against the documented six-of-eight-subinterval boundary,
+requires the documented idle qualification, and decodes wake marks. The exact
+six-subinterval case is not assigned a silicon-equivalence claim because the
+manual defines only intervals more or less than six.
+
+The SCI also includes all four internal divisors, an eight-edge external
+divider, nine-mark transmitter preamble, LSB-first ten-bit frames, ordered
+TDRE/RDRF/ORFE clearing, center-sampled NRZ receive, overrun/framing status,
+wake-mark counting, pin overrides, and shared interrupt. The Hitachi SCI tables
+reserve `CC1:CC0=00`; an explicit device parameter disables Motorola bi-phase
+in HD6301V1, HD6303R, and HD63701V0 wrappers.
 The common block has an explicit framing-error transfer parameter: MC6801 and
 HD63701V0 transfer a misframed receive byte into RDR while leaving RDRF clear,
 whereas HD6301V1 and HD6303R inhibit that transfer. Device wrappers select the

@@ -26,17 +26,18 @@ The committed tests cover:
 | HD6301 opcode values with documented TRAP behavior | 26 |
 | Python exhaustive practical ALU cases | 1,839,105 |
 | SystemVerilog exhaustive practical ALU cases | 1,969,155 |
-| Python unit tests | 103 |
+| Python unit tests | 105 |
 | M6800 directed core checks | 28 |
 | MC6800 bus-wrapper checks | 14 |
 | MC6801/MC6803 Mode 2/3 integration checks | 50 |
 | MC6801 Mode 0-7/1R/6R decode checks | 62 |
 | MC6801 real-core mode boot paths | 2 |
 | MC6801 external-clock SCI checks | 165 |
+| MC6801 bi-phase SCI checks | 24 |
 | MC6801/MC6803 peripheral model/RTL cycle comparisons | 1,536 |
-| HD6301V1 Mode-7 integration checks | 31 |
-| HD6303R Mode-2 integration checks | 18 |
-| HD63701V0 Mode-7 integration checks | 29 |
+| HD6301V1 Mode-7 integration checks | 32 |
+| HD6303R Mode-2 integration checks | 19 |
+| HD63701V0 Mode-7 integration checks | 30 |
 | HD63705V0 integration checks | 27 |
 | HD63705V0 peripheral model/RTL cycle comparisons | 768 |
 | M6805 directed core checks | 13 |
@@ -92,12 +93,14 @@ timer priority, distinct vectors, NRZ transmit framing, center-sampled receive,
 SCI overrun retention, MC6801 misframed-byte transfer, P22-forced input in
 external clock mode, exact eight-positive-edge bit division, simultaneous
 external-clock transmit/receive, status-clearing protocols, sticky SCI pin
-direction,
+direction, exact Motorola bi-phase boundary/half-bit transitions, transition-
+interval receive, one-bit idle qualification, and ten-mark bi-phase wake-up,
+including the distinct framing-error transfer path,
 and a one-cycle IRQ1 pulse which arrives after IRQ2 entry has started and wins
 the documented late vector-priority selection. It also removes a timer source's
 identity after latching IRQ2 and verifies the documented default SCI vector.
 
-The independent Python device model has thirteen focused regressions for all-mode
+The independent Python device model has fourteen focused regressions for all-mode
 decode, RAM/ROM/vector behavior, physical-pin GPIO behavior and SCI direction overrides,
 coherent timer reads and ordered status clears, second-cycle input capture,
 overflow/compare events, retained IRQ priority, and internally clocked NRZ
@@ -105,7 +108,9 @@ transmit/receive with unread-data overrun retention. The additional external
 NRZ regression proves that a stationary P22 clock cannot advance serial state,
 then compares the transmitted and received ten-bit frames after exactly eight
 positive P22 edges per bit. Its cycle/event structure is separate from the RTL
-wrapper.
+wrapper. The bi-phase regression independently verifies the Figure 6-7 line
+code for every bit of a frame, reconstructs a different byte from measured
+transition intervals, and exercises the encoded wake-up delimiter.
 
 Two recorded seeds, `0x68030002` and `0x68030003`, drive 768 E-cycle
 transactions per mode through a verification-only CPU bus source. After every
@@ -134,7 +139,8 @@ RTL and model tests cover the Hitachi full-counter write sequence and TOF at
 rollover to `$0000`. The instruction model has a matching regression for the
 masked-request SLP rule. Model and RTL tests additionally cover E-synchronous
 STBY entry, high-impedance GPIO and external-bus suppression, retained RAM and
-STBY_PWR, active-state reset, and external reset-vector recovery.
+STBY_PWR, active-state reset, external reset-vector recovery, and explicit
+rejection of the Motorola-only bi-phase selection.
 
 The HD6301V1 Mode-7 suite fetches reset and interrupt vectors through the
 internal program-image interface, executes from both the 4-KiB program window
@@ -150,7 +156,9 @@ fifth model test and the RTL suite verify the Hitachi FRC write and rollover
 semantics. The RTL suite also proves that V1 DDR reset takes effect at an E
 edge rather than at asynchronous RES assertion. A sixth model test and the RTL
 suite verify E-synchronous STBY sampling, active-domain reset, program/GPIO
-suppression, retained RAM/STBY_PWR, and reset-vector restart.
+suppression, retained RAM/STBY_PWR, and reset-vector restart. A seventh model
+test plus a wrapper-parameter check prove that reserved `CC1:CC0=00` does not
+activate Motorola bi-phase behavior.
 
 The HD63701V0 Mode-7 suite fetches reset and TRAP vectors from the separate
 EPROM image, executes at both `$0040` and `$00ff`, checks OLVL reset, exercises
@@ -163,6 +171,8 @@ manufacturer manual contradicts itself there. It separately checks the
 V0-specific asynchronous DDR clear before another E edge occurs. Model and RTL
 tests also verify asynchronous STBY entry, immediate program/GPIO suppression,
 retained RAM/STBY_PWR, active-state reset, and reset-vector restart.
+The wrapper suite separately checks that the reserved bi-phase selection is
+disabled.
 
 The MC6800 device-wrapper suite verifies reset bus controls, TSC ownership and
 state stalling, HALT completion and stable bus release, single-instruction
@@ -258,12 +268,12 @@ Representative generic Yosys 0.68 results from the current source are:
 | M6800 | 6,213 | 217 |
 | MC6800 bus wrapper | 6,274 | 223 |
 | MC6801 | 6,165 | 217 |
-| MC6801 Mode 2 integration | 11,099 | 1,436 |
-| MC6801 Mode 4/5 integration | 10,980 | 1,475 |
+| MC6801 Mode 2 integration | 11,346 | 1,457 |
+| MC6801 Mode 4/5 integration | 11,421 | 1,493 |
 | HD6301 | 7,289 | 218 |
-| HD6301V1 Mode 7 integration | 12,129 | 1,485 |
-| HD6303R Mode 2 integration | 12,236 | 1,447 |
-| HD63701V0 Mode 7 integration | 13,902 | 1,996 |
+| HD6301V1 Mode 7 integration | 12,187 | 1,456 |
+| HD6303R Mode 2 integration | 12,255 | 1,434 |
+| HD63701V0 Mode 7 integration | 13,968 | 1,996 |
 | M6805 | 3,609 | 169 |
 | HD6305 | 3,611 | 170 |
 | MC68705P5 integration | 6,940 | 1,144 |

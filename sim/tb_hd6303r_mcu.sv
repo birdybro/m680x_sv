@@ -123,6 +123,9 @@ module tb_hd6303r_mcu;
     irq1_n = 1'b1;
     port2_in = 5'h1d;
     checks = 0;
+    if (dut.device.SCI_BIPHASE_SUPPORTED !== 1'b0)
+      $fatal(1, "HD6303R incorrectly enables reserved RMCR=00 bi-phase");
+    checks = checks + 1;
     for (index = 0; index < 65536; index = index + 1) memory[index] = 8'h01;
 
     memory[16'hfffe] = 8'h02; memory[16'hffff] = 8'h00;

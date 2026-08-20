@@ -104,11 +104,16 @@ class MC6801PeripheralState:
     tx_frame: int = 0x3FF
     tx_bits: int = 0
     tx_marks: int = 0
+    tx_biphase_level: bool = True
     rx_previous: bool = True
     rx_busy: bool = False
     rx_countdown: int = 0
     rx_bit: int = 0
     rx_shift: int = 0
+    biphase_transition_seen: bool = False
+    biphase_interval: int = 0
+    biphase_short_pending: bool = False
+    biphase_idle_intervals: int = 0
     wake_marks: int = 0
     sci_clock_previous: bool = True
     sci_external_subcycles: int = 0
@@ -159,7 +164,11 @@ class MC6801PeripheralState:
 
     @property
     def sci_tx(self) -> int:
-        return (self.tx_frame & 1) if (self.trcsr_control & 0x02 and self.tx_bits) else 1
+        if not self.trcsr_control & 0x02:
+            return 1
+        if self.rmcr >> 2 == 0:
+            return int(self.tx_biphase_level)
+        return (self.tx_frame & 1) if self.tx_bits else 1
 
 
 class MC6801DeviceModel:
@@ -173,6 +182,7 @@ class MC6801DeviceModel:
         program_memory: Memory | None = None,
         rom_start: int = 0xF800,
         transfer_framing_error: bool = True,
+        sci_biphase_supported: bool = True,
         timer_counter_double_write: bool = False,
         timer_overflow_at_zero: bool = False,
         internal_ram_start: int = 0x0080,
@@ -192,6 +202,7 @@ class MC6801DeviceModel:
         self.state = MC6801PeripheralState()
         self.mode0_reset_vector_reads_remaining = 2
         self.transfer_framing_error = transfer_framing_error
+        self.sci_biphase_supported = sci_biphase_supported
         self.timer_counter_double_write = timer_counter_double_write
         self.timer_overflow_at_zero = timer_overflow_at_zero
 
@@ -640,17 +651,29 @@ class MC6801DeviceModel:
         external_clock_rise = not s.sci_clock_previous and clock_pin
         external_nrz = (s.rmcr >> 2) == 3
         nrz_format = (s.rmcr >> 2) != 0
+        biphase_format = not nrz_format and self.sci_biphase_supported
         if external_nrz:
             bit_tick = external_clock_rise and s.sci_external_subcycles == 7
+            half_tick = False
             count_event = external_clock_rise
             half_interval = 4
             bit_interval = 8
         else:
             bit_tick = (s.timer & (divisor - 1)) == 0
+            half_tick = (s.timer & (divisor // 2 - 1)) == 0
             count_event = True
             half_interval = divisor // 2
             bit_interval = divisor
         receive_pin = bool(inputs.port2 & 0x08)
+        current_tx_bit = (s.tx_frame & 1) if s.tx_bits else 1
+        sci_mode_write = internal_write and address == 0x0010
+        sci_control_write = internal_write and address == 0x0011
+        tx_control_change = sci_control_write and bool(inputs.data & 0x02) != bool(
+            old_control & 0x02
+        )
+        rx_control_change = sci_control_write and bool(
+            (inputs.data ^ old_control) & 0x09
+        )
 
         s.sci_clock_previous = clock_pin
         if external_nrz and external_clock_rise:
@@ -669,20 +692,27 @@ class MC6801DeviceModel:
             if address == 0x0010:
                 s.rmcr = inputs.data & 0x0F
                 s.sci_external_subcycles = 0
+                s.tx_biphase_level = True
+                s.biphase_transition_seen = False
+                s.biphase_interval = 0
+                s.biphase_short_pending = False
+                s.biphase_idle_intervals = 0
             elif address == 0x0011:
                 s.trcsr_control = inputs.data & 0x1F
                 if not old_control & 0x02 and inputs.data & 0x02:
                     s.tx_marks = 9
                     s.tx_bits = 0
+                    s.tx_biphase_level = True
                 if not inputs.data & 0x02:
                     s.tx_bits = 0
+                    s.tx_biphase_level = True
             elif address == 0x0013:
                 s.transmit_data = inputs.data
                 if s.status_armed & 0x01:
                     s.tdre = False
                     s.status_armed &= ~0x01
 
-        if bit_tick and old_control & 0x01:
+        if bit_tick and nrz_format and old_control & 0x01:
             if receive_pin:
                 if s.wake_marks == 9:
                     s.trcsr_control &= ~0x01
@@ -692,7 +722,12 @@ class MC6801DeviceModel:
             else:
                 s.wake_marks = 0
 
-        if bit_tick and nrz_format and old_control & 0x02:
+        if (half_tick and biphase_format and old_control & 0x02
+                and not sci_mode_write and not tx_control_change):
+            if bit_tick or current_tx_bit:
+                s.tx_biphase_level = not s.tx_biphase_level
+
+        if bit_tick and (nrz_format or biphase_format) and old_control & 0x02:
             if s.tx_marks:
                 s.tx_marks -= 1
             elif s.tx_bits:
@@ -711,7 +746,12 @@ class MC6801DeviceModel:
                 s.tx_bits = 10
                 s.tdre = True
 
-        if not old_control & 0x08 or not nrz_format or old_control & 0x01:
+        if biphase_format:
+            if not sci_mode_write and not rx_control_change:
+                self._advance_biphase_receiver(
+                    receive_pin, previous_pin, divisor, old_control
+                )
+        elif not nrz_format or not old_control & 0x08 or old_control & 0x01:
             s.rx_busy = False
         elif not s.rx_busy:
             if previous_pin and not receive_pin:
@@ -745,6 +785,89 @@ class MC6801DeviceModel:
             else:
                 s.receive_data = s.rx_shift
                 s.rdrf = True
+
+    def _advance_biphase_receiver(
+        self,
+        receive_pin: bool,
+        previous_pin: bool,
+        divisor: int,
+        control: int,
+    ) -> None:
+        """Advance the transition-interval decoder described in MC6801RM 6.4.1."""
+        s = self.state
+        if not control & 0x08 and not control & 0x01:
+            s.rx_busy = False
+            s.biphase_transition_seen = False
+            s.biphase_interval = 0
+            s.biphase_short_pending = False
+            s.biphase_idle_intervals = 0
+            return
+
+        transition = receive_pin != previous_pin
+        elapsed = min(s.biphase_interval + 1, 0x1FFF)
+        if not transition:
+            s.biphase_interval = elapsed
+            return
+
+        s.biphase_interval = 0
+        if not s.biphase_transition_seen:
+            s.biphase_transition_seen = True
+            return
+
+        short_interval = elapsed < divisor - divisor // 4
+        idle_ready = s.biphase_idle_intervals >= 2
+        decoded_bit: int | None = None
+        if short_interval:
+            s.biphase_idle_intervals = min(s.biphase_idle_intervals + 1, 2)
+            if s.biphase_short_pending:
+                s.biphase_short_pending = False
+            else:
+                s.biphase_short_pending = True
+                decoded_bit = 1
+        else:
+            s.biphase_idle_intervals = 0
+            s.biphase_short_pending = False
+            decoded_bit = 0
+
+        if decoded_bit is None:
+            return
+        if control & 0x01:
+            s.rx_busy = False
+            if decoded_bit:
+                if s.wake_marks == 9:
+                    s.trcsr_control &= ~0x01
+                    s.wake_marks = 0
+                else:
+                    s.wake_marks += 1
+            else:
+                s.wake_marks = 0
+            return
+        if not control & 0x08:
+            s.rx_busy = False
+            return
+        if not s.rx_busy:
+            if not decoded_bit and idle_ready:
+                s.rx_busy = True
+                s.rx_bit = 1
+                s.rx_shift = 0
+            return
+        if s.rx_bit <= 8:
+            mask = 1 << (s.rx_bit - 1)
+            s.rx_shift = (s.rx_shift | mask) if decoded_bit else (s.rx_shift & ~mask)
+            s.rx_bit += 1
+            return
+
+        s.rx_busy = False
+        s.biphase_idle_intervals = 1 if decoded_bit else 2
+        if not decoded_bit:
+            if self.transfer_framing_error and not s.rdrf and not s.orfe:
+                s.receive_data = s.rx_shift
+            s.orfe = True
+        elif s.rdrf or s.orfe:
+            s.orfe = True
+        else:
+            s.receive_data = s.rx_shift
+            s.rdrf = True
 
     def _advance_interrupt_latches(
         self,

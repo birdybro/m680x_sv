@@ -51,6 +51,7 @@
     "normalized_mode_decode": "COMPLETE",
     "internal_ram_and_program_selection": "COMPLETE",
     "normalized_external_clock_nrz_sci": "COMPLETE",
+    "normalized_internal_biphase_sci": "COMPLETE",
     "normalized_gpio_and_address_outputs": "PARTIAL",
     "physical_multiplexed_bus_waveform": "NOT_IMPLEMENTED",
     "electrical_timing": "NOT_IMPLEMENTED",
